@@ -1,5 +1,10 @@
 import BestSellerSection from "@/components/Home/BestSellerSection";
+import BrandTrustSection from "@/components/Home/BrandTrustSection";
+import BulkQueryForm from "@/components/Home/BulkQueryForm";
 import CategorySlider from "@/components/Home/CategorySlider";
+import ClientLogoSlider from "@/components/Home/ClientLogoSlider";
+import ComparisonSection from "@/components/Home/ComparisonSection";
+import FavouriteCategories from "@/components/Home/FavouriteCategories";
 import HeroSection from "@/components/Home/Hero";
 import VideoTestimonials from "@/components/Home/VideoTestimonials";
 import Footer from "@/components/Main/Footer";
@@ -12,8 +17,13 @@ export default function Home() {
       <Navbar />
       <HeroSection />
       <CategorySlider />
+      <FavouriteCategories />
+      <ComparisonSection />
+      <BrandTrustSection />
       <BestSellerSection />
+      <ClientLogoSlider />
       <VideoTestimonials />
+      <BulkQueryForm />
       <Footer />
     </div>
   );
