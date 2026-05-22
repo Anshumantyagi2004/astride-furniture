@@ -21,14 +21,10 @@ export default function Page() {
 
   return (<>
     <Navbar />
+
     <div className="min-h-screen bg-[#f4f7fb] flex items-center justify-center px-4 py-10">
-
       <div className="w-full max-w-5xl bg-white rounded-[35px] overflow-hidden shadow-2xl grid lg:grid-cols-2">
-
-        {/* LEFT SIDE */}
         <div className="hidden lg:flex relative bg-[#00badb] p-12 flex-col justify-between text-white overflow-hidden">
-
-          {/* BG CIRCLE */}
           <div className="absolute -top-20 -left-20 w-72 h-72 bg-white/10 rounded-full"></div>
           <div className="absolute bottom-0 right-0 w-80 h-80 bg-white/10 rounded-full"></div>
 
@@ -74,7 +70,7 @@ export default function Page() {
           </div>
 
           {/* SWITCH */}
-          <div className="flex items-center bg-[#f4f7fb] rounded-2xl p-1 mb-10 relative">
+          <div className="flex items-center bg-[#f4f7fb] rounded-2xl p-1 mb-5 relative">
 
             <motion.div
               animate={{
@@ -106,7 +102,7 @@ export default function Page() {
           </div>
 
           {/* TITLE */}
-          <div className="mb-8">
+          <div className="mb-6 flex justify-center items-center flex-col">
             <h2 className="text-4xl font-bold text-[#243447]">
               {isLogin ? "Welcome Back" : "Create Account"}
             </h2>
@@ -200,6 +196,7 @@ export default function Page() {
         </div>
       </div>
     </div>
+    
     <Footer />
   </>);
 }
