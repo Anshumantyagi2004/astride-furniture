@@ -12,12 +12,15 @@ import {
 } from "lucide-react";
 
 import { motion } from "framer-motion";
+import Navbar from "@/components/Main/Navbar";
+import Footer from "@/components/Main/Footer";
 
 export default function Page() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
-  return (
+  return (<>
+    <Navbar />
     <div className="min-h-screen bg-[#f4f7fb] flex items-center justify-center px-4 py-10">
 
       <div className="w-full max-w-5xl bg-white rounded-[35px] overflow-hidden shadow-2xl grid lg:grid-cols-2">
@@ -87,18 +90,16 @@ export default function Page() {
 
             <button
               onClick={() => setIsLogin(true)}
-              className={`relative z-10 w-1/2 py-3 font-semibold transition-all duration-300 ${
-                isLogin ? "text-white" : "text-gray-600"
-              }`}
+              className={`relative z-10 w-1/2 py-3 font-semibold transition-all duration-300 ${isLogin ? "text-white" : "text-gray-600"
+                }`}
             >
               Login
             </button>
 
             <button
               onClick={() => setIsLogin(false)}
-              className={`relative z-10 w-1/2 py-3 font-semibold transition-all duration-300 ${
-                !isLogin ? "text-white" : "text-gray-600"
-              }`}
+              className={`relative z-10 w-1/2 py-3 font-semibold transition-all duration-300 ${!isLogin ? "text-white" : "text-gray-600"
+                }`}
             >
               Signup
             </button>
@@ -199,5 +200,6 @@ export default function Page() {
         </div>
       </div>
     </div>
-  );
+    <Footer />
+  </>);
 }
