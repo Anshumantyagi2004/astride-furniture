@@ -1,0 +1,129 @@
+import { NextResponse } from "next/server";
+import crypto from "crypto";
+import path from "path";
+import connectDB from "@/config/connectDB";
+import Product from "@/models/Product";
+import Category from "@/models/Category";
+import { uploadToR2 } from "@/utils/uploadToR2";
+import { generateSlug } from "@/utils/generateSlug";
+
+export async function POST(req) {
+    try {
+        await connectDB();
+        const formData = await req.formData();
+
+        // FIELDS
+        const productName = formData.get("productName");
+        const category = formData.get("category");
+        const oldPrice = formData.get("oldPrice");
+        const realPrice = formData.get("realPrice");
+        const shortDescription = formData.get("shortDescription");
+        const longDescription = formData.get("longDescription");
+        const videoLinks = JSON.parse(formData.get("videoLinks") || "[]");
+        const specifications = JSON.parse(formData.get("specifications") || "[]");
+        const imageFiles = formData.getAll("images");
+
+        // VALIDATION
+        if (!productName || !category || !oldPrice || !realPrice || !shortDescription || !longDescription) {
+            return NextResponse.json(
+                { success: false, message: "All fields are required", },
+                { status: 400 }
+            );
+        }
+
+        // CATEGORY CHECK
+        const categoryExists = await Category.findById(category);
+        if (!categoryExists) {
+            return NextResponse.json(
+                { success: false, message: "Category not found", },
+                { status: 404 }
+            );
+        }
+
+        // GENERATE SLUG
+        let slug = generateSlug(productName);
+        const existingProduct = await Product.findOne({ slug, });
+        if (existingProduct) { slug = `${slug}-${crypto.randomBytes(2).toString("hex")}`; }
+
+        // UPLOAD IMAGES
+        const uploadedImages = [];
+        for (const image of imageFiles) {
+            const bytes = await image.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+            const extension = path.extname(image.name);
+            const fileName = `${Date.now()}-${generateSlug(productName)}${extension}`;
+
+            const uploadedImage = await uploadToR2({
+                file: buffer,
+                folder: "products",
+                fileName,
+                contentType: image.type,
+            });
+
+            uploadedImages.push({
+                url: uploadedImage.url,
+                imageField: uploadedImage.key,
+            });
+        }
+
+        // AUTO META
+        const metaTitle = `${productName} | Your Company`;
+
+        const metaDescription = `Buy ${productName} at best price from our company. Discover premium quality products with trusted service.`;
+
+        // CREATE PRODUCT
+        const product = await Product.create({
+            productName,
+            slug,
+            category,
+            oldPrice,
+            realPrice,
+            shortDescription,
+            longDescription,
+            images: uploadedImages,
+            videoLinks,
+            specifications,
+            metaTitle,
+            metaDescription,
+        });
+
+        return NextResponse.json(
+            { success: true, message: "Product created successfully", product, },
+            { status: 201 }
+        );
+    } catch (error) {
+        console.log(error);
+
+        return NextResponse.json(
+            { success: false, message: "Internal server error", },
+            { status: 500 }
+        );
+    }
+}
+
+export async function GET() {
+    try {
+        await connectDB();
+
+        const products = await Product.find().populate("category").sort({ createdAt: -1 });
+
+        return NextResponse.json(
+            {
+                success: true,
+                count: products.length,
+                products,
+            },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.log(error);
+
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Internal server error",
+            },
+            { status: 500 }
+        );
+    }
+}

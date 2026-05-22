@@ -9,9 +9,17 @@ import {
     Users,
     Settings,
     Headphones,
+    LogOut,
 } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 export default function Sidebar() {
+    const router = useRouter();
+    const handleLogout = () => {
+        document.cookie =
+            "admin-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        router.push("/admin/login");
+    };
     return (
         <aside className="w-[260px] bg-white border-r border-gray-200 shadow-sm hidden md:flex flex-col">
             <div className="h-20 flex items-center px-6 border-b border-gray-200">
@@ -29,11 +37,11 @@ export default function Sidebar() {
                     Dashboard
                 </Link>
 
-                <Link href="/admin/add-category"
+                <Link href="/admin/categories"
                     className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#00badb] hover:text-white transition-all duration-300 text-gray-700 font-medium"
                 >
-                    <FolderPlus size={20} />
-                    Add Category
+                    <Boxes size={20} />
+                    Categories
                 </Link>
 
                 <Link href="/admin/add-product"
@@ -48,13 +56,6 @@ export default function Sidebar() {
                 >
                     <ShoppingBag size={20} />
                     All Products
-                </Link>
-
-                <Link href="/admin/categories"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#00badb] hover:text-white transition-all duration-300 text-gray-700 font-medium"
-                >
-                    <Boxes size={20} />
-                    Categories
                 </Link>
 
                 <Link href="/admin/users"
@@ -78,6 +79,13 @@ export default function Sidebar() {
                     Inquiries
                 </Link>
             </nav>
+
+            <div className='p-4'>
+                <button onClick={handleLogout} className=" flex items-center gap-3 w-full text-left bg-red-100 text-red-600 px-4 py-2 rounded-lg shadow hover:bg-red-200 transition mt-auto">
+                    <LogOut size={20} />
+                    Logout
+                </button>
+            </div>
         </aside>
     )
 }

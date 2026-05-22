@@ -53,7 +53,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* MAIN NAVBAR */}
       <div className="bg-white md:border-b border-gray-200">
         <div className="lg:px-15 px-4 py-2 flex items-center justify-between gap-4">
           <Link href="/" className="shrink-0">
@@ -99,16 +98,16 @@ export default function Navbar() {
             <button className="hover:text-[#00badb] transition-all duration-300 hover:scale-110">
               <Heart size={25} strokeWidth={1.8} />
             </button>
-            <button className="relative hover:text-[#00badb] transition-all duration-300 hover:scale-110">
+            <Link href={"/cart"} className="relative hover:text-[#00badb] transition-all duration-300 hover:scale-110">
               <ShoppingCart size={27} strokeWidth={1.8} />
 
               <span className="absolute -top-2 -right-2 bg-[#00badb] text-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow">
-                2
+                0
               </span>
-            </button>
-            <button className="hover:text-[#00badb] transition-all duration-300 hover:scale-110">
+            </Link>
+            <Link href={"/login"} className="hover:text-[#00badb] transition-all duration-300 hover:scale-110">
               <User size={25} strokeWidth={1.8} />
-            </button>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,0 +1,218 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { UploadCloud, Tag, Trash2 } from "lucide-react";
+import Sidebar from "@/components/Admin/Sidebar";
+import axios from "axios";
+import toast from "react-hot-toast";
+
+export default function Page() {
+    const [categoryName, setCategoryName] = useState("");
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files?.[0];
+
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+    const getCategories = async () => {
+        try {
+            setLoading(true);
+            const { data } = await axios.get("/api/category");
+
+            if (data.success) {
+                setCategories(data.categories);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to fetch categories");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const formData = new FormData();
+            formData.append("name", categoryName);
+            formData.append("image", imageFile);
+            const { data } = await axios.post("/api/category", formData);
+
+            if (data.success) {
+                toast.success("Category Added Successfully");
+                // console.log(data.category);
+                getCategories();
+                setCategoryName("");
+                setImageFile(null);
+                setImagePreview(null);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response?.data?.message || "Something went wrong");
+        }
+    };
+
+    useEffect(() => {
+        getCategories();
+    }, []);
+
+    return (
+        <div className="min-h-screen bg-gray-100 flex md:flex-row flex-col">
+            <Sidebar />
+
+            {/* MAIN CONTENT */}
+            <main className="flex-1 p-6">
+                <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-lg p-8">
+                    <div className="mb-8">
+                        <h1 className="text-3xl font-bold text-gray-800">
+                            Add Category
+                        </h1>
+
+                        <p className="text-gray-500 mt-2">
+                            Create a new category with name and image
+                        </p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                Category Name
+                            </label>
+
+                            <div className="relative text-black">
+                                <Tag
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600"
+                                    size={20}
+                                />
+
+                                <input
+                                    type="text"
+                                    placeholder="Enter category name"
+                                    value={categoryName}
+                                    onChange={(e) => setCategoryName(e.target.value)}
+                                    className="w-full pl-12 pr-4 py-3 border border-gray-400 rounded-lg outline-none focus:ring-1 focus:ring-black"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                Category Image
+                            </label>
+
+                            <label className="border-2 border-dashed border-gray-300 rounded-3xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-black transition">
+                                <UploadCloud
+                                    className="text-gray-600 mb-3"
+                                    size={40}
+                                />
+
+                                <p className="text-gray-600 font-medium">
+                                    Click to upload image
+                                </p>
+
+                                <span className="text-sm text-gray-400 mt-1">
+                                    PNG, JPG, JPEG
+                                </span>
+
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                />
+                            </label>
+
+                            {/* IMAGE PREVIEW */}
+                            {imagePreview && (
+                                <div className="mt-5">
+                                    <p className="text-sm font-semibold text-gray-700 mb-3">
+                                        Preview
+                                    </p>
+
+                                    <div className="relative w-full h-64 rounded-3xl overflow-hidden border">
+                                        <Image
+                                            src={imagePreview}
+                                            alt="Preview"
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <button type="submit"
+                            className="w-full bg-black text-white py-3 rounded-2xl font-semibold hover:opacity-90 transition"
+                        >
+                            Add Category
+                        </button>
+                    </form>
+                </div>
+            </main>
+
+            <main className="flex-1 p-6">
+                <div className="mb-2">
+                    <h2 className="text-2xl font-bold text-black">
+                        All Categories
+                    </h2>
+                </div>
+
+                {loading ? (
+                    <p className="text-gray-800">
+                        Loading...
+                    </p>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {categories.map((category) => (
+                            <div key={category._id}
+                                className="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-200"
+                            >
+                                <div className="relative h-52 w-full">
+                                    <Image
+                                        src={category.image}
+                                        alt={category.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+
+                                <div className="px-5 py-3">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h3 className="text-lg font-bold text-black">
+                                                {category.name}
+                                            </h3>
+
+                                            <p className="text-sm text-gray-500 mt-1">
+                                                {category.slug}
+                                            </p>
+                                        </div>
+
+                                        <button onClick={() => deleteCategory(category._id)}
+                                            className="p-3 rounded-full bg-red-100 hover:bg-red-200 transition"
+                                        >
+                                            <Trash2 className="text-red-600" size={18} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </main>
+        </div>
+    );
+}

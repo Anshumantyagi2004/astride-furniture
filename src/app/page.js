@@ -13,7 +13,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1">
+    <main className="min-h-screen">
       <Navbar />
       <HeroSection />
       <CategorySlider />
@@ -25,6 +25,6 @@ export default function Home() {
       <VideoTestimonials />
       <BulkQueryForm />
       <Footer />
-    </div>
+    </main>
   );
 }
