@@ -24,13 +24,13 @@ export default function Home() {
       {/* <CategorySlider /> */}
       <FavouriteCategories />
       <BrandAboutSection />
+      <ChairSection />
       <ShopTheLook />
       <WhyUs />
       <BrandTrustSection />
       <ComparisonSection />
       {/* <BestSellerSection /> */}
       <ClientLogoSlider />
-      <ChairSection />
       <VideoTestimonials />
       <BulkQueryForm />
       <Footer />
