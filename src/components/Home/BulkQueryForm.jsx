@@ -21,7 +21,7 @@ export default function BulkQueryForm() {
                     transition={{ duration: 0.4 }}
                     className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden"
                 >
-                    <div className="bg-[#00badb] px-6 py-5 text-center">
+                    <div className="bg-[#FF6D29] px-6 py-5 text-center">
                         <h2 className="text-2xl sm:text-3xl font-bold text-white">
                             Bulk Office Chair Enquiry
                         </h2>
@@ -42,7 +42,7 @@ export default function BulkQueryForm() {
                                 <input
                                     type="text"
                                     placeholder="Full Name"
-                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#00badb] transition-all"
+                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#FF6D29] transition-all"
                                 />
                             </div>
 
@@ -55,7 +55,7 @@ export default function BulkQueryForm() {
                                 <input
                                     type="text"
                                     placeholder="Company Name"
-                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#00badb] transition-all"
+                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#FF6D29] transition-all"
                                 />
                             </div>
 
@@ -68,7 +68,7 @@ export default function BulkQueryForm() {
                                 <input
                                     type="number"
                                     placeholder="No. of Chairs"
-                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#00badb] transition-all"
+                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#FF6D29] transition-all"
                                 />
                             </div>
 
@@ -81,7 +81,7 @@ export default function BulkQueryForm() {
                                 <input
                                     type="email"
                                     placeholder="Official Email"
-                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#00badb] transition-all"
+                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#FF6D29] transition-all"
                                 />
                             </div>
 
@@ -94,7 +94,7 @@ export default function BulkQueryForm() {
                                 <input
                                     type="tel"
                                     placeholder="Mobile Number"
-                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#00badb] transition-all"
+                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#FF6D29] transition-all"
                                 />
                             </div>
 
@@ -107,7 +107,7 @@ export default function BulkQueryForm() {
                                 <input
                                     type="text"
                                     placeholder="Your Location"
-                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#00badb] transition-all"
+                                    className="w-full h-12 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:border-[#FF6D29] transition-all"
                                 />
                             </div>
 
@@ -116,7 +116,7 @@ export default function BulkQueryForm() {
                                     whileHover={{ scale: 1.01 }}
                                     whileTap={{ scale: 0.98 }}
                                     // type="submit"
-                                    className="w-full h-12 rounded-xl bg-[#00badb] hover:bg-cyan-500 text-white font-semibold text-base transition-all duration-300 shadow-md"
+                                    className="w-full h-12 rounded-xl bg-[#FF6D29] hover:bg-[#f46624] text-white font-semibold text-base transition-all duration-300 shadow-md"
                                 >
                                     Submit Enquiry
                                 </motion.button>

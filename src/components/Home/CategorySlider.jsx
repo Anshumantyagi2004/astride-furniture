@@ -38,6 +38,7 @@ const categories = [
 ];
 
 export default function CategorySlider() {
+  
   return (
     <section className="w-full pt-10 bg-white overflow-hidden">
       <div className="text-center">

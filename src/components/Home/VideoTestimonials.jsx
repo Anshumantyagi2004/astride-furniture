@@ -59,30 +59,26 @@ export default function VideoTestimonials() {
         <section className="w-full py-10 bg-[#f8fafc] overflow-hidden">
 
             <div className="max-w-7xl mx-auto px-4">
-
-                {/* HEADER */}
                 <div className="text-center mb-8">
-
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#243447]">
                         Video{" "}
-                        <span className="text-[#00badb] relative inline-block">
+                        <span className="text-[#FF6D29] relative inline-block">
                             Testimonials
 
-                            <span className="absolute left-0 -bottom-2 w-full h-[4px] bg-[#00badb]/20 rounded-full"></span>
+                            <span className="absolute left-0 -bottom-2 w-full h-[4px] bg-[#FF6D29]/20 rounded-full"></span>
                         </span>
                     </h2>
-
                     <p className="mt-4 text-gray-700 max-w-2xl mx-auto leading-relaxed">
                         Watch real customer experiences from YouTube Shorts
                         and Instagram Reels.
                     </p>
 
                     <div className="flex items-center justify-center gap-2 mt-4">
-                        <span className="w-16 h-[2px] bg-[#00badb]/30 rounded-full"></span>
+                        <span className="w-16 h-[2px] bg-[#FF6D29]/30 rounded-full"></span>
 
-                        <span className="w-3 h-3 rounded-full bg-[#00badb]"></span>
+                        <span className="w-3 h-3 rounded-full bg-[#FF6D29]"></span>
 
-                        <span className="w-16 h-[2px] bg-[#00badb]/30 rounded-full"></span>
+                        <span className="w-16 h-[2px] bg-[#FF6D29]/30 rounded-full"></span>
                     </div>
                 </div>
 

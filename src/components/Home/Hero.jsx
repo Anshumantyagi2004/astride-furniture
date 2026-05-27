@@ -9,7 +9,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 export default function HeroSection() {
-    return (
+    return (<>
         <section className="w-full">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
                 <div className="lg:col-span-2  sm:flex hidden md:h-[280px] lg:h-[350px] relative rounded-xl overflow-hidden">
@@ -63,5 +63,40 @@ export default function HeroSection() {
                 </div>
             </div>
         </section>
-    );
+
+         <section className="w-full py-2 px-5">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+                <div className="h-[200px] relative rounded-xl overflow-hidden">
+                    <Image
+                        src="/Artboard_2_copy_2.webp"
+                        // src="/Mobile_Ergofit.webp"
+                        alt="Hero GIF"
+                        fill
+                        priority
+                        className="object-cover"
+                    />
+                </div>
+                <div className="h-[200px] relative rounded-xl overflow-hidden">
+                    <Image
+                        src="/Artboard_2_copy_5.webp"
+                        // src="/Mobile_Ergofit.webp"
+                        alt="Hero GIF"
+                        fill
+                        priority
+                        className="object-cover"
+                    />
+                </div>
+                <div className="h-[200px] relative rounded-xl overflow-hidden">
+                    <Image
+                        src="/OfficeChairs.webp"
+                        // src="/Mobile_Ergofit.webp"
+                        alt="Hero GIF"
+                        fill
+                        priority
+                        className="object-cover"
+                    />
+                </div>
+            </div>
+        </section>
+    </>);
 }

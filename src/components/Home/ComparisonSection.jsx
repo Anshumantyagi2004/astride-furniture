@@ -70,13 +70,13 @@ export default function ComparisonSection() {
     return (
         <section className="w-full pt-10 bg-[#f8fafc] overflow-hidden">
             <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-6">
-                    <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#00badb]/10 text-[#00badb] text-xs sm:text-sm font-semibold uppercase tracking-wide">
-                        Why Choose ErgoFit
-                    </span>
-
-                    <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-[#243447]">
-                        Compare Our Chairs
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#161316] leading-tight">
+                        Compare Our {" "}
+                        <span className="text-[#FF6D29]">
+                            Chairs
+                        </span>
+                         <div className="w-24 h-[2px] bg-[#FF6D29] mx-auto mt-2 rounded-full"></div>
                     </h2>
                 </div>
 
@@ -96,20 +96,14 @@ export default function ComparisonSection() {
                                 transition={{ duration: 0.4 }}
                                 className="bg-white border border-gray-200 rounded-3xl shadow-lg overflow-hidden"
                             >
-
-                                {/* TITLE */}
-                                <div className="bg-[#00badb] py-3 text-center">
+                                <div className="bg-[#FF6D29] py-3 text-center">
                                     <h3 className="text-xl sm:text-2xl font-bold text-white">
                                         {comparison.title}
                                     </h3>
                                 </div>
 
-                                {/* PRODUCT SECTION */}
                                 <div className="grid grid-cols-2">
-
-                                    {/* LEFT */}
                                     <div className="p-4 sm:p-5 border-r border-gray-200 text-center">
-
                                         <motion.div
                                             whileHover={{ scale: 1.04 }}
                                             className="relative h-[150px] sm:h-[190px]"
@@ -126,7 +120,7 @@ export default function ComparisonSection() {
                                             {comparison.leftChair.name}
                                         </h4>
 
-                                        <p className="mt-1 text-2xl font-bold text-[#00badb]">
+                                        <p className="mt-1 text-2xl font-bold text-green-500">
                                             {comparison.leftChair.price}
                                         </p>
                                     </div>
@@ -171,7 +165,7 @@ export default function ComparisonSection() {
                                             </div>
 
                                             {/* LEFT VALUE */}
-                                            <div className="flex justify-center py-3">
+                                            <div className="flex justify-center py-2">
                                                 {feature.value ? (
                                                     <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center">
                                                         <Check
@@ -190,7 +184,7 @@ export default function ComparisonSection() {
                                             </div>
 
                                             {/* RIGHT VALUE */}
-                                            <div className="flex justify-center py-3">
+                                            <div className="flex justify-center py-2">
                                                 {comparison.rightChair.features[idx].value ? (
                                                     <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center">
                                                         <Check

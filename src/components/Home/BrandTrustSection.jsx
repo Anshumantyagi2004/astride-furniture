@@ -3,122 +3,237 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-import { Star } from "lucide-react";
+import {
+    Trophy,
+    ShieldCheck,
+    Sparkles,
+    Sofa,
+} from "lucide-react";
+
+const features = [
+    {
+        title: "11+ Years Experience",
+        icon: Trophy,
+    },
+    {
+        title: "Unmatched Comfort",
+        icon: Sofa,
+    },
+    {
+        title: "Sleek Aesthetics",
+        icon: Sparkles,
+    },
+    {
+        title: "Quality Products",
+        icon: ShieldCheck,
+    },
+];
 
 export default function MarketplaceReviews() {
     return (
-        <section className="w-full py-10 bg-gradient-to-b from-white to-[#f8fafc] overflow-hidden">
+        <section className="w-full py-10 bg-white overflow-hidden">
 
-            <div className="max-w-6xl mx-auto px-4">
+            <div className="max-w-7xl mx-auto px-4">
                 <div className="text-center mb-8">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 25 }}
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#243447] leading-tight"
                     >
-                        India&apos;s Leading Ergonomic Furniture Brand
-                    </motion.h2>
-
-                    <div className="flex items-center justify-center gap-2 mt-4">
-                        <span className="w-16 h-[2px] bg-[#00badb]/30 rounded-full"></span>
-
-                        <span className="w-3 h-3 rounded-full bg-[#00badb]"></span>
-
-                        <span className="w-16 h-[2px] bg-[#00badb]/30 rounded-full"></span>
-                    </div>
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#161316] leading-tight">
+                            India&apos;s Leading
+                            <span className="text-[#FF6D29]">
+                                {" "}Ergonomic Furniture
+                            </span>
+                            {" "}Brand
+                        </h2>
+                    </motion.div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* GRID */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+                    {/* AMAZON */}
                     <motion.div
-                        initial={{ opacity: 0, x: -40 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        whileHover={{ y: -10 }}
-                        transition={{ duration: 0.4 }}
-                        className="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-500"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        whileHover={{
+                            y: -8,
+                        }}
+                        className="
+          group
+          relative
+          bg-white
+          border
+          border-[#E7DDD5]
+          rounded-[28px]
+          p-6
+          overflow-hidden
+          transition-all
+          duration-500
+          hover:border-[#FF6D29]
+          hover:shadow-[0_20px_50px_rgba(255,109,41,0.12)]
+          flex
+          flex-col
+          items-center
+          justify-center
+        "
                     >
-                        <div className="flex h-30 items-center justify-center">
+
+                        {/* TOP GLOW */}
+                        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#FF6D29] scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+
+                        <div className="relative w-[120px] h-[45px]">
+
                             <Image
                                 src="/Amazon_icon.png"
                                 alt="Amazon"
-                                width={180}
-                                height={80}
-                                className="h-full w-full object-contain"
+                                fill
+                                className="object-contain"
                             />
                         </div>
 
-                        <div className="mt-2 text-center">
+                        <h3 className="mt-6 text-3xl font-semibold text-[#161316]">
+                            55K+
+                        </h3>
 
-                            <h3 className="text-5xl font-bold text-[#243447]">
-                                55K+
-                            </h3>
+                        <p className="mt-2 text-sm text-[#FF6D29] font-medium">
+                            Orders Delivered
+                        </p>
 
-                            <p className="mt-2 text-gray-600 text-lg font-medium">
-                                Customer Reviews
-                            </p>
-
-                            {/* STARS */}
-                            <div className="flex items-center justify-center gap-1 mt-2">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        size={22}
-                                        className="fill-yellow-400 text-yellow-400"
-                                    />
-                                ))}
-                            </div>
-
-                            <p className="mt-3 text-[#00badb] font-semibold text-lg">
-                                4.9/5 Average Rating
-                            </p>
-
-                        </div>
+                        {/* GLOW */}
+                        <div className="absolute -bottom-16 -right-16 w-32 h-32 bg-[#FF6D29]/10 blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
                     </motion.div>
 
+                    {/* FLIPKART */}
                     <motion.div
-                        initial={{ opacity: 0, x: 40 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        whileHover={{ y: -10 }}
-                        transition={{ duration: 0.4 }}
-                        className="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-500"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.05 }}
+                        whileHover={{
+                            y: -8,
+                        }}
+                        className="
+          group
+          relative
+          bg-white
+          border
+          border-[#E7DDD5]
+          rounded-[28px]
+          p-6
+          overflow-hidden
+          transition-all
+          duration-500
+          hover:border-[#FF6D29]
+          hover:shadow-[0_20px_50px_rgba(255,109,41,0.12)]
+          flex
+          flex-col
+          items-center
+          justify-center
+        "
                     >
-                        <div className="flex h-30 items-center justify-center">
+
+                        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#FF6D29] scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+
+                        <div className="relative w-[120px] h-[45px]">
+
                             <Image
                                 src="/Flipkart-Icon-Logo-Small.png"
                                 alt="Flipkart"
-                                width={180}
-                                height={80}
-                                className="h-full w-full object-contain"
+                                fill
+                                className="object-contain"
                             />
                         </div>
 
-                        <div className="mt-2 text-center">
+                        <h3 className="mt-6 text-3xl font-semibold text-[#161316]">
+                            40K+
+                        </h3>
 
-                            <h3 className="text-5xl font-bold text-[#243447]">
-                                40K+
-                            </h3>
+                        <p className="mt-2 text-sm text-[#FF6D29] font-medium">
+                            Happy Customers
+                        </p>
 
-                            <p className="mt-2 text-gray-600 text-lg font-medium">
-                                Verified Ratings
-                            </p>
-
-                            {/* STARS */}
-                            <div className="flex items-center justify-center gap-1 mt-2">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        size={22}
-                                        className="fill-yellow-400 text-yellow-400"
-                                    />
-                                ))}
-                            </div>
-
-                            <p className="mt-3 text-[#00badb] font-semibold text-lg">
-                                4.8/5 Customer Satisfaction
-                            </p>
-
-                        </div>
+                        <div className="absolute -bottom-16 -right-16 w-32 h-32 bg-[#FF6D29]/10 blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
                     </motion.div>
+
+                    {/* FEATURES */}
+                    {features.map((item, index) => {
+
+                        const Icon = item.icon;
+
+                        return (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{
+                                    duration: 0.3,
+                                    delay: index * 0.05,
+                                }}
+                                whileHover={{
+                                    y: -8,
+                                }}
+                                className="
+              group
+              relative
+              bg-white
+              border
+              border-[#E7DDD5]
+              rounded-[28px]
+              px-5
+              py-7
+              overflow-hidden
+              transition-all
+              duration-500
+              hover:border-[#FF6D29]
+              hover:shadow-[0_20px_50px_rgba(255,109,41,0.12)]
+            "
+                            >
+
+                                {/* TOP BAR */}
+                                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#FF6D29] scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+
+                                {/* ICON */}
+                                <div
+                                    className="
+                  relative
+                  z-10
+                  w-14
+                  h-14
+                  rounded-2xl
+                  mx-auto
+                  bg-[#FFF1EA]
+                  border
+                  border-[#FFD7C5]
+                  text-[#FF6D29]
+                  flex
+                  items-center
+                  justify-center
+                  transition-all
+                  duration-500
+                  group-hover:bg-[#FF6D29]
+                  group-hover:text-white
+                  group-hover:scale-110
+                "
+                                >
+                                    <Icon size={26} />
+                                </div>
+
+                                {/* CONTENT */}
+                                <div className="relative z-10 mt-6 text-center px-8">
+
+                                    <h3 className="text-lg font-semibold text-[#161316] leading-snug">
+                                        {item.title}
+                                    </h3>
+
+                                </div>
+
+                                {/* GLOW */}
+                                <div className="absolute -bottom-16 -right-16 w-32 h-32 bg-[#FF6D29]/10 blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+                            </motion.div>
+                        );
+                    })}
                 </div>
             </div>
         </section>

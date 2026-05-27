@@ -1,21 +1,12 @@
-import { Barlow, Geist, Geist_Mono } from "next/font/google";
+import { Forum } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-const barlow = Barlow({
+const forum = Forum({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: "400",
+  variable: "--font-forum",
 });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
 
 export const metadata = {
   title: "Astrides",
@@ -24,13 +15,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="en"
-      className={barlow.className}
-    >
+    <html lang="en" className={forum.variable}>
       <body className="min-h-screen">
         {children}
-        <Toaster position="top-center"/>
+        <Toaster position="top-center" />
       </body>
     </html>
   );
