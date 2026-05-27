@@ -34,7 +34,7 @@ const products = [
     },
     {
         id: 3,
-        image: "/product/InfographicDesign-1.webp",
+        image: "/Product/InfographicDesign-1.webp",
         title: "Premium Beige Sofa",
         price: "₹18,999",
         oldPrice: "₹24,999",
@@ -44,7 +44,7 @@ const products = [
     },
     {
         id: 4,
-        image: "/product/Infographic_Design-6.webp",
+        image: "/Product/Infographic_Design-6.webp",
         title: "Designer Accent Chair",
         price: "₹14,999",
         oldPrice: "₹19,999",
