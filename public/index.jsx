@@ -1,0 +1,1 @@
+export { default as ExpandedImg } from "/expanded/image_ct.png"
