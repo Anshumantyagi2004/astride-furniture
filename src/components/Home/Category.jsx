@@ -57,7 +57,7 @@ export default function Category() {
                     <>
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-5">
 
-                            {[...categories, ...categories, ...categories].map(
+                            {[...categories, ...categories,].map(
                                 (category, index) => (
                                     <motion.div
                                         key={category._id}
