@@ -21,7 +21,7 @@ export default function BulkQueryForm() {
                     transition={{ duration: 0.4 }}
                     className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden"
                 >
-                    <div className="bg-[#FF6D29] px-6 py-5 text-center">
+                    <div className="bg-[#161316]/90 backdrop-blur-xl border-b border-[#453027] px-6 py-5 text-center">
                         <h2 className="text-2xl sm:text-3xl font-bold text-white">
                             Bulk Office Chair Enquiry
                         </h2>
@@ -116,7 +116,7 @@ export default function BulkQueryForm() {
                                     whileHover={{ scale: 1.01 }}
                                     whileTap={{ scale: 0.98 }}
                                     // type="submit"
-                                    className="w-full h-12 rounded-xl bg-[#FF6D29] hover:bg-[#f46624] text-white font-semibold text-base transition-all duration-300 shadow-md"
+                                    className="w-full h-12 rounded-xl bg-[#161316]/90 backdrop-blur-xl border-b border-[#453027] text-white font-semibold text-base transition-all duration-300 shadow-md"
                                 >
                                     Submit Enquiry
                                 </motion.button>

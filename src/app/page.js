@@ -29,7 +29,7 @@ export default function Home() {
       <WhyUs />
       <BrandTrustSection />
       <ComparisonSection />
-      {/* <BestSellerSection /> */}
+      <BestSellerSection />
       <ClientLogoSlider />
       <VideoTestimonials />
       <BulkQueryForm />

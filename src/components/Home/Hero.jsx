@@ -64,7 +64,7 @@ export default function HeroSection() {
             </div>
         </section>
 
-         <section className="w-full py-2 px-5">
+         <section className="w-full py-2 md:px-5">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
                 <div className="h-[200px] relative rounded-xl overflow-hidden">
                     <Image

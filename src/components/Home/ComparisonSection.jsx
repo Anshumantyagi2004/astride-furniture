@@ -96,7 +96,7 @@ export default function ComparisonSection() {
                                 transition={{ duration: 0.4 }}
                                 className="bg-white border border-gray-200 rounded-3xl shadow-lg overflow-hidden"
                             >
-                                <div className="bg-[#FF6D29] py-3 text-center">
+                                <div className="bg-[#161316]/90 backdrop-blur-xl border-b border-[#453027] py-3 text-center">
                                     <h3 className="text-xl sm:text-2xl font-bold text-white">
                                         {comparison.title}
                                     </h3>

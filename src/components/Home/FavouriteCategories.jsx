@@ -265,7 +265,7 @@ export default function FavouriteCategories() {
                         {categories[activeCategory].map((product, index) => (
                             <motion.div key={product.id} initial={{ opacity: 0, scale: 0.96 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: index * 0.05, }}
+                                transition={{ delay: index * 0.02, }}
                                 whileHover={{ y: -8, }}
                                 className="group relative rounded-3xl overflow-hidden bg-white border border-[#E7DDD5] transition-all duration-500 hover:border-[#FF6D29] hover:shadow-[0_20px_50px_rgba(255,109,41,0.12)]">
                                 <div className="absolute top-4 right-4 z-20 flex flex-col gap-3">

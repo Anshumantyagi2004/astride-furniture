@@ -57,7 +57,7 @@ export default function MarketplaceReviews() {
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
+                        // transition={{ duration: 0.2, delay: 0.1 }}
                         whileHover={{
                             y: -8,
                         }}
@@ -110,7 +110,7 @@ export default function MarketplaceReviews() {
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: 0.05 }}
+                        //    transition={{ duration: 0.2, delay: 0.1 }}
                         whileHover={{
                             y: -8,
                         }}
@@ -167,13 +167,11 @@ export default function MarketplaceReviews() {
                                 key={index}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                transition={{
-                                    duration: 0.3,
-                                    delay: index * 0.05,
-                                }}
-                                whileHover={{
-                                    y: -8,
-                                }}
+                                // transition={{
+                                //     duration: 0.3,
+                                //     delay: index * 0.05,
+                                // }}
+                                whileHover={{ y: -8, }}
                                 className="
               group
               relative

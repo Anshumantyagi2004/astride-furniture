@@ -94,10 +94,10 @@ export default function WhyUs() {
                                 opacity: 1,
                                 y: 0,
                             }}
-                            transition={{
-                                duration: 0.5,
-                                delay: index * 0.1,
-                            }}
+                            // transition={{
+                            //     duration: 0.2,
+                            //     delay: index * 0.2,
+                            // }}
                             viewport={{ once: true }}
                             whileHover={{
                                 y: -10,

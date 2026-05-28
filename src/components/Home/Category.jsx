@@ -47,7 +47,7 @@ export default function Category() {
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#453027]/10 blur-[160px] rounded-full" />
 
             {/* CONTENT */}
-            <div className="relative md:px-15 px-4 pt-10">
+            <div className="relative md:px-15 px-4 pt-8">
 
                 {loading ? (
                     <div className="text-center text-[#453027] text-lg">
@@ -64,8 +64,8 @@ export default function Category() {
                                         initial={{ opacity: 0, y: 40 }}
                                         whileInView={{ opacity: 1, y: 0 }}
                                         transition={{
-                                            duration: 0.5,
-                                            delay: index * 0.05,
+                                            duration: 0.2,
+                                            delay: index * 0.02,
                                         }}
                                         viewport={{ once: true }}
                                         whileHover={{
