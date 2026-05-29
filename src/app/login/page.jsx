@@ -12,8 +12,8 @@ import {
 } from "lucide-react";
 
 import { motion } from "framer-motion";
-import Navbar from "@/components/Main/Navbar";
-import Footer from "@/components/Main/Footer";
+import Navbar from "@/components/Main/Navbar/Navbar";
+import Footer from "@/components/Main/Footer/Footer";
 
 export default function Page() {
   const [isLogin, setIsLogin] = useState(true);
@@ -196,7 +196,7 @@ export default function Page() {
         </div>
       </div>
     </div>
-    
+
     <Footer />
   </>);
 }

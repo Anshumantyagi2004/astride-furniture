@@ -13,11 +13,14 @@ import {
 
 export default function Footer() {
     return (
-        <footer className="bg-[#161316] text-[#BABABA] border-t border-[#453027] font-[Barlow]">
+        <footer className="bg-[#120a06] text-[#BABABA] border-t border-[#453027] font-[Barlow] relative overflow-hidden">
+            {/* Warm glowing amber and deep copper flares */}
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[150px] pointer-events-none" />
+            <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[130px] pointer-events-none" />
 
-            <div className="lg:px-15 md:px-10 px-4 py-14">
+            <div className="max-w-7xl mx-auto lg:px-15 md:px-10 px-4 py-14 relative z-10">
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.5fr_0.7fr_0.7fr_1fr] gap-6">
 
                     {/* LOGO + ABOUT */}
                     <div>
@@ -142,7 +145,7 @@ export default function Footer() {
             </div>
 
             {/* BOTTOM BAR */}
-            <div className="border-t border-[#453027] bg-[#120F12]">
+            <div className="border-t border-[#453027] bg-[#0e0704]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
 
                     <p className="text-sm text-[#8E8E8E] text-center sm:text-left">

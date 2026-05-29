@@ -12,8 +12,9 @@ import BrandAboutSection from "@/components/Home/Intro";
 import ShopTheLook from "@/components/Home/ProductGrid";
 import VideoTestimonials from "@/components/Home/VideoTestimonials";
 import WhyUs from "@/components/Home/WhyUs";
-import Footer from "@/components/Main/Footer";
-import Navbar from "@/components/Main/Navbar";
+import Footer from "@/components/Main/Footer/Footer";
+import Navbar from "@/components/Main/Navbar/Navbar";
+import Header2 from "@/components/Header2/Index";
 
 export default function Home() {
   return (
@@ -25,6 +26,7 @@ export default function Home() {
       <FavouriteCategories />
       <BrandAboutSection />
       <ChairSection />
+      <Header2 />
       <ShopTheLook />
       <WhyUs />
       <BrandTrustSection />
