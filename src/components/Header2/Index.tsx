@@ -132,7 +132,7 @@ const Header2 = () => {
     }, []);
 
     return (
-        <section id="anatomy" ref={containerRef} className="w-full min-h-screen bg-[#F5F5F7] overflow-hidden relative flex items-center pt-32 pb-24 border-t border-zinc-200 border-b border-zinc-200">
+        <section id="anatomy" ref={containerRef} className="w-full bg-[#F5F5F7] overflow-hidden relative flex items-center pt-0 pb-0 border-t border-zinc-200 border-b border-zinc-200">
             {/* Premium Minimalist Background Grid & Ambient Glows */}
             <div className="absolute inset-0 opacity-40">
                 <div className="h-full w-full bg-[linear-gradient(to_right,#00000003_1px,transparent_1px),linear-gradient(to_bottom,#00000003_1px,transparent_1px)] bg-[size:100px_100px]" />
@@ -141,13 +141,13 @@ const Header2 = () => {
 
             <div className="max-w-[1600px] mx-auto px-0 w-full relative z-10">
                 {/* Exploded Chair Section */}
-                <div className="relative w-full flex flex-col items-center mt-6 bg-white/40 rounded-[32px] border border-zinc-200/80 p-3 md:p-6 lg:p-12 overflow-visible shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
+                <div className="relative w-full flex flex-col items-center mt-0 bg-white/40 rounded-[32px] border border-zinc-200/80 pt-3 md:pt-6 lg:pt-12 pb-0 md:pb-0 lg:pb-0 px-3 md:px-6 lg:px-12 overflow-visible shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
                     {/* Chair Image Wrapper */}
                     <div className="relative w-full max-w-[1450px] scale-110 md:scale-100 transition-transform duration-500">
                         <Image
                             src={expandedImg}
                             alt="Exploded Chair"
-                            className={`w-full h-auto object-contain select-none transition-all duration-700 -mb-[12%] md:-mb-[16%] ${activeId ? "opacity-100 md:opacity-30 brightness-95 scale-[1.01]" : "opacity-100"
+                            className={`w-full h-auto object-contain select-none transition-all duration-700 -mt-[4%] md:-mt-[6%] -mb-[10%] md:-mb-[12%] ${activeId ? "opacity-100 md:opacity-30 brightness-95 scale-[1.01]" : "opacity-100"
                                 }`}
                             priority
                         />

@@ -13,7 +13,7 @@ const chairImages = [
 
 export default function ChairSection() {
     return (
-        <section className="relative overflow-hidden bg-[#F8F5F1] pb-16 pt-10 border-t border-t-white">
+        <section className="relative overflow-hidden bg-[#F8F5F1] pb-3 pt-10 border-t border-t-white">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-[#FF6D29]/10 blur-[180px] rounded-full"></div>
             <div className="relative z-10 md:px-25 px-4 lg:px-10">
                 <div className="text-center mb-8">

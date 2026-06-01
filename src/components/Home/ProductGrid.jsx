@@ -121,34 +121,41 @@ export default function ShopTheLook() {
                                         <span className="w-2.5 h-2.5 rounded-full bg-[#FF6D29]"></span>
                                     </button>
 
-                                    <div className="absolute left-1/2 top-0 pt-12 -translate-x-1/2 opacity-0 invisible group-hover/dot:opacity-100 group-hover/dot:visible transition-all duration-300">
-                                        <div className="w-[260px] rounded-xl bg-white border border-[#E7DDD5] overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.12)]">
-                                            <div className="relative h-[180px] bg-[#F8F5F1]">
+                                    <div className="absolute left-1/2 top-full mt-4 -translate-x-1/2 opacity-0 invisible group-hover/dot:opacity-100 group-hover/dot:visible transition-all duration-300 ease-out z-[1000] pointer-events-auto">
+                                        {/* Premium Frosted Connected Stem */}
+                                        <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rotate-45 bg-white/90 border-t border-l border-white/60 z-10"></div>
+                                        
+                                        {/* Main Apple-Inspired Card */}
+                                        <div className="w-[260px] p-3 rounded-[28px] bg-white/95 backdrop-blur-2xl border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.12),inset_0_1px_1px_rgba(255,255,255,0.8)] transition-all duration-300">
+                                            {/* Nested Card-in-Card Image Container */}
+                                            <div className="relative h-[145px] w-full rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.03)] bg-[#FDFDFD] border border-black/[0.03]">
                                                 <Image
                                                     src={product.image}
                                                     alt={product.title}
                                                     fill
-                                                    className="object-contain p-5"
+                                                    className="object-cover"
                                                 />
                                             </div>
 
-                                            <div className="px-5 py-2">
-                                                <h3 className="text-lg font-semibold text-[#161316] leading-snug line-clamp-2">
+                                            {/* Details Block */}
+                                            <div className="px-2 pt-3 pb-1">
+                                                <h3 className="text-sm font-bold text-[#1C1A17] tracking-tight truncate">
                                                     {product.title}
                                                 </h3>
 
-                                                <div className="flex items-center gap-3 mt-2">
-                                                    <span className="text-2xl font-bold text-[#161316]">
+                                                <div className="flex items-baseline gap-2 mt-1">
+                                                    <span className="text-base font-extrabold text-[#1C1A17] tracking-tight">
                                                         {product.price}
                                                     </span>
-
-                                                    <span className="text-[#9CA3AF] line-through">
+                                                    <span className="text-[11px] text-[#8C8680] line-through font-medium">
                                                         {product.oldPrice}
                                                     </span>
                                                 </div>
 
-                                                <button className="flex items-center justify-center gap-2 mt-2 w-full py-3 rounded-lg bg-[#161316] text-white font-medium hover:bg-[#FF6D29] transition-all duration-300">
-                                                    <Eye />  View Product
+                                                {/* Premium Apple Pill Button */}
+                                                <button className="flex items-center justify-center gap-1.5 mt-3.5 w-full py-2.5 rounded-full bg-[#1C1A17] hover:bg-[#FF6D29] hover:shadow-[0_6px_16px_rgba(255,109,41,0.25)] text-white text-xs font-bold tracking-tight transition-all duration-300">
+                                                    <Eye size={13} strokeWidth={2.5} />
+                                                    <span>View Product</span>
                                                 </button>
                                             </div>
                                         </div>

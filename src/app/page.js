@@ -13,28 +13,36 @@ import ShopTheLook from "@/components/Home/ProductGrid";
 import VideoTestimonials from "@/components/Home/VideoTestimonials";
 import WhyUs from "@/components/Home/WhyUs";
 import Footer from "@/components/Main/Footer/Footer";
-import Navbar from "@/components/Main/Navbar/Navbar";
+
 import Header2 from "@/components/Header2/Index";
+import Navbar2 from "@/components/Home/Navbar2";
+import CircularChairs from "@/components/Home/CircularChairs";
+
+
+
 
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <Navbar />
-      <HeroSection />
+      <Navbar2/>
+      <CircularChairs/>
       <Category />
       {/* <CategorySlider /> */}
       <FavouriteCategories />
       <BrandAboutSection />
       <ChairSection />
       <Header2 />
-      <ShopTheLook />
       <WhyUs />
+      <ShopTheLook />
+
       <BrandTrustSection />
       <ComparisonSection />
-      <BestSellerSection />
+      {/* <BestSellerSection /> */}
+      <BestSellerSection/>
       <ClientLogoSlider />
       <VideoTestimonials />
       <BulkQueryForm />
+     
       <Footer />
     </main>
   );
