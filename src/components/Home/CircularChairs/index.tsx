@@ -74,6 +74,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
   const [mounted, setMounted] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [showFinder, setShowFinder] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const hoveredIdxRef = useRef<number | null>(null);
   const chairRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -94,6 +95,13 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
       const isLowSpec = touchDevice || window.innerWidth < 1024;
       isLowEndRef.current = isLowSpec;
     }
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -302,6 +310,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
             }}
           >
             {chairs.current.map((chair, idx) => {
+              if (isMobile && chair.row === "mid") return null;
               const cfg = ROW_CONFIG[chair.row];
               
               // Initial calculations to avoid flash before first anim frame
