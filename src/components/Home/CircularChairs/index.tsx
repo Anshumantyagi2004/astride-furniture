@@ -165,12 +165,10 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
         const targetScale = baseScale * (isHovered ? 1.35 : 1);
         
         // Smooth scale interpolation in JS
-        const currentScaleRaw = el.dataset.scale || String(baseScale);
-        let currScale = parseFloat(currentScaleRaw);
+        let currScale = (el as any)._currScale ?? baseScale;
         currScale += (targetScale - currScale) * 0.15; // Ease factor
-        el.dataset.scale = String(currScale);
+        (el as any)._currScale = currScale;
 
-        const opacity = chair.row === "mid" ? 0.12 : (0.6 + depth * 0.4);
         const zIndex = isHovered ? 999 : Math.round(depth * 100);
 
         let finalScale = currScale;
@@ -193,8 +191,12 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
 
         // GPU-accelerated positioning via translate3d to completely prevent DOM layout/reflow thrashing
         el.style.transform = `translate3d(${x}vw, 0, 0) translate(-50%, -50%) scale(${finalScale})`;
-        el.style.opacity = `${opacity}`;
-        el.style.zIndex = `${zIndex}`;
+        
+        // zIndex only updates on hover state changes, avoiding unnecessary repaints
+        if ((el as any)._lastZIndex !== zIndex) {
+          el.style.zIndex = `${zIndex}`;
+          (el as any)._lastZIndex = zIndex;
+        }
       }
 
       rafRef.current = requestAnimationFrame(animate);
@@ -273,7 +275,11 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
               #ebedf0 100%
             );
           background-size: 150% 150%;
-          animation: metallic-drift 15s ease-in-out infinite alternate;
+        }
+        @media (min-width: 1024px) {
+          .local-metallic-bg {
+            animation: metallic-drift 15s ease-in-out infinite alternate;
+          }
         }
         .pulse-ring-animation {
           animation: pulse-ring 12s linear infinite;
