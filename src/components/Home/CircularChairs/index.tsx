@@ -191,10 +191,8 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
           if (cursorHalo) cursorHalo.style.opacity = `${mag * 0.20}`;
         }
 
-        // GPU accelerated positioning hint with translate3d
-        el.style.left = `${x}%`;
-        el.style.top = `${y}%`;
-        el.style.transform = `translate(-50%, -50%) translate3d(0,0,0) scale(${finalScale})`;
+        // GPU-accelerated positioning via translate3d to completely prevent DOM layout/reflow thrashing
+        el.style.transform = `translate3d(${x}vw, 0, 0) translate(-50%, -50%) scale(${finalScale})`;
         el.style.opacity = `${opacity}`;
         el.style.zIndex = `${zIndex}`;
       }
@@ -339,8 +337,9 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                   onMouseEnter={() => handleMouseEnterChair(idx)}
                   onMouseLeave={handleMouseLeaveChair}
                   style={{
-                    left: `${x}%`, top: `${y}%`,
-                    transform: `translate(-50%,-50%) scale(${scale})`,
+                    left: 0,
+                    top: `${y}%`,
+                    transform: `translate3d(${x}vw, 0, 0) translate(-50%,-50%) scale(${scale})`,
                     opacity: mounted ? opacity : 0,
                     zIndex,
                     animation: mounted
