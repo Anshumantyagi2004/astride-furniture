@@ -5,18 +5,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import ChairFinder from "../ChairFinder";
 
 const CHAIR_IMAGES = [
-  "/Png1/Chair6a_Amica Black .png",
-  "/Png1/Chair6b_Gladus Grey.png",
-  "/Png1/Chair7_Delton.png",
-  "/Png1/chair10_FitWell.png",
-  "/Png1/chair11_octave.png",
-  "/Png1/chair12_ErgoFit.png",
-  "/Png1/chair4_ACE.png",
-  "/Png1/chair5_AIRSENSE.png",
-  "/Png1/chair6_AlphaGrey.png",
-  "/Png1/chair6c_Rapid Black .png",
-  "/Png1/chair8_ERIZO.png",
-  "/Png1/chair9_FitWell.png",
+  "/Png1/Chair6a_Amica Black .webp",
+  "/Png1/Chair6b_Gladus Grey.webp",
+  "/Png1/Chair7_Delton.webp",
+  "/Png1/chair10_FitWell.webp",
+  "/Png1/chair11_octave.webp",
+  "/Png1/chair12_ErgoFit.webp",
+  "/Png1/chair4_ACE.webp",
+  "/Png1/chair5_AIRSENSE.webp",
+  "/Png1/chair6_AlphaGrey.webp",
+  "/Png1/chair6c_Rapid Black .webp",
+  "/Png1/chair8_ERIZO.webp",
+  "/Png1/chair9_FitWell.webp",
 ];
 
 type RowType = "top" | "mid" | "bottom";
