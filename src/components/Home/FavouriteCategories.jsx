@@ -262,70 +262,85 @@ export default function FavouriteCategories() {
                         transition={{ duration: 0.35 }}
                         className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12"
                     >
-                        {categories[activeCategory].map((product, index) => (
-                            <motion.div key={product.id} initial={{ opacity: 0, scale: 0.96 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: index * 0.02, }}
-                                whileHover={{ y: -8, }}
-                                className="group relative rounded-3xl overflow-hidden bg-white border border-[#E7DDD5] transition-all duration-500 hover:border-[#FF6D29] hover:shadow-[0_20px_50px_rgba(255,109,41,0.12)]">
-                                <div className="absolute top-4 right-4 z-20 flex flex-col gap-3">
-                                    <button className="w-10 h-10 rounded-full bg-white border border-[#E7DDD5] flex items-center justify-center text-[#161316] hover:bg-[#FF6D29] hover:border-[#FF6D29] hover:text-white transition-all duration-300">
-                                        <Heart size={18} />
-                                    </button>
+                        {categories[activeCategory].map((product, index) => {
+                            // Calculate premium dynamic pricing and ratings
+                            const basePrice = 3999 + (product.id * 1500) + (index * 800);
+                            const discountPercent = 20 + ((product.id + index) % 4) * 5; // e.g. 20%, 25%, 30%, 35%
+                            const salePrice = Math.round((basePrice * (1 - discountPercent / 100)) / 100) * 100 - 1;
+                            const originalPrice = Math.round(basePrice / 100) * 100;
+                            const ratingValue = (4.3 + ((product.id * 3 + index) % 7) * 0.1).toFixed(1);
+                            const ratingReviews = 12 + (product.id * 14) + (index * 7);
 
-                                    <button className="w-10 h-10 rounded-full bg-white border border-[#E7DDD5]
-                                     flex items-center justify-center text-[#161316] hover:bg-[#FF6D29] hover:border-[#FF6D29] hover:text-white transition-all duration-300">
-                                        <BsCartPlus size={20} />
-                                    </button>
-                                </div>
+                            return (
+                                <motion.div key={product.id} initial={{ opacity: 0, scale: 0.96 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: index * 0.02, }}
+                                    whileHover={{ y: -8, }}
+                                    className="group relative rounded-[28px] overflow-hidden bg-white border border-gray-100 transition-all duration-500 hover:border-[#FF6D29]/30 hover:shadow-[0_20px_40px_rgba(255,109,41,0.08)]">
 
-                                <div className="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-[#FF6D29] text-white text-xs font-semibold">
-                                    -25%
-                                </div>
+                                    {/* Action Buttons (Fade in on hover) */}
+                                    <div className="absolute top-5 right-5 z-20 flex flex-col gap-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <button className="w-9 h-9 rounded-full bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FF6D29] hover:border-[#FF6D29] hover:text-white transition-all duration-300">
+                                            <Heart size={16} />
+                                        </button>
 
-                                <div className="relative h-[250px] bg-[#F8F5F1] overflow-hidden">
-                                    <Image
-                                        src={product.image}
-                                        alt={product.name}
-                                        fill
-                                        className="object-contain p-6 group-hover:scale-105 transition-all duration-700"
-                                    />
+                                        <button className="w-9 h-9 rounded-full bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FF6D29] hover:border-[#FF6D29] hover:text-white transition-all duration-300">
+                                            <BsCartPlus size={18} />
+                                        </button>
+                                    </div>
 
-                                    {/* SOFT GLOW */}
-                                    <div className="absolute inset-0 bg-[#FF6D29]/0 group-hover:bg-[#FF6D29]/5 transition-all duration-500"></div>
-                                </div>
+                                    {/* Image Container with premium rounded margins & neutral background */}
+                                    <div className="m-3 rounded-2xl relative h-[240px] bg-[#F4F4F5] overflow-hidden">
+                                        <Image
+                                            src={product.image}
+                                            alt={product.name}
+                                            fill
+                                            className="object-contain p-5 group-hover:scale-105 transition-all duration-700"
+                                        />
 
-                                <div className="px-5 py-2">
-                                    <h3 className="text-[17px] font-semibold text-[#161316] line-clamp-1">
-                                        {product.name}
-                                    </h3>
+                                        {/* Premium Rating Badge - Bottom-Left of the image (exactly matching the 3rd image) */}
+                                        <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-[11px] font-extrabold text-gray-800 flex items-center gap-1">
+                                            <span>{ratingValue}</span>
+                                            <span className="text-[#03a685] text-xs">★</span>
+                                        </div>
 
-                                    <div className="flex items-center gap-1">
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <span key={star} className="text-[#FFB547] text-sm">
-                                                ★
+                                        {/* Soft hover glow overlay */}
+                                        <div className="absolute inset-0 bg-[#FF6D29]/0 group-hover:bg-[#FF6D29]/2 transition-all duration-500"></div>
+                                    </div>
+
+                                    {/* Card Details Area */}
+                                    <div className="px-5 pb-5 pt-1">
+                                        {/* Brand/Subtitle */}
+                                        <div className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-0.5">
+                                            Astride Premium
+                                        </div>
+
+                                        {/* Product Title */}
+                                        <h3 className="text-base font-semibold text-gray-800 line-clamp-1 group-hover:text-[#FF6D29] transition-colors duration-300">
+                                            {product.name}
+                                        </h3>
+
+                                        {/* Pricing Row (exactly matching the inline styling of the 3rd image) */}
+                                        <div className="flex items-baseline gap-2 mt-2">
+                                            <span className="text-[17px] font-bold text-gray-900">
+                                                ₹{salePrice.toLocaleString("en-IN")}
                                             </span>
-                                        ))}
 
-                                        <span className="ml-2 text-sm text-[#6B7280]">
-                                            (4.8)
-                                        </span>
+                                            <span className="text-xs text-gray-400 line-through">
+                                                ₹{originalPrice.toLocaleString("en-IN")}
+                                            </span>
+
+                                            <span className="text-[11px] font-extrabold text-[#FF6D29] uppercase">
+                                                ({discountPercent}% OFF)
+                                            </span>
+                                        </div>
                                     </div>
 
-                                    <div className="flex items-center gap-3 mt-">
-                                        <span className="text-2xl font-bold text-[#161316]">
-                                            ₹12,999
-                                        </span>
-
-                                        <span className="text-[#9CA3AF] line-through text-base">
-                                            ₹17,999
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-[#FF6D29] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-                            </motion.div>
-                        ))}
+                                    {/* Decorative bottom hover bar */}
+                                    <div className="absolute bottom-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-[#FF6D29] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                                </motion.div>
+                            );
+                        })}
                     </motion.div>
                 </AnimatePresence>
             </div>
