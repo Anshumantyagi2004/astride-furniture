@@ -20,7 +20,7 @@ const HOTSPOTS: Hotspot[] = [
         title: "Adjustable Headrest",
         desc: "Multi-directional ergonomic support with height and angle customization to cradle your cervical spine and relieve neck strain.",
         specs: ["Cervical Cradle", "Multi-Angle Tilt", "Height Adjustment"],
-        style: { left: "7%", top: "10%" },
+        style: { left: "6%", top: "0%" },
         mobileStyle: { left: "3%", top: "6%" }, // Change these percentages to reposition the headrest dot on mobile!
         cardPosition: "right",
     },
@@ -38,7 +38,7 @@ const HOTSPOTS: Hotspot[] = [
         title: "4D Ergonomic Armrests",
         desc: "Fully adaptive support adjustable in height, depth, pivot angle, and width to perfectly align with elbow and shoulder dynamics.",
         specs: ["4D Multi-Pivot", "PU Cushioning", "Width & Depth Slide"],
-        style: { left: "38.5%", top: "28%" },
+        style: { left: "38.5%", top: "10%" },
         mobileStyle: { left: "37%", top: "18%" }, // Change these percentages to reposition the armrest dot on mobile!
         cardPosition: "right",
     },
@@ -47,7 +47,7 @@ const HOTSPOTS: Hotspot[] = [
         title: "Dual-Density Cushion",
         desc: "Contoured high-resilience foam base with waterfall edge design to improve blood circulation and reduce pressure behind the knees.",
         specs: ["High-Resilience Foam", "Waterfall Edge", "Ischial Pressure Relief"],
-        style: { left: "55.5%", top: "36%" },
+        style: { left: "55.5%", top: "25%" },
         mobileStyle: { left: "55.5%", top: "36%" }, // Change these percentages to reposition the seat dot on mobile!
         cardPosition: "left",
     },
@@ -56,7 +56,7 @@ const HOTSPOTS: Hotspot[] = [
         title: "Class 4 Gas Suspension",
         desc: "Heavy-duty nitrogen charged lift cylinder providing fluid height adjustments and responsive vertical shock absorption.",
         specs: ["Class 4 Safety", "Nitrogen Charged", "Smooth Travel"],
-        style: { left: "72%", top: "39%" },
+        style: { left: "72.%", top: "25%" },
         mobileStyle: { left: "71%", top: "30%" }, // Change these percentages to reposition the suspension dot on mobile!
         cardPosition: "right",
     },
