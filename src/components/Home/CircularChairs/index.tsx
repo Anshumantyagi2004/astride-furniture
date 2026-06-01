@@ -162,11 +162,18 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
         const isHovered = currentHovered === i;
         
         const baseScale = (0.7 + depth * 0.3) * chair.scaleFactor;
-        const scale = baseScale * (isHovered ? 1.35 : 1);
+        const targetScale = baseScale * (isHovered ? 1.35 : 1);
+        
+        // Smooth scale interpolation in JS
+        const currentScaleRaw = el.dataset.scale || String(baseScale);
+        let currScale = parseFloat(currentScaleRaw);
+        currScale += (targetScale - currScale) * 0.15; // Ease factor
+        el.dataset.scale = String(currScale);
+
         const opacity = chair.row === "mid" ? 0.12 : (0.6 + depth * 0.4);
         const zIndex = isHovered ? 999 : Math.round(depth * 100);
 
-        let finalScale = scale;
+        let finalScale = currScale;
 
         // Skip heavy proximity calculations on touch/low-end devices
         if (!isLowEnd) {
@@ -174,7 +181,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
           const dy = y / 100 - mouseY;
           const dist = Math.sqrt(dx * dx + dy * dy);
           const mag = Math.max(0, 1 - dist / 0.18);
-          finalScale = scale * (1 + mag * 0.16);
+          finalScale = currScale * (1 + mag * 0.16);
 
           // Apply halo segment updates
           const halo = el.querySelector('.chair-halo') as HTMLElement | null;
@@ -184,9 +191,10 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
           if (cursorHalo) cursorHalo.style.opacity = `${mag * 0.20}`;
         }
 
+        // GPU accelerated positioning hint with translate3d
         el.style.left = `${x}%`;
         el.style.top = `${y}%`;
-        el.style.transform = `translate(-50%,-50%) scale(${finalScale})`;
+        el.style.transform = `translate(-50%, -50%) translate3d(0,0,0) scale(${finalScale})`;
         el.style.opacity = `${opacity}`;
         el.style.zIndex = `${zIndex}`;
       }
@@ -338,7 +346,8 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                     animation: mounted
                       ? `chair-appear 0.7s cubic-bezier(0.22,1,0.36,1) ${idx * 20}ms both`
                       : "none",
-                    transition: "opacity 0.3s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)",
+                    // Removed transform from transition because requestAnimationFrame updates it every frame
+                    transition: "opacity 0.3s ease",
                   }}
                 >
                   {/* chair visibility halo — always present so black chairs stay visible */}
@@ -347,7 +356,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                     style={{
                       background: "radial-gradient(circle, rgba(255,255,255,1) 0%, transparent 68%)",
                       transform: "scale(1.7)",
-                      filter: "blur(22px)",
+                      // Removed filter: blur() for massive mobile performance gain
                     }}
                   />
                   {/* extra boost when cursor is near */}
@@ -356,7 +365,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                     style={{
                       background: "radial-gradient(circle, rgba(255,255,255,1) 0%, transparent 65%)",
                       transform: "scale(2.2)",
-                      filter: "blur(28px)",
+                      // Removed filter: blur() for massive mobile performance gain
                     }}
                   />
                   <div className="relative">
@@ -365,7 +374,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       alt={`Chair ${idx + 1}`}
                       width={cfg.size}
                       height={cfg.size}
-                      className="object-contain pointer-events-none select-none transition-filter duration-200"
+                      className="object-contain pointer-events-none select-none"
                       style={{
                         width: `min(22vw,${cfg.size}px)`,
                         height: `min(22vw,${cfg.size}px)`,
