@@ -17,6 +17,7 @@ import Footer from "@/components/Main/Footer/Footer";
 import Header2 from "@/components/Header2/Index";
 import Navbar2 from "@/components/Home/Navbar2";
 import CircularChairs from "@/components/Home/CircularChairs";
+import ProductPageHome from "@/components/prodcutPage/ProductPageHome";
 
 
 
@@ -42,6 +43,7 @@ export default function Home() {
       <ClientLogoSlider />
       <VideoTestimonials />
       <BulkQueryForm />
+      <ProductPageHome/>
      
       <Footer />
     </main>

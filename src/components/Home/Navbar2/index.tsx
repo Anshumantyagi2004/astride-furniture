@@ -19,48 +19,32 @@ interface ChairCategory {
 }
 
 const CHAIR_CATEGORIES: Record<string, ChairCategory> = {
-  'Gaming Chair': {
-    label: 'Gaming Chair',
-    chairs: [
-      { name: 'ACE Pro', image: '/Png1/chair4_ACE.png', tag: 'Bestseller', buyUrl: '#buy', learnUrl: '#learn' },
-      { name: 'AlphaGrey', image: '/Png1/chair6_AlphaGrey.png', tag: 'Pro', buyUrl: '#buy', learnUrl: '#learn' },
-      { name: 'Rapid Black', image: '/Png1/chair6c_Rapid Black .png', tag: 'Active', buyUrl: '#buy', learnUrl: '#learn' }
-    ]
-  },
-  'Executive Chair': {
-    label: 'Executive Chair',
-    chairs: [
-      { name: 'ERIZO', image: '/Png1/chair8_ERIZO.png', tag: 'Luxury', buyUrl: '#buy', learnUrl: '#learn' },
-      { name: 'Gladus Grey', image: '/Png1/Chair6b_Gladus Grey.png', tag: 'Hybrid', buyUrl: '#buy', learnUrl: '#learn' },
-      { name: 'ErgoFit', image: '/Png1/chair12_ErgoFit.png', tag: 'Premium', buyUrl: '#buy', learnUrl: '#learn' }
-    ]
-  },
-  'Staff Chair': {
-    label: 'Staff Chair',
-    chairs: [
-      { name: 'Amica Black', image: '/Png1/Chair6a_Amica Black .png', tag: 'Classic', buyUrl: '#buy', learnUrl: '#learn' },
-      { name: 'Delton', image: '/Png1/Chair7_Delton.png', tag: 'Comfort', buyUrl: '#buy', learnUrl: '#learn' },
-      { name: 'Avien', image: '/Png1/chair13_Avien.png', tag: 'New', buyUrl: '#buy', learnUrl: '#learn' }
-    ]
-  },
-  'Study Chair': {
-    label: 'Study Chair',
-    chairs: [
-      { name: 'AIRSENSE', image: '/Png1/chair5_AIRSENSE.png', tag: 'Aero', buyUrl: '#buy', learnUrl: '#learn' },
-      { name: 'octave', image: '/Png1/chair11_octave.png', tag: 'Mesh', buyUrl: '#buy', learnUrl: '#learn' },
-      { name: 'FitWell', image: '/Png1/chair9_FitWell.png', tag: 'Support', buyUrl: '#buy', learnUrl: '#learn' }
-    ]
-  },
-  'Bar Stool': {
-    label: 'Bar Stool',
+  'Bar Stools': {
+    label: 'Bar Stools',
     chairs: [
       { name: 'Zenith Stool', image: '/Png1/chair10_FitWell.png', tag: 'Stool', buyUrl: '#buy', learnUrl: '#learn' },
       { name: 'Apex Stool', image: '/Png1/chair9_FitWell.png', tag: 'Comfort', buyUrl: '#buy', learnUrl: '#learn' }
     ]
+  },
+  'Ergonomic Chairs': {
+    label: 'Ergonomic Chairs',
+    chairs: [
+      { name: 'ACE Pro', image: '/Png1/chair4_ACE.png', tag: 'Bestseller', buyUrl: '#buy', learnUrl: '#learn' },
+      { name: 'AlphaGrey', image: '/Png1/chair6_AlphaGrey.png', tag: 'Pro', buyUrl: '#buy', learnUrl: '#learn' },
+      { name: 'ErgoFit', image: '/Png1/chair12_ErgoFit.png', tag: 'Premium', buyUrl: '#buy', learnUrl: '#learn' }
+    ]
+  },
+  'Office Task Chair': {
+    label: 'Office Task Chair',
+    chairs: [
+      { name: 'Delton', image: '/Png1/Chair7_Delton.png', tag: 'Comfort', buyUrl: '#buy', learnUrl: '#learn' },
+      { name: 'AIRSENSE', image: '/Png1/chair5_AIRSENSE.png', tag: 'Aero', buyUrl: '#buy', learnUrl: '#learn' },
+      { name: 'Amica Black', image: '/Png1/Chair6a_Amica Black .png', tag: 'Classic', buyUrl: '#buy', learnUrl: '#learn' }
+    ]
   }
 };
 
-const CATEGORY_KEYS = ['Gaming Chair', 'Executive Chair', 'Staff Chair', 'Study Chair', 'Bar Stool'];
+const CATEGORY_KEYS = ['Bar Stools', 'Ergonomic Chairs', 'Office Task Chair'];
 
 export default function Navbar2() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
