@@ -62,7 +62,7 @@ function getPosition(index: number, total: number, isMobile: boolean) {
     ? `${18 + row * 22}%`  // row 0: 18%, row 1: 40%, row 2: 62%, row 3: 84%
     : `${20 + row * 30}%`;
 
-  const scale = isMobile ? 0.38 : 0.475;
+  const scale = isMobile ? 0.75 : 0.475;
 
   return {
     left,
@@ -135,7 +135,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                   alt={chair.name}
                   width={320}
                   height={320}
-                  className="w-auto h-auto max-w-[180px] md:max-w-[280px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:scale-110 transition-transform duration-300"
+                  className="w-[150px] h-[150px] md:w-[250px] md:h-[250px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:scale-110 transition-transform duration-300"
                 />
               </div>
             );
