@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, ShoppingCart, ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, ShoppingCart, ChevronRight, X } from 'lucide-react';
 
 interface SeriesChair {
   name: string;
@@ -47,9 +48,42 @@ const CHAIR_CATEGORIES: Record<string, ChairCategory> = {
 const CATEGORY_KEYS = ['Bar Stools', 'Ergonomic Chairs', 'Office Task Chair'];
 
 export default function Navbar2() {
+  const router = useRouter();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 3, minutes: 9, seconds: 4 });
+  const [cartItems, setCartItems] = useState<any[]>([]);
+
+  const loadCart = () => {
+    const savedCart = localStorage.getItem('astride_cart');
+    if (savedCart) {
+      try {
+        setCartItems(JSON.parse(savedCart));
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      setCartItems([]);
+    }
+  };
+
+  useEffect(() => {
+    loadCart();
+
+    const handleStorageChange = () => {
+      loadCart();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('add-to-cart', handleStorageChange);
+    window.addEventListener('astride_cart_updated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('add-to-cart', handleStorageChange);
+      window.removeEventListener('astride_cart_updated', handleStorageChange);
+    };
+  }, []);
 
   // Countdown timer simulation
   useEffect(() => {
@@ -158,21 +192,76 @@ export default function Navbar2() {
               onMouseEnter={() => setIsCartOpen(true)}
               onMouseLeave={() => setIsCartOpen(false)}
             >
-              <button className="hover:text-black transition-colors cursor-pointer p-1">
+              <button 
+                onClick={() => window.dispatchEvent(new CustomEvent('open-cart-sidebar'))}
+                className="hover:text-black transition-colors cursor-pointer p-1 relative flex items-center justify-center"
+              >
                 <ShoppingCart className="w-4.5 h-4.5 stroke-[2.5]" />
+                {cartItems.reduce((acc, item) => acc + item.quantity, 0) > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-black text-white rounded-full text-[8px] w-4 h-4 flex items-center justify-center font-bold">
+                    {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+                  </span>
+                )}
               </button>
 
               {/* Cart Popover */}
               {isCartOpen && (
                 <div className="absolute right-0 top-full pt-3.5 w-80 z-[1100] animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="bg-white border border-neutral-200 rounded-xl shadow-xl p-6 text-center">
-                    <p className="text-neutral-500 text-sm font-bold mb-4">Cart is empty.</p>
-                    <Link 
-                      href="#sale" 
-                      className="block w-full py-3 text-xs font-extrabold text-white bg-black hover:bg-neutral-800 rounded-lg transition-colors shadow-sm"
-                    >
-                      Shop Now
-                    </Link>
+                    {cartItems.length === 0 ? (
+                      <>
+                        <p className="text-neutral-500 text-sm font-bold mb-4">Cart is empty.</p>
+                        <Link 
+                          href="/products" 
+                          className="block w-full py-3 text-xs font-extrabold text-white bg-black hover:bg-neutral-800 rounded-lg transition-colors shadow-sm"
+                        >
+                          Shop Now
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-neutral-800 text-xs font-black uppercase tracking-wider mb-3">
+                          You have {cartItems.reduce((acc, item) => acc + item.quantity, 0)} items
+                        </p>
+                        <div className="max-h-48 overflow-y-auto mb-4 space-y-3 pr-1 text-left">
+                          {cartItems.map((item, idx) => (
+                            <div key={idx} className="flex gap-3 items-center border-b border-neutral-100 pb-2 relative group/item">
+                              <div className="relative w-10 h-10 bg-neutral-50 rounded border border-neutral-200/50 flex items-center justify-center shrink-0">
+                                <Image src={item.image} alt={item.name} fill className="object-contain p-1 mix-blend-multiply" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[11px] font-bold text-neutral-800 truncate">{item.name}</p>
+                                <p className="text-[10px] text-neutral-400 font-semibold">{item.quantity} x ₹{item.price.toLocaleString()}</p>
+                              </div>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const updated = cartItems.filter((_, i) => i !== idx);
+                                  localStorage.setItem('astride_cart', JSON.stringify(updated));
+                                  window.dispatchEvent(new Event('astride_cart_updated'));
+                                }}
+                                className="w-5 h-5 rounded-md hover:bg-neutral-100 flex items-center justify-center text-neutral-400 hover:text-red-500 transition-colors shrink-0"
+                              >
+                                <X size={10} strokeWidth={2.5} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-between items-baseline mb-4">
+                          <span className="text-[11px] font-bold text-neutral-400">Subtotal</span>
+                          <span className="text-[15px] font-black text-neutral-900">₹{cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0).toLocaleString()}</span>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            setIsCartOpen(false);
+                            router.push('/checkout');
+                          }}
+                          className="block w-full py-3 text-xs font-extrabold text-white bg-black hover:bg-neutral-800 rounded-lg transition-colors shadow-sm uppercase tracking-wider"
+                        >
+                          View Bag / Checkout
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               )}

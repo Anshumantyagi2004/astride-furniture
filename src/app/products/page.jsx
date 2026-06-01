@@ -1,12 +1,8 @@
 import React from 'react'
-import Product from './Product'
-import Navbar from '@/components/Main/Navbar/Navbar'
-import Footer from '@/components/Main/Footer/Footer'
+import ProductPageHome from '@/components/prodcutPage/ProductPageHome'
 
 export default function page() {
-    return (<>
-        <Navbar />
-        <Product />
-        <Footer />
-    </>)
+    return (
+        <ProductPageHome />
+    )
 }

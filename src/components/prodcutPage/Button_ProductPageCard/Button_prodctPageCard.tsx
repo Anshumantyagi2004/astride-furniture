@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Button = () => {
+const Button = ({ onClick }: { onClick?: React.MouseEventHandler<HTMLButtonElement> }) => {
   return (
     <StyledWrapper>
-      <button className="button-name" role="button">
+      <button onClick={onClick} className="button-name" role="button">
         ADD TO CART <span className="ml-1">→</span>
       </button>
     </StyledWrapper>

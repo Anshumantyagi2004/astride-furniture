@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import ChairFinder from "../ChairFinder";
 
 const CHAIR_IMAGES = [
@@ -29,6 +30,7 @@ interface CircularChairsProps {
 }
 
 export default function CircularChairs({ onStart = () => { } }: CircularChairsProps) {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [showFinder, setShowFinder] = useState(false);
 
@@ -108,8 +110,8 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
         }
 
         .marquee-item {
-          width: 120px;
-          height: 120px;
+          width: 150px;
+          height: 150px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -119,8 +121,8 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
 
         @media (max-width: 768px) {
           .marquee-item {
-            width: 84px;
-            height: 90px;
+            width: 100px;
+            height: 106px;
           }
           .marquee-group {
             gap: 25px;
@@ -170,7 +172,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       width={100}
                       height={100}
                       className="object-contain pointer-events-none select-none"
-                      style={{ width: "85%", height: "85%" }}
+                      style={{ width: "95%", height: "95%" }}
                       priority={idx < 4}
                     />
                   </div>
@@ -186,7 +188,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       width={100}
                       height={100}
                       className="object-contain pointer-events-none select-none"
-                      style={{ width: "85%", height: "85%" }}
+                      style={{ width: "95%", height: "95%" }}
                     />
                   </div>
                 ))}
@@ -207,7 +209,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       width={100}
                       height={100}
                       className="object-contain pointer-events-none select-none"
-                      style={{ width: "85%", height: "85%" }}
+                      style={{ width: "95%", height: "95%" }}
                       priority={idx < 4}
                     />
                   </div>
@@ -223,7 +225,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       width={100}
                       height={100}
                       className="object-contain pointer-events-none select-none"
-                      style={{ width: "85%", height: "85%" }}
+                      style={{ width: "95%", height: "95%" }}
                     />
                   </div>
                 ))}
@@ -244,7 +246,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       width={100}
                       height={100}
                       className="object-contain pointer-events-none select-none"
-                      style={{ width: "85%", height: "85%" }}
+                      style={{ width: "95%", height: "95%" }}
                       priority={idx < 4}
                     />
                   </div>
@@ -260,7 +262,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       width={100}
                       height={100}
                       className="object-contain pointer-events-none select-none"
-                      style={{ width: "85%", height: "85%" }}
+                      style={{ width: "95%", height: "95%" }}
                     />
                   </div>
                 ))}
@@ -324,7 +326,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
             {/* CTA Buttons */}
             <div className="flex flex-row items-center justify-center gap-3 w-full mt-2">
               <button
-                onClick={onStart}
+                onClick={() => router.push('/products')}
                 className="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-full overflow-hidden cursor-pointer"
                 style={{
                   background: "#0f172a",

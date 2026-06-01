@@ -1,12 +1,18 @@
 import React from 'react';
 import Image from 'next/image';
 import Button from '../Button_ProductPageCard/Button_prodctPageCard';
+import { useRouter } from 'next/navigation';
 
 const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
+  const router = useRouter();
+  
   return (
-    <div className="group relative w-full max-w-[280px] aspect-[3/4] bg-white rounded-[32px] p-5 border border-slate-100 shadow-[0_20px_40px_rgba(0,0,0,0.04),_0_5px_15px_rgba(0,0,0,0.01),_inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-2px_6px_rgba(15,23,42,0.02)] flex flex-col justify-between overflow-hidden cursor-pointer hover:scale-[1.03] hover:shadow-[0_25px_50px_rgba(0,0,0,0.08)] transition-all duration-500 ease-out">
+    <div 
+      onClick={() => router.push(`/products/${product.id}`)}
+      className="group relative w-full max-w-[280px] h-[340px] bg-white rounded-[28px] p-4 pb-5 pt-3.5 border border-slate-100 shadow-[0_20px_40px_rgba(0,0,0,0.04),_0_5px_15px_rgba(0,0,0,0.01),_inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-2px_6px_rgba(15,23,42,0.02)] flex flex-col justify-between overflow-hidden cursor-pointer hover:scale-[1.03] hover:shadow-[0_25px_50px_rgba(0,0,0,0.08)] transition-all duration-500 ease-out"
+    >
       {/* Background radial reflection glow for added visual shine */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-white/80 via-transparent to-black/[0.01] pointer-events-none rounded-[32px]" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-white/80 via-transparent to-black/[0.01] pointer-events-none rounded-[28px]" />
 
       {/* Header Details (Wishlist & Discount Badge) */}
       <div className="flex items-center justify-between w-full z-10 relative">
@@ -35,39 +41,39 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
       </div>
 
       {/* Image Area with Shadow Pop */}
-      <div className="relative w-full h-[58%] flex items-center justify-center z-[5]">
+      <div className="relative w-full h-[52%] flex items-center justify-center z-[5] my-0.5">
         <Image
           src={product.image}
           alt={product.name}
           width={280}
           height={280}
-          className="object-contain h-full w-auto filter drop-shadow-[0_16px_32px_rgba(15,23,42,0.12)] scale-105 hover:scale-110 transition-transform duration-500 ease-out"
+          className="object-contain h-full w-auto filter drop-shadow-[0_16px_32px_rgba(15,23,42,0.12)] scale-[1.12] hover:scale-[1.25] transition-transform duration-500 ease-out"
           priority
         />
       </div>
 
       {/* Bottom Metadata */}
-      <div className="w-full flex flex-col gap-2 z-10 relative">
+      <div className="w-full flex flex-col gap-1 z-10 relative">
         {/* Name, Rating & Pricing */}
-        <div className="flex flex-col gap-1.5">
-          <h3 className="text-base font-black text-slate-900 tracking-tight leading-tight md:text-lg pr-2">
+        <div className="flex flex-col gap-1">
+          <h3 className="text-sm font-black text-slate-900 tracking-tight leading-tight md:text-base pr-2">
             {product.name}
           </h3>
           <div className="flex justify-between items-center w-full">
-            <div className="flex items-center gap-2.5">
-              <span className="text-sm font-black text-slate-900 md:text-base">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black text-slate-900 md:text-sm">
                 ₹{product.price.toLocaleString()}
               </span>
-              <span className="text-[11px] font-bold text-slate-400 line-through">
+              <span className="text-[10px] font-bold text-slate-400 line-through">
                 ₹{product.originalPrice.toLocaleString()}
               </span>
             </div>
             {product.rating && (
               <div className="flex items-center gap-1 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-lg border border-slate-100 shadow-sm shrink-0 mb-[1px]">
-                <span className="text-[10px] font-black text-slate-800">{product.rating}</span>
+                <span className="text-[9px] font-black text-slate-800">{product.rating}</span>
                 <svg 
-                  width="10" 
-                  height="10" 
+                  width="9" 
+                  height="9" 
                   viewBox="0 0 24 24" 
                   fill="#fbbf24" 
                   stroke="#fbbf24" 
@@ -82,8 +88,18 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
         </div>
 
         {/* Always visible animated Pearl Button component */}
-        <div className="w-full mt-2">
-          <Button />
+        <div className="w-full mt-1.5">
+          <Button onClick={(e) => {
+            e.stopPropagation();
+            const cartItem = {
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: product.image,
+              quantity: 1
+            };
+            window.dispatchEvent(new CustomEvent('add-to-cart', { detail: cartItem }));
+          }} />
         </div>
       </div>
     </div>

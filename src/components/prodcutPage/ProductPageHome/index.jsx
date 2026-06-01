@@ -203,15 +203,15 @@ export default function ProductPageHome() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans px-4 py-8 md:py-16 select-none overflow-x-hidden">
-      <div className="max-w-[1400px] mx-auto">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans px-4 md:px-8 py-8 md:py-16 select-none overflow-x-hidden">
+      <div className="max-w-[1600px] mx-auto w-full">
         
         {/* ── Breadcrumb Navigation ── */}
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-8"
+          className="flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-10"
         >
           <span className="hover:text-slate-900 cursor-pointer transition-colors">Home</span>
           <span>/</span>
@@ -225,36 +225,31 @@ export default function ProductPageHome() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-10"
+          className="text-center mb-12"
         >
-          <h1 className="text-3xl md:text-5xl font-black tracking-tight uppercase text-slate-900 mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-black mb-5">
             {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory === "Ergonomic Chairs" ? "Ergonomic Gaming Series" : selectedCategory === "Bar Stools" ? "Premium Bar Stools" : "Office Task Chair"}
           </h1>
-          <p className="max-w-3xl mx-auto text-xs md:text-sm text-slate-500 leading-relaxed font-semibold">
+          <p className="max-w-3xl mx-auto text-sm md:text-base text-neutral-500 leading-relaxed font-medium">
             Discover Astride's premium ergonomics — masterfully engineered seating built for long-session endurance, proactive posture correction, adjustable support components, and premium styling.
           </p>
         </motion.div>
 
-        {/* ── Text Tab Navigation ── */}
-        <div className="flex justify-center items-center gap-8 md:gap-16 border-b border-slate-100 pb-4 mb-16 max-w-2xl mx-auto">
+        {/* ── Pill Tab Navigation ── */}
+        <div className="flex justify-center items-center gap-3 md:gap-4 flex-wrap pb-4 mb-16 max-w-4xl mx-auto">
           {TABS.map((tab) => {
             const isActive = selectedCategory === tab;
             return (
               <button
                 key={tab}
                 onClick={() => setSelectedCategory(tab)}
-                className={`relative font-black uppercase text-xs md:text-sm tracking-widest pb-4 focus:outline-none transition-all duration-300 ${
-                  isActive ? "text-slate-900" : "text-slate-400 hover:text-slate-650"
+                className={`relative px-6 py-3 rounded-full font-bold uppercase text-[11px] md:text-xs tracking-widest focus:outline-none transition-all duration-300 ${
+                  isActive 
+                    ? "bg-black text-white shadow-lg scale-105" 
+                    : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-black"
                 }`}
               >
                 <span>{tab}</span>
-                {isActive && (
-                  <motion.div 
-                    layoutId="activeTabIndicator"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
               </button>
             );
           })}
@@ -268,10 +263,10 @@ export default function ProductPageHome() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="w-full lg:w-[250px] shrink-0 lg:sticky lg:top-32 h-fit lg:pr-8"
+            className="w-full lg:w-[280px] shrink-0 lg:sticky lg:top-32 h-fit lg:pr-8 bg-neutral-50 p-6 rounded-2xl border border-neutral-100"
           >
-            <div className="flex items-center justify-between border-b-2 border-slate-900 pb-3 mb-8">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-900">Filters</h2>
+            <div className="flex items-center justify-between border-b border-neutral-200 pb-4 mb-6">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-black">Filters</h2>
               {(selectedCategory !== "All Products" || selectedBackSupport || selectedHours || selectedCapacity || maxPrice !== 25000) && (
                 <button
                   onClick={clearFilters}
@@ -383,7 +378,7 @@ export default function ProductPageHome() {
                   variants={containerVariants}
                   initial="hidden"
                   animate="show"
-                  className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10 justify-items-center w-full"
                 >
                   {filteredProducts.map((prod) => (
                     <motion.div
