@@ -56,7 +56,7 @@ const HOTSPOTS: Hotspot[] = [
         title: "Class 4 Gas Suspension",
         desc: "Heavy-duty nitrogen charged lift cylinder providing fluid height adjustments and responsive vertical shock absorption.",
         specs: ["Class 4 Safety", "Nitrogen Charged", "Smooth Travel"],
-        style: { left: "72.%", top: "25%" },
+        style: { left: "72%", top: "25%" },
         mobileStyle: { left: "71%", top: "30%" }, // Change these percentages to reposition the suspension dot on mobile!
         cardPosition: "right",
     },
