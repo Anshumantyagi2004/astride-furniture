@@ -103,6 +103,13 @@ export async function POST(req) {
 
 export async function GET() {
     try {
+        if (!process.env.MONGODB_URI) {
+            // Proxy to live API if local database is not configured
+            const res = await fetch("https://astride-furniture.vercel.app/api/product");
+            const data = await res.json();
+            return NextResponse.json(data, { status: 200 });
+        }
+
         await connectDB();
 
         const products = await Product.find().populate("category").sort({ createdAt: -1 });

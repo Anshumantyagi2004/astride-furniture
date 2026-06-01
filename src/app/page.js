@@ -17,6 +17,8 @@ import Footer from "@/components/Main/Footer/Footer";
 import Header2 from "@/components/Header2/Index";
 import Navbar2 from "@/components/Home/Navbar2";
 import CircularChairs from "@/components/Home/CircularChairs";
+import ProductPageHome from "@/components/prodcutPage/ProductPageHome";
+import DetailPage from "@/components/detailPage/detailPage";
 
 
 
@@ -24,8 +26,9 @@ import CircularChairs from "@/components/Home/CircularChairs";
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <Navbar2/>
+     
       <CircularChairs/>
+      <HeroSection/>
       <Category />
       {/* <CategorySlider /> */}
       <FavouriteCategories />
@@ -42,8 +45,10 @@ export default function Home() {
       <ClientLogoSlider />
       <VideoTestimonials />
       <BulkQueryForm />
+      
+      
      
-      <Footer />
+      
     </main>
   );
 }
