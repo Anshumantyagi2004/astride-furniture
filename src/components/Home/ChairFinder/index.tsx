@@ -62,7 +62,7 @@ function getPosition(index: number, total: number, isMobile: boolean) {
     ? `${18 + row * 22}%`  // row 0: 18%, row 1: 40%, row 2: 62%, row 3: 84%
     : `${20 + row * 30}%`;
 
-  const scale = isMobile ? 0.4275 : 0.475;
+  const scale = isMobile ? 0.38 : 0.475;
 
   return {
     left,
