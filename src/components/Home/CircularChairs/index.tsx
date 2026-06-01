@@ -155,7 +155,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
         />
 
         {/* ── Stacked Horizontal Rows (With wide spacing away from central content card) ── */}
-        <div className="absolute inset-y-20 md:inset-0 left-0 right-0 flex flex-col justify-between pt-1 pb-1 pointer-events-auto z-5 overflow-visible">
+        <div className="absolute inset-y-10 md:inset-0 left-0 right-0 flex flex-col justify-between pt-1 pb-1 pointer-events-auto z-5 overflow-visible">
           
           {/* Row 1: Top (Left to Right, Seamless) */}
           <div className="w-full overflow-visible py-4 marquee-container">
