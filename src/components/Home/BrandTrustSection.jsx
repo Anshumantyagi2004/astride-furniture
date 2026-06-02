@@ -9,9 +9,18 @@ function Counter({ value }) {
     const [count, setCount] = useState("0");
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-50px" });
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 768);
+    }, []);
 
     useEffect(() => {
         if (!isInView) return;
+        if (isMobile) {
+            setCount(value);
+            return;
+        }
         const match = value.match(/([\d.]+)(.*)/);
         if (!match) { setCount(value); return; }
         const numVal = parseFloat(match[1]);
@@ -42,6 +51,11 @@ const metrics = [
 ];
 
 export default function BrandTrustSection() {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 768);
+    }, []);
+
     return (
         <section
             className="w-full overflow-hidden relative"
@@ -55,7 +69,7 @@ export default function BrandTrustSection() {
                 <motion.div
                     initial={{ opacity: 0, y: 18 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
+                    transition={{ duration: isMobile ? 0 : 0.6 }}
                     viewport={{ once: true }}
                     className="text-center mb-12"
                 >
@@ -88,7 +102,7 @@ export default function BrandTrustSection() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1 }}
+                    transition={{ duration: isMobile ? 0 : 0.6, delay: isMobile ? 0 : 0.1 }}
                     viewport={{ once: true }}
                     className="grid grid-cols-2 md:grid-cols-4 mb-10"
                     style={{
@@ -106,7 +120,7 @@ export default function BrandTrustSection() {
                                 key={idx}
                                 initial={{ opacity: 0, y: 14 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: idx * 0.08 }}
+                                transition={{ duration: isMobile ? 0 : 0.4, delay: isMobile ? 0 : idx * 0.08 }}
                                 viewport={{ once: true }}
                                 className={`group flex flex-col items-center justify-center py-10 px-6 cursor-default relative transition-all duration-300 hover:-translate-y-1 ${idx !== metrics.length - 1 ? "border-r border-[#1C2B4A]/[0.07]" : ""}`}
                                 style={{ borderRadius: idx === 0 ? "20px 0 0 20px" : idx === metrics.length - 1 ? "0 20px 20px 0" : "" }}
@@ -152,7 +166,7 @@ export default function BrandTrustSection() {
                 <motion.div
                     initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
+                    transition={{ duration: isMobile ? 0 : 0.5, delay: isMobile ? 0 : 0.3 }}
                     viewport={{ once: true }}
                     className="flex items-center justify-center md:justify-between flex-wrap gap-5"
                     style={{

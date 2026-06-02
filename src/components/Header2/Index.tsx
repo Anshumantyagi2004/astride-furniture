@@ -138,10 +138,10 @@ const Header2 = () => {
 
             <div className="max-w-[1600px] mx-auto px-4 md:px-8 w-full relative z-10">
                 {/* 2-Column Split Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-4 items-center bg-white/50 rounded-[32px] border border-zinc-200/80 p-4 md:p-8 lg:p-12 overflow-visible shadow-[0_20px_50px_rgba(15,23,42,0.02)]">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-4 items-start bg-white/50 rounded-[32px] border border-zinc-200/80 p-4 md:p-8 lg:p-12 overflow-visible shadow-[0_20px_50px_rgba(15,23,42,0.02)]">
                     
                     {/* Left Column: Exploded Chair (approx 58% width) shifted slightly left */}
-                    <div className="lg:col-span-7 relative w-full flex items-center justify-start scale-100 lg:-ml-4 transition-transform duration-500">
+                    <div className="lg:col-span-7 relative w-full flex items-start justify-start scale-100 lg:-ml-4 transition-transform duration-500">
                         <div className="relative w-full max-w-[1050px]">
                             <Image
                                 src={expandedImg}
@@ -165,7 +165,7 @@ const Header2 = () => {
                                             onClick={() => setActiveId(isActive ? null : hotspot.id)}
                                         >
                                             {/* Pulsing Hotspot Trigger */}
-                                            <div className="relative cursor-pointer flex items-center justify-center w-5 h-5 md:w-8 md:h-8">
+                                            <div className="relative cursor-pointer flex items-center justify-center w-8 h-8 md:w-12 md:h-12">
                                                 <div className={`absolute w-3.5 h-3.5 md:w-6 md:h-6 bg-slate-400/30 rounded-full animate-ping pointer-events-none transition-transform duration-300 ${isActive ? "scale-155" : ""}`} />
                                                 <div className={`absolute w-2 h-2 md:w-4 md:h-4 rounded-full pointer-events-none transition-all duration-300 ${isActive ? "bg-slate-700 scale-125 shadow-[0_0_12px_rgba(71,85,105,0.6)]" : "bg-slate-500/60"}`} />
                                                 <div className="w-1.5 h-1.5 md:w-2.5 md:h-2.5 bg-slate-700 rounded-full ring-[1.5px] md:ring-4 ring-white transition-all duration-300 group-hover:scale-125" />
@@ -178,8 +178,8 @@ const Header2 = () => {
                     </div>
 
                     {/* Right Column: Spec / Text Details (approx 42% width) with larger text */}
-                    <div className="lg:col-span-5 w-full flex flex-col justify-center min-h-[380px] lg:pl-6">
-                        <div className="bg-white/90 backdrop-blur-md border border-zinc-200/80 rounded-[28px] p-6 md:p-10 shadow-[0_15px_35px_rgba(15,23,42,0.03)] relative overflow-hidden h-full flex flex-col justify-between">
+                    <div className="lg:col-span-5 w-full flex flex-col justify-start lg:pl-6 mt-8 lg:mt-0">
+                        <div className="bg-white/90 backdrop-blur-md border border-zinc-200/80 rounded-[28px] p-6 md:p-10 shadow-[0_15px_35px_rgba(15,23,42,0.03)] relative overflow-hidden h-[420px] lg:h-[500px] flex flex-col justify-between">
                             
                             {/* Decorative Top Accent Line */}
                             <div className="absolute top-0 left-0 right-0 h-[3.5px] bg-slate-800" />
