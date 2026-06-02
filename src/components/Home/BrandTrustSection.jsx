@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { ShoppingBag, Users, Award, Star } from "lucide-react";
 
-// Hook/Component for count-up animation when in view
 function Counter({ value }) {
     const [count, setCount] = useState("0");
     const ref = useRef(null);
@@ -13,40 +12,22 @@ function Counter({ value }) {
 
     useEffect(() => {
         if (!isInView) return;
-
-        // Parse number and suffix from string (e.g. "55K+" -> "55" and "K+")
         const match = value.match(/([\d.]+)(.*)/);
-        if (!match) {
-            setCount(value);
-            return;
-        }
-
+        if (!match) { setCount(value); return; }
         const numVal = parseFloat(match[1]);
         const suffix = match[2] || "";
         const isFloat = match[1].includes(".");
-
-        let start = 0;
-        const duration = 1200; // 1.2s animation
+        const duration = 1500;
         const startTime = performance.now();
-
         const update = (now) => {
             const elapsed = now - startTime;
             const progress = Math.min(elapsed / duration, 1);
-
-            // Ease out quad
-            const easeProgress = progress * (2 - progress);
-            const current = start + (numVal - start) * easeProgress;
-
-            const formatted = isFloat ? current.toFixed(1) : Math.floor(current).toString();
-            setCount(formatted + suffix);
-
-            if (progress < 1) {
-                requestAnimationFrame(update);
-            } else {
-                setCount(value);
-            }
+            const ease = 1 - Math.pow(1 - progress, 3);
+            const current = numVal * ease;
+            setCount((isFloat ? current.toFixed(1) : Math.floor(current).toString()) + suffix);
+            if (progress < 1) requestAnimationFrame(update);
+            else setCount(value);
         };
-
         requestAnimationFrame(update);
     }, [isInView, value]);
 
@@ -54,131 +35,150 @@ function Counter({ value }) {
 }
 
 const metrics = [
-    {
-        icon: ShoppingBag,
-        value: "55K+",
-        label: "Orders Delivered",
-    },
-    {
-        icon: Users,
-        value: "40K+",
-        label: "Happy Customers",
-    },
-    {
-        icon: Award,
-        value: "11+",
-        label: "Years Experience",
-    },
-    {
-        icon: Star,
-        value: "4.8",
-        label: "Customer Rating",
-        hasRatingStar: true,
-    },
+    { icon: ShoppingBag, value: "55K+", label: "Orders Delivered" },
+    { icon: Users,       value: "40K+", label: "Happy Customers"  },
+    { icon: Award,       value: "11+",  label: "Years Experience" },
+    { icon: Star,        value: "4.8",  label: "Customer Rating"  },
 ];
 
-export default function MarketplaceReviews() {
+export default function BrandTrustSection() {
     return (
-        <section className="w-full pt-8 pb-4 bg-[#F8F7F5] overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6">
+        <section
+            className="w-full overflow-hidden relative"
+            style={{
+                background: "linear-gradient(160deg, #F5F0E8 0%, #EDE8DD 40%, #E8E2D6 100%)",
+            }}
+        >
+            <div className="max-w-7xl mx-auto px-6 py-14 relative z-10">
 
-                {/* Heading Section */}
-                <div className="text-center mb-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 15 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        viewport={{ once: true }}
+                {/* Heading */}
+                <motion.div
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                    className="text-center mb-12"
+                >
+                    <h2
+                        className="text-3xl sm:text-4xl lg:text-[2.8rem] font-black leading-tight tracking-tight"
+                        style={{ color: "#1C2B4A" }}
                     >
-                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#161316] leading-tight tracking-tight">
-                            India&apos;s Leading{" "}
-                            <span className="text-[#FF6D29]">Ergonomic Furniture</span> Brand
-                        </h2>
+                        India&apos;s Leading{" "}
+                        <em
+                            className="not-italic font-light"
+                            style={{
+                                background: "linear-gradient(135deg, #2E6B9E, #1C4E80)",
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor: "transparent",
+                            }}
+                        >
+                            Ergonomic Chair
+                        </em>{" "}
+                        Brand
+                    </h2>
 
-                        {/* Custom Separator Divider Accent */}
-                        <div className="flex items-center justify-center gap-4 mt-5">
-                            <div className="w-14 h-[1px] bg-gradient-to-r from-transparent to-[#FF6D29]"></div>
-                            <div className="w-2 h-2 rounded-full bg-[#FF6D29]"></div>
-                            <div className="w-14 h-[1px] bg-gradient-to-l from-transparent to-[#FF6D29]"></div>
-                        </div>
-                    </motion.div>
-                </div>
+                    <div className="flex items-center justify-center gap-3 mt-5">
+                        <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#2E6B9E]/40" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#2E6B9E]/50" />
+                        <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#2E6B9E]/40" />
+                    </div>
+                </motion.div>
 
-                {/* 4-Column Metrics Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-y-10 md:gap-y-0 max-w-6xl mx-auto items-center">
+                {/* Stats — no cards, clean editorial row */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                    viewport={{ once: true }}
+                    className="grid grid-cols-2 md:grid-cols-4 mb-10"
+                    style={{
+                        background: "rgba(255,255,255,0.55)",
+                        backdropFilter: "blur(12px)",
+                        borderRadius: "20px",
+                        border: "1px solid rgba(44,107,158,0.12)",
+                        boxShadow: "0 8px 40px rgba(28,43,74,0.08), inset 0 1px 0 rgba(255,255,255,0.7)",
+                    }}
+                >
                     {metrics.map((item, idx) => {
                         const Icon = item.icon;
                         return (
                             <motion.div
                                 key={idx}
-                                initial={{ opacity: 0, y: 20 }}
+                                initial={{ opacity: 0, y: 14 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: idx * 0.1 }}
+                                transition={{ duration: 0.4, delay: idx * 0.08 }}
                                 viewport={{ once: true }}
-                                className={`text-center flex flex-col items-center justify-center px-4 ${idx !== metrics.length - 1 ? "md:border-r border-gray-200/70" : ""
-                                    }`}
+                                className={`group flex flex-col items-center justify-center py-10 px-6 cursor-default relative transition-all duration-300 hover:-translate-y-1 ${idx !== metrics.length - 1 ? "border-r border-[#1C2B4A]/[0.07]" : ""}`}
+                                style={{ borderRadius: idx === 0 ? "20px 0 0 20px" : idx === metrics.length - 1 ? "0 20px 20px 0" : "" }}
                             >
-                                {/* Circular Outline Icon Container */}
-                                <div className="w-14 h-14 rounded-full bg-[#FFF1EA] border border-[#FFD7C5] text-[#FF6D29] flex items-center justify-center mb-5 transition-transform duration-300 hover:scale-110">
-                                    <Icon size={24} strokeWidth={1.75} />
+                                {/* Icon */}
+                                <div
+                                    className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110"
+                                    style={{
+                                        background: "linear-gradient(135deg, #2E6B9E15, #1C4E8020)",
+                                        border: "1px solid rgba(46,107,158,0.15)",
+                                    }}
+                                >
+                                    <Icon size={20} strokeWidth={1.75} style={{ color: "#2E6B9E" }} />
                                 </div>
 
-                                {/* Metric Value with Counter */}
-                                <div className="flex items-center justify-center gap-1">
-                                    <h3 className="text-3xl md:text-4xl font-extrabold text-[#161316] tracking-tight">
-                                        <Counter value={item.value} />
-                                    </h3>
-                                    {item.hasRatingStar}
-                                </div>
+                                {/* Number */}
+                                <h3
+                                    className="text-4xl md:text-5xl font-black tracking-tight leading-none mb-2"
+                                    style={{ color: "#1C2B4A" }}
+                                >
+                                    <Counter value={item.value} />
+                                </h3>
 
-                                {/* Metric Label */}
-                                <p className="mt-2 text-xs md:text-sm text-[#52525b] font-semibold leading-relaxed">
+                                {/* Label */}
+                                <p
+                                    className="text-[10px] font-bold uppercase tracking-[0.18em]"
+                                    style={{ color: "#7A8BA0" }}
+                                >
                                     {item.label}
                                 </p>
 
-                                {/* Orange Segment Accent Underline */}
-
+                                {/* Hover underline */}
+                                <div
+                                    className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 group-hover:w-10 rounded-full transition-all duration-500"
+                                    style={{ background: "linear-gradient(90deg, #2E6B9E, #1C4E80)" }}
+                                />
                             </motion.div>
                         );
                     })}
-                </div>
+                </motion.div>
 
-                {/* Bottom Available On Pill Banner */}
+                {/* Available On */}
                 <motion.div
-                    initial={{ opacity: 0, y: 25 }}
+                    initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
                     viewport={{ once: true }}
-                    className="w-full max-w-4xl mx-auto mt-8 bg-[#FFF6F1]/60 border border-[#FFEBE0]/40 rounded-full py-4 px-6 md:px-10 flex items-center justify-center md:justify-between flex-wrap gap-4 shadow-[0_4px_16px_rgba(255,109,41,0.02)]"
+                    className="flex items-center justify-center md:justify-between flex-wrap gap-5"
+                    style={{
+                        background: "rgba(255,255,255,0.45)",
+                        backdropFilter: "blur(10px)",
+                        borderRadius: "16px",
+                        border: "1px solid rgba(28,43,74,0.08)",
+                        padding: "14px 36px",
+                        boxShadow: "0 2px 16px rgba(28,43,74,0.04)",
+                    }}
                 >
-                    {/* Left Text Label */}
-                    <div className="flex items-center gap-4">
-                        <span className="text-[13px] md:text-sm font-extrabold uppercase tracking-wider text-gray-700">
-                            Available On
-                        </span>
-                        <div className="hidden md:block h-5 w-[1px] bg-gray-200"></div>
-                    </div>
+                    <span
+                        className="text-[10px] font-black uppercase tracking-[0.28em]"
+                        style={{ color: "#7A8BA0" }}
+                    >
+                        Available On
+                    </span>
 
-                    {/* Right Brand Logos */}
-                    <div className="flex items-center gap-6 md:gap-8 flex-wrap justify-center">
-                        {/* Amazon Logo */}
-                        <div className="relative w-[130px] h-[60px] transition-transform hover:scale-105">
-                            <Image
-                                src="/Logo/amazon.webp"
-                                alt="Amazon"
-                                fill
-                                className="object-contain scale-[1.5]"
-                            />
+                    <div className="hidden md:block h-5 w-px" style={{ background: "rgba(28,43,74,0.12)" }} />
+
+                    <div className="flex items-center gap-8">
+                        <div className="relative w-[120px] h-[46px] opacity-80 hover:opacity-100 transition-opacity duration-300">
+                            <Image src="/Logo/amazon.webp" alt="Amazon" fill className="object-contain scale-[1.4]" />
                         </div>
-
-                        {/* Flipkart Logo */}
-                        <div className="relative w-[130px] h-[60px] transition-transform hover:scale-105">
-                            <Image
-                                src="/Logo/FLIPKART_Webp.webp"
-                                alt="Flipkart"
-                                fill
-                                className="object-contain"
-                            />
+                        <div className="relative w-[120px] h-[46px] opacity-80 hover:opacity-100 transition-opacity duration-300">
+                            <Image src="/Logo/FLIPKART_Webp.webp" alt="Flipkart" fill className="object-contain" />
                         </div>
                     </div>
                 </motion.div>

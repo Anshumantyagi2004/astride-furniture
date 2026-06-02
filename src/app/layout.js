@@ -1,9 +1,9 @@
 import { Forum } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import Navbar2 from "@/components/Home/Navbar2";
 import Footer from "@/components/Main/Footer/Footer";
 import SideMenuAddToCart from "@/components/Main/SideMenuAddToCart";
+import Navbar from "@/components/Main/Navbar/Navbar";
 
 const forum = Forum({
   subsets: ["latin"],
@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={forum.variable}>
       <body className="min-h-screen overflow-x-clip max-w-[100vw]">
-        <Navbar2/>
+        <Navbar/>
         {children}
         <Toaster position="top-center" />
         <SideMenuAddToCart />

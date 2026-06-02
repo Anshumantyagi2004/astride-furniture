@@ -45,18 +45,29 @@ export default function SideMenuAddToCart() {
       const customEvent = e as CustomEvent<CartItem>;
       const newItem = customEvent.detail;
 
-      setCartItems((prevItems) => {
-        const existingItemIndex = prevItems.findIndex((item) => item.id.toString() === newItem.id.toString());
-        let updatedItems;
-        if (existingItemIndex > -1) {
-          updatedItems = [...prevItems];
-          updatedItems[existingItemIndex].quantity += newItem.quantity || 1;
-        } else {
-          updatedItems = [...prevItems, { ...newItem, quantity: newItem.quantity || 1 }];
+      const savedCart = localStorage.getItem('astride_cart');
+      let currentItems: CartItem[] = [];
+      if (savedCart) {
+        try {
+          currentItems = JSON.parse(savedCart);
+        } catch (e) {
+          console.error(e);
         }
-        localStorage.setItem('astride_cart', JSON.stringify(updatedItems));
-        return updatedItems;
-      });
+      }
+
+      const existingItemIndex = currentItems.findIndex((item) => item.id.toString() === newItem.id.toString());
+      let updatedItems: CartItem[];
+      if (existingItemIndex > -1) {
+        updatedItems = [...currentItems];
+        updatedItems[existingItemIndex] = {
+          ...updatedItems[existingItemIndex],
+          quantity: updatedItems[existingItemIndex].quantity + (newItem.quantity || 1)
+        };
+      } else {
+        updatedItems = [...currentItems, { ...newItem, quantity: newItem.quantity || 1 }];
+      }
+
+      saveCart(updatedItems);
 
       // Open side menu with slight delay to ensure state updates
       setTimeout(() => {
@@ -130,7 +141,7 @@ export default function SideMenuAddToCart() {
 
       {/* Floating Cart Sidebar Panel */}
       <div 
-        className="cart-sidebar-panel fixed top-4 right-4 bottom-4 w-full max-w-[420px] bg-white rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transform translate-x-[105%]"
+        className="cart-sidebar-panel fixed top-0 right-0 bottom-0 md:top-4 md:right-4 md:bottom-4 w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transform translate-x-[105%]"
         style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
       >
         {/* Header section */}

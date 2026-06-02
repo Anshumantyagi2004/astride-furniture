@@ -146,7 +146,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
       `}</style>
 
       <div
-        className="relative w-full h-[85vh] overflow-hidden flex flex-col justify-between select-none local-metallic-bg py-6"
+        className="relative w-full h-[70vh] md:h-[85vh] overflow-hidden flex flex-col justify-between select-none local-metallic-bg py-6"
         style={{
           fontFamily: "'Inter', sans-serif",
         }}
@@ -161,7 +161,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
         />
 
         {/* ── Stacked Horizontal Rows (With wide spacing away from central content card) ── */}
-        <div className="absolute inset-y-0 left-0 right-0 flex flex-col justify-between pt-1 pb-1 pointer-events-auto z-5 overflow-visible">
+        <div className="absolute inset-y-0 left-0 right-0 flex flex-col justify-between pt-3 pb-3 md:pt-1 md:pb-1 pointer-events-auto z-5 overflow-visible">
           
           {/* Row 1: Top (Left to Right, Seamless) */}
           <div className="w-full overflow-visible py-4 marquee-container">

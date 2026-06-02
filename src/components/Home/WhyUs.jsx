@@ -13,204 +13,110 @@ export default function WhyUs() {
 
     const features = [
         {
-            icon: <ShieldCheck size={28} strokeWidth={2.2} />,
+            icon: <ShieldCheck size={28} strokeWidth={2} />,
             title: "Premium Quality",
-            desc: "Crafted using durable premium materials with modern finishing and long-lasting comfort.",
+            desc: "Crafted using durable premium materials with modern finishing and long-lasting comfort that stands the test of time.",
+            stat: "ISO Certified",
         },
         {
-            icon: <HeartHandshake size={28} strokeWidth={2.2} />,
+            icon: <HeartHandshake size={28} strokeWidth={2} />,
             title: "Trusted By Customers",
-            desc: "Loved by thousands of customers for elegant design, comfort, and everyday usability.",
+            desc: "Loved by thousands of professionals for elegant design, ergonomic comfort, and everyday usability.",
+            stat: "50,000+ Users",
         },
         {
-            icon: <Sparkles size={28} strokeWidth={2.2} />,
+            icon: <Sparkles size={28} strokeWidth={2} />,
             title: "Luxury Aesthetics",
-            desc: "Minimal modern styling designed to elevate every workspace and interior effortlessly.",
+            desc: "Minimal modern styling curated to elevate every workspace and interior effortlessly with a timeless look.",
+            stat: "Award-Winning Design",
         },
         {
-            icon: <Armchair size={28} strokeWidth={2.2} />,
+            icon: <Armchair size={28} strokeWidth={2} />,
             title: "Ergonomic Comfort",
-            desc: "Smart ergonomic support that improves posture and reduces fatigue during long hours.",
+            desc: "Research-backed ergonomic support that improves posture, enhances focus, and reduces fatigue during long hours.",
+            stat: "5-Year Warranty",
         },
     ];
 
     return (
-        <section className="relative py-10 bg-[#F8F5F1] overflow-hidden">
+        <section className="relative py-8 bg-[#F8F9FA] overflow-hidden">
 
-            {/* BACKGROUND */}
-            <div className="absolute inset-0 overflow-hidden">
-
-                <div className="absolute top-[-120px] left-[-120px] w-[350px] h-[350px] bg-[#FF6D29]/10 blur-[120px] rounded-full"></div>
-
-                <div className="absolute bottom-[-100px] right-[-100px] w-[320px] h-[320px] bg-[#453027]/10 blur-[120px] rounded-full"></div>
-
+            {/* BACKGROUND — subtle blue/slate blobs, no orange */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-80px] left-[-80px] w-[360px] h-[360px] bg-slate-200/40 blur-[130px] rounded-full" />
+                <div className="absolute bottom-[-80px] right-[-80px] w-[320px] h-[320px] bg-blue-100/20 blur-[120px] rounded-full" />
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 relative z-0">
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+
+                {/* HEADER */}
                 <motion.div
-                    initial={{ opacity: 0, y: 40 }}
+                    initial={{ opacity: 0, y: 36 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                     viewport={{ once: true }}
-                    className="text-center max-w-3xl mx-auto"
+                    className="text-center max-w-3xl mx-auto mb-8"
                 >
-
-                    <span
-                        className="
-              text-[#FF6D29]
-              text-
-              font-bold
-              tracking-[0.18em]
-              uppercase
-            "
-                    >
-                        Why Choose Us
-                    </span>
-
-                    <h2 className="mt-2 text-4xl sm:text-5xl lg:text-6xl font-semibold text-[#161316] leading-[1.1]">
-                        Designed For
-                        <span className="text-[#FF6D29]"> Modern Living</span>
+                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#161316] leading-[1.08] tracking-tight">
+                        Designed For{" "}
+                        <span className="bg-gradient-to-r from-slate-700 to-slate-500 bg-clip-text text-transparent">
+                            Modern Living
+                        </span>
                     </h2>
 
-                    <p className="mt-4 text-[#6B7280] text-base sm:text-lg leading-relaxed">
-                        We combine premium craftsmanship, ergonomic comfort,
-                        and contemporary aesthetics to create chairs that
-                        enhance both productivity and lifestyle.
+                    <p className="mt-5 text-slate-500 text-base sm:text-lg leading-relaxed max-w-xl mx-auto">
+                        We combine premium craftsmanship, ergonomic comfort, and
+                        contemporary aesthetics to create chairs that enhance both
+                        productivity and lifestyle.
                     </p>
                 </motion.div>
 
                 {/* FEATURE CARDS */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-10">
-
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
                     {features.map((item, index) => (
-
                         <motion.div
                             key={index}
-                            initial={{
-                                opacity: 0,
-                                y: 50,
-                            }}
-                            whileInView={{
-                                opacity: 1,
-                                y: 0,
-                            }}
-                            // transition={{
-                            //     duration: 0.2,
-                            //     delay: index * 0.2,
-                            // }}
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: index * 0.08 }}
                             viewport={{ once: true }}
-                            whileHover={{
-                                y: -10,
-                            }}
-                            className="
-                group
-                relative
-                rounded-[30px]
-                border
-                border-[#E8DDD5]
-                bg-white/80
-                backdrop-blur-xl
-                p-8
-                overflow-hidden
-                transition-all
-                duration-500
-                hover:border-[#FF6D29]
-                hover:shadow-[0_20px_60px_rgba(255,109,41,0.12)]
-              "
+                            whileHover={{ y: -8 }}
+                            className="group relative rounded-[22px] md:rounded-[28px] border border-slate-200/70 bg-white p-4 md:p-8 flex flex-row items-center gap-4 md:block overflow-hidden transition-all duration-400 hover:border-slate-300 hover:shadow-[0_16px_48px_rgba(15,23,42,0.06)] cursor-default"
                         >
+                            {/* CARD GLASSY TOP HIGHLIGHT */}
+                            <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
 
                             {/* TOP NUMBER */}
-                            <span
-                                className="
-                  absolute
-                  top-10
-                  right-10
-                  text-5xl
-                  font-semibold
-                  text-[#161316]/50
-                  group-hover:text-[#FF6D29]/100
-
-                  transition-all
-                  duration-500
-                "
-                            >
-                                {index + 1}
+                            <span className="absolute top-7 right-8 text-5xl font-black text-slate-100 group-hover:text-slate-200 transition-colors duration-500 select-none leading-none hidden md:block">
+                                {String(index + 1).padStart(2, "0")}
                             </span>
 
-                            {/* ICON */}
-                            <div
-                                className="
-                  relative
-                  w-16
-                  h-16
-                  rounded-2xl
-                  bg-[#FFF1EA]
-                  border
-                  border-[#FFD8C7]
-                  flex
-                  items-center
-                  justify-center
-                  text-[#FF6D29]
-                  transition-all
-                  duration-500
-                  group-hover:bg-[#FF6D29]
-                  group-hover:text-white
-                  group-hover:scale-110
-                "
-                            >
-
-                                <div className="absolute inset-0 rounded-2xl bg-[#FF6D29]/20 blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-
-                                <div className="relative z-10">
-                                    {item.icon}
-                                </div>
+                            {/* ICON BOX */}
+                            <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 transition-all duration-400 group-hover:bg-slate-800 group-hover:text-white group-hover:border-slate-800 group-hover:scale-105 shadow-sm flex-shrink-0">
+                                {/* subtle inner glow on hover */}
+                                <div className="absolute inset-0 rounded-2xl bg-slate-900/0 group-hover:bg-slate-900/10 blur-md transition-all duration-500" />
+                                <div className="relative z-10">{item.icon}</div>
                             </div>
 
                             {/* CONTENT */}
-                            <div className="mt-8 relative z-10">
-
-                                <h3 className="text-2xl font-semibold text-[#161316] leading-snug">
+                            <div className="mt-0 md:mt-7 relative z-10 flex-grow">
+                                <h3 className="text-base md:text-xl font-bold text-[#161316] leading-snug tracking-tight">
                                     {item.title}
                                 </h3>
 
-                                <p className="mt-4 text-[#6B7280] leading-relaxed text-[15px]">
+                                <p className="hidden md:block mt-3 text-slate-500 leading-relaxed text-[14px]">
                                     {item.desc}
                                 </p>
 
+                                {/* STAT PILL */}
+                                <div className="hidden md:inline-flex mt-5 items-center gap-1.5 bg-slate-50 border border-slate-200/80 text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0" />
+                                    {item.stat}
+                                </div>
                             </div>
 
-                            {/* BOTTOM BAR */}
-                            <div
-                                className="
-                  absolute
-                  bottom-0
-                  left-0
-                  h-[3px]
-                  w-0
-                  bg-[#FF6D29]
-                  group-hover:w-full
-                  transition-all
-                  duration-500
-                "
-                            ></div>
-
-                            {/* HOVER GLOW */}
-                            <div
-                                className="
-                  absolute
-                  -bottom-20
-                  -right-20
-                  w-40
-                  h-40
-                  bg-[#FF6D29]/10
-                  blur-3xl
-                  opacity-0
-                  group-hover:opacity-100
-                  transition-all
-                  duration-700
-                "
-                            ></div>
-
+                            {/* BOTTOM ACCENT BAR */}
+                            <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-slate-800 group-hover:w-full transition-all duration-500 rounded-full" />
                         </motion.div>
                     ))}
                 </div>

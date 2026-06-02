@@ -15,7 +15,7 @@ const PRODUCTS = [
     originalPrice: 29999,
     discount: "-60%",
     image: "/Png1/chair12_ErgoFit.webp",
-    category: "Ergonomic Chairs",
+    category: "Gaming Chair",
     backSupport: "High Back",
     height: "5'7\" - 6'6\"",
     hours: "8+ Hours",
@@ -30,7 +30,7 @@ const PRODUCTS = [
     originalPrice: 32999,
     discount: "-60%",
     image: "/Png1/Chair7_Delton.webp",
-    category: "Ergonomic Chairs",
+    category: "Gaming Chair",
     backSupport: "High Back",
     height: "5'2\" - 5'10\"",
     hours: "8+ Hours",
@@ -45,7 +45,7 @@ const PRODUCTS = [
     originalPrice: 35999,
     discount: "-57%",
     image: "/Png1/chair4_ACE.webp",
-    category: "Office Task Chair",
+    category: "Executive Chair",
     backSupport: "High Back",
     height: "5'7\" - 6'6\"",
     hours: "8+ Hours",
@@ -60,7 +60,7 @@ const PRODUCTS = [
     originalPrice: 29999,
     discount: "-58%",
     image: "/Png1/chair5_AIRSENSE.webp",
-    category: "Office Task Chair",
+    category: "Executive Chair",
     backSupport: "High Back",
     height: "4'11\" - 5'10\"",
     hours: "6-8 Hours",
@@ -75,7 +75,7 @@ const PRODUCTS = [
     originalPrice: 39999,
     discount: "-60%",
     image: "/Png1/chair6_AlphaGrey.webp",
-    category: "Bar Stools",
+    category: "Staff Chair",
     backSupport: "High Back",
     height: "5'7\" - 6'6\"",
     hours: "8+ Hours",
@@ -90,7 +90,7 @@ const PRODUCTS = [
     originalPrice: 42999,
     discount: "-59%",
     image: "/Png1/Chair6a_Amica Black .webp",
-    category: "Bar Stools",
+    category: "Study Chair",
     backSupport: "High Back",
     height: "5'7\" - 6'6\"",
     hours: "8+ Hours",
@@ -100,7 +100,7 @@ const PRODUCTS = [
   },
 ];
 
-const TABS = ["All Products", "Bar Stools", "Ergonomic Chairs", "Office Task Chair"];
+const TABS = ["All Products", "Gaming Chair", "Executive Chair", "Staff Chair", "Study Chair", "Bar Stool"];
 
 export default function ProductPageHome() {
   const [productsList, setProductsList] = useState(PRODUCTS);
@@ -123,14 +123,20 @@ export default function ProductPageHome() {
               : 60;
             
             // Normalize Category string to match frontend TABS
-            let normalizedCategory = "Ergonomic Chairs";
+            let normalizedCategory = "Gaming Chair";
             const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
-            if (dbCategory.includes("BAR")) {
-              normalizedCategory = "Bar Stools";
-            } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK")) {
-              normalizedCategory = "Office Task Chair";
-            } else if (dbCategory.includes("GAME") || dbCategory.includes("GAMING") || dbCategory.includes("ERGO")) {
-              normalizedCategory = "Ergonomic Chairs";
+            if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
+              normalizedCategory = "Gaming Chair";
+            } else if (dbCategory.includes("EXECUTIVE")) {
+              normalizedCategory = "Executive Chair";
+            } else if (dbCategory.includes("STAFF")) {
+              normalizedCategory = "Staff Chair";
+            } else if (dbCategory.includes("STUDY")) {
+              normalizedCategory = "Study Chair";
+            } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) {
+              normalizedCategory = "Bar Stool";
+            } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
+              normalizedCategory = "Executive Chair";
             }
 
             return {
@@ -228,7 +234,7 @@ export default function ProductPageHome() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-black mb-5">
-            {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory === "Ergonomic Chairs" ? "Ergonomic Gaming Series" : selectedCategory === "Bar Stools" ? "Premium Bar Stools" : "Office Task Chair"}
+            {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory === "Gaming Chair" ? "Gaming Series" : selectedCategory === "Executive Chair" ? "Executive Series" : selectedCategory === "Staff Chair" ? "Staff Series" : selectedCategory === "Study Chair" ? "Study Series" : "Premium Bar Stools"}
           </h1>
           <p className="max-w-3xl mx-auto text-sm md:text-base text-neutral-500 leading-relaxed font-medium">
             Discover Astride's premium ergonomics — masterfully engineered seating built for long-session endurance, proactive posture correction, adjustable support components, and premium styling.

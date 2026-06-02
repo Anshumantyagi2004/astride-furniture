@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1052.0",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "axios": "^1.16.1",
     "framer-motion": "^12.39.0",
     "gsap": "^3.15.0",
@@ -23,7 +25,8 @@
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.6.0",
     "styled-components": "^6.4.2",
-    "swiper": "^12.1.4"
+    "swiper": "^12.1.4",
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
