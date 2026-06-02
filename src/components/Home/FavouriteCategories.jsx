@@ -230,19 +230,21 @@ export default function FavouriteCategories() {
         <section className="w-full py-16 bg-[#F8F9FA] overflow-hidden">
 
             <div className="max-w-7xl mx-auto px-6">
-                <div className="text-center mb-10">
-                    <span className="inline-flex items-center text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-[0.25em]">
+                <div className="flex flex-col items-start text-left mb-4">
+                    <span className="inline-flex items-center text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2">
                         Explore Collections
                     </span>
-
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#161316] leading-tight mt-2 tracking-tight">
-                        Our Favourite Categories
-                    </h2>
-                    <div className="w-16 h-[3px] bg-slate-800 mx-auto mt-3 rounded-full"></div>
+                    <div 
+                        className="text-5xl sm:text-6xl lg:text-[4.5rem] font-black uppercase leading-[0.85] tracking-tighter"
+                        style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+                    >
+                        <span className="block text-[#161316]">TRENDING</span>
+                        <span className="block text-transparent [-webkit-text-stroke:2px_#18181b]">NOW</span>
+                    </div>
                 </div>
 
                 {/* Fluid active tab switcher */}
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 bg-gray-100 rounded-full max-w-2xl mx-auto mt-8 border border-gray-200/50">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 bg-gray-100 rounded-full max-w-2xl mx-auto mt-4 border border-gray-200/50">
                     {Object.keys(categories).map((category) => (
                         <button
                             key={category}

@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 import {
     Heart,
@@ -108,19 +109,40 @@ export default function BestSellerSection() {
             <div className="relative z-10 lg:px-15 md:px-10 px-6">
                 
                 {/* SECTION HEADER */}
-                <div className="text-center mb-8 relative">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 relative">
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6 }}
-                        className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-zinc-900 tracking-tight"
+                        className="flex flex-col"
                     >
-                        Best Selling <br />
-                        <span className="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-600 bg-clip-text text-transparent">
-                            Ergonomic Chairs
-                        </span>
-                    </motion.h2>
+                        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-zinc-900 tracking-wider uppercase leading-none [-webkit-text-stroke:2.5px_#18181b]">
+                            Best Selling
+                        </h2>
+                        <div className="flex items-center gap-3 sm:gap-4 mt-2">
+                            <span className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-wide text-transparent [-webkit-text-stroke:2.5px_#18181b] uppercase leading-none">
+                                Chairs
+                            </span>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <Link 
+                            href="/products" 
+                            className="group inline-flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 rounded-full border border-zinc-900 text-zinc-900 font-bold uppercase tracking-wider text-xs md:text-sm hover:bg-zinc-900 hover:text-white transition-all duration-300 shadow-sm"
+                        >
+                            All Products
+                            <svg className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </Link>
+                    </motion.div>
                 </div>
 
                 {/* PRODUCTS GRID */}
