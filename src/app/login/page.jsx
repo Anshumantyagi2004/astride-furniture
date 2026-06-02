@@ -12,16 +12,12 @@ import {
 } from "lucide-react";
 
 import { motion } from "framer-motion";
-import Navbar from "@/components/Main/Navbar/Navbar";
-import Footer from "@/components/Main/Footer/Footer";
 
 export default function Page() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
-  return (<>
-    <Navbar />
-
+  return (
     <div className="min-h-screen bg-[#f4f7fb] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-5xl bg-white rounded-[35px] overflow-hidden shadow-2xl grid lg:grid-cols-2">
         <div className="hidden lg:flex relative bg-[#00badb] p-12 flex-col justify-between text-white overflow-hidden">
@@ -196,7 +192,5 @@ export default function Page() {
         </div>
       </div>
     </div>
-
-    <Footer />
-  </>);
+  );
 }

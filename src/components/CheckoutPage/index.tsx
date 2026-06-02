@@ -21,6 +21,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setIsMounted(true);
+    window.scrollTo(0, 0);
     const savedCart = localStorage.getItem('astride_cart');
     if (savedCart) {
       try {
@@ -122,7 +123,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <div className="pt-4">
+                <div className="pt-4 hidden md:block">
                   <button 
                     type="button"
                     onClick={(e) => { e.preventDefault(); alert('Order Placed Successfully!'); }}
@@ -188,6 +189,17 @@ export default function CheckoutPage() {
                         ₹{(subtotal + (subtotal > 0 ? shippingCost : 0)).toLocaleString()}
                       </span>
                     </div>
+                  </div>
+
+                  {/* Place Order Button - mobile only */}
+                  <div className="pt-2 md:hidden">
+                    <button 
+                      type="button"
+                      onClick={(e) => { e.preventDefault(); alert('Order Placed Successfully!'); }}
+                      className="w-full bg-black text-white py-4 rounded-xl font-bold text-base hover:bg-[#111111] transition-colors active:scale-[0.99] shadow-lg shadow-black/20"
+                    >
+                      Place Order
+                    </button>
                   </div>
                 </div>
               )}

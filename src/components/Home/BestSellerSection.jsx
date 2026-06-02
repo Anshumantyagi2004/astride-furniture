@@ -1,13 +1,12 @@
 "use client";
 
+import React from "react";
 import Image from "next/image";
 
 import {
     Heart,
     Eye,
-    ShoppingBag,
     Star,
-    ArrowRight,
     Sparkles,
 } from "lucide-react";
 
@@ -20,204 +19,210 @@ const products = [
         name: "ErgoFit Chair",
         price: "₹12,999",
         oldPrice: "₹21,999",
-        image: "/Product/1.webp",
+        image: "/Png1/chair4_ACE.webp",
         rating: 5,
         discount: "30% OFF",
+        tag: "Best Seller",
     },
     {
         id: 2,
         name: "Alpha Brown Chair",
         price: "₹15,499",
         oldPrice: "₹24,999",
-        image: "/Product/AlphaBrown_8.webp",
+        image: "/Png1/Chair7_Delton.webp",
         rating: 4,
         discount: "20% OFF",
+        tag: "Premium Choice",
     },
     {
         id: 3,
         name: "Luxury Gaming Chair",
         price: "₹18,999",
         oldPrice: "₹28,999",
-        image: "/Product/Infographic-6.webp",
+        image: "/Png1/chair11_octave.webp",
         rating: 5,
         discount: "35% OFF",
+        tag: "Top Rated",
     },
     {
         id: 4,
         name: "Modern Office Chair",
         price: "₹11,999",
         oldPrice: "₹18,999",
-        image: "/Product/InfographicDesign-1.webp",
+        image: "/Png1/chair6_AlphaGrey.webp",
         rating: 4,
         discount: "25% OFF",
+        tag: "Ergonomic Focus",
     },
     {
         id: 5,
         name: "Executive Chair",
         price: "₹19,999",
         oldPrice: "₹31,999",
-        image: "/Product/1.webp",
+        image: "/Png1/chair4_ACE.webp",
         rating: 5,
         discount: "40% OFF",
+        tag: "Luxury Tier",
     },
     {
         id: 6,
         name: "Comfort Pro Chair",
         price: "₹13,499",
         oldPrice: "₹22,999",
-        image: "/Product/AlphaBrown_8.webp",
+        image: "/Png1/Chair7_Delton.webp",
         rating: 4,
         discount: "18% OFF",
+        tag: "Popular",
     },
     {
         id: 7,
         name: "Premium Desk Chair",
         price: "₹14,999",
         oldPrice: "₹25,999",
-        image: "/Product/Infographic-6.webp",
+        image: "/Png1/chair11_octave.webp",
         rating: 5,
         discount: "28% OFF",
+        tag: "New Arrival",
     },
     {
         id: 8,
         name: "Elite Workspace Chair",
         price: "₹17,499",
         oldPrice: "₹27,999",
-        image: "/Product/InfographicDesign-1.webp",
+        image: "/Png1/chair6_AlphaGrey.webp",
         rating: 5,
         discount: "32% OFF",
+        tag: "Special Edition",
     },
 ];
 
 export default function BestSellerSection() {
     return (
-        <section className="relative overflow-hidden bg-[#F6F3F1] py-10">
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-20 left-[-120px] w-[420px] h-[420px] bg-[#FF6D29]/20 rounded-full blur-[120px]" />
-
-                <div className="absolute bottom-[-150px] right-[-120px] w-[420px] h-[420px] bg-[#453027]/20 rounded-full blur-[140px]" />
+        <section className="relative overflow-hidden bg-zinc-50 py-10">
+            {/* Soft, luxurious grey/white radial background flares */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-20 left-[-150px] w-[500px] h-[500px] bg-zinc-200/40 rounded-full blur-[140px]" />
+                <div className="absolute bottom-[-150px] right-[-150px] w-[500px] h-[500px] bg-white rounded-full blur-[120px]" />
             </div>
 
-            <div className="relative z-10 lg:px-15 md:px-10 px-4">
-                <div className="text-center mb-5">
+            <div className="relative z-10 lg:px-15 md:px-10 px-6">
+                
+                {/* SECTION HEADER */}
+                <div className="text-center mb-8 relative">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#161316] leading-"
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                        className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-zinc-900 tracking-tight"
                     >
                         Best Selling <br />
-
-                        <span className="bg-gradient-to-r from-[#FF6D29] to-[#453027] bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-600 bg-clip-text text-transparent">
                             Ergonomic Chairs
                         </span>
                     </motion.h2>
                 </div>
 
-                {/* PRODUCTS */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+                {/* PRODUCTS GRID */}
+                <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-8">
                     {products.map((product, index) => (
                         <motion.div
                             key={product.id}
-                            initial={{ opacity: 0, y: 70 }}
+                            initial={{ opacity: 0, y: 50 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.2, delay: index * 0.02, }}
+                            transition={{ duration: 0.5, delay: index * 0.05 }}
                             viewport={{ once: true }}
-                            whileHover={{ y: -10, }}
-                            className="group relative rounded-xl border border-[#453027]/10 bg-white/70 backdrop-blur-xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_60px_rgba(255,109,41,0.18)] transition-all duration-500"
+                            whileHover={{ y: -8 }}
+                            className="group relative rounded-2xl md:rounded-3xl border border-zinc-200/80 bg-white/80 backdrop-blur-md overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:border-zinc-400 transition-all duration-300 cursor-pointer"
                         >
-                            <div className="absolute top-2 left-2 z-20">
-                                <div className="px-4 py-2 rounded-full bg-gradient-to-r from-[#FF6D29] to-[#ff8b55] text-white text-xs font-bold shadow-[0_8px_20px_rgba(255,109,41,0.35)]">
-                                    {product.discount} OFF
+                            {/* SALE / DISCOUNT BADGE */}
+                            <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20 flex flex-col gap-1 md:gap-2">
+                                <div className="px-2 py-1 md:px-3.5 md:py-1.5 rounded-full bg-zinc-900 text-white text-[8px] md:text-[11px] font-bold tracking-wider shadow-sm uppercase">
+                                    {product.discount}
+                                </div>
+                                <div className="hidden md:block px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-zinc-200 text-zinc-700 text-[10px] font-semibold tracking-wide shadow-sm">
+                                    {product.tag}
                                 </div>
                             </div>
 
-                            <div className="absolute top-2 right-2 z-20 flex flex-col gap-3 opacity-0 group-hover:opacity-100 translate-x-5 group-hover:translate-x-0 transition-all duration-500">
-                                <button className="w-11 h-11 rounded-full border border-[#453027]/10 bg-white text-[#161316] hover:bg-[#FF6D29] hover:text-white flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110">
-                                    <Heart size={18} />
+                            {/* QUICK ACTION BUTTONS */}
+                            <div className="hidden md:flex absolute top-4 right-4 z-20 flex-col gap-2.5 opacity-0 group-hover:opacity-100 translate-x-3 group-hover:translate-x-0 transition-all duration-300">
+                                <button className="w-10 h-10 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110">
+                                    <Heart size={16} />
                                 </button>
 
-                                <button className="w-11 h-11 rounded-full border border-[#453027]/10 bg-white text-[#161316] hover:bg-[#453027] hover:text-white flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110">
-                                    <Eye size={18} />
+                                <button className="w-10 h-10 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110">
+                                    <Eye size={16} />
                                 </button>
                             </div>
 
-                            <div className="relative h-[280px] flex items-center justify-center overflow-hidden">
-                                <div className="absolute w-[250px] h-[250px] bg-[#FF6D29]/10 rounded-full blur-[90px] opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                            {/* PRODUCT IMAGE CONTAINER */}
+                            <div className="relative h-[160px] md:h-[290px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-50/50 to-transparent">
+                                {/* Subtle white/grey inner glow on hover */}
+                                <div className="absolute w-[120px] h-[120px] md:w-[200px] md:h-[200px] bg-zinc-100 rounded-full blur-[80px] opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                                
                                 <motion.div
-                                    whileHover={{ scale: 1.05, }}
+                                    whileHover={{ scale: 1.04 }}
                                     transition={{ duration: 0.3 }}
-                                    className="relative z-10"
+                                    className="relative z-10 p-3 md:p-6 w-full h-[130px] md:h-[230px] flex items-center justify-center"
                                 >
-                                    <Image
+                                    <img
                                         src={product.image}
                                         alt={product.name}
-                                        width={500}
-                                        height={500}
-                                        className="w-full h-[250px] object-contain drop-shadow-[0_25px_50px_rgba(255,109,41,0.30)] group-hover:drop-shadow-[0_35px_65px_rgba(255,109,41,0.45)] transition-all duration-500"
+                                        className="w-full h-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.08)] group-hover:drop-shadow-[0_25px_40px_rgba(0,0,0,0.12)] transition-all duration-500"
                                     />
                                 </motion.div>
                             </div>
 
-                            <div className="px-6 pt-2 pb-4">
+                            {/* PRODUCT DETAILS */}
+                            <div className="px-3 md:px-6 pt-2 md:pt-3 pb-3 md:pb-6 relative">
+                                
                                 {/* TITLE */}
-                                <h3 className="text-[22px] font-semibold text-[#161316] group-hover:text-[#FF6D29] transition-all duration-300 line-clamp-1">
+                                <h3 className="text-[13px] md:text-xl font-bold text-zinc-900 group-hover:text-zinc-600 transition-all duration-300 line-clamp-1">
                                     {product.name}
                                 </h3>
 
-                                <div className="flex items-center gap-1">
-                                    {[...Array(product.rating)].map((_, i) => (
+                                {/* RATING */}
+                                <div className="flex items-center gap-0.5 md:gap-1 mt-0.5 md:mt-1">
+                                    {[...Array(5)].map((_, i) => (
                                         <Star
                                             key={i}
-                                            size={15}
-                                            className="fill-[#FFB547] text-[#FFB547]"
+                                            size={10}
+                                            className={`md:w-[13px] md:h-[13px] ${
+                                                i < product.rating
+                                                    ? "fill-yellow-500 text-yellow-500"
+                                                    : "fill-zinc-200 text-zinc-200"
+                                            }`}
                                         />
                                     ))}
 
-                                    <span className="text-sm text-[#8B8B8B] ml-1">
+                                    <span className="hidden md:inline text-xs text-zinc-400 ml-1 font-medium">
                                         ({product.rating}.0 Reviews)
                                     </span>
                                 </div>
 
                                 {/* DESCRIPTION */}
-                                <p className="text-[#484848] text-sm mt-1 leading-relaxed">
+                                <p className="hidden md:block text-zinc-500 text-[13px] mt-2.5 leading-relaxed line-clamp-2">
                                     Premium ergonomic chair with breathable mesh,
                                     adjustable comfort, and modern luxury aesthetics.
                                 </p>
 
-                                {/* FEATURES */}
-                                <div className="flex items-center gap-2 flex-wrap mt-2">
-
-                                    <span className="px-3 py-1 rounded-full bg-[#F3F3F3] text-xs text-[#5B5B5B] border border-[#453027]/5">
-                                        Ergonomic
-                                    </span>
-
-                                    <span className="px-3 py-1 rounded-full bg-[#F3F3F3] text-xs text-[#5B5B5B] border border-[#453027]/5">
-                                        Premium
-                                    </span>
-
-                                    <span className="px-3 py-1 rounded-full bg-[#F3F3F3] text-xs text-[#5B5B5B] border border-[#453027]/5">
-                                        Mesh Back
-                                    </span>
-                                </div>
-
-                                {/* PRICE */}
-                                <div className="flex items-end justify-between mt-4">
+                                {/* PRICE AND CART */}
+                                <div className="flex items-end justify-between mt-2 md:mt-5 pt-2 md:pt-4 border-t border-zinc-100">
                                     <div>
-                                        <p className="text-[#8B8B8B] text-sm line-through">
+                                        <p className="text-zinc-400 text-[10px] md:text-xs line-through mb-0 md:mb-0.5">
                                             {product.oldPrice}
                                         </p>
 
-                                        <h4 className="text-3xl font-bold text-[#161316]">
+                                        <h4 className="text-sm md:text-2xl font-black text-zinc-900 tracking-tight">
                                             {product.price}
                                         </h4>
                                     </div>
 
-                                    <div className="absolute bottom-5 right-5 z-20 flex flex-col gap-3 opacity-0 group-hover:opacity-100 translate-x-5 group-hover:translate-x-0 transition-all duration-500">
-                                        <button className="w-11 h-11 rounded-full border border-[#453027]/10 bg-white text-[#161316] hover:bg-[#FF6D29] hover:text-white flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110">
-                                            <BsCartPlus size={20} />
-                                        </button>
-                                    </div>
+                                    {/* CART BUTTON */}
+                                    <button className="w-7 h-7 md:w-11 md:h-11 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md hover:scale-105">
+                                        <BsCartPlus className="w-3.5 h-3.5 md:w-[18px] md:h-[18px]" />
+                                    </button>
                                 </div>
                             </div>
                         </motion.div>

@@ -10,215 +10,215 @@ const categories = {
     "Gaming Chair": [
         {
             id: 1,
-            name: "ErgoFit Pro Chair",
-            image: "/Product/1.webp",
+            name: "Octave Gaming Pro",
+            image: "/Png1/chair11_octave.webp",
         },
         {
             id: 2,
-            name: "Executive Mesh Chair",
-            image: "/Product/AlphaBrown_8.webp",
+            name: "ACE Gaming Edition",
+            image: "/Png1/chair4_ACE.webp",
         },
         {
             id: 3,
-            name: "Comfort Office Chair",
-            image: "/Product/Infographic-6.webp",
+            name: "ErgoFit Ultra Gaming",
+            image: "/Png1/chair12_ErgoFit.webp",
         },
         {
             id: 4,
-            name: "Modern Workspace Chair",
-            image: "/Product/InfographicDesign-1.webp",
+            name: "AlphaGrey Combat",
+            image: "/Png1/chair6_AlphaGrey.webp",
         },
         {
             id: 5,
-            name: "Premium Office Chair",
-            image: "/Product/1.webp",
+            name: "Delton Esports Elite",
+            image: "/Png1/Chair7_Delton.webp",
         },
         {
             id: 6,
-            name: "Ergo Executive",
-            image: "/Product/AlphaBrown_8.webp",
+            name: "Erizo RGB Edition",
+            image: "/Png1/chair8_ERIZO.webp",
         },
         {
             id: 7,
-            name: "Workspace Elite",
-            image: "/Product/Infographic-6.webp",
+            name: "FitWell Gaming Lite",
+            image: "/Png1/chair9_FitWell.webp",
         },
         {
             id: 8,
-            name: "Office Master Chair",
-            image: "/Product/InfographicDesign-1.webp",
+            name: "FitWell Gaming Pro",
+            image: "/Png1/chair10_FitWell.webp",
         },
     ],
 
     "Executive Chair": [
         {
             id: 1,
-            name: "Gaming Beast Chair",
-            image: "/Product/Infographic-6.webp",
+            name: "ErgoFit Premium Executive",
+            image: "/Png1/chair12_ErgoFit.webp",
         },
         {
             id: 2,
-            name: "RGB Gaming Chair",
-            image: "/Product/InfographicDesign-1.webp",
+            name: "Delton High-Back Pro",
+            image: "/Png1/Chair7_Delton.webp",
         },
         {
             id: 3,
-            name: "Pro Gamer Seat",
-            image: "/Product/1.webp",
+            name: "AlphaGrey Executive Mesh",
+            image: "/Png1/chair6_AlphaGrey.webp",
         },
         {
             id: 4,
-            name: "Recliner Gaming Chair",
-            image: "/Product/AlphaBrown_8.webp",
+            name: "Amica Black Classic",
+            image: "/Png1/Chair6a_Amica Black .webp",
         },
         {
             id: 5,
-            name: "Ultra Gaming Chair",
-            image: "/Product/Infographic-6.webp",
+            name: "Gladus Premium Grey",
+            image: "/Png1/Chair6b_Gladus Grey.webp",
         },
         {
             id: 6,
-            name: "Comfort Gamer Chair",
-            image: "/Product/InfographicDesign-1.webp",
+            name: "AirSense Aero Mesh",
+            image: "/Png1/chair5_AIRSENSE.webp",
         },
         {
             id: 7,
-            name: "Elite Gaming Seat",
-            image: "/Product/1.webp",
+            name: "Erizo Ergonomic Mesh",
+            image: "/Png1/chair8_ERIZO.webp",
         },
         {
             id: 8,
-            name: "Turbo Gamer Chair",
-            image: "/Product/AlphaBrown_8.webp",
+            name: "Classic Comfort Director",
+            image: "/Png1/img1 (1).webp",
         },
     ],
 
     "Staff Chair": [
         {
             id: 1,
-            name: "Luxury Bar Stool",
-            image: "/Product/AlphaBrown_8.webp",
+            name: "AirSense Task Chair",
+            image: "/Png1/chair5_AIRSENSE.webp",
         },
         {
             id: 2,
-            name: "Modern Bar Chair",
-            image: "/Product/1.webp",
+            name: "Amica Black Tasker",
+            image: "/Png1/Chair6a_Amica Black .webp",
         },
         {
             id: 3,
-            name: "Wooden Bar Stool",
-            image: "/Product/InfographicDesign-1.webp",
+            name: "Rapid Black Tasker",
+            image: "/Png1/chair6c_Rapid Black .webp",
         },
         {
             id: 4,
-            name: "Premium Counter Stool",
-            image: "/Product/Infographic-6.webp",
+            name: "Delton Staff Comfort",
+            image: "/Png1/Chair7_Delton.webp",
         },
         {
             id: 5,
-            name: "Classic Stool",
-            image: "/Product/AlphaBrown_8.webp",
+            name: "Erizo Staff Mesh",
+            image: "/Png1/chair8_ERIZO.webp",
         },
         {
             id: 6,
-            name: "Elegant Bar Chair",
-            image: "/Product/1.webp",
+            name: "FitWell Basic Staff",
+            image: "/Png1/chair9_FitWell.webp",
         },
         {
             id: 7,
-            name: "Minimal Stool",
-            image: "/Product/InfographicDesign-1.webp",
+            name: "FitWell Pro Staff",
+            image: "/Png1/chair10_FitWell.webp",
         },
         {
             id: 8,
-            name: "Designer Stool",
-            image: "/Product/Infographic-6.webp",
+            name: "ACE Task Support",
+            image: "/Png1/chair4_ACE.webp",
         },
     ],
 
     "Study Chair": [
         {
             id: 1,
-            name: "Luxury Bar Stool",
-            image: "/Product/AlphaBrown_8.webp",
+            name: "Classic Comfort Study",
+            image: "/Png1/img1 (1).webp",
         },
         {
             id: 2,
-            name: "Modern Bar Chair",
-            image: "/Product/1.webp",
+            name: "FitWell Basic Student",
+            image: "/Png1/chair9_FitWell.webp",
         },
         {
             id: 3,
-            name: "Wooden Bar Stool",
-            image: "/Product/InfographicDesign-1.webp",
+            name: "FitWell Pro Study",
+            image: "/Png1/chair10_FitWell.webp",
         },
         {
             id: 4,
-            name: "Premium Counter Stool",
-            image: "/Product/Infographic-6.webp",
+            name: "Octave Studio Student",
+            image: "/Png1/chair11_octave.webp",
         },
         {
             id: 5,
-            name: "Classic Stool",
-            image: "/Product/AlphaBrown_8.webp",
+            name: "ACE Task Study",
+            image: "/Png1/chair4_ACE.webp",
         },
         {
             id: 6,
-            name: "Elegant Bar Chair",
-            image: "/Product/1.webp",
+            name: "AirSense Lite Study",
+            image: "/Png1/chair5_AIRSENSE.webp",
         },
         {
             id: 7,
-            name: "Minimal Stool",
-            image: "/Product/InfographicDesign-1.webp",
+            name: "Erizo Study Mesh",
+            image: "/Png1/chair8_ERIZO.webp",
         },
         {
             id: 8,
-            name: "Designer Stool",
-            image: "/Product/Infographic-6.webp",
+            name: "Gladus Grey Student",
+            image: "/Png1/Chair6b_Gladus Grey.webp",
         },
     ],
 
     "Bar Stool": [
         {
             id: 1,
-            name: "Luxury Bar Stool",
-            image: "/Product/AlphaBrown_8.webp",
+            name: "Zenith Pro Stool",
+            image: "/Png1/chair10_FitWell.webp",
         },
         {
             id: 2,
-            name: "Modern Bar Chair",
-            image: "/Product/1.webp",
+            name: "Apex Bar Stool",
+            image: "/Png1/chair9_FitWell.webp",
         },
         {
             id: 3,
-            name: "Wooden Bar Stool",
-            image: "/Product/InfographicDesign-1.webp",
+            name: "Octave Counter Stool",
+            image: "/Png1/chair11_octave.webp",
         },
         {
             id: 4,
-            name: "Premium Counter Stool",
-            image: "/Product/Infographic-6.webp",
+            name: "Delton High Counter",
+            image: "/Png1/Chair7_Delton.webp",
         },
         {
             id: 5,
-            name: "Classic Stool",
-            image: "/Product/AlphaBrown_8.webp",
+            name: "ACE High Stool",
+            image: "/Png1/chair4_ACE.webp",
         },
         {
             id: 6,
-            name: "Elegant Bar Chair",
-            image: "/Product/1.webp",
+            name: "AirSense High Stool",
+            image: "/Png1/chair5_AIRSENSE.webp",
         },
         {
             id: 7,
-            name: "Minimal Stool",
-            image: "/Product/InfographicDesign-1.webp",
+            name: "AlphaGrey Counter Stool",
+            image: "/Png1/chair6_AlphaGrey.webp",
         },
         {
             id: 8,
-            name: "Designer Stool",
-            image: "/Product/Infographic-6.webp",
+            name: "Erizo Bar Stool",
+            image: "/Png1/chair8_ERIZO.webp",
         },
     ],
 };
@@ -227,40 +227,60 @@ export default function FavouriteCategories() {
     const [activeCategory, setActiveCategory] = useState("Gaming Chair");
 
     return (
-        <section className="w-full py-10 bg-white overflow-hidden">
+        <section className="w-full py-16 bg-[#F8F9FA] overflow-hidden">
 
-            <div className="max-w-7xl mx-auto px-4">
-                <div className="text-center">
-                    <span className="inline-flex items-center text-[#FF6D29] text-xs sm:text-sm font-semibold uppercase tracking-[0.2em]">
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="text-center mb-10">
+                    <span className="inline-flex items-center text-slate-500 text-xs sm:text-sm font-semibold uppercase tracking-[0.25em]">
                         Explore Collections
                     </span>
 
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#161316] leading-tight">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#161316] leading-tight mt-2 tracking-tight">
                         Our Favourite Categories
                     </h2>
-                    <div className="w-24 h-[2px] bg-[#FF6D29] mx-auto mt-2 rounded-full"></div>
+                    <div className="w-16 h-[3px] bg-slate-800 mx-auto mt-3 rounded-full"></div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
+                {/* Fluid active tab switcher */}
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 bg-gray-100 rounded-full max-w-2xl mx-auto mt-8 border border-gray-200/50">
                     {Object.keys(categories).map((category) => (
-                        <motion.button key={category} whileTap={{ scale: 0.95 }}
-                            whileHover={{ y: -2 }} onClick={() => setActiveCategory(category)}
-                            className={`px-6 py-3 rounded-full font-medium transition-all duration-300 border
-                    ${activeCategory === category
-                                    ? "bg-[#161316] text-white border-[#161316] shadow-lg"
-                                    : "bg-white text-[#161316] border-[#E7DDD5] hover:border-[#FF6D29] hover:text-[#FF6D29]"
-                                }`}
+                        <button
+                            key={category}
+                            onClick={() => setActiveCategory(category)}
+                            className="relative px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-300 focus:outline-none"
                         >
-                            {category}
-                        </motion.button>
+                            {activeCategory === category && (
+                                <motion.div
+                                    layoutId="activeCategoryBg"
+                                    className="absolute inset-0 bg-[#161316] rounded-full shadow-sm"
+                                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                                />
+                            )}
+                            <span
+                                className={`relative z-10 transition-colors duration-300 ${
+                                    activeCategory === category ? "text-white" : "text-gray-500 hover:text-gray-900"
+                                }`}
+                            >
+                                {category}
+                            </span>
+                        </button>
                     ))}
                 </div>
 
                 <AnimatePresence mode="wait">
-                    <motion.div key={activeCategory} initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }}
-                        transition={{ duration: 0.35 }}
-                        className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12"
+                    <motion.div
+                        key={activeCategory}
+                        variants={{
+                            hidden: { opacity: 0 },
+                            show: {
+                                opacity: 1,
+                                transition: { staggerChildren: 0.04 }
+                            }
+                        }}
+                        initial="hidden"
+                        animate="show"
+                        exit={{ opacity: 0, transition: { duration: 0.15 } }}
+                        className="flex overflow-x-auto gap-4 pb-4 scrollbar-none snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 sm:pb-0 sm:overflow-visible mt-12"
                     >
                         {categories[activeCategory].map((product, index) => {
                             // Calculate premium dynamic pricing and ratings
@@ -271,58 +291,59 @@ export default function FavouriteCategories() {
                             const ratingValue = (4.3 + ((product.id * 3 + index) % 7) * 0.1).toFixed(1);
                             const ratingReviews = 12 + (product.id * 14) + (index * 7);
 
-                            return (
-                                <motion.div key={product.id} initial={{ opacity: 0, scale: 0.96 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: index * 0.02, }}
-                                    whileHover={{ y: -8, }}
-                                    className="group relative rounded-[28px] overflow-hidden bg-white border border-gray-100 transition-all duration-500 hover:border-[#FF6D29]/30 hover:shadow-[0_20px_40px_rgba(255,109,41,0.08)]">
-
+                             return (
+                                <motion.div
+                                    key={`${activeCategory}-${product.id}`}
+                                    variants={{
+                                        hidden: { opacity: 0, y: 15 },
+                                        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } }
+                                    }}
+                                    whileHover={{ y: -6 }}
+                                    className="group relative rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 hover:border-slate-300/80 hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] min-w-[270px] sm:min-w-0 snap-start flex-shrink-0"
+                                >
                                     {/* Action Buttons (Fade in on hover) */}
-                                    <div className="absolute top-5 right-5 z-20 flex flex-col gap-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <button className="w-9 h-9 rounded-full bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FF6D29] hover:border-[#FF6D29] hover:text-white transition-all duration-300">
-                                            <Heart size={16} />
+                                    <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
+                                        <button className="w-8.5 h-8.5 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#161316] hover:text-white hover:scale-105 active:scale-95 transition-all duration-200">
+                                            <Heart size={15} />
                                         </button>
 
-                                        <button className="w-9 h-9 rounded-full bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FF6D29] hover:border-[#FF6D29] hover:text-white transition-all duration-300">
-                                            <BsCartPlus size={18} />
+                                        <button className="w-8.5 h-8.5 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#161316] hover:text-white hover:scale-105 active:scale-95 transition-all duration-200">
+                                            <BsCartPlus size={16} />
                                         </button>
                                     </div>
 
                                     {/* Image Container with premium rounded margins & neutral background */}
-                                    <div className="m-3 rounded-2xl relative h-[240px] bg-[#F4F4F5] overflow-hidden">
+                                    <div className="m-3 rounded-2xl relative h-[220px] bg-[#F3F4F6] overflow-hidden">
                                         <Image
                                             src={product.image}
                                             alt={product.name}
                                             fill
-                                            className="object-contain p-5 group-hover:scale-105 transition-all duration-700"
+                                            className="object-contain p-6 transform group-hover:scale-103 transition-transform duration-500 ease-out"
                                         />
 
-                                        {/* Premium Rating Badge - Bottom-Left of the image (exactly matching the 3rd image) */}
-                                        <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-[4px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-[11px] font-extrabold text-gray-800 flex items-center gap-1">
+                                        {/* Premium Rating Badge - Bottom-Left */}
+                                        <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-[6px] border border-gray-100 shadow-xs text-[10px] font-bold text-gray-700 flex items-center gap-1">
                                             <span>{ratingValue}</span>
                                             <span className="text-[#03a685] text-xs">★</span>
+                                            <span className="text-gray-400 font-normal">({ratingReviews})</span>
                                         </div>
-
-                                        {/* Soft hover glow overlay */}
-                                        <div className="absolute inset-0 bg-[#FF6D29]/0 group-hover:bg-[#FF6D29]/2 transition-all duration-500"></div>
                                     </div>
 
                                     {/* Card Details Area */}
                                     <div className="px-5 pb-5 pt-1">
                                         {/* Brand/Subtitle */}
-                                        <div className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 mb-0.5">
+                                        <div className="text-[9px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">
                                             Astride Premium
                                         </div>
 
                                         {/* Product Title */}
-                                        <h3 className="text-base font-semibold text-gray-800 line-clamp-1 group-hover:text-[#FF6D29] transition-colors duration-300">
+                                        <h3 className="text-sm sm:text-base font-semibold text-gray-800 line-clamp-1 group-hover:text-slate-900 transition-colors duration-300">
                                             {product.name}
                                         </h3>
 
-                                        {/* Pricing Row (exactly matching the inline styling of the 3rd image) */}
+                                        {/* Pricing Row */}
                                         <div className="flex items-baseline gap-2 mt-2">
-                                            <span className="text-[17px] font-bold text-gray-900">
+                                            <span className="text-base sm:text-[17px] font-bold text-gray-900">
                                                 ₹{salePrice.toLocaleString("en-IN")}
                                             </span>
 
@@ -330,14 +351,14 @@ export default function FavouriteCategories() {
                                                 ₹{originalPrice.toLocaleString("en-IN")}
                                             </span>
 
-                                            <span className="text-[11px] font-extrabold text-[#FF6D29] uppercase">
-                                                ({discountPercent}% OFF)
+                                            <span className="text-[10px] sm:text-[11px] font-bold text-[#03a685]">
+                                                {discountPercent}% OFF
                                             </span>
                                         </div>
                                     </div>
 
-                                    {/* Decorative bottom hover bar */}
-                                    <div className="absolute bottom-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-[#FF6D29] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                                    {/* Decorative subtle bottom hover bar */}
+                                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#161316] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                                 </motion.div>
                             );
                         })}
