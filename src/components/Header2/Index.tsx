@@ -129,7 +129,7 @@ const Header2 = () => {
     const activeHotspot = HOTSPOTS.find((h) => h.id === activeId);
 
     return (
-        <section id="anatomy" ref={containerRef} className="flex w-full bg-[#F8F9FA] overflow-hidden relative items-center py-2 md:py-4 border-t border-zinc-200 border-b border-zinc-200">
+        <section id="anatomy" ref={containerRef} className="hidden md:flex w-full bg-[#F8F9FA] overflow-hidden relative items-center py-2 md:py-4 border-t border-zinc-200 border-b border-zinc-200">
             {/* Premium Minimalist Background Grid & Ambient Glows */}
             <div className="absolute inset-0 opacity-40">
                 <div className="h-full w-full bg-[linear-gradient(to_right,#00000003_1px,transparent_1px),linear-gradient(to_bottom,#00000003_1px,transparent_1px)] bg-[size:100px_100px]" />
