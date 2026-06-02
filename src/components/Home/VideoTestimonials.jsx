@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     FaYoutube,
@@ -59,6 +59,11 @@ const videos = [
 
 export default function VideoTestimonials() {
     const [playingVideo, setPlayingVideo] = useState(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 768);
+    }, []);
 
     return (
         <section className="w-full py-10 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#f8fafc] overflow-hidden">
@@ -90,8 +95,8 @@ export default function VideoTestimonials() {
                             initial={{ opacity: 0, y: 50 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{
-                                duration: 0.5,
-                                delay: index * 0.1,
+                                duration: isMobile ? 0 : 0.5,
+                                delay: isMobile ? 0 : index * 0.1,
                                 ease: [0.21, 1.02, 0.43, 1.01]
                             }}
                             whileHover={{ y: -10 }}
