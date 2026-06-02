@@ -44,9 +44,9 @@ export default function Category() {
             </div>
 
             {/* SOFT BACKGROUND GLOW */}
-            <div className="absolute top-0 left-0 w-96 h-96 bg-[#FF6D29]/10 blur-[140px] rounded-full" />
+            <div className="absolute top-0 left-0 w-96 h-96 bg-zinc-800/5 blur-[140px] rounded-full" />
 
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#453027]/10 blur-[160px] rounded-full" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-zinc-800/5 blur-[160px] rounded-full" />
 
             {/* CONTENT */}
             <div className="relative md:px-15 px-4 pt-8">
@@ -73,7 +73,7 @@ export default function Category() {
                                         whileHover={{
                                             y: -8,
                                         }}
-                                        className="group relative overflow-hidden rounded-3xl bg-white border border-[#E7DDD5] transition-all duration-500 hover:border-[#FF6D29] hover:shadow-[0_15px_40px_rgba(255,109,41,0.12)]">
+                                        className="group relative overflow-hidden rounded-3xl bg-white border border-[#E7DDD5] transition-all duration-500 hover:border-[#161316] hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)]">
 
                                         <div className="relative h-72 overflow-hidden rounded-3xl">
                                             <img
@@ -83,7 +83,7 @@ export default function Category() {
                                             />
 
                                             <div className="absolute inset-0 bg-gradient-to-t from-[#161316]/80 via-[#161316]/10 to-transparent" />
-                                            <div className="absolute inset-0 bg-[#FF6D29]/0 group-hover:bg-[#FF6D29]/5 transition-all duration-500" />
+                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-500" />
                                         </div>
 
                                         <div className="absolute bottom-0 left-0 w-full px-5 py-2">
@@ -96,13 +96,13 @@ export default function Category() {
 
                                                 <div className="w-8 h-8 rounded-full
                                               bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center
-                                              text-white group-hover:bg-[#FF6D29] group-hover:border-[#FF6D29] transition-all duration-500 group-hover:rotate-45">
+                                              text-white group-hover:bg-[#161316] group-hover:border-[#161316] transition-all duration-500 group-hover:rotate-45">
                                                     <ArrowRight size={18} />
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#FF6D29] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                                        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#161316] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
                                     </motion.div>
                                 ))}
                         </div>
