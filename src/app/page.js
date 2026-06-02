@@ -16,6 +16,8 @@ import WhyUs from "@/components/Home/WhyUs";
 import Footer from "@/components/Main/Footer/Footer";
 
 import Header2 from "@/components/Header2/Index";
+import Marquee1 from "@/components/Home/marquee1";
+import Marquee2Hover from "@/components/Home/marquee2_hover";
 import Navbar2 from "@/components/Home/Navbar2";
 import CircularChairs from "@/components/Home/CircularChairs";
 import ProductPageHome from "@/components/prodcutPage/ProductPageHome";
@@ -38,12 +40,16 @@ export default function Home() {
       <CircularChairs/>
       {/* <HeroSection/> */}
       <Category />
+       <Marquee1 />
+      
       <BentoCategories/>
       {/* <CategorySlider /> */}
       <FavouriteCategories />
       <BrandAboutSection />
+       <Marquee2Hover />
       <ChairSection />
       <Header2 />
+     
       <BestSeller/>
       <WhyUs />
       <Chair_split/>

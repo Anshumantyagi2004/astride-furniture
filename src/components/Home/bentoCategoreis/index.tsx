@@ -57,7 +57,7 @@ const CATEGORIES: BentoCategory[] = [
 export default function BentoCategories() {
   return (
     <section 
-      className="w-full bg-[#FAFAFA] pt-20 pb-6 px-6 md:px-12 lg:px-20 overflow-hidden"
+      className="w-full bg-[#FAFAFA] pt-8 pb-6 px-6 md:px-12 lg:px-20 overflow-hidden"
       style={{
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
       }}

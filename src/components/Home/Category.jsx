@@ -33,12 +33,14 @@ export default function Category() {
         <section className="relative overflow-hidden bg-[#F8F5F1] py-10">
 
             {/* HEADING */}
-            <div className="relative z-10">
-                <h1 className="text-center text-[#161316] font-semibold text-4xl tracking-wide">
-                    Trending Products
-                </h1>
-
-                <div className="w-24 h-[2px] bg-[#FF6D29] mx-auto mt-4 rounded-full"></div>
+            <div className="relative z-10 md:px-15 px-4 mb-4">
+                <div 
+                    className="text-5xl sm:text-6xl lg:text-[4.5rem] font-black uppercase leading-[0.85] tracking-tighter"
+                    style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+                >
+                    <span className="block text-[#161316]">TRENDING</span>
+                    <span className="block text-transparent [-webkit-text-stroke:2px_#18181b]">PRODUCTS</span>
+                </div>
             </div>
 
             {/* SOFT BACKGROUND GLOW */}
