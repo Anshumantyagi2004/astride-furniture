@@ -74,25 +74,25 @@ export default function Navbar() {
     'Gaming Chair': {
       label: 'Gaming Chair',
       chairs: [
-        { name: 'ACE Pro Gaming', image: '/Png1/chair4_ACE.png', tag: 'Bestseller', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'Apex Gaming', image: '/Png1/chair9_FitWell.png', tag: 'Pro', buyUrl: '#buy', learnUrl: '#learn' },
+        { name: 'ACE Pro Gaming', image: '/Png1/chair4_ACE.webp', tag: 'Bestseller', buyUrl: '#buy', learnUrl: '#learn' },
+        { name: 'Apex Gaming', image: '/Png1/chair9_FitWell.webp', tag: 'Pro', buyUrl: '#buy', learnUrl: '#learn' },
         { name: 'RGB Gaming Chair', image: '/Product/InfographicDesign-1.webp', tag: 'Premium', buyUrl: '#buy', learnUrl: '#learn' }
       ]
     },
     'Executive Chair': {
       label: 'Executive Chair',
       chairs: [
-        { name: 'AlphaGrey', image: '/Png1/chair6_AlphaGrey.png', tag: 'Premium Mesh', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'ErgoFit Executive', image: '/Png1/chair12_ErgoFit.png', tag: 'High Back', buyUrl: '#buy', learnUrl: '#learn' },
+        { name: 'AlphaGrey', image: '/Png1/chair6_AlphaGrey.webp', tag: 'Premium Mesh', buyUrl: '#buy', learnUrl: '#learn' },
+        { name: 'ErgoFit Executive', image: '/Png1/chair12_ErgoFit.webp', tag: 'High Back', buyUrl: '#buy', learnUrl: '#learn' },
         { name: 'Executive Mesh Chair', image: '/Product/AlphaBrown_8.webp', tag: 'Bestseller', buyUrl: '#buy', learnUrl: '#learn' }
       ]
     },
     'Staff Chair': {
       label: 'Staff Chair',
       chairs: [
-        { name: 'Delton Staff', image: '/Png1/Chair7_Delton.png', tag: 'Comfort', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'AIRSENSE Task', image: '/Png1/chair5_AIRSENSE.png', tag: 'Aero Mesh', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'Amica Black', image: '/Png1/Chair6a_Amica Black .png', tag: 'Classic', buyUrl: '#buy', learnUrl: '#learn' }
+        { name: 'Delton Staff', image: '/Png1/Chair7_Delton.webp', tag: 'Comfort', buyUrl: '#buy', learnUrl: '#learn' },
+        { name: 'AIRSENSE Task', image: '/Png1/chair5_AIRSENSE.webp', tag: 'Aero Mesh', buyUrl: '#buy', learnUrl: '#learn' },
+        { name: 'Amica Black', image: '/Png1/Chair6a_Amica Black .webp', tag: 'Classic', buyUrl: '#buy', learnUrl: '#learn' }
       ]
     },
     'Study Chair': {
@@ -106,8 +106,8 @@ export default function Navbar() {
     'Bar Stool': {
       label: 'Bar Stool',
       chairs: [
-        { name: 'Zenith Stool', image: '/Png1/chair10_FitWell.png', tag: 'Counter Stool', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'Apex Stool', image: '/Png1/chair9_FitWell.png', tag: 'Bestseller', buyUrl: '#buy', learnUrl: '#learn' },
+        { name: 'Zenith Stool', image: '/Png1/chair10_FitWell.webp', tag: 'Counter Stool', buyUrl: '#buy', learnUrl: '#learn' },
+        { name: 'Apex Stool', image: '/Png1/chair9_FitWell.webp', tag: 'Bestseller', buyUrl: '#buy', learnUrl: '#learn' },
         { name: 'Luxury Bar Stool', image: '/Product/AlphaBrown_8.webp', tag: 'Premium', buyUrl: '#buy', learnUrl: '#learn' }
       ]
     }

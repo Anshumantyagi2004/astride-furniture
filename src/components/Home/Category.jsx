@@ -39,7 +39,7 @@ export default function Category() {
                     style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
                 >
                     <span className="block text-[#161316]">TRENDING</span>
-                    <span className="block text-transparent [-webkit-text-stroke:2px_#18181b]">PRODUCTS</span>
+                    <span className="block text-transparent [-webkit-text-stroke:2px_#18181b] mt-[6px]">PRODUCTS</span>
                 </div>
             </div>
 
