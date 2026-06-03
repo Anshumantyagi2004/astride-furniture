@@ -38,26 +38,27 @@ const CameraRig = ({
         const o = progressRef.current;
         const s = isMobile ? 0.7 : 1.0;
         const zoom = isMobile ? 1.1 : 1.0;
+        const dScale = isMobile ? 1.0 : 1.4; // Zoom out the close-up shots slightly on desktop only
 
         if (o < 0.15) {
-            // Intro: Wide Shot of the entire chair (Centered and Zoomed In)
-            targetPos.current.set(0, 0, 3.6 * zoom);
+            // Intro: Wide Shot of the entire chair (Zoomed in on mobile, zoomed out further on desktop)
+            targetPos.current.set(0, 0, (isMobile ? 3.6 : 6.2) * zoom);
             targetLook.current.set(0, 0, 0);
         } else if (o >= 0.15 && o < 0.4) {
             // Section 1: Premium Headrest (Top of the chair)
-            targetPos.current.set(-1.0 * zoom, 1.3 * s, 1.6 * zoom);
+            targetPos.current.set(-1.0 * zoom * dScale, 1.3 * s, 1.6 * zoom * dScale);
             targetLook.current.set(0, 1.3 * s, 0);
         } else if (o >= 0.4 && o < 0.65) {
             // Section 2: Lumbar Support (Middle back)
-            targetPos.current.set(1.5 * zoom, -0.2 * s, 1.5 * zoom);
+            targetPos.current.set(1.5 * zoom * dScale, -0.2 * s, 1.5 * zoom * dScale);
             targetLook.current.set(0, -0.2 * s, 0);
         } else if (o >= 0.65 && o < 0.8) {
             // Section 3: Armrests (Side middle)
-            targetPos.current.set(-1.6 * zoom, 0.1 * s, 1.2 * zoom);
+            targetPos.current.set(-1.6 * zoom * dScale, 0.1 * s, 1.2 * zoom * dScale);
             targetLook.current.set(0, 0.1 * s, 0);
         } else {
             // Section 4: Wheels & Base (Bottom of the chair)
-            targetPos.current.set(1.5 * zoom, -1.0 * s, 1.8 * zoom);
+            targetPos.current.set(1.5 * zoom * dScale, -1.0 * s, 1.8 * zoom * dScale);
             targetLook.current.set(0, -1.2 * s, 0);
         }
 
@@ -331,7 +332,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                                         key={index}
                                         className={`absolute inset-0 flex transition-all duration-700 ease-in-out ${
                                             sec.align === 'center'
-                                                ? 'items-center justify-center px-12 text-center'
+                                                ? 'items-end justify-center px-12 text-center pb-20'
                                                 : sec.align === 'left'
                                                     ? 'items-center justify-start px-12'
                                                     : 'items-center justify-end px-12'
@@ -367,7 +368,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                                                     {sec.title}
                                                 </h2>
                                                 {sec.desc && (
-                                                    <p className="text-zinc-300 leading-relaxed text-base">
+                                                    <p className="text-zinc-400 leading-relaxed text-base">
                                                         {sec.desc}
                                                     </p>
                                                 )}

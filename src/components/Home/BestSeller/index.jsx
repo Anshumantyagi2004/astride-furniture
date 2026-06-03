@@ -11,7 +11,7 @@ const BESTSELLERS = [
     description: 'Elevate your setup with the sophisticated Ace, a perfect blend of elegance and functionality.',
     price: '$650.00 USD',
     image: '/Png1/chair4_ACE.webp',
-    tag: 'GEAR',
+    tag: 'office',
   },
   {
     id: 2,
@@ -19,7 +19,7 @@ const BESTSELLERS = [
     description: 'Stay connected and monitor your posture effortlessly with the Delton, your essential companion.',
     price: '$720.00 USD',
     image: '/Png1/Chair7_Delton.webp',
-    tag: 'GEAR',
+    tag: 'study',
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ const BESTSELLERS = [
     description: 'Experience deep, powerful comfort and crystal-clear focus with the Octave for long sessions.',
     price: '$320.00 USD',
     image: '/Png1/chair11_octave.webp',
-    tag: 'GEAR',
+    tag: 'gaming',
   },
   {
     id: 4,
@@ -35,7 +35,7 @@ const BESTSELLERS = [
     description: 'Immerse yourself in premium quality and enjoy the ultimate seating experience with our top-notch Erizo.',
     price: '$900.00 USD',
     image: '/Png1/chair6_AlphaGrey.webp',
-    tag: 'GEAR',
+    tag: 'bar',
   },
 ];
 
@@ -54,7 +54,7 @@ export default function BestSeller() {
 
   return (
     <section 
-      className="w-full bg-white pt-4 pb-12 md:py-16 px-6 md:px-12 lg:px-20" 
+      className="w-full bg-white pt-0 pb-12 md:py-16 px-6 md:px-12 lg:px-20" 
       style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
     >
       <div className="max-w-[1440px] mx-auto">
@@ -81,7 +81,7 @@ export default function BestSeller() {
                 {/* Image Container - Reduced aspect ratio for shorter length */}
                 <div className="relative w-full aspect-[4/3.3] bg-[#F5F5F5] rounded-[24px] p-5 mb-4 overflow-hidden flex items-center justify-center transition-colors duration-300 group-hover:bg-[#EFEFEF]">
                   {/* Tag */}
-                  <div className="absolute top-4 left-4 bg-white px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-widest text-[#111111] shadow-sm z-10">
+                  <div className="absolute top-4 left-4 bg-white px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-widest text-[#111111] shadow-sm z-10 uppercase">
                     {product.tag}
                   </div>
                   
