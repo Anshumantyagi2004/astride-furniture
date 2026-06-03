@@ -217,6 +217,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
             
             const rect = containerRef.current.getBoundingClientRect();
             const viewHeight = window.innerHeight;
+            const absoluteContainerTop = window.scrollY + rect.top;
             
             // Only capture gesture if container is locked in active view
             if (rect.top <= 10 && rect.bottom >= viewHeight - 10) {
@@ -226,23 +227,39 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                 if (Math.abs(diffY) > 30) {
                     if (diffY > 0) {
                         // Swipe Up (Scroll Down) -> advance to next slide
+                        e.preventDefault();
                         if (activeSection < 4) {
-                            e.preventDefault();
                             setActiveSection(prev => {
                                 const nextSec = prev + 1;
                                 snapToSection(nextSec);
                                 return nextSec;
                             });
+                        } else {
+                            // Already at last slide, scroll past the component down
+                            isSnapping = true;
+                            window.scrollTo({
+                                top: absoluteContainerTop + rect.height,
+                                behavior: 'smooth'
+                            });
+                            setTimeout(() => { isSnapping = false; }, 800);
                         }
                     } else {
                         // Swipe Down (Scroll Up) -> go to previous slide
+                        e.preventDefault();
                         if (activeSection > 0) {
-                            e.preventDefault();
                             setActiveSection(prev => {
                                 const prevSec = prev - 1;
                                 snapToSection(prevSec);
                                 return prevSec;
                             });
+                        } else {
+                            // Already at first slide, scroll past the component up
+                            isSnapping = true;
+                            window.scrollTo({
+                                top: Math.max(0, absoluteContainerTop - viewHeight),
+                                behavior: 'smooth'
+                            });
+                            setTimeout(() => { isSnapping = false; }, 800);
                         }
                     }
                 }

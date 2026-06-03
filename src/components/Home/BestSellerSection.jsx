@@ -115,15 +115,17 @@ export default function BestSellerSection() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6 }}
-                        className="flex flex-col"
+                        className="flex flex-col items-start text-left"
                     >
-                        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-zinc-900 tracking-wider uppercase leading-none [-webkit-text-stroke:2.5px_#18181b]">
-                            Best Selling
-                        </h2>
-                        <div className="flex items-center gap-3 sm:gap-4 mt-2">
-                            <span className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-wide text-transparent [-webkit-text-stroke:2.5px_#18181b] uppercase leading-none">
-                                Chairs
-                            </span>
+                        <span className="inline-flex items-center text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2">
+                            EXPLORE BESTSELLERS
+                        </span>
+                        <div 
+                            className="text-5xl sm:text-6xl lg:text-[4.5rem] font-black uppercase leading-[0.85] tracking-tighter"
+                            style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+                        >
+                            <span className="block text-[#161316]">BEST SELLING</span>
+                            <span className="block text-transparent [-webkit-text-stroke:2px_#18181b] mt-[6px]">CHAIRS</span>
                         </div>
                     </motion.div>
 
