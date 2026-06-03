@@ -158,12 +158,36 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
     useEffect(() => {
         if (!mounted) return;
 
-        const handleScroll = () => {
+        let isSnapping = false;
+        let snapTimeout: NodeJS.Timeout;
+
+        const snapToSection = (sectionIndex: number) => {
             if (!containerRef.current) return;
+            const rect = containerRef.current.getBoundingClientRect();
+            const absoluteContainerTop = window.scrollY + rect.top;
+            const totalScrollable = rect.height - window.innerHeight;
+            
+            const snapPoints = [0, 0.28, 0.53, 0.73, 1.0];
+            const progress = snapPoints[sectionIndex];
+            const targetScrollY = absoluteContainerTop + progress * totalScrollable;
+            
+            isSnapping = true;
+            window.scrollTo({
+                top: targetScrollY,
+                behavior: 'smooth'
+            });
+            
+            setTimeout(() => {
+                isSnapping = false;
+            }, 600);
+        };
+
+        const handleScroll = () => {
+            if (isSnapping || !containerRef.current) return;
             const rect = containerRef.current.getBoundingClientRect();
             const viewHeight = window.innerHeight;
             
-            // Calculate progress through the 400vh container
+            // Calculate progress through the container
             const totalScrollable = rect.height - viewHeight;
             if (totalScrollable <= 0) return;
 
@@ -181,6 +205,17 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
             else section = 4;
             
             setActiveSection(section);
+
+            // On mobile, snap to the nearest section after scroll stops
+            if (window.innerWidth < 768) {
+                clearTimeout(snapTimeout);
+                snapTimeout = setTimeout(() => {
+                    // Only snap if the container is actively covering the screen
+                    if (rect.top < 0 && rect.bottom > viewHeight) {
+                        snapToSection(section);
+                    }
+                }, 150);
+            }
         };
 
         const handleResize = () => {
@@ -195,6 +230,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
         return () => {
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleResize);
+            clearTimeout(snapTimeout);
             if (interactTimeoutRef.current) {
                 clearTimeout(interactTimeoutRef.current);
             }
@@ -204,7 +240,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
     if (!mounted) return null;
 
     return (
-        <div ref={containerRef} className="relative w-full h-[250vh] md:h-[400vh] bg-[#090807] overflow-visible">
+        <div ref={containerRef} className="relative w-full h-[500vh] md:h-[400vh] bg-[#090807] overflow-visible">
             {/* Sticky Container */}
             <div className="sticky top-0 w-full h-screen overflow-hidden">
 
