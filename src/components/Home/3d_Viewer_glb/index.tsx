@@ -159,7 +159,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
         if (!mounted) return;
 
         let isSnapping = false;
-        let snapTimeout: NodeJS.Timeout;
+        let startY = 0;
 
         const snapToSection = (sectionIndex: number) => {
             if (!containerRef.current) return;
@@ -179,7 +179,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
             
             setTimeout(() => {
                 isSnapping = false;
-            }, 600);
+            }, 800);
         };
 
         const handleScroll = () => {
@@ -205,16 +205,47 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
             else section = 4;
             
             setActiveSection(section);
+        };
 
-            // On mobile, snap to the nearest section after scroll stops
-            if (window.innerWidth < 768) {
-                clearTimeout(snapTimeout);
-                snapTimeout = setTimeout(() => {
-                    // Only snap if the container is actively covering the screen
-                    if (rect.top < 0 && rect.bottom > viewHeight) {
-                        snapToSection(section);
+        // Mobile Gesture Swipe Snapping Controls
+        const handleTouchStart = (e: TouchEvent) => {
+            startY = e.touches[0].clientY;
+        };
+
+        const handleTouchMove = (e: TouchEvent) => {
+            if (isSnapping || !containerRef.current) return;
+            
+            const rect = containerRef.current.getBoundingClientRect();
+            const viewHeight = window.innerHeight;
+            
+            // Only capture gesture if container is locked in active view
+            if (rect.top <= 10 && rect.bottom >= viewHeight - 10) {
+                const currentY = e.touches[0].clientY;
+                const diffY = startY - currentY; // positive diff means swipe up/scroll down
+                
+                if (Math.abs(diffY) > 30) {
+                    if (diffY > 0) {
+                        // Swipe Up (Scroll Down) -> advance to next slide
+                        if (activeSection < 4) {
+                            e.preventDefault();
+                            setActiveSection(prev => {
+                                const nextSec = prev + 1;
+                                snapToSection(nextSec);
+                                return nextSec;
+                            });
+                        }
+                    } else {
+                        // Swipe Down (Scroll Up) -> go to previous slide
+                        if (activeSection > 0) {
+                            e.preventDefault();
+                            setActiveSection(prev => {
+                                const prevSec = prev - 1;
+                                snapToSection(prevSec);
+                                return prevSec;
+                            });
+                        }
                     }
-                }, 150);
+                }
             }
         };
 
@@ -225,17 +256,27 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
         
         window.addEventListener('scroll', handleScroll, { passive: true });
         window.addEventListener('resize', handleResize);
+        
+        const container = containerRef.current;
+        if (container) {
+            container.addEventListener('touchstart', handleTouchStart, { passive: true });
+            container.addEventListener('touchmove', handleTouchMove, { passive: false });
+        }
+        
         handleScroll();
         
         return () => {
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleResize);
-            clearTimeout(snapTimeout);
+            if (container) {
+                container.removeEventListener('touchstart', handleTouchStart);
+                container.removeEventListener('touchmove', handleTouchMove);
+            }
             if (interactTimeoutRef.current) {
                 clearTimeout(interactTimeoutRef.current);
             }
         };
-    }, [mounted]);
+    }, [mounted, activeSection, isMobile]);
 
     if (!mounted) return null;
 
