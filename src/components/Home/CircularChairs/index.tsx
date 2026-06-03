@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ChairFinder from "../ChairFinder";
+import RotatingText from "../../RotatingText";
 
 const CHAIR_IMAGES = [
   "/Png1/Chair6a_Amica Black .webp",
@@ -288,14 +289,29 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
             {/* Headline */}
             <div className="flex flex-col gap-1 items-center">
               <h1
-                className="m-0 font-black tracking-tight"
+                className="m-0 font-black tracking-tight flex items-center justify-center gap-2"
                 style={{
                   fontSize: "clamp(1.5rem, 3.2vw, 2.25rem)",
                   color: "#0f172a",
                   letterSpacing: "-0.02em",
                 }}
               >
-                The Astride Series
+                <span>The Astride</span>
+                <RotatingText
+                  texts={['Series', 'Collection', 'Chairs', 'Comfort']}
+                  mainClassName="w-[100px] sm:w-[130px] md:w-[170px] bg-[#0f172a] text-white overflow-hidden py-0.5 justify-center rounded-lg inline-flex"
+                  staggerFrom="last"
+                  initial={{ y: "100%" }}
+                  animate={{ y: 0 }}
+                  exit={{ y: "-120%" }}
+                  staggerDuration={0.025}
+                  splitLevelClassName="overflow-hidden pb-0.5"
+                  transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                  rotationInterval={2000}
+                  splitBy="characters"
+                  auto
+                  loop
+                />
               </h1>
               <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-neutral-500">
                 Engineered For Excellence
