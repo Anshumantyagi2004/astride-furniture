@@ -129,6 +129,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
     const [activeSection, setActiveSection] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     const [isInteracting, setIsInteracting] = useState(false);
+    const isInteractingRef = useRef(false);
     const interactTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     
     const containerRef = useRef<HTMLDivElement>(null);
@@ -136,6 +137,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
 
     const handleInteractionStart = () => {
         setIsInteracting(true);
+        isInteractingRef.current = true;
         if (interactTimeoutRef.current) {
             clearTimeout(interactTimeoutRef.current);
         }
@@ -147,7 +149,8 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
         }
         interactTimeoutRef.current = setTimeout(() => {
             setIsInteracting(false);
-        }, 2500);
+            isInteractingRef.current = false;
+        }, 600);
     };
 
     useEffect(() => {
@@ -212,8 +215,14 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
             startY = e.touches[0].clientY;
         };
 
+        const handleTouchEnd = () => {
+            // Reset startY after each gesture so next swipe starts fresh
+            startY = 0;
+        };
+
         const handleTouchMove = (e: TouchEvent) => {
-            if (isSnapping || !containerRef.current) return;
+            // If user is rotating the 3D model, don't intercept scroll gestures
+            if (isSnapping || isInteractingRef.current || !containerRef.current) return;
             
             const rect = containerRef.current.getBoundingClientRect();
             const viewHeight = window.innerHeight;
@@ -278,6 +287,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
         if (container) {
             container.addEventListener('touchstart', handleTouchStart, { passive: true });
             container.addEventListener('touchmove', handleTouchMove, { passive: false });
+            container.addEventListener('touchend', handleTouchEnd, { passive: true });
         }
         
         handleScroll();
@@ -288,6 +298,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
             if (container) {
                 container.removeEventListener('touchstart', handleTouchStart);
                 container.removeEventListener('touchmove', handleTouchMove);
+                container.removeEventListener('touchend', handleTouchEnd);
             }
             if (interactTimeoutRef.current) {
                 clearTimeout(interactTimeoutRef.current);
