@@ -63,7 +63,7 @@ export default function BrandTrustSection() {
             ref={sectionRef}
             className="w-full overflow-hidden relative"
             style={{
-                background: "linear-gradient(160deg, #F5F0E8 0%, #EDE8DD 40%, #E8E2D6 100%)",
+                background: "linear-gradient(160deg, #E4E4E7 0%, #D4D4D8 40%, #A1A1AA 100%)",
             }}
         >
             <div className="max-w-7xl mx-auto px-6 py-14 relative z-10">
@@ -71,14 +71,13 @@ export default function BrandTrustSection() {
                 {/* Heading */}
                 <div className="text-center mb-12">
                     <h2
-                        className="text-3xl sm:text-4xl lg:text-[2.8rem] font-black leading-tight tracking-tight"
-                        style={{ color: "#1C2B4A" }}
+                        className="text-3xl sm:text-4xl lg:text-[2.8rem] font-black leading-tight tracking-tight text-zinc-900"
                     >
                         India&apos;s Leading{" "}
                         <em
                             className="not-italic font-light"
                             style={{
-                                background: "linear-gradient(135deg, #2E6B9E, #1C4E80)",
+                                background: "linear-gradient(135deg, #71717A, #18181B)",
                                 WebkitBackgroundClip: "text",
                                 WebkitTextFillColor: "transparent",
                             }}
@@ -89,9 +88,9 @@ export default function BrandTrustSection() {
                     </h2>
 
                     <div className="flex items-center justify-center gap-3 mt-5">
-                        <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#2E6B9E]/40" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#2E6B9E]/50" />
-                        <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#2E6B9E]/40" />
+                        <div className="h-px w-16 bg-gradient-to-r from-transparent to-zinc-500/40" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-zinc-500/50" />
+                        <div className="h-px w-16 bg-gradient-to-l from-transparent to-zinc-500/40" />
                     </div>
                 </div>
 
@@ -99,10 +98,10 @@ export default function BrandTrustSection() {
                 <div
                     className="grid grid-cols-2 md:grid-cols-4 mb-10"
                     style={{
-                        background: "rgba(255,255,255,0.9)",
+                        background: "rgba(255,255,255,0.92)",
                         borderRadius: "20px",
-                        border: "1px solid rgba(44,107,158,0.12)",
-                        boxShadow: "0 8px 40px rgba(28,43,74,0.08), inset 0 1px 0 rgba(255,255,255,0.7)",
+                        border: "1px solid rgba(113,113,122,0.15)",
+                        boxShadow: "0 8px 40px rgba(24,24,27,0.06), inset 0 1px 0 rgba(255,255,255,0.8)",
                     }}
                 >
                     {metrics.map((item, idx) => {
@@ -110,32 +109,30 @@ export default function BrandTrustSection() {
                         return (
                             <div
                                 key={idx}
-                                className={`group flex flex-col items-center justify-center py-10 px-6 cursor-default relative transition-all duration-300 hover:-translate-y-1 ${idx !== metrics.length - 1 ? "border-r border-[#1C2B4A]/[0.07]" : ""}`}
+                                className={`group flex flex-col items-center justify-center py-10 px-6 cursor-default relative transition-all duration-300 hover:-translate-y-1 ${idx !== metrics.length - 1 ? "border-r border-zinc-900/[0.07]" : ""}`}
                                 style={{ borderRadius: idx === 0 ? "20px 0 0 20px" : idx === metrics.length - 1 ? "0 20px 20px 0" : "" }}
                             >
                                 {/* Icon */}
                                 <div
                                     className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110"
                                     style={{
-                                        background: "linear-gradient(135deg, #2E6B9E15, #1C4E8020)",
-                                        border: "1px solid rgba(46,107,158,0.15)",
+                                        background: "linear-gradient(135deg, rgba(113,113,122,0.1), rgba(24,24,27,0.15))",
+                                        border: "1px solid rgba(113,113,122,0.2)",
                                     }}
                                 >
-                                    <Icon size={20} strokeWidth={1.75} style={{ color: "#2E6B9E" }} />
+                                    <Icon size={20} strokeWidth={1.75} className="text-zinc-700" />
                                 </div>
 
                                 {/* Number */}
                                 <h3
-                                    className="text-4xl md:text-5xl font-black tracking-tight leading-none mb-2"
-                                    style={{ color: "#1C2B4A" }}
+                                    className="text-4xl md:text-5xl font-black tracking-tight leading-none mb-2 text-zinc-900"
                                 >
                                     <Counter value={item.value} start={inView} />
                                 </h3>
 
                                 {/* Label */}
                                 <p
-                                    className="text-[10px] font-bold uppercase tracking-[0.18em]"
-                                    style={{ color: "#7A8BA0" }}
+                                    className="text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500"
                                 >
                                     {item.label}
                                 </p>
@@ -143,7 +140,7 @@ export default function BrandTrustSection() {
                                 {/* Hover underline */}
                                 <div
                                     className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 group-hover:w-10 rounded-full transition-all duration-500"
-                                    style={{ background: "linear-gradient(90deg, #2E6B9E, #1C4E80)" }}
+                                    style={{ background: "linear-gradient(90deg, #71717A, #18181B)" }}
                                 />
                             </div>
                         );
@@ -154,21 +151,20 @@ export default function BrandTrustSection() {
                 <div
                     className="flex items-center justify-center md:justify-between flex-wrap gap-5"
                     style={{
-                        background: "rgba(255,255,255,0.85)",
+                        background: "rgba(255,255,255,0.9)",
                         borderRadius: "16px",
-                        border: "1px solid rgba(28,43,74,0.08)",
+                        border: "1px solid rgba(113,113,122,0.12)",
                         padding: "14px 36px",
-                        boxShadow: "0 2px 16px rgba(28,43,74,0.04)",
+                        boxShadow: "0 2px 16px rgba(24,24,27,0.03)",
                     }}
                 >
                     <span
-                        className="text-[10px] font-black uppercase tracking-[0.28em]"
-                        style={{ color: "#7A8BA0" }}
+                        className="text-[10px] font-black uppercase tracking-[0.28em] text-zinc-500"
                     >
                         Available On
                     </span>
 
-                    <div className="hidden md:block h-5 w-px" style={{ background: "rgba(28,43,74,0.12)" }} />
+                    <div className="hidden md:block h-5 w-px bg-zinc-200" />
 
                     <div className="flex items-center gap-8">
                         <div className="relative w-[120px] h-[46px] opacity-80 hover:opacity-100 transition-opacity duration-300">

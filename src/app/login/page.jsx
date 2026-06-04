@@ -48,7 +48,7 @@ export default function Page() {
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
           setTimeout(() => {
-            router.push("/");
+            router.push("/account");
           }, 1000);
         } else {
           setTimeout(() => {

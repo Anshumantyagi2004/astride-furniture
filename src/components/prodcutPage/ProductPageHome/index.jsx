@@ -111,6 +111,22 @@ export default function ProductPageHome() {
   const [wishlisted, setWishlisted] = useState({});
 
   useEffect(() => {
+    const saved = localStorage.getItem("astride_wishlist");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const dict = {};
+        parsed.forEach(item => {
+          dict[item.id] = true;
+        });
+        setWishlisted(dict);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [productsList]);
+
+  useEffect(() => {
     async function fetchProducts() {
       try {
         const res = await fetch("/api/product");
@@ -176,7 +192,33 @@ export default function ProductPageHome() {
   }, [productsList, selectedCategory, selectedBackSupport, selectedHours, selectedCapacity, maxPrice]);
 
   const toggleWishlist = (id) => {
-    setWishlisted((prev) => ({ ...prev, [id]: !prev[id] }));
+    setWishlisted((prev) => {
+      const updated = { ...prev, [id]: !prev[id] };
+      const product = productsList.find(p => p.id === id);
+      const saved = localStorage.getItem("astride_wishlist");
+      let list = [];
+      if (saved) {
+        try { list = JSON.parse(saved); } catch (e) {}
+      }
+      if (updated[id]) {
+        if (product && !list.some(p => p.id === id)) {
+          list.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            originalPrice: product.originalPrice || product.price,
+            discount: product.discount || "0%",
+            image: product.image,
+            rating: product.rating || 4.7
+          });
+        }
+      } else {
+        list = list.filter(p => p.id !== id);
+      }
+      localStorage.setItem("astride_wishlist", JSON.stringify(list));
+      window.dispatchEvent(new Event("astride_wishlist_updated"));
+      return updated;
+    });
   };
 
   const clearFilters = () => {

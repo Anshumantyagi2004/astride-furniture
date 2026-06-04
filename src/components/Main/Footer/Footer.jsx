@@ -80,7 +80,7 @@ export default function Footer() {
                                 { name: "Home", link: "/" },
                                 { name: "Our Story", link: "/our-story" },
                                 { name: "Newsletter", link: "/newsletter" },
-                                { name: "Contact Us", link: "/contact-us" },
+                                { name: "Contact Us", link: "/contact" },
                                 { name: "Bulk Queries", link: "/bulk-queries" },
                             ].map((item, index) => (
                                 <Link

@@ -28,7 +28,12 @@ export default function Navbar() {
   if (adminLayout) return null;
   useEffect(() => {
     const handleScroll = () => {
-      setHideTopBar(window.scrollY > 50);
+      const scrollY = window.scrollY;
+      setHideTopBar((prev) => {
+        if (scrollY > 100) return true;
+        if (scrollY < 10) return false;
+        return prev;
+      });
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -52,12 +57,19 @@ export default function Navbar() {
       setCartItems([]);
     }
   };
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     loadCart();
+    if (typeof window !== "undefined") {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    }
 
     const handleStorageChange = () => {
       loadCart();
+      if (typeof window !== "undefined") {
+        setIsLoggedIn(!!localStorage.getItem("token"));
+      }
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -163,14 +175,14 @@ export default function Navbar() {
           {/* RIGHT SIDE */}
           <div className="flex items-center gap-6 text-sm font-medium text-[#BABABA]">
 
-            <button className="flex items-center gap-2 hover:text-[#FF6D29] transition-all duration-300">
+            <Link href="/contact" className="flex items-center gap-2 hover:text-[#FF6D29] transition-all duration-300">
               <Phone size={16} />
               Support
-            </button>
+            </Link>
 
-            <button className="hover:text-[#FF6D29] transition-all duration-300">
-              Help
-            </button>
+            <Link href="/about" className="hover:text-[#FF6D29] transition-all duration-300">
+              About
+            </Link>
           </div>
         </div>
       </motion.div>
@@ -201,9 +213,9 @@ export default function Navbar() {
           </Link>
 
           <div className="flex items-center gap-4 md:gap-5 text-white">
-            <button className="text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110">
+            <Link href="/wishlist" className="text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110">
               <Heart size={24} strokeWidth={1.8} />
-            </button>
+            </Link>
 
             <div
               className="relative"
@@ -287,7 +299,7 @@ export default function Navbar() {
             </div>
 
             <Link
-              href={"/login"}
+              href={isLoggedIn ? "/account" : "/login"}
               className="text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110"
             >
               <User size={24} strokeWidth={1.8} />

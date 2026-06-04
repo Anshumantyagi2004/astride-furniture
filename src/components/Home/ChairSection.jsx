@@ -9,40 +9,40 @@ const chairData = [
         hoverImage: "/Png/img1 (2).png", 
         name: "Classic Comfort", 
         subtitle: "Ergonomic Comfort",
-        mainScaleValue: 1.0,
-        hoverScaleValue: 1.05
+        mainScaleValue: 0.95,
+        hoverScaleValue: 1.00
     },
     { 
         mainImage: "/Png1/chair12_ErgoFit.webp", 
         hoverImage: "/Png1/chair12_ErgoFit12a.png", 
         name: "ErgoFit Premium", 
         subtitle: "Ergonomic Comfort",
-        mainScaleValue: 1.0,
-        hoverScaleValue: 1.05
+        mainScaleValue: 0.95,
+        hoverScaleValue: 1.00
     },
     { 
         mainImage: "/Png1/chair10_FitWell.webp", 
         hoverImage: "/Png1/chair10_FitWell10a.png", 
         name: "FitWell Pro", 
         subtitle: "Ergonomic Comfort",
-        mainScaleValue: 1.0,
-        hoverScaleValue: 1.05
+        mainScaleValue: 0.95,
+        hoverScaleValue: 1.00
     },
     { 
         mainImage: "/Png1/chair9_FitWell.webp", 
         hoverImage: "/Png1/chair9_FitWell9a.png", 
         name: "FitWell Basic", 
         subtitle: "Ergonomic Comfort",
-        mainScaleValue: 1.0,
-        hoverScaleValue: 1.05
+        mainScaleValue: 0.95,
+        hoverScaleValue: 1.00
     },
     { 
         mainImage: "/Png1/chair11_octave.webp", 
         hoverImage: "/Png1/chair11_octave11a.png", 
         name: "Octave Studio", 
         subtitle: "Ergonomic Comfort",
-        mainScaleValue: 1.0,
-        hoverScaleValue: 1.45
+        mainScaleValue: 0.95,
+        hoverScaleValue: 1.00
     },
 ];
 
@@ -68,7 +68,7 @@ function ChairCard({ chair, index }) {
                             isHovered ? "opacity-0 pointer-events-none" : "opacity-100"
                         }`}
                         style={{
-                            transform: isHovered ? "scale(0.95)" : `scale(${chair.mainScaleValue || 1.0})`
+                            transform: isHovered ? "scale(0.90)" : `scale(${chair.mainScaleValue || 0.95})`
                         }}
                     >
                         <Image
@@ -86,7 +86,7 @@ function ChairCard({ chair, index }) {
                             isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
                         }`}
                         style={{
-                            transform: isHovered ? `scale(${chair.hoverScaleValue || 1.05})` : "scale(0.95)"
+                            transform: isHovered ? `scale(${chair.hoverScaleValue || 1.00})` : "scale(0.90)"
                         }}
                     >
                         <Image
@@ -122,7 +122,7 @@ function ChairCard({ chair, index }) {
 
 export default function ChairSection() {
     return (
-        <section className="relative overflow-hidden bg-[#F8F5F1] pb-20 pt-10 border-t border-t-white">
+        <section className="relative overflow-hidden bg-[#f1f3f5] pb-20 pt-10 border-t border-t-white">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-zinc-400/10 blur-[180px] rounded-full"></div>
             <div className="relative z-10 md:px-25 px-4 lg:px-10">
                 <div className="text-center mb-8">

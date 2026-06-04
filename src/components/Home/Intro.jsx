@@ -82,12 +82,12 @@ export default function BrandAboutSection() {
     }, []);
 
     return (
-        <section ref={containerRef} className="w-full py-12 bg-[#F8F5F1] overflow-hidden">
+        <section ref={containerRef} className="w-full py-12 bg-[#F4F4F5] overflow-hidden">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="grid lg:grid-cols-2 gap-14 items-center">
                     {/* LEFT IMAGE GRID */}
                     <div className="grid grid-cols-2 gap-5">
-                        <div className="col-span-2 relative h-[320px] rounded-[30px] overflow-hidden bg-white border border-[#E7DDD5] hover:border-[#FF6D29] hover:shadow-[0_20px_40px_rgba(255,109,41,0.1)] transition-all duration-500 intro-image-card group">
+                        <div className="col-span-2 relative h-[320px] rounded-[30px] overflow-hidden bg-white border border-zinc-200 hover:border-zinc-800 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all duration-500 intro-image-card group">
                             <Image
                                 src="/694_9.webp"
                                 alt="Office Chair"
@@ -97,7 +97,7 @@ export default function BrandAboutSection() {
                             <div className="absolute inset-0 bg-gradient-to-t from-[#161316]/30 via-transparent to-transparent"></div>
                         </div>
 
-                        <div className="relative h-[300px] rounded-[28px] overflow-hidden bg-white border border-[#E7DDD5] hover:border-[#FF6D29] hover:shadow-[0_15px_30px_rgba(255,109,41,0.1)] transition-all duration-500 intro-image-card group">
+                        <div className="relative h-[300px] rounded-[28px] overflow-hidden bg-white border border-zinc-200 hover:border-zinc-800 hover:shadow-[0_15px_30px_rgba(0,0,0,0.06)] transition-all duration-500 intro-image-card group">
                             <Image
                                 src="/Product/AlphaBrown_8.webp"
                                 alt="Chair"
@@ -106,7 +106,7 @@ export default function BrandAboutSection() {
                             />
                         </div>
 
-                        <div className="relative h-[300px] rounded-[28px] overflow-hidden bg-white border border-[#E7DDD5] hover:border-[#FF6D29] hover:shadow-[0_15px_30px_rgba(255,109,41,0.1)] transition-all duration-500 intro-image-card group">
+                        <div className="relative h-[300px] rounded-[28px] overflow-hidden bg-white border border-zinc-200 hover:border-zinc-800 hover:shadow-[0_15px_30px_rgba(0,0,0,0.06)] transition-all duration-500 intro-image-card group">
                             <Image
                                 src="/Product/Infographic-6.webp"
                                 alt="Chair"
@@ -119,9 +119,9 @@ export default function BrandAboutSection() {
                     {/* RIGHT CONTENT COLUMN */}
                     <div>
                         {/* TAG */}
-                        <span className="flex flex-col justify-start items-start text-[#FF6D29] text-xs sm:text-sm font-bold uppercase tracking-[0.25em] intro-content-item">
+                        <span className="flex flex-col justify-start items-start text-zinc-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] intro-content-item">
                             About ASTRIDE
-                            <div className="w-14 h-[2px] bg-[#FF6D29] mt-2 rounded-full"></div>
+                            <div className="w-14 h-[2px] bg-zinc-800 mt-2 rounded-full"></div>
                         </span>
 
                         {/* HEADING */}
@@ -132,7 +132,7 @@ export default function BrandAboutSection() {
                         {/* DESCRIPTION */}
                         <p className="mt-4 text-[#3f4248] leading-relaxed text-base sm:text-lg intro-content-item">
                             At{" "}
-                            <span className="font-bold text-[#FF6D29]">
+                            <span className="font-bold text-zinc-900">
                                 ASTRIDE
                             </span>
                             , we create premium ergonomic office chairs designed
@@ -151,38 +151,38 @@ export default function BrandAboutSection() {
 
                         {/* FEATURES */}
                         <div className="grid grid-cols-2 gap-4 mt-6">
-                            <div className="flex items-center gap-4 p-4 md:p-5 rounded-2xl bg-white border border-[#E7DDD5] hover:border-[#FF6D29] hover:shadow-[0_10px_30px_rgba(255,109,41,0.08)] transition-all duration-300 group cursor-default intro-feature-card">
-                                <div className="w-12 h-12 rounded-xl bg-[#FF6D29]/10 text-[#FF6D29] group-hover:bg-[#FF6D29] group-hover:text-white group-hover:scale-110 flex items-center justify-center shrink-0 transition-all duration-300">
+                            <div className="flex items-center gap-4 p-4 md:p-5 rounded-2xl bg-white border border-zinc-200 hover:border-zinc-800 hover:shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition-all duration-300 group cursor-default intro-feature-card">
+                                <div className="w-12 h-12 rounded-xl bg-zinc-100 text-zinc-800 group-hover:bg-zinc-900 group-hover:text-white group-hover:scale-110 flex items-center justify-center shrink-0 transition-all duration-300">
                                     <Sofa size={22} />
                                 </div>
-                                <h3 className="font-semibold text-[#161316] text-sm md:text-base group-hover:text-[#FF6D29] transition-colors duration-300">
+                                <h3 className="font-semibold text-[#161316] text-sm md:text-base group-hover:text-zinc-900 transition-colors duration-300">
                                     Ergonomic Comfort
                                 </h3>
                             </div>
 
-                            <div className="flex items-center gap-4 p-4 md:p-5 rounded-2xl bg-white border border-[#E7DDD5] hover:border-[#FF6D29] hover:shadow-[0_10px_30px_rgba(255,109,41,0.08)] transition-all duration-300 group cursor-default intro-feature-card">
-                                <div className="w-12 h-12 rounded-xl bg-[#FF6D29]/10 text-[#FF6D29] group-hover:bg-[#FF6D29] group-hover:text-white group-hover:scale-110 flex items-center justify-center shrink-0 transition-all duration-300">
+                            <div className="flex items-center gap-4 p-4 md:p-5 rounded-2xl bg-white border border-zinc-200 hover:border-zinc-800 hover:shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition-all duration-300 group cursor-default intro-feature-card">
+                                <div className="w-12 h-12 rounded-xl bg-zinc-100 text-zinc-800 group-hover:bg-zinc-900 group-hover:text-white group-hover:scale-110 flex items-center justify-center shrink-0 transition-all duration-300">
                                     <ShieldCheck size={22} />
                                 </div>
-                                <h3 className="font-semibold text-[#161316] text-sm md:text-base group-hover:text-[#FF6D29] transition-colors duration-300">
+                                <h3 className="font-semibold text-[#161316] text-sm md:text-base group-hover:text-zinc-900 transition-colors duration-300">
                                     Premium Quality
                                 </h3>
                             </div>
 
-                            <div className="flex items-center gap-4 p-4 md:p-5 rounded-2xl bg-white border border-[#E7DDD5] hover:border-[#FF6D29] hover:shadow-[0_10px_30px_rgba(255,109,41,0.08)] transition-all duration-300 group cursor-default intro-feature-card">
-                                <div className="w-12 h-12 rounded-xl bg-[#FF6D29]/10 text-[#FF6D29] group-hover:bg-[#FF6D29] group-hover:text-white group-hover:scale-110 flex items-center justify-center shrink-0 transition-all duration-300">
+                            <div className="flex items-center gap-4 p-4 md:p-5 rounded-2xl bg-white border border-zinc-200 hover:border-zinc-800 hover:shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition-all duration-300 group cursor-default intro-feature-card">
+                                <div className="w-12 h-12 rounded-xl bg-zinc-100 text-zinc-800 group-hover:bg-zinc-900 group-hover:text-white group-hover:scale-110 flex items-center justify-center shrink-0 transition-all duration-300">
                                     <Sparkles size={22} />
                                 </div>
-                                <h3 className="font-semibold text-[#161316] text-sm md:text-base group-hover:text-[#FF6D29] transition-colors duration-300">
+                                <h3 className="font-semibold text-[#161316] text-sm md:text-base group-hover:text-zinc-900 transition-colors duration-300">
                                     Sleek Aesthetics
                                 </h3>
                             </div>
 
-                            <div className="flex items-center gap-4 p-4 md:p-5 rounded-2xl bg-white border border-[#E7DDD5] hover:border-[#FF6D29] hover:shadow-[0_10px_30px_rgba(255,109,41,0.08)] transition-all duration-300 group cursor-default intro-feature-card">
-                                <div className="w-12 h-12 rounded-xl bg-[#FF6D29]/10 text-[#FF6D29] group-hover:bg-[#FF6D29] group-hover:text-white group-hover:scale-110 flex items-center justify-center shrink-0 transition-all duration-300">
+                            <div className="flex items-center gap-4 p-4 md:p-5 rounded-2xl bg-white border border-zinc-200 hover:border-zinc-800 hover:shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition-all duration-300 group cursor-default intro-feature-card">
+                                <div className="w-12 h-12 rounded-xl bg-zinc-100 text-zinc-800 group-hover:bg-zinc-900 group-hover:text-white group-hover:scale-110 flex items-center justify-center shrink-0 transition-all duration-300">
                                     <Armchair size={22} />
                                 </div>
-                                <h3 className="font-semibold text-[#161316] text-sm md:text-base group-hover:text-[#FF6D29] transition-colors duration-300">
+                                <h3 className="font-semibold text-[#161316] text-sm md:text-base group-hover:text-zinc-900 transition-colors duration-300">
                                     Modern Designs
                                 </h3>
                             </div>
