@@ -1,8 +1,36 @@
 'use client';
 import { Suspense, useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, Environment, ContactShadows, Center, OrbitControls } from '@react-three/drei';
+import { useGLTF, Environment, ContactShadows, Center, OrbitControls, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
+
+function LoadingScreen() {
+    const { progress } = useProgress();
+    const [visible, setVisible] = useState(true);
+
+    useEffect(() => {
+        // Only hide the loading screen when progress reaches 100%
+        if (progress === 100) {
+            const timeout = setTimeout(() => setVisible(false), 600);
+            return () => clearTimeout(timeout);
+        }
+    }, [progress]);
+
+    if (!visible) return null;
+
+    return (
+        <div 
+            className={`absolute inset-0 flex flex-col items-center justify-center bg-[#090807] z-50 transition-opacity duration-500 ${
+                progress === 100 ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
+        >
+            <div className="w-12 h-12 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4" />
+            <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.2em]">
+                Loading 3D Experience {Math.round(progress)}%
+            </p>
+        </div>
+    );
+}
 
 const Model = ({ url, isMobile }: { url: string; isMobile: boolean }) => {
     const { scene } = useGLTF(url);
@@ -129,8 +157,13 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
     const [activeSection, setActiveSection] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     const [isInteracting, setIsInteracting] = useState(false);
+    // Start as true so the canvas renders immediately on mount.
+    // The IntersectionObserver will set this to false when scrolled off-screen.
+    const [isInView, setIsInView] = useState(true);
     const isInteractingRef = useRef(false);
     const interactTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    // Use a ref to track activeSection inside event listeners — avoids re-mounting listeners on every section change
+    const activeSectionRef = useRef(0);
     
     const containerRef = useRef<HTMLDivElement>(null);
     const progressRef = useRef(0);
@@ -152,6 +185,11 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
             isInteractingRef.current = false;
         }, 600);
     };
+
+    // Keep activeSectionRef in sync with state (for use inside event listeners)
+    useEffect(() => {
+        activeSectionRef.current = activeSection;
+    }, [activeSection]);
 
     useEffect(() => {
         setMounted(true);
@@ -237,7 +275,8 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                     if (diffY > 0) {
                         // Swipe Up (Scroll Down) -> advance to next slide
                         e.preventDefault();
-                        if (activeSection < 4) {
+                        // Use ref instead of state to avoid stale closure & dep array issues
+                        if (activeSectionRef.current < 4) {
                             setActiveSection(prev => {
                                 const nextSec = prev + 1;
                                 snapToSection(nextSec);
@@ -255,7 +294,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                     } else {
                         // Swipe Down (Scroll Up) -> go to previous slide
                         e.preventDefault();
-                        if (activeSection > 0) {
+                        if (activeSectionRef.current > 0) {
                             setActiveSection(prev => {
                                 const prevSec = prev - 1;
                                 snapToSection(prevSec);
@@ -289,6 +328,16 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
             container.addEventListener('touchmove', handleTouchMove, { passive: false });
             container.addEventListener('touchend', handleTouchEnd, { passive: true });
         }
+
+        // IntersectionObserver: pause WebGL canvas when scrolled off-screen
+        // Runs here (not in first useEffect) because containerRef.current is guaranteed to be set now
+        const visibilityObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => setIsInView(entry.isIntersecting));
+            },
+            { threshold: 0.05 }
+        );
+        if (container) visibilityObserver.observe(container);
         
         handleScroll();
         
@@ -300,20 +349,22 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                 container.removeEventListener('touchmove', handleTouchMove);
                 container.removeEventListener('touchend', handleTouchEnd);
             }
+            visibilityObserver.disconnect();
             if (interactTimeoutRef.current) {
                 clearTimeout(interactTimeoutRef.current);
             }
         };
-    }, [mounted, activeSection, isMobile]);
-
+    // IMPORTANT: activeSection intentionally removed from deps.
+    // We read it via activeSectionRef inside handlers to avoid re-mounting listeners on every section change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mounted, isMobile]);
     if (!mounted) return null;
 
     return (
         <div ref={containerRef} className="relative w-full h-[500vh] md:h-[400vh] bg-[#090807] overflow-visible">
             {/* Sticky Container */}
             <div className="sticky top-0 w-full h-screen overflow-hidden">
-
-                {/* MOBILE LAYOUT */}
+                <LoadingScreen />
                 {isMobile ? (
                     <div className="w-full h-full flex flex-col justify-start gap-4 pt-20 pb-4 px-4 z-10 relative">
                         {/* Title at top */}
@@ -325,35 +376,41 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                         {/* Beautiful 3D Model Card */}
                         <div className="relative w-full h-[460px] max-h-[55vh] mx-auto rounded-2xl overflow-hidden border border-white/10 bg-zinc-950/45 shadow-2xl backdrop-blur-md">
                             <div className="w-full h-full">
-                                <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
-                                    <color attach="background" args={['#090807']} />
-                                    
-                                    <ambientLight intensity={0.5} />
-                                    <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
-                                    <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-                                    <Environment preset="studio" />
-                                    
-                                    <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
+                                {/* Only render the WebGL canvas when the component is visible on screen */}
+                                {isInView ? (
+                                    <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
+                                        <color attach="background" args={['#090807']} />
+                                        
+                                        <ambientLight intensity={0.5} />
+                                        <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
+                                        <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+                                        <Environment preset="studio" />
+                                        
+                                        <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
             
-                                    <Suspense fallback={null}>
-                                        <Center position={[0, -0.3, 0]}>
-                                            <Model url={url} isMobile={isMobile} />
-                                        </Center>
-                                        <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={isInteracting} />
-                                    </Suspense>
+                                        <Suspense fallback={null}>
+                                            <Center position={[0, -0.3, 0]}>
+                                                <Model url={url} isMobile={isMobile} />
+                                            </Center>
+                                            <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={isInteracting} />
+                                        </Suspense>
 
-                                    <OrbitControls 
-                                        enablePan={false}
-                                        enableZoom={true}
-                                        minDistance={2}
-                                        maxDistance={10}
-                                        minPolarAngle={Math.PI / 2.1}
-                                        maxPolarAngle={Math.PI / 1.9}
-                                        onStart={handleInteractionStart}
-                                        onEnd={handleInteractionEnd}
-                                        makeDefault
-                                    />
-                                </Canvas>
+                                        <OrbitControls 
+                                            enablePan={false}
+                                            enableZoom={true}
+                                            minDistance={2}
+                                            maxDistance={10}
+                                            minPolarAngle={Math.PI / 2.1}
+                                            maxPolarAngle={Math.PI / 1.9}
+                                            onStart={handleInteractionStart}
+                                            onEnd={handleInteractionEnd}
+                                            makeDefault
+                                        />
+                                    </Canvas>
+                                ) : (
+                                    // Lightweight placeholder when off-screen — zero GPU cost
+                                    <div className="w-full h-full bg-[#090807]" />
+                                )}
                             </div>
                             
                             {/* Astronaut-style overlay on card bottom */}
@@ -407,25 +464,30 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                 ) : (
                     <>
                         {/* DESKTOP LAYOUT: full screen canvas with overlay cards */}
-                        {/* 3D Canvas */}
+                        {/* 3D Canvas — only rendered when in view to stop GPU loop off-screen */}
                         <div className="absolute inset-0 w-full h-full z-0">
-                            <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
-                                <color attach="background" args={['#090807']} />
-                                
-                                <ambientLight intensity={0.5} />
-                                <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
-                                <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-                                <Environment preset="studio" />
-                                
-                                <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
+                            {isInView ? (
+                                <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
+                                    <color attach="background" args={['#090807']} />
+                                    
+                                    <ambientLight intensity={0.5} />
+                                    <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
+                                    <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+                                    <Environment preset="studio" />
+                                    
+                                    <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
          
-                                <Suspense fallback={null}>
-                                    <Center position={[0, -0.3, 0]}>
-                                        <Model url={url} isMobile={isMobile} />
-                                    </Center>
-                                    <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={false} />
-                                </Suspense>
-                            </Canvas>
+                                    <Suspense fallback={null}>
+                                        <Center position={[0, -0.3, 0]}>
+                                            <Model url={url} isMobile={isMobile} />
+                                        </Center>
+                                        <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={false} />
+                                    </Suspense>
+                                </Canvas>
+                            ) : (
+                                // Lightweight placeholder — zero GPU cost when off-screen
+                                <div className="w-full h-full bg-[#090807]" />
+                            )}
                         </div>
 
                         {/* DESKTOP: Full-screen overlay cards */}

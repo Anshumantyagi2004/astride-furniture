@@ -1,15 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import Image from "next/image";
 import { Star } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-// Register ScrollTrigger plugin
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 interface Review {
   id: number;
@@ -48,103 +41,8 @@ const REVIEWS: Review[] = [
 ];
 
 export default function Reviews() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Title entrance
-      if (titleRef.current) {
-        gsap.fromTo(
-          titleRef.current.children,
-          { opacity: 0, y: 24 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            stagger: 0.12,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: titleRef.current,
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-
-      if (cardsRef.current) {
-        const cards = Array.from(cardsRef.current.children);
-
-        // Cards slide in
-        gsap.fromTo(
-          cards,
-          { opacity: 0, y: 50, scale: 0.95 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.7,
-            stagger: 0.13,
-            ease: "back.out(1.2)",
-            scrollTrigger: {
-              trigger: cardsRef.current,
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-
-        // 3D tilt on hover
-        cards.forEach((card) => {
-          const inner = card.querySelector(".card-inner");
-          if (!inner) return;
-
-          const handleMouseMove = (e: Event) => {
-            const mouseEvent = e as MouseEvent;
-            const rect = (card as HTMLElement).getBoundingClientRect();
-            const x = mouseEvent.clientX - rect.left - rect.width / 2;
-            const y = mouseEvent.clientY - rect.top - rect.height / 2;
-            const rotateX = -(y / (rect.height / 2)) * 8;
-            const rotateY = (x / (rect.width / 2)) * 8;
-
-            gsap.to(inner, {
-              rotationX: rotateX,
-              rotationY: rotateY,
-              scale: 1.02,
-              boxShadow: "0 24px 60px rgba(28,43,74,0.12), 0 4px 16px rgba(28,43,74,0.06)",
-              transformPerspective: 1000,
-              ease: "power2.out",
-              duration: 0.3,
-              overwrite: "auto",
-            });
-          };
-
-          const handleMouseLeave = () => {
-            gsap.to(inner, {
-              rotationX: 0,
-              rotationY: 0,
-              scale: 1,
-              boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
-              ease: "power3.out",
-              duration: 0.5,
-              overwrite: "auto",
-            });
-          };
-
-          card.addEventListener("mousemove", handleMouseMove);
-          card.addEventListener("mouseleave", handleMouseLeave);
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
     <section
-      ref={sectionRef}
       className="w-full bg-[#F4F4F6] overflow-hidden border-t border-b border-slate-200 flex flex-col justify-center relative py-10"
     >
       {/* Soft background blobs */}
@@ -154,7 +52,7 @@ export default function Reviews() {
       <div className="max-w-6xl mx-auto px-6 w-full flex flex-col gap-10 relative z-10">
 
         {/* ── Title ── */}
-        <div ref={titleRef} className="text-center">
+        <div className="text-center">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.05]">
             Loved by{" "}
             <span className="bg-gradient-to-r from-slate-600 to-slate-500 bg-clip-text text-transparent">
@@ -168,15 +66,12 @@ export default function Reviews() {
 
         {/* ── Cards Grid ── */}
         <div
-          ref={cardsRef}
           className="flex overflow-x-auto gap-4 pb-4 scrollbar-none snap-x snap-mandatory md:grid md:grid-cols-3 md:gap-5 md:pb-0 md:overflow-visible items-stretch"
-          style={{ transformStyle: "preserve-3d" }}
         >
           {REVIEWS.map((review) => (
             <div
               key={review.id}
               className="relative group cursor-pointer w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-start flex-shrink-0"
-              style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
             >
               <div
                 className="card-inner relative flex flex-col gap-5 rounded-2xl p-7 h-full overflow-hidden transition-all duration-300 whitespace-normal"

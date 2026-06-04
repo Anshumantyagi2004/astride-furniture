@@ -2,25 +2,13 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import { ShoppingBag, Users, Award, Star } from "lucide-react";
 
-function Counter({ value }) {
+function Counter({ value, start }) {
     const [count, setCount] = useState("0");
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-50px" });
-    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        setIsMobile(window.innerWidth < 768);
-    }, []);
-
-    useEffect(() => {
-        if (!isInView) return;
-        if (isMobile) {
-            setCount(value);
-            return;
-        }
+        if (!start) return;
         const match = value.match(/([\d.]+)(.*)/);
         if (!match) { setCount(value); return; }
         const numVal = parseFloat(match[1]);
@@ -38,9 +26,9 @@ function Counter({ value }) {
             else setCount(value);
         };
         requestAnimationFrame(update);
-    }, [isInView, value]);
+    }, [start, value]);
 
-    return <span ref={ref}>{count}</span>;
+    return <span>{count}</span>;
 }
 
 const metrics = [
@@ -51,13 +39,28 @@ const metrics = [
 ];
 
 export default function BrandTrustSection() {
-    const [isMobile, setIsMobile] = useState(false);
+    const [inView, setInView] = useState(false);
+    const sectionRef = useRef(null);
+
     useEffect(() => {
-        setIsMobile(window.innerWidth < 768);
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setInView(true);
+                    observer.disconnect();
+                }
+            },
+            { threshold: 0.1 }
+        );
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
+        }
+        return () => observer.disconnect();
     }, []);
 
     return (
         <section
+            ref={sectionRef}
             className="w-full overflow-hidden relative"
             style={{
                 background: "linear-gradient(160deg, #F5F0E8 0%, #EDE8DD 40%, #E8E2D6 100%)",
@@ -66,13 +69,7 @@ export default function BrandTrustSection() {
             <div className="max-w-7xl mx-auto px-6 py-14 relative z-10">
 
                 {/* Heading */}
-                <motion.div
-                    initial={{ opacity: 0, y: 18 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: isMobile ? 0 : 0.6 }}
-                    viewport={{ once: true }}
-                    className="text-center mb-12"
-                >
+                <div className="text-center mb-12">
                     <h2
                         className="text-3xl sm:text-4xl lg:text-[2.8rem] font-black leading-tight tracking-tight"
                         style={{ color: "#1C2B4A" }}
@@ -96,18 +93,13 @@ export default function BrandTrustSection() {
                         <div className="w-1.5 h-1.5 rounded-full bg-[#2E6B9E]/50" />
                         <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#2E6B9E]/40" />
                     </div>
-                </motion.div>
+                </div>
 
                 {/* Stats — no cards, clean editorial row */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: isMobile ? 0 : 0.6, delay: isMobile ? 0 : 0.1 }}
-                    viewport={{ once: true }}
+                <div
                     className="grid grid-cols-2 md:grid-cols-4 mb-10"
                     style={{
-                        background: "rgba(255,255,255,0.55)",
-                        backdropFilter: "blur(12px)",
+                        background: "rgba(255,255,255,0.9)",
                         borderRadius: "20px",
                         border: "1px solid rgba(44,107,158,0.12)",
                         boxShadow: "0 8px 40px rgba(28,43,74,0.08), inset 0 1px 0 rgba(255,255,255,0.7)",
@@ -116,12 +108,8 @@ export default function BrandTrustSection() {
                     {metrics.map((item, idx) => {
                         const Icon = item.icon;
                         return (
-                            <motion.div
+                            <div
                                 key={idx}
-                                initial={{ opacity: 0, y: 14 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: isMobile ? 0 : 0.4, delay: isMobile ? 0 : idx * 0.08 }}
-                                viewport={{ once: true }}
                                 className={`group flex flex-col items-center justify-center py-10 px-6 cursor-default relative transition-all duration-300 hover:-translate-y-1 ${idx !== metrics.length - 1 ? "border-r border-[#1C2B4A]/[0.07]" : ""}`}
                                 style={{ borderRadius: idx === 0 ? "20px 0 0 20px" : idx === metrics.length - 1 ? "0 20px 20px 0" : "" }}
                             >
@@ -141,7 +129,7 @@ export default function BrandTrustSection() {
                                     className="text-4xl md:text-5xl font-black tracking-tight leading-none mb-2"
                                     style={{ color: "#1C2B4A" }}
                                 >
-                                    <Counter value={item.value} />
+                                    <Counter value={item.value} start={inView} />
                                 </h3>
 
                                 {/* Label */}
@@ -157,21 +145,16 @@ export default function BrandTrustSection() {
                                     className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 group-hover:w-10 rounded-full transition-all duration-500"
                                     style={{ background: "linear-gradient(90deg, #2E6B9E, #1C4E80)" }}
                                 />
-                            </motion.div>
+                            </div>
                         );
                     })}
-                </motion.div>
+                </div>
 
                 {/* Available On */}
-                <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: isMobile ? 0 : 0.5, delay: isMobile ? 0 : 0.3 }}
-                    viewport={{ once: true }}
+                <div
                     className="flex items-center justify-center md:justify-between flex-wrap gap-5"
                     style={{
-                        background: "rgba(255,255,255,0.45)",
-                        backdropFilter: "blur(10px)",
+                        background: "rgba(255,255,255,0.85)",
                         borderRadius: "16px",
                         border: "1px solid rgba(28,43,74,0.08)",
                         padding: "14px 36px",
@@ -195,7 +178,7 @@ export default function BrandTrustSection() {
                             <Image src="/Logo/FLIPKART_Webp.webp" alt="Flipkart" fill className="object-contain" />
                         </div>
                     </div>
-                </motion.div>
+                </div>
 
             </div>
         </section>

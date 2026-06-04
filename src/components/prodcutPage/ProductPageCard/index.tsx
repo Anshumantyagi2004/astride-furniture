@@ -9,7 +9,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
   return (
     <div 
       onClick={() => router.push(`/products/${product.id}`)}
-      className="group relative w-full max-w-[280px] h-[340px] bg-white rounded-[28px] p-4 pb-5 pt-3.5 border border-slate-100 shadow-[0_20px_40px_rgba(0,0,0,0.04),_0_5px_15px_rgba(0,0,0,0.01),_inset_0_1px_2px_rgba(255,255,255,0.9),_inset_0_-2px_6px_rgba(15,23,42,0.02)] flex flex-col justify-between overflow-hidden cursor-pointer hover:scale-[1.03] hover:shadow-[0_25px_50px_rgba(0,0,0,0.08)] transition-all duration-500 ease-out"
+      className="group relative w-full max-w-[280px] h-[340px] bg-white rounded-[28px] p-4 pb-5 pt-3.5 border border-slate-100 shadow-sm flex flex-col justify-between overflow-hidden cursor-pointer hover:scale-[1.02] hover:shadow-md transition-all duration-300"
     >
       {/* Background radial reflection glow for added visual shine */}
       <div className="absolute inset-0 bg-gradient-to-tr from-white/80 via-transparent to-black/[0.01] pointer-events-none rounded-[28px]" />
@@ -24,7 +24,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
             e.stopPropagation();
             onToggleWishlist(product.id);
           }}
-          className="w-8 h-8 rounded-full bg-slate-50 hover:bg-white flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_6px_14px_rgba(0,0,0,0.06)] active:scale-90 transition-all duration-200 focus:outline-none border border-slate-100"
+          className="w-8 h-8 rounded-full bg-slate-50 hover:bg-white flex items-center justify-center shadow-sm hover:shadow active:scale-90 transition-all duration-200 focus:outline-none border border-slate-100"
         >
           <svg
             width="14"
@@ -40,15 +40,15 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
         </button>
       </div>
 
-      {/* Image Area with Shadow Pop */}
+      {/* Image Area with simpler rendering */}
       <div className="relative w-full h-[52%] flex items-center justify-center z-[5] my-0.5">
         <Image
           src={product.image}
           alt={product.name}
           width={280}
           height={280}
-          className="object-contain h-full w-auto filter drop-shadow-[0_16px_32px_rgba(15,23,42,0.12)] scale-[1.12] hover:scale-[1.25] transition-transform duration-500 ease-out"
-          priority
+          className="object-contain h-full w-auto scale-100 hover:scale-105 transition-transform duration-300"
+          loading="lazy"
         />
       </div>
 
@@ -56,7 +56,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
       <div className="w-full flex flex-col gap-1 z-10 relative">
         {/* Name, Rating & Pricing */}
         <div className="flex flex-col gap-1">
-          <h3 className="text-sm font-black text-slate-900 tracking-tight leading-tight md:text-base pr-2">
+          <h3 className="text-sm font-black text-slate-900 tracking-tight leading-tight md:text-base pr-2 truncate">
             {product.name}
           </h3>
           <div className="flex justify-between items-center w-full">
@@ -69,7 +69,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
               </span>
             </div>
             {product.rating && (
-              <div className="flex items-center gap-1 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-lg border border-slate-100 shadow-sm shrink-0 mb-[1px]">
+              <div className="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded-lg border border-slate-100 shadow-sm shrink-0 mb-[1px]">
                 <span className="text-[9px] font-black text-slate-800">{product.rating}</span>
                 <svg 
                   width="9" 

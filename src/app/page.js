@@ -1,75 +1,55 @@
-import BestSellerSection from "@/components/Home/BestSellerSection";
-import BrandTrustSection from "@/components/Home/BrandTrustSection";
-import BulkQueryForm from "@/components/Home/BulkQueryForm";
-import Category from "@/components/Home/Category";
-import CategorySlider from "@/components/Home/CategorySlider";
-import ChairSection from "@/components/Home/ChairSection";
-import ClientLogoSlider from "@/components/Home/ClientLogoSlider";
-import ComparisonSection from "@/components/Home/ComparisonSection";
-import FavouriteCategories from "@/components/Home/FavouriteCategories";
-import HeroSection from "@/components/Home/Hero";
-import BrandAboutSection from "@/components/Home/Intro";
-import ShopTheLook from "@/components/Home/ProductGrid";
-import VideoTestimonials from "@/components/Home/VideoTestimonials";
-import Reviews from "@/components/Home/Reviews";
-import WhyUs from "@/components/Home/WhyUs";
-import Footer from "@/components/Main/Footer/Footer";
+import dynamic from 'next/dynamic';
 
-import Header2 from "@/components/Header2/Index";
-import Marquee1 from "@/components/Home/marquee1";
-import Marquee2Hover from "@/components/Home/marquee2_hover";
-import Navbar2 from "@/components/Home/Navbar2";
+// Static imports — loaded normally
 import CircularChairs from "@/components/Home/CircularChairs";
-import ProductPageHome from "@/components/prodcutPage/ProductPageHome";
-import DetailPage from "@/components/detailPage/detailPage";
-import Navbar from "@/components/Main/Navbar/Navbar";
+import Category from "@/components/Home/Category";
+import Marquee1 from "@/components/Home/marquee1";
 import BentoCategories from "@/components/Home/bentoCategoreis";
-import FAQ from "@/components/Home/FAQ";
-import ModelViewer from "@/components/Home/3d_Viewer_glb";
-import Chair_split from "@/components/Home/Chair_split";
+import FavouriteCategories from "@/components/Home/FavouriteCategories";
+import BrandAboutSection from "@/components/Home/Intro";
+import Marquee2Hover from "@/components/Home/marquee2_hover";
+import ChairSection from "@/components/Home/ChairSection";
+import Header2 from "@/components/Header2/Index";
 import BestSeller from "@/components/Home/BestSeller";
-import AstrideOffers from "@/components/Home/AstrideOffers";
+import WhyUs from "@/components/Home/WhyUs";
+import Chair_split from "@/components/Home/Chair_split";
+import BrandTrustSection from "@/components/Home/BrandTrustSection";
+import BestSellerSection from "@/components/Home/BestSellerSection";
+import ClientLogoSlider from "@/components/Home/ClientLogoSlider";
+import BulkQueryForm from "@/components/Home/BulkQueryForm";
+import FAQ from "@/components/Home/FAQ";
 
-
-
+// Lazy loaded — only the 3 heaviest components
+// Reviews: uses GSAP + ScrollTrigger (large bundle)
+const Reviews = dynamic(() => import('@/components/Home/Reviews'));
+// VideoTestimonials: loads 4 external thumbnails + embeds
+const VideoTestimonials = dynamic(() => import('@/components/Home/VideoTestimonials'));
+// ModelViewer: Three.js WebGL — preloads while user is on VideoTestimonials
+const PreloadModelViewer = dynamic(() => import('@/components/Home/PreloadModelViewer'));
 
 export default function Home() {
   return (
     <main className="min-h-screen">
-     
       <CircularChairs/>
-      {/* <HeroSection/> */}
       <Category />
-       <Marquee1 />
-      
+      <Marquee1 />
       <BentoCategories/>
-      {/* <CategorySlider /> */}
       <FavouriteCategories />
       <BrandAboutSection />
-       <Marquee2Hover />
+      <Marquee2Hover />
       <ChairSection />
       <Header2 />
-     
       <BestSeller/>
       <WhyUs />
       <Chair_split/>
-      {/* <ShopTheLook /> */}
-
       <BrandTrustSection />
-      {/* <ComparisonSection /> */}
-      {/* <BestSellerSection /> */}
       <BestSellerSection/>
       <ClientLogoSlider />
-      {/* <AstrideOffers/> */}
       <Reviews />
       <VideoTestimonials />
-      <ModelViewer/>
+      <PreloadModelViewer/>
       <BulkQueryForm />
       <FAQ/>
-      
-      
-     
-      
     </main>
   );
 }

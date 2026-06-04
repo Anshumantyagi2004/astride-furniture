@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 
 const chairData = [
     { 
@@ -51,32 +50,18 @@ function ChairCard({ chair, index }) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-        <motion.div
+        <div
             key={index}
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            whileHover={{
-                y: -12,
-            }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden hover:border-zinc-400 transition-all duration-300 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] min-w-[290px] max-w-[320px] snap-center flex-shrink-0 md:min-w-0 md:max-w-none"
+            className="group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden hover:border-zinc-400 hover:-translate-y-3 transition-all duration-300 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] min-w-[290px] max-w-[320px] snap-center flex-shrink-0 md:min-w-0 md:max-w-none cursor-pointer"
         >
             {/* HOVER GLOW */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
 
             {/* IMAGE */}
             <div className="relative h-[300px] md:h-[420px] flex items-center justify-center p-6">
-                <motion.div
-                    whileHover={{
-                        scale: 1.03,
-                        rotate: -1,
-                    }}
-                    transition={{ duration: 0.2 }}
-                    className="w-full h-full flex items-center justify-center relative"
-                >
+                <div className="w-full h-full flex items-center justify-center relative transition-transform duration-300 group-hover:scale-103 group-hover:-rotate-1">
                     {/* Main Image */}
                     <div 
                         className={`absolute w-full h-[260px] md:h-[380px] transition-all duration-500 flex items-center justify-center ${
@@ -112,7 +97,7 @@ function ChairCard({ chair, index }) {
                             className="w-full h-full object-contain drop-shadow-[0_25px_45px_rgba(0,0,0,0.08)] group-hover:drop-shadow-[0_35px_65px_rgba(0,0,0,0.12)] transition-all duration-500"
                         />
                     </div>
-                </motion.div>
+                </div>
             </div>
 
             {/* CONTENT */}
@@ -131,7 +116,7 @@ function ChairCard({ chair, index }) {
                     </button>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 }
 
@@ -141,23 +126,13 @@ export default function ChairSection() {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-zinc-400/10 blur-[180px] rounded-full"></div>
             <div className="relative z-10 md:px-25 px-4 lg:px-10">
                 <div className="text-center mb-8">
-                    <motion.p
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="uppercase tracking-[5px] text-zinc-500 text-sm font-semibold"
-                    >
+                    <p className="uppercase tracking-[5px] text-zinc-500 text-sm font-semibold">
                         Premium Ergonomics
-                    </motion.p>
-                    <motion.h2
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7 }}
-                        className="text-4xl md:text-6xl font-bold text-[#161316] leading-none mt-2"
-                    >
+                    </p>
+                    <h2 className="text-4xl md:text-6xl font-bold text-[#161316] leading-none mt-2">
                         Designed For <br />
                         Modern Workspace
-                    </motion.h2>
+                    </h2>
                 </div>
 
                 {/* CARDS */}
