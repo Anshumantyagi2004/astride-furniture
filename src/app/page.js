@@ -18,6 +18,7 @@ import BestSellerSection from "@/components/Home/BestSellerSection";
 import ClientLogoSlider from "@/components/Home/ClientLogoSlider";
 import BulkQueryForm from "@/components/Home/BulkQueryForm";
 import FAQ from "@/components/Home/FAQ";
+import HeroSection from '@/components/Home/Hero';
 
 // Lazy loaded — only the 3 heaviest components
 // Reviews: uses GSAP + ScrollTrigger (large bundle)
@@ -32,6 +33,7 @@ export default function Home() {
     <main className="min-h-screen">
       <CircularChairs/>
       <Category />
+      <HeroSection/>
       <Marquee1 />
       <BentoCategories/>
       <FavouriteCategories />
