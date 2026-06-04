@@ -155,7 +155,12 @@ const SECTIONS: SectionData[] = [
 export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: string }) {
     const [mounted, setMounted] = useState(false);
     const [activeSection, setActiveSection] = useState(0);
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile, setIsMobile] = useState(() => {
+        if (typeof window !== "undefined") {
+            return window.innerWidth < 768;
+        }
+        return false;
+    });
     const [isInteracting, setIsInteracting] = useState(false);
     // Start as true so the canvas renders immediately on mount.
     // The IntersectionObserver will set this to false when scrolled off-screen.
@@ -193,14 +198,35 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
 
     useEffect(() => {
         setMounted(true);
-        setIsMobile(window.innerWidth < 768);
+        
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    // Visibility Observer to pause WebGL on mobile and desktop
+    useEffect(() => {
+        if (!mounted) return;
+        
+        const visibilityObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => setIsInView(entry.isIntersecting));
+            },
+            { threshold: 0.05 }
+        );
+        if (containerRef.current) {
+            visibilityObserver.observe(containerRef.current);
+        }
+        return () => visibilityObserver.disconnect();
+    }, [mounted]);
 
     useEffect(() => {
         if (!mounted) return;
+        if (isMobile) return; // Skip scroll snapping and touch gesture listeners on mobile
 
         let isSnapping = false;
-        let startY = 0;
 
         const snapToSection = (sectionIndex: number) => {
             if (!containerRef.current) return;
@@ -248,305 +274,191 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
             setActiveSection(section);
         };
 
-        // Mobile Gesture Swipe Snapping Controls
-        const handleTouchStart = (e: TouchEvent) => {
-            startY = e.touches[0].clientY;
-        };
-
-        const handleTouchEnd = () => {
-            // Reset startY after each gesture so next swipe starts fresh
-            startY = 0;
-        };
-
-        const handleTouchMove = (e: TouchEvent) => {
-            // If user is rotating the 3D model, don't intercept scroll gestures
-            if (isSnapping || isInteractingRef.current || !containerRef.current) return;
-            
-            const rect = containerRef.current.getBoundingClientRect();
-            const viewHeight = window.innerHeight;
-            const absoluteContainerTop = window.scrollY + rect.top;
-            
-            // Only capture gesture if container is locked in active view
-            if (rect.top <= 10 && rect.bottom >= viewHeight - 10) {
-                const currentY = e.touches[0].clientY;
-                const diffY = startY - currentY; // positive diff means swipe up/scroll down
-                
-                if (Math.abs(diffY) > 30) {
-                    if (diffY > 0) {
-                        // Swipe Up (Scroll Down) -> advance to next slide
-                        e.preventDefault();
-                        // Use ref instead of state to avoid stale closure & dep array issues
-                        if (activeSectionRef.current < 4) {
-                            setActiveSection(prev => {
-                                const nextSec = prev + 1;
-                                snapToSection(nextSec);
-                                return nextSec;
-                            });
-                        } else {
-                            // Already at last slide, scroll past the component down
-                            isSnapping = true;
-                            window.scrollTo({
-                                top: absoluteContainerTop + rect.height,
-                                behavior: 'smooth'
-                            });
-                            setTimeout(() => { isSnapping = false; }, 800);
-                        }
-                    } else {
-                        // Swipe Down (Scroll Up) -> go to previous slide
-                        e.preventDefault();
-                        if (activeSectionRef.current > 0) {
-                            setActiveSection(prev => {
-                                const prevSec = prev - 1;
-                                snapToSection(prevSec);
-                                return prevSec;
-                            });
-                        } else {
-                            // Already at first slide, scroll past the component up
-                            isSnapping = true;
-                            window.scrollTo({
-                                top: Math.max(0, absoluteContainerTop - viewHeight),
-                                behavior: 'smooth'
-                            });
-                            setTimeout(() => { isSnapping = false; }, 800);
-                        }
-                    }
-                }
-            }
-        };
-
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
-            handleScroll();
-        };
-        
         window.addEventListener('scroll', handleScroll, { passive: true });
-        window.addEventListener('resize', handleResize);
-        
-        const container = containerRef.current;
-        if (container) {
-            container.addEventListener('touchstart', handleTouchStart, { passive: true });
-            container.addEventListener('touchmove', handleTouchMove, { passive: false });
-            container.addEventListener('touchend', handleTouchEnd, { passive: true });
-        }
-
-        // IntersectionObserver: pause WebGL canvas when scrolled off-screen
-        // Runs here (not in first useEffect) because containerRef.current is guaranteed to be set now
-        const visibilityObserver = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => setIsInView(entry.isIntersecting));
-            },
-            { threshold: 0.05 }
-        );
-        if (container) visibilityObserver.observe(container);
         
         handleScroll();
         
         return () => {
             window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('resize', handleResize);
-            if (container) {
-                container.removeEventListener('touchstart', handleTouchStart);
-                container.removeEventListener('touchmove', handleTouchMove);
-                container.removeEventListener('touchend', handleTouchEnd);
-            }
-            visibilityObserver.disconnect();
             if (interactTimeoutRef.current) {
                 clearTimeout(interactTimeoutRef.current);
             }
         };
-    // IMPORTANT: activeSection intentionally removed from deps.
-    // We read it via activeSectionRef inside handlers to avoid re-mounting listeners on every section change.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mounted, isMobile]);
+
     if (!mounted) return null;
+
+    if (isMobile) {
+        return (
+            <div ref={containerRef} className="w-full bg-[#090807] py-10 px-8 flex flex-col gap-6">
+                <LoadingScreen />
+                {/* Title at top */}
+                <div className="text-center">
+                    <span className="text-zinc-500 text-[10px] tracking-widest uppercase block mb-0.5">Interactive Experience</span>
+                    <h2 className="text-white text-2xl font-serif font-bold uppercase tracking-tight">The Astride Chair</h2>
+                </div>
+
+                {/* Beautiful 3D Model Card */}
+                <div className="relative w-full h-[400px] rounded-2xl overflow-hidden border border-zinc-700 bg-zinc-900/30 shadow-2xl backdrop-blur-md">
+                    <div className="w-full h-full">
+                        {isInView ? (
+                            <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
+                                <color attach="background" args={['#090807']} />
+                                
+                                <ambientLight intensity={0.5} />
+                                <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
+                                <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+                                <Environment preset="studio" />
+                                
+                                <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
+    
+                                <Suspense fallback={null}>
+                                    <Center position={[0, -0.3, 0]}>
+                                        <Model url={url} isMobile={isMobile} />
+                                    </Center>
+                                    <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={isInteracting} />
+                                </Suspense>
+
+                                <OrbitControls 
+                                    enablePan={false}
+                                    enableZoom={true}
+                                    minDistance={2}
+                                    maxDistance={10}
+                                    minPolarAngle={Math.PI / 2.1}
+                                    maxPolarAngle={Math.PI / 1.9}
+                                    onStart={handleInteractionStart}
+                                    onEnd={handleInteractionEnd}
+                                    makeDefault
+                                />
+                            </Canvas>
+                        ) : (
+                            <div className="w-full h-full bg-[#090807]" />
+                        )}
+                    </div>
+                    
+                    {/* Interaction helper overlay */}
+                    <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/80 to-transparent pointer-events-none z-10">
+                        <div className="flex items-center gap-2 text-[10px] text-neutral-300">
+                            <span className="inline-flex items-center gap-2 rounded px-1.5 py-0.5 bg-white/10 ring-1 ring-white/20 font-mono">
+                                R3F • GLB
+                            </span>
+                            <div className="text-neutral-400">
+                                Drag to rotate, pinch to zoom
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Plain text listed after the model */}
+                <div className="flex flex-col gap-4 mt-2">
+                    <div 
+                        className="bg-zinc-950/40 border border-white/5 rounded-2xl p-6 flex flex-col justify-center text-center shadow-lg animate-fade-in"
+                        style={{ fontFamily: '"Inter", sans-serif' }}
+                    >
+                        <span className="text-zinc-500 font-bold tracking-[0.25em] text-[10px] mb-1.5 block uppercase">
+                            Why Astride?
+                        </span>
+                        <h3 className="text-white text-xl font-extrabold tracking-wider mb-2 uppercase">
+                            Engineered for Excellence
+                        </h3>
+                        <p className="text-zinc-300 text-sm leading-relaxed font-normal">
+                            Discover the ultimate ergonomic experience, meticulously crafted from the ground up. Rotate, zoom, and interact with the 3D model above to explore the premium craftsmanship and ergonomic design.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div ref={containerRef} className="relative w-full h-[500vh] md:h-[400vh] bg-[#090807] overflow-visible">
             {/* Sticky Container */}
             <div className="sticky top-0 w-full h-screen overflow-hidden">
                 <LoadingScreen />
-                {isMobile ? (
-                    <div className="w-full h-full flex flex-col justify-start gap-4 pt-20 pb-4 px-4 z-10 relative">
-                        {/* Title at top */}
-                        <div className="text-center">
-                            <span className="text-zinc-500 text-[10px] tracking-widest uppercase block mb-0.5">Interactive Experience</span>
-                            <h2 className="text-white text-2xl font-serif font-bold uppercase tracking-tight">The Astride Chair</h2>
-                        </div>
-
-                        {/* Beautiful 3D Model Card */}
-                        <div className="relative w-full h-[460px] max-h-[55vh] mx-auto rounded-2xl overflow-hidden border border-white/10 bg-zinc-950/45 shadow-2xl backdrop-blur-md">
-                            <div className="w-full h-full">
-                                {/* Only render the WebGL canvas when the component is visible on screen */}
-                                {isInView ? (
-                                    <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
-                                        <color attach="background" args={['#090807']} />
-                                        
-                                        <ambientLight intensity={0.5} />
-                                        <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
-                                        <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-                                        <Environment preset="studio" />
-                                        
-                                        <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
-            
-                                        <Suspense fallback={null}>
-                                            <Center position={[0, -0.3, 0]}>
-                                                <Model url={url} isMobile={isMobile} />
-                                            </Center>
-                                            <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={isInteracting} />
-                                        </Suspense>
-
-                                        <OrbitControls 
-                                            enablePan={false}
-                                            enableZoom={true}
-                                            minDistance={2}
-                                            maxDistance={10}
-                                            minPolarAngle={Math.PI / 2.1}
-                                            maxPolarAngle={Math.PI / 1.9}
-                                            onStart={handleInteractionStart}
-                                            onEnd={handleInteractionEnd}
-                                            makeDefault
-                                        />
-                                    </Canvas>
-                                ) : (
-                                    // Lightweight placeholder when off-screen — zero GPU cost
-                                    <div className="w-full h-full bg-[#090807]" />
-                                )}
-                            </div>
-                            
-                            {/* Astronaut-style overlay on card bottom */}
-                            <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/80 to-transparent pointer-events-none z-10">
-                                <div className="flex items-center gap-2 text-[10px] text-neutral-300">
-                                    <span className="inline-flex items-center gap-2 rounded px-1.5 py-0.5 bg-white/10 ring-1 ring-white/20 font-mono">
-                                        R3F • GLB
-                                    </span>
-                                    <div className="text-neutral-400">
-                                        Drag to rotate, scroll to zoom
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Text card below the 3D Viewer */}
-                        <div className="w-full bg-zinc-950/50 border border-white/10 backdrop-blur-md rounded-2xl p-6 min-h-[160px] flex flex-col justify-center items-center shadow-lg relative z-20">
-                            {(() => {
-                                const sec = SECTIONS[activeSection];
-                                if (!sec) return null;
-                                return (
-                                    <div className="w-full flex flex-col items-center text-center transition-all duration-300" style={{ fontFamily: '"Inter", sans-serif' }}>
-                                        {sec.badge && (
-                                            <span className="text-zinc-400 font-bold tracking-[0.25em] text-[10px] mb-2 block uppercase">
-                                                {sec.badge}
-                                            </span>
-                                        )}
-                                        <h3 className="text-white text-2xl font-extrabold tracking-wider mb-2.5 uppercase">
-                                            {sec.title}
-                                        </h3>
-                                        {sec.subtitle && (
-                                            <p className="text-zinc-200 text-sm leading-relaxed max-w-sm font-normal">
-                                                {sec.subtitle}
-                                            </p>
-                                        )}
-                                        {sec.desc && (
-                                            <p className="text-zinc-200 leading-relaxed text-sm font-normal">
-                                                {sec.desc}
-                                            </p>
-                                        )}
-                                        {sec.align === 'center' && (
-                                            <div className="mt-5 flex flex-col items-center animate-bounce">
-                                                <span className="text-zinc-400 text-[9px] tracking-[0.2em] uppercase font-bold">Scroll to explore</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })()}
-                        </div>
+                <>
+                    {/* DESKTOP LAYOUT: full screen canvas with overlay cards */}
+                    {/* 3D Canvas — only rendered when in view to stop GPU loop off-screen */}
+                    <div className="absolute inset-0 w-full h-full z-0">
+                        {isInView ? (
+                            <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
+                                <color attach="background" args={['#090807']} />
+                                
+                                <ambientLight intensity={0.5} />
+                                <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
+                                <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+                                <Environment preset="studio" />
+                                
+                                <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
+     
+                                <Suspense fallback={null}>
+                                    <Center position={[0, -0.3, 0]}>
+                                        <Model url={url} isMobile={isMobile} />
+                                    </Center>
+                                    <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={false} />
+                                </Suspense>
+                            </Canvas>
+                        ) : (
+                            // Lightweight placeholder — zero GPU cost when off-screen
+                            <div className="w-full h-full bg-[#090807]" />
+                        )}
                     </div>
-                ) : (
-                    <>
-                        {/* DESKTOP LAYOUT: full screen canvas with overlay cards */}
-                        {/* 3D Canvas — only rendered when in view to stop GPU loop off-screen */}
-                        <div className="absolute inset-0 w-full h-full z-0">
-                            {isInView ? (
-                                <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
-                                    <color attach="background" args={['#090807']} />
-                                    
-                                    <ambientLight intensity={0.5} />
-                                    <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
-                                    <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-                                    <Environment preset="studio" />
-                                    
-                                    <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
-         
-                                    <Suspense fallback={null}>
-                                        <Center position={[0, -0.3, 0]}>
-                                            <Model url={url} isMobile={isMobile} />
-                                        </Center>
-                                        <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={false} />
-                                    </Suspense>
-                                </Canvas>
-                            ) : (
-                                // Lightweight placeholder — zero GPU cost when off-screen
-                                <div className="w-full h-full bg-[#090807]" />
-                            )}
-                        </div>
 
-                        {/* DESKTOP: Full-screen overlay cards */}
-                        <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
-                            {SECTIONS.map((sec, index) => {
-                                const isActive = activeSection === index;
-                                return (
-                                    <div
-                                        key={index}
-                                        className={`absolute inset-0 flex transition-all duration-700 ease-in-out ${
-                                            sec.align === 'center'
-                                                ? 'items-end justify-center px-12 text-center pb-20'
-                                                : sec.align === 'left'
-                                                    ? 'items-center justify-start px-12'
-                                                    : 'items-center justify-end px-12'
-                                        } ${
-                                            isActive
-                                                ? 'opacity-100 translate-y-0 scale-100 visible'
-                                                : 'opacity-0 translate-y-8 scale-95 invisible pointer-events-none'
-                                        }`}
-                                    >
-                                        {sec.align === 'center' ? (
-                                            <div className="max-w-2xl flex flex-col items-center">
-                                                <h1 className="text-white text-7xl font-serif font-bold tracking-tight mb-4 drop-shadow-2xl uppercase">
-                                                    {sec.title}
-                                                </h1>
-                                                {sec.subtitle && (
-                                                    <p className="text-zinc-400 text-xl font-medium tracking-wide">
-                                                        {sec.subtitle}
-                                                    </p>
-                                                )}
-                                                <div className="mt-12 flex flex-col items-center animate-bounce">
-                                                    <span className="text-zinc-500 text-sm tracking-widest uppercase mb-2">Scroll to explore</span>
-                                                    <div className="w-px h-12 bg-gradient-to-b from-zinc-500 to-transparent"></div>
-                                                </div>
+                    {/* DESKTOP: Full-screen overlay cards */}
+                    <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
+                        {SECTIONS.map((sec, index) => {
+                            const isActive = activeSection === index;
+                            return (
+                                <div
+                                    key={index}
+                                    className={`absolute inset-0 flex transition-all duration-700 ease-in-out ${
+                                        sec.align === 'center'
+                                            ? 'items-end justify-center px-12 text-center pb-20'
+                                            : sec.align === 'left'
+                                                ? 'items-center justify-start px-12'
+                                                : 'items-center justify-end px-12'
+                                    } ${
+                                        isActive
+                                            ? 'opacity-100 translate-y-0 scale-100 visible'
+                                            : 'opacity-0 translate-y-8 scale-95 invisible pointer-events-none'
+                                    }`}
+                                >
+                                    {sec.align === 'center' ? (
+                                        <div className="max-w-2xl flex flex-col items-center">
+                                            <h1 className="text-white text-7xl font-serif font-bold tracking-tight mb-4 drop-shadow-2xl uppercase">
+                                                {sec.title}
+                                            </h1>
+                                            {sec.subtitle && (
+                                                <p className="text-zinc-400 text-xl font-medium tracking-wide">
+                                                    {sec.subtitle}
+                                                </p>
+                                            )}
+                                            <div className="mt-12 flex flex-col items-center animate-bounce">
+                                                <span className="text-zinc-500 text-sm tracking-widest uppercase mb-2">Scroll to explore</span>
+                                                <div className="w-px h-12 bg-gradient-to-b from-zinc-500 to-transparent"></div>
                                             </div>
-                                        ) : (
-                                            <div className="max-w-md bg-black/40 backdrop-blur-md border border-white/10 p-8 rounded-2xl shadow-2xl pointer-events-auto">
-                                                {sec.badge && (
-                                                    <span className="text-orange-500 font-bold tracking-widest text-sm mb-2 block">
-                                                        {sec.badge}
-                                                    </span>
-                                                )}
-                                                <h2 className="text-white text-4xl font-serif font-bold mb-4">
-                                                    {sec.title}
-                                                </h2>
-                                                {sec.desc && (
-                                                    <p className="text-zinc-400 leading-relaxed text-base">
-                                                        {sec.desc}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </>
-                )}
+                                        </div>
+                                    ) : (
+                                        <div className="max-w-md bg-black/40 backdrop-blur-md border border-white/10 p-8 rounded-2xl shadow-2xl pointer-events-auto">
+                                            {sec.badge && (
+                                                <span className="text-orange-500 font-bold tracking-widest text-sm mb-2 block">
+                                                    {sec.badge}
+                                                </span>
+                                            )}
+                                            <h2 className="text-white text-4xl font-serif font-bold mb-4">
+                                                {sec.title}
+                                            </h2>
+                                            {sec.desc && (
+                                                <p className="text-zinc-400 leading-relaxed text-base">
+                                                    {sec.desc}
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </>
             </div>
         </div>
     );
