@@ -21,7 +21,9 @@ export async function POST(req) {
         const longDescription = formData.get("longDescription");
         const videoLinks = JSON.parse(formData.get("videoLinks") || "[]");
         const specifications = JSON.parse(formData.get("specifications") || "[]");
-        const imageFiles = formData.getAll("images");
+        const colorVariantsData = JSON.parse(
+            formData.get("colorVariants") || "[]"
+        );
 
         // VALIDATION
         if (!productName || !category || !oldPrice || !realPrice || !shortDescription || !longDescription) {
@@ -46,23 +48,46 @@ export async function POST(req) {
         if (existingProduct) { slug = `${slug}-${crypto.randomBytes(2).toString("hex")}`; }
 
         // UPLOAD IMAGES
-        const uploadedImages = [];
-        for (const image of imageFiles) {
-            const bytes = await image.arrayBuffer();
-            const buffer = Buffer.from(bytes);
-            const extension = path.extname(image.name);
-            const fileName = `${Date.now()}-${generateSlug(productName)}${extension}`;
+        const uploadedColorVariants = [];
 
-            const uploadedImage = await uploadToR2({
-                file: buffer,
-                folder: "products",
-                fileName,
-                contentType: image.type,
-            });
+        for (
+            let variantIndex = 0;
+            variantIndex < colorVariantsData.length;
+            variantIndex++
+        ) {
+            const variant = colorVariantsData[variantIndex];
 
-            uploadedImages.push({
-                url: uploadedImage.url,
-                imageField: uploadedImage.key,
+            const files = formData.getAll(
+                `variant_${variantIndex}`
+            );
+
+            const uploadedImages = [];
+
+            for (const image of files) {
+                const bytes = await image.arrayBuffer();
+                const buffer = Buffer.from(bytes);
+
+                const extension = path.extname(image.name);
+
+                const fileName =
+                    `${Date.now()}-${generateSlug(productName)}-${variant.colorName}${extension}`;
+
+                const uploadedImage = await uploadToR2({
+                    file: buffer,
+                    folder: "products",
+                    fileName,
+                    contentType: image.type,
+                });
+
+                uploadedImages.push({
+                    url: uploadedImage.url,
+                    imageField: uploadedImage.key,
+                });
+            }
+
+            uploadedColorVariants.push({
+                colorName: variant.colorName,
+                images: uploadedImages,
             });
         }
 
@@ -80,7 +105,7 @@ export async function POST(req) {
             realPrice,
             shortDescription,
             longDescription,
-            images: uploadedImages,
+            colorVariants: uploadedColorVariants,
             videoLinks,
             specifications,
             metaTitle,
@@ -103,13 +128,6 @@ export async function POST(req) {
 
 export async function GET() {
     try {
-        if (!process.env.MONGODB_URI) {
-            // Proxy to live API if local database is not configured
-            const res = await fetch("https://astride-furniture.vercel.app/api/product");
-            const data = await res.json();
-            return NextResponse.json(data, { status: 200 });
-        }
-
         await connectDB();
 
         const products = await Product.find().populate("category").sort({ createdAt: -1 });

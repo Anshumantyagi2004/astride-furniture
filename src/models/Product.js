@@ -26,18 +26,26 @@ const productSchema = new mongoose.Schema(
         },
 
         // PRODUCT IMAGES
-        images: [
+        colorVariants: [
             {
-                url: {
+                colorName: {
                     type: String,
-                    required: true,
+                    trim: true,
                 },
+                images: [
+                    {
+                        url: {
+                            type: String,
+                            required: true,
+                        },
 
-                imageField: {
-                    type: String,
-                    required: true,
-                },
-            },
+                        imageField: {
+                            type: String,
+                            required: true,
+                        },
+                    },
+                ],
+            }
         ],
 
         // PRICING

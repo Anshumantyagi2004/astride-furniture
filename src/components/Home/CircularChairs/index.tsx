@@ -72,7 +72,11 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
               #ebedf0 100%
             );
           background-size: 150% 150%;
-          animation: metallic-drift 15s ease-in-out infinite alternate;
+        }
+        @media (min-width: 1024px) {
+          .local-metallic-bg {
+            animation: metallic-drift 15s ease-in-out infinite alternate;
+          }
         }
 
         /* 100% mathematically bulletproof hardware-accelerated infinite marquee */

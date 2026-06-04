@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
     FaFacebookF,
@@ -12,6 +13,10 @@ import {
 } from "react-icons/fa6";
 
 export default function Footer() {
+    const pathname = usePathname();
+
+    const adminLayout = pathname.startsWith("/admin");
+    if (adminLayout) return null;
     return (
         <footer className="bg-[#0b0b0b] text-[#BABABA] border-t border-zinc-800/60 font-[Barlow] relative overflow-hidden">
             {/* Elegant glowing pure grey/white flares */}

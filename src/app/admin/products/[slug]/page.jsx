@@ -31,8 +31,13 @@ export default function Page() {
     const [oldPrice, setOldPrice] = useState("");
     const [realPrice, setRealPrice] = useState("");
     const [category, setCategory] = useState("");
-    const [images, setImages] = useState([]);
-    const [imagePreview, setImagePreview] = useState([]);
+    const [colorVariants, setColorVariants] = useState([
+        {
+            colorName: "",
+            images: [],
+            previews: [],
+        },
+    ]);
     const [videoLinks, setVideoLinks] = useState([""]);
     const [specifications, setSpecifications,] = useState([
         { key: "", value: "", },
@@ -59,7 +64,21 @@ export default function Page() {
                 setSpecifications(product.specifications
                     ?.length ? product.specifications : [{ key: "", value: "", },
                 ]);
-                setImagePreview(product.images.map((img) => img.url));
+                setColorVariants(
+                    product.colorVariants?.length
+                        ? product.colorVariants.map((variant) => ({
+                            colorName: variant.colorName,
+                            images: [],
+                            previews: variant.images.map((img) => img.url),
+                        }))
+                        : [
+                            {
+                                colorName: "",
+                                images: [],
+                                previews: [],
+                            },
+                        ]
+                );
             }
         } catch (error) {
             console.log(error);
@@ -87,12 +106,75 @@ export default function Page() {
         getCategories();
     }, []);
 
+    const addColorVariant = () => {
+        const lastVariant =
+            colorVariants[colorVariants.length - 1];
+
+        if (!lastVariant.colorName.trim()) {
+            toast.error(
+                "Please enter previous color name first"
+            );
+            return;
+        }
+
+        setColorVariants([
+            ...colorVariants,
+            {
+                colorName: "",
+                images: [],
+                previews: [],
+            },
+        ]);
+    };
+
+    const removeColorVariant = (index) => {
+        const updated = [...colorVariants];
+
+        updated.splice(index, 1);
+
+        setColorVariants(updated);
+    };
+
+    const handleColorChange = (index, value) => {
+        const updated = [...colorVariants];
+
+        updated[index].colorName = value;
+
+        setColorVariants(updated);
+    };
+
     // IMAGE CHANGE
-    const handleImageChange = (e) => {
+    const handleImageChange = (index, e) => {
         const files = Array.from(e.target.files);
-        setImages(files);
-        const preview = files.map((file) => URL.createObjectURL(file));
-        setImagePreview(preview);
+
+        const updated = [...colorVariants];
+
+        updated[index].images = files;
+
+        updated[index].previews = files.map((file) =>
+            URL.createObjectURL(file)
+        );
+
+        setColorVariants(updated);
+    };
+
+    const removeVariantImage = (
+        variantIndex,
+        imageIndex
+    ) => {
+        const updated = [...colorVariants];
+
+        updated[variantIndex].images.splice(
+            imageIndex,
+            1
+        );
+
+        updated[variantIndex].previews.splice(
+            imageIndex,
+            1
+        );
+
+        setColorVariants(updated);
     };
 
     // VIDEO
@@ -162,7 +244,28 @@ export default function Page() {
             formData.append("category", category);
             formData.append("videoLinks", JSON.stringify(videoLinks));
             formData.append("specifications", JSON.stringify(specifications));
-            images.forEach((image) => { formData.append("images", image); });
+            const colorData = colorVariants.map(
+                (variant) => ({
+                    colorName: variant.colorName,
+                    imageCount: variant.images.length,
+                })
+            );
+
+            formData.append(
+                "colorVariants",
+                JSON.stringify(colorData)
+            );
+
+            colorVariants.forEach(
+                (variant, variantIndex) => {
+                    variant.images.forEach((image) => {
+                        formData.append(
+                            `variant_${variantIndex}`,
+                            image
+                        );
+                    });
+                }
+            );
 
             const { data } = await axios.put(`/api/product/${params.slug}`, formData);
             if (data.success) {
@@ -359,40 +462,115 @@ export default function Page() {
                         </div>
 
                         {/* MULTIPLE IMAGES */}
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Product Images
-                            </label>
+                        <div className="space-y-4">
 
-                            <label className="border-2 border-dashed border-gray-400 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-black transition">
-                                <UploadCloud className="text-gray-600 mb-3" size={40} />
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-semibold text-gray-700">
+                                    Product Color Variants
+                                </label>
 
-                                <p className="text-gray-600 font-medium">
-                                    Upload Multiple Images
-                                </p>
-
-                                <input
-                                    type="file"
-                                    multiple
-                                    accept="image/*"
-                                    onChange={handleImageChange}
-                                    className="hidden"
-                                />
-                            </label>
-
-                            {/* PREVIEW */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
-                                {imagePreview.map((image, index) => (
-                                    <div key={index} className="relative h-40 rounded-2xl overflow-hidden border">
-                                        <Image
-                                            src={image}
-                                            alt="Preview"
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    </div>
-                                ))}
+                                <button
+                                    type="button"
+                                    onClick={addColorVariant}
+                                    className="bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2"
+                                >
+                                    <Plus size={16} />
+                                    Add Color Variant
+                                </button>
                             </div>
+
+                            {colorVariants.map((variant, index) => (
+                                <div
+                                    key={index}
+                                    className="border rounded-2xl p-5 bg-gray-50"
+                                >
+                                    <div className="flex justify-between items-center mb-4">
+
+                                        <h3 className="font-semibold">
+                                            Variant #{index + 1}
+                                        </h3>
+
+                                        {colorVariants.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    removeColorVariant(index)
+                                                }
+                                                className="text-red-500"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <input
+                                        type="text"
+                                        placeholder="Black, Blue, White..."
+                                        value={variant.colorName}
+                                        onChange={(e) =>
+                                            handleColorChange(
+                                                index,
+                                                e.target.value
+                                            )
+                                        }
+                                        className="w-full border rounded-lg px-4 py-3 mb-4"
+                                    />
+
+                                    <label className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-black transition">
+
+                                        <UploadCloud
+                                            size={32}
+                                            className="mb-2"
+                                        />
+
+                                        <p>
+                                            Upload Images
+                                        </p>
+
+                                        <input
+                                            type="file"
+                                            multiple
+                                            accept="image/*"
+                                            onChange={(e) =>
+                                                handleImageChange(index, e)
+                                            }
+                                            className="hidden"
+                                        />
+                                    </label>
+
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+
+                                        {variant.previews.map(
+                                            (image, imageIndex) => (
+                                                <div
+                                                    key={imageIndex}
+                                                    className="relative h-40 rounded-xl overflow-hidden border"
+                                                >
+                                                    <Image
+                                                        src={image}
+                                                        alt=""
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            removeVariantImage(
+                                                                index,
+                                                                imageIndex
+                                                            )
+                                                        }
+                                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
 
                         {/* VIDEO LINKS */}

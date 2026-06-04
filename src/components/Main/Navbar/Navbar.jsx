@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 import {
@@ -22,7 +22,10 @@ import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
 export default function Navbar() {
   const [hideTopBar, setHideTopBar] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
+  const adminLayout = pathname.startsWith("/admin");
+  if (adminLayout) return null;
   useEffect(() => {
     const handleScroll = () => {
       setHideTopBar(window.scrollY > 50);
