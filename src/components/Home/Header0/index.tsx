@@ -1,9 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
+import ChairFinder from "../ChairFinder";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -30,6 +32,36 @@ const itemVariants: Variants = {
 };
 
 export default function Header0() {
+  const [showFinder, setShowFinder] = useState(false);
+
+  useEffect(() => {
+    const handleUrlCheck = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("finder") === "true") {
+        setShowFinder(true);
+      }
+    };
+
+    handleUrlCheck();
+
+    const handleOpenEvent = () => {
+      setShowFinder(true);
+    };
+
+    window.addEventListener("open-chair-finder", handleOpenEvent);
+    return () => {
+      window.removeEventListener("open-chair-finder", handleOpenEvent);
+    };
+  }, []);
+
+  if (showFinder) {
+    return (
+      <section id="circular-chairs" className="relative w-full h-[85vh] min-h-[600px] overflow-hidden bg-zinc-900">
+        <ChairFinder onBack={() => setShowFinder(false)} />
+      </section>
+    );
+  }
+
   return (
     <section className="relative w-full h-[85vh] min-h-[600px] overflow-hidden bg-zinc-900">
       {/* Background Image */}
@@ -87,11 +119,7 @@ export default function Header0() {
       </div>
 
       {/* Bottom Pagination */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center gap-6 text-white/60 text-sm font-medium">
-        <div className="w-12 h-[2px] bg-white"></div>
-        <span className="text-white cursor-pointer">01</span>
-        <span className="hover:text-white cursor-pointer transition-colors">02</span>
-      </div>
+      
     </section>
   );
 }

@@ -364,9 +364,12 @@ export default function DetailPageCard({ productId }: { productId?: string }) {
             {/* Tab Contents */}
             <div ref={tabContentRef} className="text-[13.5px] leading-relaxed text-neutral-700">
               {activeTab === 'description' && (
-                <p className="animate-fade-in font-medium text-neutral-700">
-                  {product.longDescription || `Meet the ${product.name} — built for those who live and breathe performance. Wrapped in sleek, premium upholstery with breathable spandex panels, it keeps you cool under pressure. The soft velour neck pillow and memory foam lumbar support mould to your posture, making long gaming sessions feel effortless. Precision-designed carbon-textured 4D armrests provide versatile positioning, while the newly engineered Frog Mechanism gives you complete control over recline and tilt. Features a heavy-duty metal base, Class 4 gas lift, and smooth-rolling casters. The ultimate premium chair under ₹20,000 for users in India.`}
-                </p>
+                <div 
+                  className="animate-fade-in font-medium text-neutral-700 space-y-4"
+                  dangerouslySetInnerHTML={{
+                    __html: product.longDescription || `Meet the ${product.name} — built for those who live and breathe performance. Wrapped in sleek, premium upholstery with breathable spandex panels, it keeps you cool under pressure. The soft velour neck pillow and memory foam lumbar support mould to your posture, making long gaming sessions feel effortless. Precision-designed carbon-textured 4D armrests provide versatile positioning, while the newly engineered Frog Mechanism gives you complete control over recline and tilt. Features a heavy-duty metal base, Class 4 gas lift, and smooth-rolling casters. The ultimate premium chair under ₹20,000 for users in India.`
+                  }}
+                />
               )}
 
               {activeTab === 'features' && (
