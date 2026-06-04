@@ -32,8 +32,9 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <CircularChairs/>
+       <HeroSection/>
       <Category />
-      <HeroSection/>
+     
       <Marquee1 />
       <BentoCategories/>
       <FavouriteCategories />
