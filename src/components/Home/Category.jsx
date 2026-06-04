@@ -30,7 +30,7 @@ export default function Category() {
     }, []);
 
     return (
-        <section className="relative overflow-hidden bg-[#F8F5F1] py-10">
+        <section className="relative overflow-hidden bg-[#F4F4F5] py-10">
 
             {/* HEADING */}
             <div className="relative z-10 md:px-15 px-4 mb-4">
@@ -38,21 +38,21 @@ export default function Category() {
                     className="text-5xl sm:text-6xl lg:text-[4.5rem] font-black uppercase leading-[0.85] tracking-tighter"
                     style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
                 >
-                    <span className="block text-[#161316]">TRENDING</span>
-                    <span className="block text-transparent [-webkit-text-stroke:2px_#18181b] mt-[6px]">PRODUCTS</span>
+                    <span className="block text-zinc-900">TRENDING</span>
+                    <span className="block text-transparent [-webkit-text-stroke:2px_#27272a] mt-[6px]">PRODUCTS</span>
                 </div>
             </div>
 
             {/* SOFT BACKGROUND GLOW */}
-            <div className="absolute top-0 left-0 w-96 h-96 bg-zinc-800/5 blur-[140px] rounded-full" />
+            <div className="absolute top-0 left-0 w-96 h-96 bg-zinc-400 blur-[100px] rounded-full" />
 
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-zinc-800/5 blur-[160px] rounded-full" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-zinc-300/40 blur-[160px] rounded-full" />
 
             {/* CONTENT */}
             <div className="relative md:px-15 px-4 pt-8">
 
                 {loading ? (
-                    <div className="text-center text-[#453027] text-lg">
+                    <div className="text-center text-zinc-600 text-lg">
                         Loading...
                     </div>
                 ) : (
@@ -73,7 +73,7 @@ export default function Category() {
                                         whileHover={{
                                             y: -8,
                                         }}
-                                        className="group relative overflow-hidden rounded-3xl bg-white border border-[#E7DDD5] transition-all duration-500 hover:border-[#161316] hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)]">
+                                        className="group relative overflow-hidden rounded-3xl bg-white border border-zinc-200 transition-all duration-500 hover:border-zinc-800 hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)]">
 
                                         <div className="relative h-72 overflow-hidden rounded-3xl">
                                             <img
@@ -96,13 +96,13 @@ export default function Category() {
 
                                                 <div className="w-8 h-8 rounded-full
                                               bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center
-                                              text-white group-hover:bg-[#161316] group-hover:border-[#161316] transition-all duration-500 group-hover:rotate-45">
+                                              text-white group-hover:bg-zinc-900 group-hover:border-zinc-900 group-hover:text-white transition-all duration-500 group-hover:rotate-45">
                                                     <ArrowRight size={18} />
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#161316] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+                                        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-zinc-800 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
                                     </motion.div>
                                 ))}
                         </div>

@@ -176,6 +176,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       alt={`Top Chair ${idx}`}
                       width={100}
                       height={100}
+                      unoptimized={true}
                       className="object-contain pointer-events-none select-none"
                       style={{ width: "95%", height: "95%" }}
                       priority={idx < 4}
@@ -192,6 +193,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       alt={`Top Chair copy ${idx}`}
                       width={100}
                       height={100}
+                      unoptimized={true}
                       className="object-contain pointer-events-none select-none"
                       style={{ width: "95%", height: "95%" }}
                     />
@@ -213,6 +215,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       alt={`Mid Chair ${idx}`}
                       width={100}
                       height={100}
+                      unoptimized={true}
                       className="object-contain pointer-events-none select-none"
                       style={{ width: "95%", height: "95%" }}
                       priority={idx < 4}
@@ -229,6 +232,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       alt={`Mid Chair copy ${idx}`}
                       width={100}
                       height={100}
+                      unoptimized={true}
                       className="object-contain pointer-events-none select-none"
                       style={{ width: "95%", height: "95%" }}
                     />
@@ -250,6 +254,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       alt={`Bottom Chair ${idx}`}
                       width={100}
                       height={100}
+                      unoptimized={true}
                       className="object-contain pointer-events-none select-none"
                       style={{ width: "95%", height: "95%" }}
                       priority={idx < 4}
@@ -266,6 +271,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
                       alt={`Bottom Chair copy ${idx}`}
                       width={100}
                       height={100}
+                      unoptimized={true}
                       className="object-contain pointer-events-none select-none"
                       style={{ width: "95%", height: "95%" }}
                     />

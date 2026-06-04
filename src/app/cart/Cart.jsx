@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export default function Cart() {
   return (
-    <div className="h-full flex items-center justify-center px-4 py-10">
+    <div className="min-h-[75vh] flex items-center justify-center px-4 py-10">
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -22,22 +22,22 @@ export default function Cart() {
             repeat: Infinity,
             duration: 2,
           }}
-          className="w-24 h-24 mx-auto rounded-full bg-cyan-50 flex items-center justify-center mb-6"
+          className="w-24 h-24 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-6 border border-slate-200/60"
         >
           <ShoppingCart
-            size={50}
-            strokeWidth={1.5}
-            className="text-[#00badb]"
+            size={40}
+            strokeWidth={1.8}
+            className="text-slate-800"
           />
         </motion.div>
 
         {/* Title */}
-        <h2 className="text-3xl font-bold text-[#243447] mb-3">
+        <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-3">
           Your Cart is Empty
         </h2>
 
         {/* Description */}
-        <p className="text-gray-500 text-[15px] leading-relaxed mb-8">
+        <p className="text-slate-500 text-[13px] font-medium leading-relaxed mb-8">
           Looks like you haven’t added anything to your cart yet.
           Start shopping to fill it with amazing products.
         </p>
@@ -47,7 +47,7 @@ export default function Cart() {
           <motion.button
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
-            className="bg-[#00badb] hover:bg-cyan-500 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg shadow-cyan-100"
+            className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 shadow-lg shadow-slate-900/10"
           >
             Continue Shopping
           </motion.button>

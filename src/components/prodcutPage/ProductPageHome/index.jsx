@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
 
 import ProductPageCard from '../ProductPageCard';
 
@@ -112,6 +111,22 @@ export default function ProductPageHome() {
   const [wishlisted, setWishlisted] = useState({});
 
   useEffect(() => {
+    const saved = localStorage.getItem("astride_wishlist");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const dict = {};
+        parsed.forEach(item => {
+          dict[item.id] = true;
+        });
+        setWishlisted(dict);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [productsList]);
+
+  useEffect(() => {
     async function fetchProducts() {
       try {
         const res = await fetch("/api/product");
@@ -177,7 +192,33 @@ export default function ProductPageHome() {
   }, [productsList, selectedCategory, selectedBackSupport, selectedHours, selectedCapacity, maxPrice]);
 
   const toggleWishlist = (id) => {
-    setWishlisted((prev) => ({ ...prev, [id]: !prev[id] }));
+    setWishlisted((prev) => {
+      const updated = { ...prev, [id]: !prev[id] };
+      const product = productsList.find(p => p.id === id);
+      const saved = localStorage.getItem("astride_wishlist");
+      let list = [];
+      if (saved) {
+        try { list = JSON.parse(saved); } catch (e) {}
+      }
+      if (updated[id]) {
+        if (product && !list.some(p => p.id === id)) {
+          list.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            originalPrice: product.originalPrice || product.price,
+            discount: product.discount || "0%",
+            image: product.image,
+            rating: product.rating || 4.7
+          });
+        }
+      } else {
+        list = list.filter(p => p.id !== id);
+      }
+      localStorage.setItem("astride_wishlist", JSON.stringify(list));
+      window.dispatchEvent(new Event("astride_wishlist_updated"));
+      return updated;
+    });
   };
 
   const clearFilters = () => {
@@ -188,58 +229,28 @@ export default function ProductPageHome() {
     setMaxPrice(25000);
   };
 
-  // Animations variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    show: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { type: "spring", stiffness: 100, damping: 15 } 
-    },
-  };
-
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans px-4 md:px-8 py-8 md:py-16 select-none overflow-x-hidden">
       <div className="max-w-[1600px] mx-auto w-full">
         
         {/* ── Breadcrumb Navigation ── */}
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-10"
-        >
+        <div className="flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-10 transition-all duration-300">
           <span className="hover:text-slate-900 cursor-pointer transition-colors">Home</span>
           <span>/</span>
           <span className="hover:text-slate-900 cursor-pointer transition-colors">Products</span>
           <span>/</span>
           <span className="text-slate-900">{selectedCategory}</span>
-        </motion.div>
+        </div>
 
         {/* ── Dynamic Category Title Header ── */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12 transition-all duration-300">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-black mb-5">
             {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory === "Gaming Chair" ? "Gaming Series" : selectedCategory === "Executive Chair" ? "Executive Series" : selectedCategory === "Staff Chair" ? "Staff Series" : selectedCategory === "Study Chair" ? "Study Series" : "Premium Bar Stools"}
           </h1>
           <p className="max-w-3xl mx-auto text-sm md:text-base text-neutral-500 leading-relaxed font-medium">
             Discover Astride's premium ergonomics — masterfully engineered seating built for long-session endurance, proactive posture correction, adjustable support components, and premium styling.
           </p>
-        </motion.div>
+        </div>
 
         {/* ── Pill Tab Navigation ── */}
         <div className="flex justify-center items-center gap-3 md:gap-4 flex-wrap pb-4 mb-16 max-w-4xl mx-auto">
@@ -265,12 +276,7 @@ export default function ProductPageHome() {
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
           {/* ── Sidebar Filters ── */}
-          <motion.aside 
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="w-full lg:w-[280px] shrink-0 lg:sticky lg:top-32 h-fit lg:pr-8 bg-neutral-50 p-6 rounded-2xl border border-neutral-100"
-          >
+          <aside className="w-full lg:w-[280px] shrink-0 lg:sticky lg:top-32 h-fit lg:pr-8 bg-neutral-50 p-6 rounded-2xl border border-neutral-100 transition-all duration-300">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-4 mb-6">
               <h2 className="text-sm font-bold uppercase tracking-widest text-black">Filters</h2>
               {(selectedCategory !== "All Products" || selectedBackSupport || selectedHours || selectedCapacity || maxPrice !== 25000) && (
@@ -356,54 +362,36 @@ export default function ProductPageHome() {
                 className="w-full accent-slate-900 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none"
               />
             </div>
-          </motion.aside>
+          </aside>
 
           {/* ── Product List Grid ── */}
           <main className="flex-1 w-full">
-            <AnimatePresence mode="popLayout">
-              {filteredProducts.length === 0 ? (
-                <motion.div 
-                  key="empty"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="bg-white border border-slate-100 rounded-[32px] p-12 text-center shadow-[0_20px_40px_rgba(0,0,0,0.03)]"
+            {filteredProducts.length === 0 ? (
+              <div className="bg-white border border-slate-100 rounded-[32px] p-12 text-center shadow-[0_20px_40px_rgba(0,0,0,0.03)] transition-all duration-300">
+                <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">No matching chairs found</p>
+                <button
+                  onClick={clearFilters}
+                  className="mt-4 px-6 py-2.5 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-transform"
                 >
-                  <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">No matching chairs found</p>
-                  <button
-                    onClick={clearFilters}
-                    className="mt-4 px-6 py-2.5 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-transform"
+                  Reset Filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10 justify-items-center w-full transition-all duration-300">
+                {filteredProducts.map((prod) => (
+                  <div
+                    key={prod.id}
+                    className="w-full flex justify-center animate-fade-in"
                   >
-                    Reset Filters
-                  </button>
-                </motion.div>
-              ) : (
-                <motion.div 
-                  key="grid"
-                  layout
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="show"
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10 justify-items-center w-full"
-                >
-                  {filteredProducts.map((prod) => (
-                    <motion.div
-                      key={prod.id}
-                      layout
-                      variants={itemVariants}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      className="w-full flex justify-center"
-                    >
-                      <ProductPageCard
-                        product={prod}
-                        isWishlisted={wishlisted[prod.id]}
-                        onToggleWishlist={toggleWishlist}
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    <ProductPageCard
+                      product={prod}
+                      isWishlisted={wishlisted[prod.id]}
+                      onToggleWishlist={toggleWishlist}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </main>
 
         </div>

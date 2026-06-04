@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
     FaYoutube,
     FaInstagram,
     FaPlay,
     FaStar,
 } from "react-icons/fa6";
-import { IoShieldCheckmark } from "react-icons/io5";
 
 const videos = [
     {
@@ -30,7 +30,7 @@ const videos = [
         rating: 5,
         thumbnail: "https://img.youtube.com/vi/rzfRqSPMfNE/maxresdefault.jpg",
         embed: "https://www.youtube.com/embed/rzfRqSPMfNE?autoplay=1&mute=0",
-        link: "https://youtube.com/shorts/rzfRqSPMfNE?si=WnrwRG_M-E5ymXdT",
+        link: "https://www.youtube.com/shorts/rzfRqSPMfNE?si=WnrwRG_M-E5ymXdT",
         duration: "0:58",
     },
     {
@@ -59,162 +59,116 @@ const videos = [
 
 export default function VideoTestimonials() {
     const [playingVideo, setPlayingVideo] = useState(null);
-    const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        setIsMobile(window.innerWidth < 768);
-    }, []);
 
     return (
-        <section className="w-full py-10 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#f8fafc] overflow-hidden">
+        <section className="w-full py-10 bg-gray-50 overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">
                 
                 {/* HEADER */}
                 <div className="text-center mb-8 relative">
-                    <div className="absolute inset-0 -top-8 flex justify-center opacity-[0.03] select-none pointer-events-none">
-                        <span className="text-8xl font-black text-slate-900 tracking-widest uppercase">Reviews</span>
-                    </div>
-
-                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight">
-                        Video{" "}
-                        <span className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-600 bg-clip-text text-transparent">
-                            Testimonials
-                        </span>
+                    <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
+                        Video Testimonials
                     </h2>
-                    
-                    <p className="mt-4 text-slate-600 max-w-xl mx-auto text-base sm:text-lg leading-relaxed font-light">
+                    <p className="mt-4 text-slate-600 max-w-xl mx-auto text-base sm:text-lg">
                         Real people, real comfort. Watch honest reviews from YouTube Shorts and Instagram Reels.
                     </p>
                 </div>
 
                 {/* VIDEOS GRID / SWIPER */}
                 <div className="flex overflow-x-auto pb-10 -mx-6 px-6 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-8 md:overflow-visible md:pb-0 md:px-0 md:-mx-0 md:snap-none">
-                    {videos.map((video, index) => (
-                        <motion.div
+                    {videos.map((video) => (
+                        <div
                             key={video.id}
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{
-                                duration: isMobile ? 0 : 0.5,
-                                delay: isMobile ? 0 : index * 0.1,
-                                ease: [0.21, 1.02, 0.43, 1.01]
-                            }}
-                            whileHover={{ y: -10 }}
-                            viewport={{ once: true }}
-                            className="w-[85vw] sm:w-[320px] md:w-auto shrink-0 snap-center md:snap-align-none group relative rounded-3xl overflow-hidden bg-slate-950 shadow-2xl transition-all duration-300 border border-slate-200/10 hover:shadow-slate-300/50 mr-4 md:mr-0"
+                            className="w-[85vw] sm:w-[320px] md:w-auto shrink-0 snap-center md:snap-align-none relative rounded-2xl overflow-hidden bg-slate-900 shadow-lg border border-slate-200/50 mr-4 md:mr-0"
                         >
                             {/* VIDEO WRAPPER */}
-                            <div className="relative h-[480px] w-full overflow-hidden">
-                                <AnimatePresence mode="wait">
-                                    {playingVideo === video.id ? (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="w-full h-full bg-black"
+                            <div className="relative h-[480px] w-full bg-slate-800">
+                                {playingVideo === video.id ? (
+                                    <div className="w-full h-full bg-black">
+                                        <iframe
+                                            src={video.embed}
+                                            className="w-full h-full border-0"
+                                            allow="autoplay; encrypted-media"
+                                            allowFullScreen
+                                            loading="lazy"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="relative w-full h-full">
+                                        {/* THUMBNAIL */}
+                                        <img
+                                            src={video.thumbnail}
+                                            alt={`${video.author}'s testimonial`}
+                                            className="w-full h-full object-cover opacity-80"
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
+
+                                        {/* SIMPLE OVERLAY */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                                        {/* PLAY BUTTON CONTAINER */}
+                                        <button
+                                            onClick={() => setPlayingVideo(video.id)}
+                                            className="absolute inset-0 flex items-center justify-center z-10"
+                                            aria-label="Play video testimonial"
                                         >
-                                            <iframe
-                                                src={video.embed}
-                                                className="w-full h-full"
-                                                allow="autoplay; encrypted-media"
-                                                allowFullScreen
-                                            />
-                                        </motion.div>
-                                    ) : (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="relative w-full h-full"
-                                        >
-                                            {/* THUMBNAIL */}
-                                            <img
-                                                src={video.thumbnail}
-                                                alt={`${video.author}'s testimonial`}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                            />
+                                            <div className="w-14 h-14 rounded-full bg-black/50 border border-white/20 flex items-center justify-center shadow-md">
+                                                <FaPlay size={18} className="text-white translate-x-0.5" />
+                                            </div>
+                                        </button>
 
-                                            {/* MODERN MULTI-LAYER OVERLAY */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-black/30" />
-
-                                            {/* PLAY BUTTON CONTAINER */}
-                                            <button
-                                                onClick={() => setPlayingVideo(video.id)}
-                                                className="absolute inset-0 flex items-center justify-center group/btn z-10"
-                                                aria-label="Play video testimonial"
-                                            >
-                                                <div className="relative">
-                                                    {/* Outer pulsing ring */}
-                                                    <div className="absolute -inset-4 rounded-full bg-white/10 blur-md group-hover/btn:bg-white/20 transition-all duration-300 group-hover/btn:scale-110" />
-                                                    
-                                                    {/* Core glass play circle */}
-                                                    <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center shadow-2xl transition-all duration-300 group-hover/btn:scale-110 group-hover/btn:bg-white/30">
-                                                        <FaPlay
-                                                            size={20}
-                                                            className="text-white translate-x-0.5 transition-transform duration-300 group-hover/btn:scale-110"
-                                                        />
-                                                    </div>
+                                        {/* PLATFORM BADGE */}
+                                        <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
+                                            {video.platform === "youtube" ? (
+                                                <div className="flex items-center gap-1.5 px-3 py-1 bg-red-600 rounded text-white text-[11px] font-bold uppercase">
+                                                    <FaYoutube size={12} />
+                                                    <span>Shorts</span>
                                                 </div>
-                                            </button>
-
-                                            {/* PLATFORM BADGE - PILL STYLE */}
-                                            <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
-                                                {video.platform === "youtube" ? (
-                                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-600 text-white text-xs font-semibold tracking-wider uppercase shadow-md border border-red-500/20">
-                                                        <FaYoutube size={14} />
-                                                        <span>Shorts</span>
-                                                    </div>
-                                                ) : (
-                                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-yellow-500 text-white text-xs font-semibold tracking-wider uppercase shadow-md border border-white/10">
-                                                        <FaInstagram size={13} />
-                                                        <span>Reels</span>
-                                                    </div>
-                                                )}
-                                                
-                                                {/* DURATION BADGE */}
-                                                <div className="px-2 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-medium text-white tracking-wider">
-                                                    {video.duration}
+                                            ) : (
+                                                <div className="flex items-center gap-1.5 px-3 py-1 bg-pink-600 rounded text-white text-[11px] font-bold uppercase">
+                                                    <FaInstagram size={12} />
+                                                    <span>Reels</span>
                                                 </div>
+                                            )}
+                                            
+                                            {/* DURATION BADGE */}
+                                            <div className="px-2 py-1 bg-black/50 rounded text-[10px] font-medium text-white tracking-wider">
+                                                {video.duration}
+                                            </div>
+                                        </div>
+
+                                        {/* CATEGORY TAG BADGE */}
+                                        <div className="absolute top-4 right-4 z-20">
+                                            <div className="px-2 py-1 bg-black/40 rounded border border-white/10 text-[10px] font-medium text-white">
+                                                {video.tag}
+                                            </div>
+                                        </div>
+
+                                        {/* BOTTOM METADATA CARD */}
+                                        <div className="absolute bottom-0 left-0 w-full p-5 z-20">
+                                            {/* Stars rating */}
+                                            <div className="flex items-center gap-1 mb-1">
+                                                {[...Array(video.rating)].map((_, i) => (
+                                                    <FaStar key={i} size={10} className="text-yellow-400" />
+                                                ))}
                                             </div>
 
-                                            {/* CATEGORY TAG BADGE */}
-                                            <div className="absolute top-4 right-4 z-20">
-                                                <div className="px-2.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-medium text-white tracking-wide">
-                                                    {video.tag}
-                                                </div>
+                                            <h3 className="text-white text-base font-bold">
+                                                {video.author}
+                                            </h3>
+
+                                            <div className="flex items-center gap-1.5 mt-1 text-slate-300">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                                <p className="text-[11px]">
+                                                    Verified Astride Owner
+                                                </p>
                                             </div>
-
-                                            {/* PREMIUM BOTTOM METADATA CARD */}
-                                            <div className="absolute bottom-0 left-0 w-full p-6 z-20">
-                                                {/* Stars rating */}
-                                                <div className="flex items-center gap-1 mb-2">
-                                                    {[...Array(video.rating)].map((_, i) => (
-                                                        <FaStar key={i} size={12} className="text-yellow-400 fill-yellow-400" />
-                                                    ))}
-                                                </div>
-
-                                                <h3 className="text-white text-lg font-bold tracking-tight">
-                                                    {video.author}
-                                                </h3>
-
-                                                <div className="flex items-center gap-1.5 mt-1 text-slate-300">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                                    <p className="text-xs tracking-wide">
-                                                        Verified Astride Owner
-                                                    </p>
-                                                </div>
-
-                                                {/* Modern call to action on hover */}
-                                                <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0 transform">
-                                                    <span>Watch Review</span>
-                                                    <span className="font-semibold">&rarr;</span>
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             </div>

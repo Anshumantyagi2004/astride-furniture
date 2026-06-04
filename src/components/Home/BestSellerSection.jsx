@@ -8,10 +8,8 @@ import {
     Heart,
     Eye,
     Star,
-    Sparkles,
 } from "lucide-react";
 
-import { motion } from "framer-motion";
 import { BsCartPlus } from "react-icons/bs";
 
 const products = [
@@ -100,109 +98,88 @@ const products = [
 export default function BestSellerSection() {
     return (
         <section className="relative overflow-hidden bg-zinc-50 py-10">
-            {/* Soft, luxurious grey/white radial background flares */}
+            {/* Lightweight Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-20 left-[-150px] w-[500px] h-[500px] bg-zinc-200/40 rounded-full blur-[140px]" />
-                <div className="absolute bottom-[-150px] right-[-150px] w-[500px] h-[500px] bg-white rounded-full blur-[120px]" />
+                <div className="absolute top-20 left-[-80px] w-[250px] h-[250px] bg-zinc-200/20 rounded-full blur-[50px]" />
+                <div className="absolute bottom-[-80px] right-[-80px] w-[250px] h-[250px] bg-white rounded-full blur-[50px]" />
             </div>
 
             <div className="relative z-10 lg:px-15 md:px-10 px-6">
                 
                 {/* SECTION HEADER */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 relative">
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                        className="flex flex-col items-start text-left"
-                    >
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                    <div className="flex flex-col items-start text-left">
                         <span className="inline-flex items-center text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2">
                             EXPLORE BESTSELLERS
                         </span>
                         <div 
                             className="text-5xl sm:text-6xl lg:text-[4.5rem] font-black uppercase leading-[0.85] tracking-tighter"
-                            style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+                            style={{
+                                fontFamily: 'Impact, "Arial Black", sans-serif',
+                            }}
                         >
                             <span className="block text-[#161316]">BEST SELLING</span>
                             <span className="block text-transparent [-webkit-text-stroke:2px_#18181b] mt-[6px]">CHAIRS</span>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                    >
+                    <div>
                         <Link 
                             href="/products" 
-                            className="group inline-flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 rounded-full border border-zinc-900 text-zinc-900 font-bold uppercase tracking-wider text-xs md:text-sm hover:bg-zinc-900 hover:text-white transition-all duration-300 shadow-sm"
+                            className="group inline-flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 rounded-full border border-zinc-900 text-zinc-900 font-bold uppercase tracking-wider text-xs md:text-sm hover:bg-zinc-900 hover:text-white transition-colors duration-300"
                         >
                             All Products
-                            <svg className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
+                            <span className="group-hover:translate-x-1 transition-transform duration-300">
+                                →
+                            </span>
                         </Link>
-                    </motion.div>
+                    </div>
                 </div>
 
                 {/* PRODUCTS GRID */}
                 <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-8">
-                    {products.map((product, index) => (
-                        <motion.div
+                    {products.map((product) => (
+                        <div
                             key={product.id}
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: index * 0.05 }}
-                            viewport={{ once: true }}
-                            whileHover={{ y: -8 }}
-                            className="group relative rounded-2xl md:rounded-3xl border border-zinc-200/80 bg-white/80 backdrop-blur-md overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:border-zinc-400 transition-all duration-300 cursor-pointer"
+                            className="group relative rounded-2xl md:rounded-3xl border border-zinc-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
                         >
                             {/* SALE / DISCOUNT BADGE */}
                             <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20 flex flex-col gap-1 md:gap-2">
                                 <div className="px-2 py-1 md:px-3.5 md:py-1.5 rounded-full bg-zinc-900 text-white text-[8px] md:text-[11px] font-bold tracking-wider shadow-sm uppercase">
                                     {product.discount}
                                 </div>
-                                <div className="hidden md:block px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-zinc-200 text-zinc-700 text-[10px] font-semibold tracking-wide shadow-sm">
+                                <div className="hidden md:block px-2.5 py-1 rounded-full bg-white/90 border border-zinc-200 text-zinc-700 text-[10px] font-semibold tracking-wide shadow-sm">
                                     {product.tag}
                                 </div>
                             </div>
 
                             {/* QUICK ACTION BUTTONS */}
-                            <div className="hidden md:flex absolute top-4 right-4 z-20 flex-col gap-2.5 opacity-0 group-hover:opacity-100 translate-x-3 group-hover:translate-x-0 transition-all duration-300">
-                                <button className="w-10 h-10 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110">
+                            <div className="hidden md:flex absolute top-4 right-4 z-20 flex-col gap-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <button className="w-10 h-10 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-colors duration-300 shadow-md">
                                     <Heart size={16} />
                                 </button>
 
-                                <button className="w-10 h-10 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md hover:scale-110">
+                                <button className="w-10 h-10 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-colors duration-300 shadow-md">
                                     <Eye size={16} />
                                 </button>
                             </div>
 
                             {/* PRODUCT IMAGE CONTAINER */}
                             <div className="relative h-[160px] md:h-[290px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-50/50 to-transparent">
-                                {/* Subtle white/grey inner glow on hover */}
-                                <div className="absolute w-[120px] h-[120px] md:w-[200px] md:h-[200px] bg-zinc-100 rounded-full blur-[80px] opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                                
-                                <motion.div
-                                    whileHover={{ scale: 1.04 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="relative z-10 p-3 md:p-6 w-full h-[130px] md:h-[230px] flex items-center justify-center"
-                                >
+                                <div className="relative z-10 p-3 md:p-6 w-full h-[130px] md:h-[230px] flex items-center justify-center">
                                     <img
                                         src={product.image}
                                         alt={product.name}
-                                        className="w-full h-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.08)] group-hover:drop-shadow-[0_25px_40px_rgba(0,0,0,0.12)] transition-all duration-500"
+                                        className="w-full h-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.08)]"
                                     />
-                                </motion.div>
+                                </div>
                             </div>
 
                             {/* PRODUCT DETAILS */}
                             <div className="px-3 md:px-6 pt-2 md:pt-3 pb-3 md:pb-6 relative">
                                 
                                 {/* TITLE */}
-                                <h3 className="text-[13px] md:text-xl font-bold text-zinc-900 group-hover:text-zinc-600 transition-all duration-300 line-clamp-1">
+                                <h3 className="text-[13px] md:text-xl font-bold text-zinc-900 line-clamp-1">
                                     {product.name}
                                 </h3>
 
@@ -244,12 +221,12 @@ export default function BestSellerSection() {
                                     </div>
 
                                     {/* CART BUTTON */}
-                                    <button className="w-7 h-7 md:w-11 md:h-11 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md hover:scale-105">
+                                    <button className="w-7 h-7 md:w-11 md:h-11 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-colors duration-300 shadow-md">
                                         <BsCartPlus className="w-3.5 h-3.5 md:w-[18px] md:h-[18px]" />
                                     </button>
                                 </div>
                             </div>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             </div>

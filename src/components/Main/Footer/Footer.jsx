@@ -80,7 +80,7 @@ export default function Footer() {
                                 { name: "Home", link: "/" },
                                 { name: "Our Story", link: "/our-story" },
                                 { name: "Newsletter", link: "/newsletter" },
-                                { name: "Contact Us", link: "/contact-us" },
+                                { name: "Contact Us", link: "/contact" },
                                 { name: "Bulk Queries", link: "/bulk-queries" },
                             ].map((item, index) => (
                                 <Link
@@ -105,19 +105,19 @@ export default function Footer() {
                         <div className="flex flex-col gap-3 md:gap-4 w-fit text-sm md:text-base">
 
                             {[
-                                "Refund Policy",
-                                "Cancellation Policy",
-                                "Return Policy",
-                                "Shipping Policy",
-                                "Privacy Policy",
-                                "Terms & Conditions",
+                                { name: "Refund Policy", link: "/refund-policy" },
+                                { name: "Cancellation Policy", link: "/cancellation-policy" },
+                                { name: "Return Policy", link: "/return-policy" },
+                                { name: "Shipping Policy", link: "/shipping-policy" },
+                                { name: "Privacy Policy", link: "/privacy-policy" },
+                                { name: "Terms & Conditions", link: "/terms-conditions" },
                             ].map((item, index) => (
                                 <Link
                                     key={index}
-                                    href="/"
+                                    href={item.link}
                                     className="hover:text-white transition-all duration-300"
                                 >
-                                    {item}
+                                    {item.name}
                                 </Link>
                             ))}
                         </div>
