@@ -111,7 +111,7 @@ export default function Page() {
                             <div key={product._id} className="bg-white rounded-lg overflow-hidden shadow hover:shadow-xl transition">
                                 <div className="relative h-60 w-full bg-gray-100">
                                     <Image
-                                        src={product?.images?.[0]?.url}
+                                        src={product?.colorVariants?.[0]?.images?.[0]?.url}
                                         alt={product.productName}
                                         fill
                                         className="object-cover"

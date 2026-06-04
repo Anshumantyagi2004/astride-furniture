@@ -89,10 +89,11 @@ export default function BrandAboutSection() {
                     <div className="grid grid-cols-2 gap-5">
                         <div className="col-span-2 relative h-[320px] rounded-[30px] overflow-hidden bg-white border border-zinc-200 hover:border-zinc-800 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all duration-500 intro-image-card group">
                             <Image
-                                src="/694_9.webp"
+                                src="/Png1/10Seater_confernce.png"
                                 alt="Office Chair"
                                 fill
                                 className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                priority
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#161316]/30 via-transparent to-transparent"></div>
                         </div>

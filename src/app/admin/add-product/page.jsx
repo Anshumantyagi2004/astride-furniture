@@ -89,19 +89,100 @@ export default function Page() {
         setColorVariants(updated);
     };
 
-    // IMAGE CHANGE
-    const handleImageChange = (index, e) => {
-        const files = Array.from(e.target.files);
+   // IMAGE CHANGE WITH AUTO-CONVERSION TO WEBP
+    // IMAGE CHANGE WITH AUTO-CONVERSION TO WEBP
+const handleImageChange = async (index, e) => {
+    const files = Array.from(e.target.files);
+
+    const convertToWebP = (file) => {
+        return new Promise((resolve, reject) => {
+
+            // Skip conversion if already WebP
+            if (file.type === "image/webp") {
+                resolve(file);
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                const img = new window.Image();
+
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+
+                    const ctx = canvas.getContext("2d");
+
+                    if (!ctx) {
+                        resolve(file);
+                        return;
+                    }
+
+                    ctx.drawImage(img, 0, 0);
+
+                    canvas.toBlob(
+                        (blob) => {
+                            if (!blob) {
+                                resolve(file);
+                                return;
+                            }
+
+                            const webpFile = new File(
+                                [blob],
+                                `${file.name.replace(/\.[^/.]+$/, "")}.webp`,
+                                {
+                                    type: "image/webp",
+                                }
+                            );
+
+                            resolve(webpFile);
+                        },
+                        "image/webp",
+                        0.85
+                    );
+                };
+
+                img.onerror = () => {
+                    reject(new Error("Failed to load image"));
+                };
+
+                img.src = event.target.result;
+            };
+
+            reader.onerror = () => {
+                reject(new Error("Failed to read file"));
+            };
+
+            reader.readAsDataURL(file);
+        });
+    };
+
+    try {
+        const webpFiles = await Promise.all(
+            files.map((file) => convertToWebP(file))
+        );
+
+        console.log("Converted Files:", webpFiles);
 
         const updated = [...colorVariants];
 
-        updated[index].images = files;
-        updated[index].previews = files.map((file) =>
+        updated[index].images = webpFiles;
+
+        updated[index].previews = webpFiles.map((file) =>
             URL.createObjectURL(file)
         );
 
         setColorVariants(updated);
-    };
+
+        toast.success("Images converted to WebP successfully");
+    } catch (error) {
+        console.error("Error converting images:", error);
+        toast.error("Failed to process one or more images.");
+    }
+};
 
     // VIDEO LINKS
     const addVideoLink = () => {
@@ -192,16 +273,23 @@ export default function Page() {
             if (data.success) {
                 toast.success("Product Added Successfully");
                 console.log(data);
-                setProductName()
-                setShortDescription()
-                setLongDescription()
-                setOldPrice()
-                setRealPrice()
-                setCategory()
-                setVideoLinks([""])
+                setProductName("");
+                setShortDescription("");
+                setLongDescription("");
+                setOldPrice("");
+                setRealPrice("");
+                setCategory("");
+                setVideoLinks([""]);
                 setSpecifications([
                     { key: "", value: "", },
-                ])
+                ]);
+                setColorVariants([
+                    {
+                        colorName: "",
+                        images: [],
+                        previews: [],
+                    },
+                ]);
             }
         } catch (error) {
             console.log(error);
@@ -494,6 +582,7 @@ export default function Page() {
                                                         src={image}
                                                         alt="Preview"
                                                         fill
+                                                        unoptimized
                                                         className="object-cover"
                                                     />
                                                     <button

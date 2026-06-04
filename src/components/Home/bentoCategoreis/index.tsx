@@ -20,7 +20,7 @@ const CATEGORIES: BentoCategory[] = [
     id: 1,
     title: 'Gaming Chair',
     subtitle: 'Explore high-performance racing cockpits designed for ultimate lumbar support and game-winning comfort.',
-    image: '/Png1/chair6c_Rapid Black .webp',
+    image: '/Png1/chair11_octave.webp',
     colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
     imageClass: 'absolute -right-6 bottom-0 w-[45%] h-[95%] min-h-[220px] max-h-[340px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
     href: '/products?category=Gaming Chair'
@@ -47,7 +47,7 @@ const CATEGORIES: BentoCategory[] = [
     id: 4,
     title: 'Bar Stool',
     subtitle: 'Elevate your counter experience with premium luxury bar stools and ergonomic counter-height seating.',
-    image: '/Png1/chair11_octave.webp',
+    image: '/Png1/chair6c_Rapid Black .webp',
     colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
     imageClass: 'absolute -right-6 bottom-0 w-[45%] h-[95%] min-h-[220px] max-h-[340px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
     href: '/products?category=Bar Stool'

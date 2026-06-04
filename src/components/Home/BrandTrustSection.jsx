@@ -149,28 +149,27 @@ export default function BrandTrustSection() {
 
                 {/* Available On */}
                 <div
-                    className="flex items-center justify-center md:justify-between flex-wrap gap-5"
+                    className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mx-auto max-w-[90%] sm:max-w-[600px] p-4 sm:py-3 sm:px-8"
                     style={{
                         background: "rgba(255,255,255,0.9)",
-                        borderRadius: "16px",
+                        borderRadius: "18px",
                         border: "1px solid rgba(113,113,122,0.12)",
-                        padding: "14px 36px",
                         boxShadow: "0 2px 16px rgba(24,24,27,0.03)",
                     }}
                 >
                     <span
-                        className="text-[10px] font-black uppercase tracking-[0.28em] text-zinc-500"
+                        className="text-[12px] font-black uppercase tracking-[0.28em] text-zinc-600 whitespace-nowrap"
                     >
                         Available On
                     </span>
 
-                    <div className="hidden md:block h-5 w-px bg-zinc-200" />
+                    <div className="hidden sm:block h-6 w-px bg-zinc-300 flex-shrink-0" />
 
-                    <div className="flex items-center gap-8">
-                        <div className="relative w-[120px] h-[46px] opacity-80 hover:opacity-100 transition-opacity duration-300">
-                            <Image src="/Logo/amazon.webp" alt="Amazon" fill className="object-contain scale-[1.4]" />
+                    <div className="flex items-center gap-6 sm:gap-8">
+                        <div className="relative w-[100px] sm:w-[125px] h-[32px] sm:h-[40px] opacity-85 hover:opacity-100 transition-opacity duration-300">
+                            <Image src="/Logo/amazon.webp" alt="Amazon" fill className="object-contain scale-[1.5] sm:scale-[1.65]" />
                         </div>
-                        <div className="relative w-[120px] h-[46px] opacity-80 hover:opacity-100 transition-opacity duration-300">
+                        <div className="relative w-[90px] sm:w-[110px] h-[32px] sm:h-[40px] opacity-85 hover:opacity-100 transition-opacity duration-300">
                             <Image src="/Logo/FLIPKART_Webp.webp" alt="Flipkart" fill className="object-contain" />
                         </div>
                     </div>

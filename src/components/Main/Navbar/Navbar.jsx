@@ -23,6 +23,19 @@ export default function Navbar() {
   const [hideTopBar, setHideTopBar] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleFindYourChair = () => {
+    if (pathname === "/") {
+      const el = document.getElementById("circular-chairs");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+      window.dispatchEvent(new Event("open-chair-finder"));
+    } else {
+      router.push("/?finder=true");
+    }
+  };
 
   const adminLayout = pathname.startsWith("/admin");
   if (adminLayout) return null;
@@ -41,7 +54,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const router = useRouter();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
 
@@ -132,7 +144,7 @@ export default function Navbar() {
   const activeCategory = activeMenu ? CHAIR_CATEGORIES[activeMenu] : null;
 
   return (
-    <header className="w-full font-[Barlow] sticky -top-1 z-[100] relative select-none" onMouseLeave={() => setActiveMenu(null)}>
+    <header className="w-full font-[Barlow] sticky -top-1 z-[1000] relative select-none" onMouseLeave={() => setActiveMenu(null)}>
       <motion.div
         animate={{
           height: hideTopBar ? 0 : 44,
@@ -309,7 +321,7 @@ export default function Navbar() {
       </div>
 
       <div className="bg-[#161316] border-b border-[#453027] shadow-sm hidden md:block">
-        <div className="lg:px-15 px-4">
+        <div className="lg:px-15 px-4 relative flex items-center justify-center">
 
           {/* NAVIGATION */}
           <nav className="hidden md:flex items-center justify-center gap-10 pt-3 pb-4 overflow-x-auto whitespace-nowrap text-[17px] font-bold text-[#BABABA] scrollbar-hide">
@@ -328,10 +340,18 @@ export default function Navbar() {
               </button>
             ))}
           </nav>
+
+          {/* FIND YOUR CHAIR BUTTON */}
+          <div className="absolute right-4 lg:right-15 top-1/2 -translate-y-1/2 flex items-center">
+            <button
+              onClick={handleFindYourChair}
+              className="bg-[#F4F5F7] border border-slate-300 text-[#0F172A] hover:bg-white hover:border-slate-400 rounded-full px-6 py-2.5 text-sm font-black uppercase tracking-widest transition-all duration-300 shadow-sm"
+            >
+              FIND YOUR CHAIR
+            </button>
+          </div>
         </div>
       </div>
-
-      
 
       {/* MEGA MENU DROPDOWN */}
       {activeCategory && (

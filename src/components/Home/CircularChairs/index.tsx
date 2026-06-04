@@ -37,11 +37,35 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
 
   useEffect(() => {
     setMounted(true);
+
+    const handleUrlCheck = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("finder") === "true") {
+        setShowFinder(true);
+        setTimeout(() => {
+          const el = document.getElementById("circular-chairs");
+          if (el) el.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    };
+
+    handleUrlCheck();
+
+    const handleOpenEvent = () => {
+      setShowFinder(true);
+      const el = document.getElementById("circular-chairs");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    };
+
+    window.addEventListener("open-chair-finder", handleOpenEvent);
+    return () => {
+      window.removeEventListener("open-chair-finder", handleOpenEvent);
+    };
   }, []);
 
   if (showFinder) {
     return (
-      <div className="relative w-full h-[85vh] overflow-hidden select-none">
+      <div id="circular-chairs" className="relative w-full h-[85vh] overflow-hidden select-none">
         <ChairFinder onBack={() => setShowFinder(false)} />
       </div>
     );
@@ -147,6 +171,7 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
       `}</style>
 
       <div
+        id="circular-chairs"
         className="relative w-full h-[70vh] md:h-[85vh] overflow-hidden flex flex-col justify-between select-none local-metallic-bg py-6"
         style={{
           fontFamily: "'Inter', sans-serif",
