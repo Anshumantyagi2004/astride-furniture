@@ -34,7 +34,7 @@ export default function Category() {
 
             {/* HEADING */}
             <div className="relative z-10 md:px-15 px-4 mb-4">
-                <div 
+                <div
                     className="text-5xl sm:text-6xl lg:text-[4.5rem] font-black uppercase leading-[0.85] tracking-tighter"
                     style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
                 >
@@ -62,7 +62,7 @@ export default function Category() {
                             {[...categories, ...categories,].map(
                                 (category, index) => (
                                     <motion.div
-                                        key={category._id}
+                                        key={index}
                                         initial={{ opacity: 0, y: 40 }}
                                         whileInView={{ opacity: 1, y: 0 }}
                                         transition={{

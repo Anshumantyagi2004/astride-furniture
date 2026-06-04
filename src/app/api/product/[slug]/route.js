@@ -40,58 +40,113 @@ export async function GET(req, { params }) {
 export async function PUT(req, { params }) {
     try {
         await connectDB();
+
         const { slug } = await params;
-        const product = await Product.findOne({ slug: slug })
+
+        const product = await Product.findOne({ slug });
 
         if (!product) {
             return NextResponse.json(
-                { success: false, message: "Product not found", },
+                {
+                    success: false,
+                    message: "Product not found",
+                },
                 { status: 404 }
             );
         }
 
         const formData = await req.formData();
+
         const productName = formData.get("productName");
         const category = formData.get("category");
         const oldPrice = formData.get("oldPrice");
         const realPrice = formData.get("realPrice");
         const shortDescription = formData.get("shortDescription");
         const longDescription = formData.get("longDescription");
-        const videoLinks = JSON.parse(formData.get("videoLinks") || "[]");
-        const specifications = JSON.parse(formData.get("specifications") || "[]");
-        const imageFiles = formData.getAll("images");
 
-        // DELETE OLD IMAGES
-        if (imageFiles.length > 0) {
-            for (const image of product.images) {
-                await deleteFromR2(image.imageField);
+        const videoLinks = JSON.parse(
+            formData.get("videoLinks") || "[]"
+        );
+
+        const specifications = JSON.parse(
+            formData.get("specifications") || "[]"
+        );
+
+        const colorVariantsData = JSON.parse(
+            formData.get("colorVariants") || "[]"
+        );
+
+        let uploadedColorVariants = [];
+
+        const hasNewImages = colorVariantsData.some((_, index) =>
+            formData.getAll(`variant_${index}`).length > 0
+        );
+
+        if (hasNewImages) {
+            // DELETE OLD IMAGES
+            for (const variant of product.colorVariants) {
+                for (const image of variant.images) {
+                    await deleteFromR2(image.imageField);
+                }
             }
 
-            const uploadedImages = [];
-            for (const image of imageFiles) {
-                const bytes = await image.arrayBuffer();
-                const buffer = Buffer.from(bytes);
-                const extension = path.extname(image.name);
+            // UPLOAD NEW IMAGES
+            for (
+                let variantIndex = 0;
+                variantIndex < colorVariantsData.length;
+                variantIndex++
+            ) {
+                const variant =
+                    colorVariantsData[variantIndex];
 
-                const fileName = `${Date.now()}-${generateSlug(productName)}-${crypto.randomBytes(2).toString("hex")}${extension}`;
+                const files = formData.getAll(
+                    `variant_${variantIndex}`
+                );
 
-                const uploadedImage = await uploadToR2({
-                    file: buffer,
-                    folder: "products",
-                    fileName,
-                    contentType: image.type,
-                });
+                const uploadedImages = [];
 
-                uploadedImages.push({
-                    url: uploadedImage.url,
-                    imageField: uploadedImage.key,
+                for (const image of files) {
+                    const bytes =
+                        await image.arrayBuffer();
+
+                    const buffer = Buffer.from(bytes);
+
+                    const extension = path.extname(
+                        image.name
+                    );
+
+                    const fileName =
+                        `${Date.now()}-${generateSlug(
+                            productName
+                        )}-${variant.colorName}-${crypto
+                            .randomBytes(2)
+                            .toString("hex")}${extension}`;
+
+                    const uploadedImage =
+                        await uploadToR2({
+                            file: buffer,
+                            folder: "products",
+                            fileName,
+                            contentType: image.type,
+                        });
+
+                    uploadedImages.push({
+                        url: uploadedImage.url,
+                        imageField:
+                            uploadedImage.key,
+                    });
+                }
+
+                uploadedColorVariants.push({
+                    colorName: variant.colorName,
+                    images: uploadedImages,
                 });
             }
 
-            product.images = uploadedImages;
+            product.colorVariants =
+                uploadedColorVariants;
         }
 
-        // UPDATE DATA
         product.productName = productName;
         product.slug = generateSlug(productName);
         product.category = category;
@@ -101,8 +156,13 @@ export async function PUT(req, { params }) {
         product.longDescription = longDescription;
         product.videoLinks = videoLinks;
         product.specifications = specifications;
-        product.metaTitle = `${productName} | Your Company`;
-        product.metaDescription = `Buy ${productName} at best price from our company.`;
+
+        product.metaTitle =
+            `${productName} | Your Company`;
+
+        product.metaDescription =
+            `Buy ${productName} at best price from our company.`;
+
         await product.save();
 
         return NextResponse.json(
@@ -115,8 +175,12 @@ export async function PUT(req, { params }) {
         );
     } catch (error) {
         console.log(error);
+
         return NextResponse.json(
-            { success: false, message: "Internal server error", },
+            {
+                success: false,
+                message: "Internal server error",
+            },
             { status: 500 }
         );
     }
@@ -126,30 +190,47 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
     try {
         await connectDB();
+
         const { slug } = await params;
+
         const product = await Product.findById(slug);
 
         if (!product) {
             return NextResponse.json(
-                { success: false, message: "Product not found", },
+                {
+                    success: false,
+                    message: "Product not found",
+                },
                 { status: 404 }
             );
         }
 
-        // DELETE IMAGES
-        for (const image of product.images) {
-            await deleteFromR2(image.imageField);
+        // DELETE ALL VARIANT IMAGES
+        for (const variant of product.colorVariants) {
+            for (const image of variant.images) {
+                await deleteFromR2(
+                    image.imageField
+                );
+            }
         }
 
         await Product.findByIdAndDelete(slug);
+
         return NextResponse.json(
-            { success: true, message: "Product deleted successfully", },
+            {
+                success: true,
+                message: "Product deleted successfully",
+            },
             { status: 200 }
         );
     } catch (error) {
         console.log(error);
+
         return NextResponse.json(
-            { success: false, message: "Internal server error", },
+            {
+                success: false,
+                message: "Internal server error",
+            },
             { status: 500 }
         );
     }

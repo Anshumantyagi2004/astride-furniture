@@ -5,7 +5,6 @@ import Image from "next/image";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Sidebar from "@/components/Admin/Sidebar";
-
 import {
     Package,
     IndianRupee,
@@ -14,6 +13,7 @@ import {
     Trash2,
     Link2,
     FileText,
+    X,
 } from "lucide-react";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
@@ -21,13 +21,19 @@ const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 export default function Page() {
     // PRODUCT DATA
     const [productName, setProductName] = useState("");
+    const [loading, setLoading] = useState(false);
     const [shortDescription, setShortDescription] = useState("");
     const [longDescription, setLongDescription] = useState("");
     const [oldPrice, setOldPrice] = useState("");
     const [realPrice, setRealPrice] = useState("");
     const [category, setCategory] = useState("");
-    const [images, setImages] = useState([]);
-    const [imagePreview, setImagePreview] = useState([]);
+    const [colorVariants, setColorVariants] = useState([
+        {
+            colorName: "",
+            images: [],
+            previews: [],
+        },
+    ]);
     const [videoLinks, setVideoLinks] = useState([""]);
     const [categories, setCategories] = useState([]);
 
@@ -44,12 +50,57 @@ export default function Page() {
         };
     }, []);
 
+    const addColorVariant = () => {
+        const lastVariant = colorVariants[colorVariants.length - 1];
+
+        if (!lastVariant.colorName.trim()) {
+            toast.error("Please enter previous color name first");
+            return;
+        }
+
+        setColorVariants([
+            ...colorVariants,
+            {
+                colorName: "",
+                images: [],
+                previews: [],
+            },
+        ]);
+    };
+
+    const removeColorVariant = (index) => {
+        const updated = [...colorVariants];
+        updated.splice(index, 1);
+        setColorVariants(updated);
+    };
+
+    const removeVariantImage = (variantIndex, imageIndex) => {
+        const updated = [...colorVariants];
+
+        updated[variantIndex].images.splice(imageIndex, 1);
+        updated[variantIndex].previews.splice(imageIndex, 1);
+
+        setColorVariants(updated);
+    };
+
+    const handleColorChange = (index, value) => {
+        const updated = [...colorVariants];
+        updated[index].colorName = value;
+        setColorVariants(updated);
+    };
+
     // IMAGE CHANGE
-    const handleImageChange = (e) => {
+    const handleImageChange = (index, e) => {
         const files = Array.from(e.target.files);
-        setImages(files);
-        const preview = files.map((file) => URL.createObjectURL(file));
-        setImagePreview(preview);
+
+        const updated = [...colorVariants];
+
+        updated[index].images = files;
+        updated[index].previews = files.map((file) =>
+            URL.createObjectURL(file)
+        );
+
+        setColorVariants(updated);
     };
 
     // VIDEO LINKS
@@ -110,6 +161,7 @@ export default function Page() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setLoading(true);
             const formData = new FormData();
             formData.append("productName", productName);
             formData.append("shortDescription", shortDescription);
@@ -121,8 +173,19 @@ export default function Page() {
             formData.append("specifications", JSON.stringify(specifications));
 
             // MULTIPLE IMAGES
-            images.forEach((image) => {
-                formData.append("images", image);
+            const colorData = colorVariants.map((variant) => ({
+                colorName: variant.colorName,
+                imageCount: variant.images.length,
+            }));
+
+            formData.append("colorVariants", JSON.stringify(colorData));
+            colorVariants.forEach((variant, variantIndex) => {
+                variant.images.forEach((image) => {
+                    formData.append(
+                        `variant_${variantIndex}`,
+                        image
+                    );
+                });
             });
 
             const { data } = await axios.post("/api/product", formData);
@@ -135,8 +198,6 @@ export default function Page() {
                 setOldPrice()
                 setRealPrice()
                 setCategory()
-                setImages([])
-                setImagePreview([])
                 setVideoLinks([""])
                 setSpecifications([
                     { key: "", value: "", },
@@ -145,6 +206,8 @@ export default function Page() {
         } catch (error) {
             console.log(error);
             toast.error(error.response?.data?.message || "Something went wrong");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -345,40 +408,107 @@ export default function Page() {
                         </div>
 
                         {/* MULTIPLE IMAGES */}
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Product Images
-                            </label>
+                        <div className="space-y-4">
+                            {/* HEADER */}
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-semibold text-gray-700">
+                                    Product Color Variants
+                                </label>
 
-                            <label className="border-2 border-dashed border-gray-400 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-black transition">
-                                <UploadCloud className="text-gray-600 mb-3" size={40} />
-
-                                <p className="text-gray-600 font-medium">
-                                    Upload Multiple Images
-                                </p>
-
-                                <input
-                                    type="file"
-                                    multiple
-                                    accept="image/*"
-                                    onChange={handleImageChange}
-                                    className="hidden"
-                                />
-                            </label>
-
-                            {/* PREVIEW */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
-                                {imagePreview.map((image, index) => (
-                                    <div key={index} className="relative h-40 rounded-2xl overflow-hidden border">
-                                        <Image
-                                            src={image}
-                                            alt="Preview"
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    </div>
-                                ))}
+                                <button
+                                    type="button"
+                                    onClick={addColorVariant}
+                                    className="bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-800 transition"
+                                >
+                                    <Plus size={16} />
+                                    Add Color Variant
+                                </button>
                             </div>
+
+                            {colorVariants.map((variant, index) => (
+                                <div
+                                    key={index}
+                                    className="border rounded-2xl p-5 bg-white shadow-sm space-y-4"
+                                >
+
+                                    {/* TOP BAR */}
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="font-semibold text-gray-700">
+                                            Variant #{index + 1}
+                                        </h3>
+
+                                        {colorVariants.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => removeColorVariant(index)}
+                                                className="text-red-500 hover:text-red-700"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {/* COLOR NAME */}
+                                    <input
+                                        type="text"
+                                        placeholder="Color Name (Black, Blue, Red...)"
+                                        value={variant.colorName}
+                                        onChange={(e) =>
+                                            handleColorChange(index, e.target.value)
+                                        }
+                                        className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-black"
+                                    />
+
+                                    {/* IMAGE UPLOAD */}
+                                    <label className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-black transition">
+
+                                        <UploadCloud
+                                            size={32}
+                                            className="text-gray-500 mb-2"
+                                        />
+
+                                        <p className="text-sm text-gray-600">
+                                            Upload Images for {variant.colorName || "this color"}
+                                        </p>
+
+                                        <input
+                                            type="file"
+                                            multiple
+                                            accept="image/*"
+                                            onChange={(e) =>
+                                                handleImageChange(index, e)
+                                            }
+                                            className="hidden"
+                                        />
+                                    </label>
+
+                                    {/* PREVIEW */}
+                                    {variant.previews.length > 0 && (
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            {variant.previews.map((image, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="relative h-32 rounded-xl overflow-hidden border"
+                                                >
+                                                    <Image
+                                                        src={image}
+                                                        alt="Preview"
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeVariantImage(index, i)}
+                                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+                                                    >
+                                                        <X size={14} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
                         </div>
 
                         {/* VIDEO LINKS */}
@@ -422,10 +552,10 @@ export default function Page() {
                         </div>
 
                         {/* SUBMIT */}
-                        <button type="submit"
+                        <button type="submit" disabled={loading}
                             className="w-full bg-black text-white py-4 rounded-2xl font-semibold hover:opacity-90 transition"
                         >
-                            Add Product
+                            {loading ? "Adding Product..." : "Add Product"}
                         </button>
                     </form>
                 </div>
