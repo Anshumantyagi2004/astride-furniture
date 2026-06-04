@@ -43,8 +43,8 @@ export default function HeroSection() {
                         className="h-full w-full rounded-xl overflow-hidden"
                     >
                         {[
-                            "/2.jpg",
-                            "/3.jpg",
+                            "/Png/smallBanner1.avif",
+                            "/Png/smallBanner2.webp",
                             // "/Product/InfographicDesign-1.webp",
                         ].map((img, index) => (
                             <SwiperSlide key={index}>

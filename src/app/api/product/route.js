@@ -33,6 +33,15 @@ export async function POST(req) {
             );
         }
 
+        // DUPLICATE NAME CHECK
+        const existingName = await Product.findOne({ productName: { $regex: new RegExp(`^${productName.trim()}$`, "i") } });
+        if (existingName) {
+            return NextResponse.json(
+                { success: false, message: "Product with this name already exists", },
+                { status: 400 }
+            );
+        }
+
         // CATEGORY CHECK
         const categoryExists = await Category.findById(category);
         if (!categoryExists) {
@@ -120,7 +129,7 @@ export async function POST(req) {
         console.log(error);
 
         return NextResponse.json(
-            { success: false, message: "Internal server error", },
+            { success: false, message: error.message || "Internal server error", },
             { status: 500 }
         );
     }

@@ -19,7 +19,8 @@ import ClientLogoSlider from "@/components/Home/ClientLogoSlider";
 import BulkQueryForm from "@/components/Home/BulkQueryForm";
 import FAQ from "@/components/Home/FAQ";
 import HeroSection from '@/components/Home/Hero';
-
+import Header3 from '@/components/Home/Header3';
+import Header0 from '@/components/Home/Header0';
 // Lazy loaded — only the 3 heaviest components
 // Reviews: uses GSAP + ScrollTrigger (large bundle)
 const Reviews = dynamic(() => import('@/components/Home/Reviews'));
@@ -31,8 +32,11 @@ const PreloadModelViewer = dynamic(() => import('@/components/Home/PreloadModelV
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <CircularChairs/>
+      <Header0/>
+       <Header3 />
+      
        <HeroSection/>
+      
       <Category />
      
       <Marquee1 />

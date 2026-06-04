@@ -58,6 +58,21 @@ export async function PUT(req, { params }) {
         const formData = await req.formData();
 
         const productName = formData.get("productName");
+
+        // DUPLICATE NAME CHECK (excluding current product)
+        if (productName) {
+            const existingName = await Product.findOne({
+                productName: { $regex: new RegExp(`^${productName.trim()}$`, "i") },
+                _id: { $ne: product._id }
+            });
+            if (existingName) {
+                return NextResponse.json(
+                    { success: false, message: "Product with this name already exists", },
+                    { status: 400 }
+                );
+            }
+        }
+
         const category = formData.get("category");
         const oldPrice = formData.get("oldPrice");
         const realPrice = formData.get("realPrice");
