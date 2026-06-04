@@ -199,7 +199,7 @@ export default function Navbar() {
         </div>
       </motion.div>
 
-      <div className="bg-[#161316]/90 backdrop-blur-xl border-b border-[#453027] shadow-[0_0_40px_rgba(255,109,41,0.08)]">
+      <div className="relative z-20 bg-[#161316]/90 backdrop-blur-xl border-b border-[#453027] shadow-[0_0_40px_rgba(255,109,41,0.08)]">
         <div className="lg:px-15 px-4 flex items-center justify-between gap-4 py-2 md:py-0">
           
 
