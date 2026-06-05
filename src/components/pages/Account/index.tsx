@@ -138,14 +138,54 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<UserProfile>(DEFAULT_PROFILE);
-  const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [wishlist, setWishlist] = useState<WishlistItem[]>(MOCK_WISHLIST);
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const fetchMyOrders = async (userId: string) => {
+    try {
+      const response = await fetch("/api/my-orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        const mappedOrders = (data.orders || []).map((o: any) => ({
+          id: o._id,
+          date: new Date(o.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }),
+          total: o.pricing?.total || 0,
+          status: o.orderStatus || "Processing",
+          items: (o.products || []).map((p: any) => ({
+            id: p._id || p.productId,
+            name: p.productName,
+            price: p.price,
+            image: p.image,
+            quantity: p.quantity,
+          })),
+        }));
+        setOrders(mappedOrders);
+      }
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+    }
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedProfile = localStorage.getItem("astride_profile");
     
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser && parsedUser.id) {
+          fetchMyOrders(parsedUser.id);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     if (storedProfile) {
       try {
         const parsed = JSON.parse(storedProfile);
