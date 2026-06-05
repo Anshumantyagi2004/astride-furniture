@@ -246,9 +246,10 @@ export default function DetailPageCard({ productId }: { productId?: string }) {
             {product.name}
           </h1>
 
-          <p className="text-[14px] text-neutral-500 leading-relaxed font-medium mb-5 pr-4">
-            {product.shortDescription || `Premium ergonomic seat tailored for long sessions, perfect for gaming setups and casual office workspace styling.`}
-          </p>
+          <div 
+            className="text-[14px] text-neutral-500 leading-relaxed font-medium mb-5 pr-4"
+            dangerouslySetInnerHTML={{ __html: product.shortDescription || `Premium ergonomic seat tailored for long sessions, perfect for gaming setups and casual office workspace styling.` }}
+          />
 
           <p className="text-[13px] font-semibold mb-5">
             Stock is available & ready to ship!

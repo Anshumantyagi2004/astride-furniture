@@ -1,5 +1,5 @@
 'use client';
-import { Suspense, useRef, useEffect, useState, useMemo } from 'react';
+import React, { Suspense, useRef, useEffect, useState, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, Environment, ContactShadows, Center, OrbitControls, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
@@ -7,29 +7,48 @@ import * as THREE from 'three';
 function LoadingScreen() {
     const { progress } = useProgress();
     const [visible, setVisible] = useState(true);
+    const [hasLoaded, setHasLoaded] = useState(false);
 
     useEffect(() => {
         // Only hide the loading screen when progress reaches 100%
-        if (progress === 100) {
+        if (progress === 100 && !hasLoaded) {
+            setHasLoaded(true);
             const timeout = setTimeout(() => setVisible(false), 600);
             return () => clearTimeout(timeout);
         }
-    }, [progress]);
+    }, [progress, hasLoaded]);
 
     if (!visible) return null;
 
     return (
         <div 
             className={`absolute inset-0 flex flex-col items-center justify-center bg-[#090807] z-50 transition-opacity duration-500 ${
-                progress === 100 ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                hasLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
         >
             <div className="w-12 h-12 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4" />
             <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.2em]">
-                Loading 3D Experience {Math.round(progress)}%
+                Loading 3D Experience {Math.round(hasLoaded ? 100 : progress)}%
             </p>
         </div>
     );
+}
+
+class EnvErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+    constructor(props: {children: React.ReactNode}) {
+        super(props);
+        this.state = { hasError: false };
+    }
+    static getDerivedStateFromError(error: any) {
+        console.warn("Environment failed to load:", error);
+        return { hasError: true };
+    }
+    render() {
+        if (this.state.hasError) {
+            return null; // Fallback to no environment if it fails
+        }
+        return this.props.children;
+    }
 }
 
 const Model = ({ url, isMobile }: { url: string; isMobile: boolean }) => {
@@ -291,7 +310,6 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
     if (isMobile) {
         return (
             <div ref={containerRef} className="w-full bg-[#090807] py-10 px-8 flex flex-col gap-6">
-                <LoadingScreen />
                 {/* Title at top */}
                 <div className="text-center">
                     <span className="text-zinc-500 text-[10px] tracking-widest uppercase block mb-0.5">Interactive Experience</span>
@@ -300,40 +318,39 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
 
                 {/* Beautiful 3D Model Card */}
                 <div className="relative w-full h-[400px] rounded-2xl overflow-hidden border border-zinc-700 bg-zinc-900/30 shadow-2xl backdrop-blur-md">
+                    <LoadingScreen />
                     <div className="w-full h-full">
-                        {isInView ? (
-                            <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
-                                <color attach="background" args={['#090807']} />
-                                
-                                <ambientLight intensity={0.5} />
-                                <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
-                                <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-                                <Environment preset="studio" />
-                                
-                                <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
-    
-                                <Suspense fallback={null}>
-                                    <Center position={[0, -0.3, 0]}>
-                                        <Model url={url} isMobile={isMobile} />
-                                    </Center>
-                                    <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={isInteracting} />
-                                </Suspense>
+                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop={isInView ? "always" : "demand"}>
+                            <color attach="background" args={['#090807']} />
+                            
+                            <ambientLight intensity={0.5} />
+                            <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
+                            <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+                            
+                            <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
 
-                                <OrbitControls 
-                                    enablePan={false}
-                                    enableZoom={true}
-                                    minDistance={2}
-                                    maxDistance={10}
-                                    minPolarAngle={Math.PI / 2.1}
-                                    maxPolarAngle={Math.PI / 1.9}
-                                    onStart={handleInteractionStart}
-                                    onEnd={handleInteractionEnd}
-                                    makeDefault
-                                />
-                            </Canvas>
-                        ) : (
-                            <div className="w-full h-full bg-[#090807]" />
-                        )}
+                            <Suspense fallback={null}>
+                                <EnvErrorBoundary>
+                                    <Environment preset="studio" />
+                                </EnvErrorBoundary>
+                                <Center position={[0, -0.3, 0]}>
+                                    <Model url={url} isMobile={isMobile} />
+                                </Center>
+                                <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={isInteracting} />
+                            </Suspense>
+
+                            <OrbitControls 
+                                enablePan={false}
+                                enableZoom={true}
+                                minDistance={2}
+                                maxDistance={10}
+                                minPolarAngle={Math.PI / 2.1}
+                                maxPolarAngle={Math.PI / 1.9}
+                                onStart={handleInteractionStart}
+                                onEnd={handleInteractionEnd}
+                                makeDefault
+                            />
+                        </Canvas>
                     </div>
                     
                     {/* Interaction helper overlay */}
@@ -379,28 +396,25 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                     {/* DESKTOP LAYOUT: full screen canvas with overlay cards */}
                     {/* 3D Canvas — only rendered when in view to stop GPU loop off-screen */}
                     <div className="absolute inset-0 w-full h-full z-0">
-                        {isInView ? (
-                            <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }}>
-                                <color attach="background" args={['#090807']} />
-                                
-                                <ambientLight intensity={0.5} />
-                                <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
-                                <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-                                <Environment preset="studio" />
-                                
-                                <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
-     
-                                <Suspense fallback={null}>
-                                    <Center position={[0, -0.3, 0]}>
-                                        <Model url={url} isMobile={isMobile} />
-                                    </Center>
-                                    <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={false} />
-                                </Suspense>
-                            </Canvas>
-                        ) : (
-                            // Lightweight placeholder — zero GPU cost when off-screen
-                            <div className="w-full h-full bg-[#090807]" />
-                        )}
+                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop={isInView ? "always" : "demand"}>
+                            <color attach="background" args={['#090807']} />
+                            
+                            <ambientLight intensity={0.5} />
+                            <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
+                            <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+                            
+                            <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
+ 
+                            <Suspense fallback={null}>
+                                <EnvErrorBoundary>
+                                    <Environment preset="studio" />
+                                </EnvErrorBoundary>
+                                <Center position={[0, -0.3, 0]}>
+                                    <Model url={url} isMobile={isMobile} />
+                                </Center>
+                                <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={false} />
+                            </Suspense>
+                        </Canvas>
                     </div>
 
                     {/* DESKTOP: Full-screen overlay cards */}
