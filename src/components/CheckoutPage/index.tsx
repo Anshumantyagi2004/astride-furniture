@@ -17,6 +17,14 @@ export default function CheckoutPage() {
   const [subtotal, setSubtotal] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
 
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [stateName, setStateName] = useState("");
+  const [pinCode, setPinCode] = useState("");
+
   const shippingCost = 49;
 
   useEffect(() => {
@@ -34,6 +42,79 @@ export default function CheckoutPage() {
       }
     }
   }, []);
+
+  const placeOrder = async () => {
+    try {
+      if (
+        !fullName ||
+        !email ||
+        !phone ||
+        !address ||
+        !city ||
+        !stateName ||
+        !pinCode
+      ) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      const savedUser = localStorage.getItem("user");
+      const user = savedUser ? JSON.parse(savedUser) : null;
+
+      if (!user || !user.id) {
+        alert("Please log in first to place an order");
+        return;
+      }
+
+      const orderData = {
+        userId: user.id,
+        shippingInfo: {
+          fullName,
+          email,
+          phone,
+          address,
+          city,
+          state: stateName,
+          pinCode,
+        },
+
+        products: cartItems.map((item) => ({
+          productId: item.id,
+          productName: item.name,
+          image: item.image,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+
+        pricing: {
+          subtotal,
+          shippingCharge: shippingCost,
+          total: subtotal + shippingCost,
+        },
+
+        paymentMethod: "COD",
+      };
+
+      const response = await fetch("/api/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Order placed successfully");
+        localStorage.removeItem("astride_cart");
+        setCartItems([]);
+        setSubtotal(0);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   if (!isMounted) return null;
 
@@ -57,6 +138,8 @@ export default function CheckoutPage() {
                     <input 
                       type="text" 
                       placeholder="John Doe"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                       required
                     />
@@ -66,6 +149,8 @@ export default function CheckoutPage() {
                     <input 
                       type="email" 
                       placeholder="john@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                       required
                     />
@@ -77,6 +162,8 @@ export default function CheckoutPage() {
                   <input 
                     type="tel" 
                     placeholder="+91 98765 43210"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                     className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                     required
                   />
@@ -86,6 +173,8 @@ export default function CheckoutPage() {
                   <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Address</label>
                   <textarea 
                     placeholder="123 Main St, Apt 4B"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
                     rows={3}
                     className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium resize-none"
                     required
@@ -97,6 +186,8 @@ export default function CheckoutPage() {
                   <input 
                     type="text" 
                     placeholder="Mumbai"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
                     className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                     required
                   />
@@ -108,6 +199,8 @@ export default function CheckoutPage() {
                     <input 
                       type="text" 
                       placeholder="Maharashtra"
+                      value={stateName}
+                      onChange={(e) => setStateName(e.target.value)}
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                       required
                     />
@@ -117,6 +210,8 @@ export default function CheckoutPage() {
                     <input 
                       type="text" 
                       placeholder="400001"
+                      value={pinCode}
+                      onChange={(e) => setPinCode(e.target.value)}
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                       required
                     />
@@ -126,7 +221,7 @@ export default function CheckoutPage() {
                 <div className="pt-4 hidden md:block">
                   <button 
                     type="button"
-                    onClick={(e) => { e.preventDefault(); alert('Order Placed Successfully!'); }}
+                    onClick={placeOrder}
                     className="w-full bg-black text-white py-4 rounded-xl font-bold text-base hover:bg-neutral-800 transition-colors active:scale-[0.99] shadow-lg shadow-black/20"
                   >
                     Place Order
@@ -195,7 +290,7 @@ export default function CheckoutPage() {
                   <div className="pt-2 md:hidden">
                     <button 
                       type="button"
-                      onClick={(e) => { e.preventDefault(); alert('Order Placed Successfully!'); }}
+                      onClick={placeOrder}
                       className="w-full bg-black text-white py-4 rounded-xl font-bold text-base hover:bg-[#111111] transition-colors active:scale-[0.99] shadow-lg shadow-black/20"
                     >
                       Place Order

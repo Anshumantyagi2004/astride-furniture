@@ -6,9 +6,25 @@ import { Truck, RotateCcw, ShieldCheck, ArrowRight } from 'lucide-react';
 import CustomButton from './deatileProductCardButton';
 import gsap from 'gsap';
 
+const COLOR_MAP: Record<string, string> = {
+  black: '#000000',
+  white: '#ffffff',
+  red: '#dc2626',
+  blue: '#2563eb',
+  grey: '#4b5563',
+  gray: '#4b5563',
+  orange: '#ea580c',
+  green: '#16a34a',
+  yellow: '#ca8a04',
+  pink: '#db2777',
+  purple: '#9333ea',
+  brown: '#7c2d12',
+};
+
 export default function DetailPageCard({ productId }: { productId?: string }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState('Red');
+  const [activeImage, setActiveImage] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'description' | 'features' | 'specs' | 'details'>('description');
   const tabContentRef = useRef<HTMLDivElement>(null);
   
@@ -153,7 +169,10 @@ export default function DetailPageCard({ productId }: { productId?: string }) {
               backSupport: prod.backSupport || "High Back",
               height: prod.height || "5'7\" - 6'6\"",
               hours: prod.hours || "8+ Hours",
-              colors: prod.colors || ["Red", "Black", "Grey", "Blue"],
+              colors: prod.colorVariants && prod.colorVariants.length > 0 
+                ? prod.colorVariants.map((v: any) => v.colorName).filter(Boolean)
+                : [],
+              colorVariants: prod.colorVariants || [],
               rating: prod.rating || 4.7,
               capacity: prod.capacity || "150 kg",
               shortDescription: prod.shortDescription,
@@ -167,8 +186,14 @@ export default function DetailPageCard({ productId }: { productId?: string }) {
         // Match string comparison for dynamic productId
         const found = allProducts.find(p => p.id.toString() === productId?.toString()) || allProducts[0];
         setProduct(found);
-        if (found && found.colors && found.colors.length > 0) {
-          setSelectedColor(found.colors[0]);
+        if (found) {
+          const foundAny = found as any;
+          const firstVariantWithImages = foundAny.colorVariants?.find((v: any) => v.images && v.images.length > 0);
+          const initialColor = firstVariantWithImages?.colorName || foundAny.colors?.[0] || "Black";
+          setSelectedColor(initialColor);
+          
+          const initialImage = firstVariantWithImages?.images?.[0]?.url || foundAny.image;
+          setActiveImage(initialImage);
         }
       } catch (err) {
         console.error("Error loading product detail data:", err);
@@ -178,6 +203,35 @@ export default function DetailPageCard({ productId }: { productId?: string }) {
     }
     loadProduct();
   }, [productId]);
+
+  useEffect(() => {
+    if (product) {
+      const variant = product.colorVariants?.find(
+        (v: any) => v.colorName?.toLowerCase() === selectedColor?.toLowerCase()
+      );
+      if (variant && variant.images && variant.images.length > 0) {
+        // Only set active image to the first image of the selected variant
+        // if the current activeImage is not already in the selected variant's images
+        const isCurrentInVariant = variant.images.some((img: any) => img.url === activeImage);
+        if (!isCurrentInVariant) {
+          setActiveImage(variant.images[0].url);
+        }
+      } else {
+        setActiveImage(product.image);
+      }
+    }
+  }, [selectedColor, product, activeImage]);
+
+  const handleThumbnailClick = (imgUrl: string) => {
+    setActiveImage(imgUrl);
+    // Find which color variant this image belongs to and select that color
+    const variant = product?.colorVariants?.find((v: any) => 
+      v.images?.some((img: any) => img.url === imgUrl)
+    );
+    if (variant && variant.colorName) {
+      setSelectedColor(variant.colorName);
+    }
+  };
 
   useEffect(() => {
     if (tabContentRef.current) {
@@ -220,32 +274,65 @@ export default function DetailPageCard({ productId }: { productId?: string }) {
     );
   }
 
-  return (
-    <div 
-      className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-white min-h-screen font-sans"
-      style={{ fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
-    >
-      {/* Breadcrumbs */}
-      <div className="text-[12px] text-neutral-400 font-medium mb-6 flex items-center gap-1.5 tracking-wide">
-        <span className="hover:text-black cursor-pointer transition-colors">Home</span>
-        <span className="text-neutral-300">/</span>
-        <span className="hover:text-black cursor-pointer transition-colors">{product.category}</span>
-        <span className="text-neutral-300">/</span>
-        <span className="text-neutral-600 font-semibold">{product.name}</span>
-      </div>
+      const allVariantImages = product?.colorVariants?.reduce(
+        (acc: any[], variant: any) => {
+          if (variant.images) {
+            return [...acc, ...variant.images];
+          }
+          return acc;
+        },
+        []
+      ) || [];
 
-      <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 mt-2">
-        {/* Left: Image */}
-        <div className="w-full lg:w-[42%] lg:sticky lg:top-20 self-start">
-          <div className="w-full h-[400px] md:h-[500px] lg:h-[calc(100vh-120px)] flex items-center justify-center relative overflow-hidden group bg-[#FAFAFA] rounded-2xl">
-            <Image 
-              src={product.image} 
-              alt={product.name} 
-              fill
-              className="object-contain p-8 lg:p-12 hover:scale-105 transition-transform duration-700 ease-out mix-blend-multiply"
-            />
+      return (
+        <div 
+          className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-white min-h-screen font-sans"
+          style={{ fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+        >
+          {/* Breadcrumbs */}
+          <div className="text-[12px] text-neutral-400 font-medium mb-6 flex items-center gap-1.5 tracking-wide">
+            <span className="hover:text-black cursor-pointer transition-colors">Home</span>
+            <span className="text-neutral-300">/</span>
+            <span className="hover:text-black cursor-pointer transition-colors">{product.category}</span>
+            <span className="text-neutral-300">/</span>
+            <span className="text-neutral-600 font-semibold">{product.name}</span>
           </div>
-        </div>
+
+          <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 mt-2">
+            {/* Left: Image Gallery */}
+            <div className="w-full lg:w-[44%] lg:sticky lg:top-20 self-start flex gap-4">
+              {/* Thumbnails strip */}
+              {allVariantImages.length > 1 && (
+                <div className="flex flex-col gap-3 w-[70px] md:w-[80px] shrink-0 overflow-y-auto max-h-[400px] md:max-h-[500px] lg:max-h-[calc(100vh-120px)] pr-1 scrollbar-thin">
+                  {allVariantImages.map((img: any, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleThumbnailClick(img.url)}
+                      className={`relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAFAFA] border-2 transition-all duration-200 shrink-0 ${
+                        activeImage === img.url ? 'border-black' : 'border-transparent hover:border-neutral-300'
+                      }`}
+                    >
+                      <Image 
+                        src={img.url} 
+                        alt={`Thumbnail ${idx + 1}`} 
+                        fill 
+                        className="object-contain p-1.5 mix-blend-multiply" 
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Main Image */}
+              <div className="flex-1 h-[400px] md:h-[500px] lg:h-[calc(100vh-120px)] flex items-center justify-center relative overflow-hidden group bg-[#FAFAFA] rounded-2xl">
+                <Image 
+                  src={activeImage || product.image} 
+                  alt={product.name} 
+                  fill
+                  className="object-contain p-8 lg:p-12 hover:scale-105 transition-transform duration-700 ease-out mix-blend-multiply"
+                />
+              </div>
+            </div>
 
         {/* Right: Details */}
         <div className="w-full lg:w-[58%] flex flex-col pt-2 text-black">
@@ -279,20 +366,32 @@ export default function DetailPageCard({ productId }: { productId?: string }) {
             <p className="text-[15px] font-semibold mb-3">
               Select Color
             </p>
-            <div className="flex flex-wrap gap-2">
-              {(product.colors || ["Red", "Black", "Grey", "Blue"]).map((colorName: string) => (
-                <button 
-                  key={colorName} 
-                  onClick={() => setSelectedColor(colorName)}
-                  className={`min-w-[76px] h-9 px-3 flex items-center justify-center rounded-lg text-[13px] font-semibold transition-colors ${
-                    selectedColor === colorName 
-                      ? 'bg-black text-white' 
-                      : 'bg-[#F3F4F6] text-black hover:bg-[#E5E7EB]'
-                  }`}
-                >
-                  {colorName}
-                </button>
-              ))}
+            <div className="flex flex-wrap gap-4">
+              {(product.colors || []).map((colorName: string) => {
+                const colorHex = COLOR_MAP[colorName.toLowerCase()] || colorName.toLowerCase();
+                const isSelected = selectedColor?.toLowerCase() === colorName?.toLowerCase();
+                
+                return (
+                  <div key={colorName} className="flex flex-col items-center gap-1">
+                    <button 
+                      type="button"
+                      onClick={() => setSelectedColor(colorName)}
+                      style={{ backgroundColor: colorHex }}
+                      className={`w-7 h-7 rounded-full border border-neutral-300 shadow-sm transition-all duration-200 focus:outline-none ${
+                        isSelected 
+                          ? 'ring-2 ring-offset-2 ring-black scale-110' 
+                          : 'hover:scale-105'
+                      }`}
+                      title={colorName}
+                    />
+                    <span className={`text-[10px] font-bold transition-colors tracking-wide ${
+                      isSelected ? 'text-black font-black' : 'text-neutral-500'
+                    }`}>
+                      {colorName}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
