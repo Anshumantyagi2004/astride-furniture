@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import expandedImg from "../../../public/expanded/image_ct.webp";
 
 interface Hotspot {
     id: string;
@@ -143,10 +144,8 @@ const Header2 = () => {
                     <div className="lg:col-span-7 relative w-full flex items-start justify-start scale-100 lg:-ml-4 transition-transform duration-500 overflow-hidden max-h-[290px] lg:max-h-[340px]">
                         <div className="relative w-full max-w-[1050px]">
                             <Image
-                                src="/expanded/image_ct.webp"
+                                src={expandedImg}
                                 alt="Exploded Chair"
-                                width={1200}
-                                height={800}
                                 className="w-full h-auto object-cover object-top select-none transition-all duration-500"
                                 priority
                             />
