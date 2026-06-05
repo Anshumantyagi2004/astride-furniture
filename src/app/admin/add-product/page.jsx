@@ -166,16 +166,16 @@ const handleImageChange = async (index, e) => {
         );
 
         console.log("Converted Files:", webpFiles);
-
-        const updated = [...colorVariants];
-
-        updated[index].images = webpFiles;
-
-        updated[index].previews = webpFiles.map((file) =>
-            URL.createObjectURL(file)
-        );
-
+          
+          // Append new images and previews to the existing lists
+        updated[index].images = [...updated[index].images, ...webpFiles];
+        updated[index].previews = [
+            ...updated[index].previews,
+            ...webpFiles.map((file) => URL.createObjectURL(file))
+        ];
         setColorVariants(updated);
+
+        
 
         toast.success("Images converted to WebP successfully");
     } catch (error) {
