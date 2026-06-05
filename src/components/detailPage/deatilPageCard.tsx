@@ -246,11 +246,12 @@ export default function DetailPageCard({ productId }: { productId?: string }) {
   const handleAddToCartClick = () => {
     if (!product) return;
     const cartItem = {
-      id: product.id,
+      id: `${product.id}-${selectedColor}`,
       name: product.name,
       price: product.price,
-      image: product.image,
-      quantity: quantity
+      image: activeImage || product.image,
+      quantity: quantity,
+      color: selectedColor
     };
     window.dispatchEvent(new CustomEvent('add-to-cart', { detail: cartItem }));
   };

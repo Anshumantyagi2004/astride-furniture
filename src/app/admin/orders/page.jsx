@@ -224,6 +224,11 @@ export default function Page() {
                                                             <p className="text-xs text-neutral-400 font-mono">
                                                                 ID: <span className="select-all font-semibold text-neutral-600">{product.productId || product._id}</span>
                                                             </p>
+                                                            {product.color && (
+                                                                <p className="text-xs text-neutral-500 font-semibold uppercase tracking-wider">
+                                                                    Color: <span className="text-neutral-800">{product.color}</span>
+                                                                </p>
+                                                            )}
                                                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 border-t border-neutral-100 mt-1">
                                                                 <span className="text-sm text-neutral-500 font-medium">Qty: <span className="font-bold text-neutral-800">{product.quantity}</span></span>
                                                                 <span className="text-xs text-neutral-300">•</span>

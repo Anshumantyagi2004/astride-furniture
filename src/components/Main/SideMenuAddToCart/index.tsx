@@ -13,6 +13,7 @@ interface CartItem {
   image: string;
   quantity: number;
   category?: string;
+  color?: string;
 }
 
 export default function SideMenuAddToCart() {
@@ -190,9 +191,16 @@ export default function SideMenuAddToCart() {
                       <h4 className="font-semibold text-neutral-800 text-[14px] leading-tight tracking-tight pr-4">
                         {item.name}
                       </h4>
-                      <p className="text-[11px] text-neutral-400 mt-1 font-medium">
-                        Material: Premium Cushioning
-                      </p>
+                      <div className="flex flex-col gap-0.5 mt-1">
+                        <p className="text-[11px] text-neutral-400 font-medium">
+                          Material: Premium Cushioning
+                        </p>
+                        {item.color && (
+                          <p className="text-[11px] text-neutral-500 font-semibold uppercase tracking-wider">
+                            Color: {item.color}
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <span className="font-semibold text-neutral-800 text-[14px] tracking-tight shrink-0">
                       ₹{item.price.toLocaleString()}

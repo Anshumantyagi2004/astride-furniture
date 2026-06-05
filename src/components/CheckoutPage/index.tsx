@@ -10,6 +10,7 @@ interface CartItem {
   price: number;
   image: string;
   quantity: number;
+  color?: string;
 }
 
 export default function CheckoutPage() {
@@ -78,13 +79,19 @@ export default function CheckoutPage() {
           pinCode,
         },
 
-        products: cartItems.map((item) => ({
-          productId: item.id,
-          productName: item.name,
-          image: item.image,
-          quantity: item.quantity,
-          price: item.price,
-        })),
+        products: cartItems.map((item) => {
+          const cleanProductId = typeof item.id === 'string' && item.id.includes('-') 
+            ? item.id.split('-')[0] 
+            : item.id;
+          return {
+            productId: cleanProductId,
+            productName: item.name,
+            image: item.image,
+            color: item.color || (typeof item.id === 'string' && item.id.includes('-') ? item.id.split('-')[1] : undefined),
+            quantity: item.quantity,
+            price: item.price,
+          };
+        }),
 
         pricing: {
           subtotal,
@@ -259,7 +266,12 @@ export default function CheckoutPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-bold text-neutral-900 text-sm truncate">{item.name}</h4>
-                          <p className="text-xs text-neutral-500 font-medium mt-0.5">Quantity: {item.quantity}</p>
+                          <div className="flex flex-col gap-0.5 mt-0.5">
+                            <p className="text-xs text-neutral-500 font-medium">Quantity: {item.quantity}</p>
+                            {item.color && (
+                              <p className="text-[10px] text-neutral-400 font-semibold uppercase tracking-wide">Color: {item.color}</p>
+                            )}
+                          </div>
                           <p className="text-sm font-black text-neutral-900 mt-1">₹{item.price.toLocaleString()}</p>
                         </div>
                       </div>
