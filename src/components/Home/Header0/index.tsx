@@ -63,7 +63,7 @@ export default function Header0() {
   }
 
   return (
-    <section className="relative w-full h-[85vh] min-h-[600px] overflow-hidden bg-zinc-900">
+    <section id="circular-chairs" className="relative w-full h-[85vh] min-h-[600px] overflow-hidden bg-zinc-900">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
