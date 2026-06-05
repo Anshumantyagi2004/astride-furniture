@@ -10,7 +10,7 @@ export async function POST(req) {
     // Get data from frontend
     const body = await req.json();
 
-    const { name, email, password } = body;
+    const { name, email, phone, password } = body;
 
     // Check if user already exists
     const existingUser = await User.findOne({
@@ -33,6 +33,7 @@ export async function POST(req) {
     const user = await User.create({
       name,
       email,
+      phone,
       password,
     });
 
@@ -46,6 +47,7 @@ export async function POST(req) {
           id: user._id,
           name: user.name,
           email: user.email,
+          phone: user.phone,
         },
       },
       {

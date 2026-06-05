@@ -9,6 +9,7 @@ import {
   Mail,
   Lock,
   User,
+  Phone,
   Eye,
   EyeOff,
 } from "lucide-react";
@@ -22,13 +23,14 @@ export default function Page() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password || (!isLogin && !name)) {
+    if (!email || !password || (!isLogin && (!name || !phone))) {
       setMessage({ type: "error", text: "Please fill in all fields" });
       return;
     }
@@ -38,7 +40,7 @@ export default function Page() {
 
     try {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
-      const payload = isLogin ? { email, password } : { name, email, password };
+      const payload = isLogin ? { email, password } : { name, email, phone, password };
       
       const { data } = await axios.post(endpoint, payload);
 
@@ -55,6 +57,7 @@ export default function Page() {
             setIsLogin(true);
             setMessage({ type: "success", text: "Account created! Please log in." });
             setName("");
+            setPhone("");
             setPassword("");
           }, 1200);
         }
@@ -191,20 +194,37 @@ export default function Page() {
           <form className="space-y-5" onSubmit={handleSubmit}>
 
             {!isLogin && (
-              <div className="relative">
-                <User
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                  size={20}
-                />
+              <>
+                <div className="relative">
+                  <User
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={20}
+                  />
 
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full h-14 pl-12 pr-4 rounded-2xl border border-slate-200/80 bg-white/60 text-slate-800 placeholder-slate-400 outline-none focus:border-[#1b2530]/50 focus:ring-1 focus:ring-[#1b2530]/10 transition-all duration-300"
-                />
-              </div>
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full h-14 pl-12 pr-4 rounded-2xl border border-slate-200/80 bg-white/60 text-slate-800 placeholder-slate-400 outline-none focus:border-[#1b2530]/50 focus:ring-1 focus:ring-[#1b2530]/10 transition-all duration-300"
+                  />
+                </div>
+
+                <div className="relative">
+                  <Phone
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={20}
+                  />
+
+                  <input
+                    type="tel"
+                    placeholder="Phone Number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full h-14 pl-12 pr-4 rounded-2xl border border-slate-200/80 bg-white/60 text-slate-800 placeholder-slate-400 outline-none focus:border-[#1b2530]/50 focus:ring-1 focus:ring-[#1b2530]/10 transition-all duration-300"
+                  />
+                </div>
+              </>
             )}
 
             {/* EMAIL */}

@@ -16,7 +16,8 @@ import {
   Truck,
   Package,
   Star,
-  ArrowRight
+  ArrowRight,
+  LogOut
 } from "lucide-react";
 
 interface AccountPageProps {
@@ -126,6 +127,13 @@ const MOCK_WISHLIST: WishlistItem[] = [
 
 export default function AccountPage({ activeTab }: AccountPageProps) {
   const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("astride_profile");
+    router.push("/login");
+  };
   
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
   const [isEditing, setIsEditing] = useState(false);
@@ -291,6 +299,17 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                   </button>
                 );
               })}
+
+              <div className="border-t border-slate-100 my-1" />
+
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 text-red-500 hover:bg-red-50 hover:text-red-650 relative overflow-hidden group"
+              >
+                <LogOut size={16} strokeWidth={2.5} />
+                <span className="flex-1 text-left">Logout</span>
+                <ArrowRight size={12} className="opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 text-red-500" />
+              </button>
             </nav>
           </aside>
 
