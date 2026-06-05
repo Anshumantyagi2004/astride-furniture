@@ -9,6 +9,7 @@ import {
     User, 
     Mail, 
     Phone, 
+    Trash2,
     Loader2 
 } from "lucide-react";
 
@@ -16,6 +17,7 @@ export default function Page() {
     const [users, setUsers] = useState([]);
     const [totalUsers, setTotalUsers] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [deletingId, setDeletingId] = useState(null);
 
     const getUsers = async () => {
         try {
@@ -29,6 +31,25 @@ export default function Page() {
             toast.error("Failed to load users list");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteUser = async (id) => {
+        if (!confirm("Are you sure you want to delete this user account?")) return;
+
+        try {
+            setDeletingId(id);
+            const { data } = await axios.delete(`/api/auth/users?id=${id}`);
+            if (data.success) {
+                toast.success("User deleted successfully");
+                setUsers(users.filter((user) => user._id !== id));
+                setTotalUsers((prev) => Math.max(0, prev - 1));
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to delete user");
+        } finally {
+            setDeletingId(null);
         }
     };
 
@@ -87,6 +108,7 @@ export default function Page() {
                                             <th className="px-8 py-5 text-sm font-black text-neutral-400 uppercase tracking-wider">Email Address</th>
                                             <th className="px-8 py-5 text-sm font-black text-neutral-400 uppercase tracking-wider">Phone Number</th>
                                             <th className="px-8 py-5 text-sm font-black text-neutral-400 uppercase tracking-wider">Registered On</th>
+                                            <th className="px-8 py-5 text-sm font-black text-neutral-400 uppercase tracking-wider text-right">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100">
@@ -128,6 +150,23 @@ export default function Page() {
                                                 {/* Registered Date */}
                                                 <td className="px-8 py-5 whitespace-nowrap text-base text-neutral-500 font-medium">
                                                     {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : "—"}
+                                                </td>
+
+                                                {/* Actions */}
+                                                <td className="px-8 py-5 whitespace-nowrap text-right text-base font-medium">
+                                                    <button
+                                                        type="button"
+                                                        disabled={deletingId === customer._id}
+                                                        onClick={() => handleDeleteUser(customer._id)}
+                                                        className="inline-flex items-center justify-center gap-1.5 bg-red-55/10 hover:bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-extrabold transition-all disabled:opacity-50"
+                                                    >
+                                                        {deletingId === customer._id ? (
+                                                            <Loader2 className="animate-spin" size={14} />
+                                                        ) : (
+                                                            <Trash2 size={14} />
+                                                        )}
+                                                        <span>Delete User</span>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))}
