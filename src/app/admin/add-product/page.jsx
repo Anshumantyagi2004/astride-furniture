@@ -167,7 +167,9 @@ const handleImageChange = async (index, e) => {
 
         console.log("Converted Files:", webpFiles);
           
-          // Append new images and previews to the existing lists
+        const updated = [...colorVariants];
+          
+        // Append new images and previews to the existing lists
         updated[index].images = [...updated[index].images, ...webpFiles];
         updated[index].previews = [
             ...updated[index].previews,
