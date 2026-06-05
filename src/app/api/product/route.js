@@ -137,8 +137,15 @@ export async function POST(req) {
 
 export async function GET() {
     try {
-        await connectDB();
+        // Only proxy production API when running locally in development
+        if (process.env.NODE_ENV === "development") {
+            const response = await fetch("https://astride-furniture.vercel.app/api/product");
+            const data = await response.json();
+            return NextResponse.json(data, { status: 200 });
+        }
 
+        // On production (Vercel), query the MongoDB database directly
+        await connectDB();
         const products = await Product.find().populate("category").sort({ createdAt: -1 });
 
         return NextResponse.json(
@@ -151,7 +158,6 @@ export async function GET() {
         );
     } catch (error) {
         console.log(error);
-
         return NextResponse.json(
             {
                 success: false,

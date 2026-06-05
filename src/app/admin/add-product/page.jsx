@@ -169,7 +169,11 @@ const handleImageChange = async (index, e) => {
           
         const updated = [...colorVariants];
           
-        // Append new images and previews to the existing lists
+        // Old replacement logic:
+        // updated[index].images = webpFiles;
+        // updated[index].previews = webpFiles.map((file) => URL.createObjectURL(file));
+          
+        // New logic: Append new images and previews to the existing lists
         updated[index].images = [...updated[index].images, ...webpFiles];
         updated[index].previews = [
             ...updated[index].previews,

@@ -131,13 +131,24 @@ export default function DetailPageCard({ productId }: { productId?: string }) {
               normalizedCategory = "Office Task Chair";
             }
 
+            const blackVariant = prod.colorVariants?.find(
+              (v: any) => v.colorName?.toLowerCase() === "black"
+            );
+            const blackImage = blackVariant?.images?.[0]?.url;
+            const fallbackImage = prod.colorVariants?.find(
+              (v: any) => v.images && v.images.length > 0
+            )?.images?.[0]?.url;
+
+            // Old logic:
+            // image: prod.images && prod.images[0] ? prod.images[0].url : "/Png1/chair12_ErgoFit.webp",
+
             return {
               id: prod._id,
               name: prod.productName,
               price: prod.realPrice,
               originalPrice: prod.oldPrice,
               discount: `-${discPercent}%`,
-              image: prod.images && prod.images[0] ? prod.images[0].url : "/Png1/chair12_ErgoFit.webp",
+              image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
               category: normalizedCategory,
               backSupport: prod.backSupport || "High Back",
               height: prod.height || "5'7\" - 6'6\"",
