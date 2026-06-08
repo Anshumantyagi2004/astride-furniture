@@ -152,6 +152,9 @@ export default function DetailPage({ productId }: { productId?: string }) {
               capacity: prod.capacity || "150 kg",
               shortDescription: prod.shortDescription,
               longDescription: prod.longDescription,
+              keyfeatures: prod.keyfeatures,
+              application: prod.application,
+              whychoose: prod.whychoose,
               specifications: prod.specifications
             };
           });

@@ -14,7 +14,22 @@ export async function GET(req, { params }) {
     try {
         await connectDB();
         const { slug } = await params;
-        const product = await Product.findOne({ slug: slug }).populate("category");
+        let product = await Product.findOne({ slug: slug }).populate("category");
+
+        if (!product && process.env.NODE_ENV === "development") {
+            try {
+                const productionUrl = process.env.PRODUCTION_URL || "https://astride-furniture.vercel.app";
+                const response = await fetch(`${productionUrl}/api/product/${slug}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        return NextResponse.json(data, { status: 200 });
+                    }
+                }
+            } catch (err) {
+                console.error("Error fetching fallback product from production:", err);
+            }
+        }
 
         if (!product) {
             return NextResponse.json(
@@ -78,6 +93,9 @@ export async function PUT(req, { params }) {
         const realPrice = formData.get("realPrice");
         const shortDescription = formData.get("shortDescription");
         const longDescription = formData.get("longDescription");
+        const keyfeatures = formData.get("keyfeatures");
+        const application = formData.get("application");
+        const whychoose = formData.get("whychoose");
 
         const videoLinks = JSON.parse(
             formData.get("videoLinks") || "[]"
@@ -169,6 +187,9 @@ export async function PUT(req, { params }) {
         product.realPrice = realPrice;
         product.shortDescription = shortDescription;
         product.longDescription = longDescription;
+        product.keyfeatures = keyfeatures;
+        product.application = application;
+        product.whychoose = whychoose;
         product.videoLinks = videoLinks;
         product.specifications = specifications;
 

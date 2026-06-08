@@ -24,6 +24,9 @@ export default function Page() {
     const [loading, setLoading] = useState(false);
     const [shortDescription, setShortDescription] = useState("");
     const [longDescription, setLongDescription] = useState("");
+    const [keyfeatures, setKeyfeatures] = useState("");
+    const [application, setApplication] = useState("");
+    const [whychoose, setWhychoose] = useState("");
     const [oldPrice, setOldPrice] = useState("");
     const [realPrice, setRealPrice] = useState("");
     const [category, setCategory] = useState("");
@@ -253,6 +256,9 @@ const handleImageChange = async (index, e) => {
             formData.append("productName", productName);
             formData.append("shortDescription", shortDescription);
             formData.append("longDescription", longDescription);
+            formData.append("keyfeatures", keyfeatures);
+            formData.append("application", application);
+            formData.append("whychoose", whychoose);
             formData.append("oldPrice", oldPrice);
             formData.append("realPrice", realPrice);
             formData.append("category", category);
@@ -282,6 +288,9 @@ const handleImageChange = async (index, e) => {
                 setProductName("");
                 setShortDescription("");
                 setLongDescription("");
+                setKeyfeatures("");
+                setApplication("");
+                setWhychoose("");
                 setOldPrice("");
                 setRealPrice("");
                 setCategory("");
@@ -448,6 +457,51 @@ const handleImageChange = async (index, e) => {
                                     value={longDescription}
                                     config={editorConfig}
                                     onBlur={(newContent) => setLongDescription(newContent)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* KEY FEATURES */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                Key Features
+                            </label>
+
+                            <div className="text-black">
+                                <JoditEditor
+                                    value={keyfeatures}
+                                    config={editorConfig}
+                                    onBlur={(newContent) => setKeyfeatures(newContent)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* APPLICATION */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                Application
+                            </label>
+
+                            <div className="text-black">
+                                <JoditEditor
+                                    value={application}
+                                    config={editorConfig}
+                                    onBlur={(newContent) => setApplication(newContent)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* WHY CHOOSE ASTRIDE */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                Why Choose Astride
+                            </label>
+
+                            <div className="text-black">
+                                <JoditEditor
+                                    value={whychoose}
+                                    config={editorConfig}
+                                    onBlur={(newContent) => setWhychoose(newContent)}
                                 />
                             </div>
                         </div>
