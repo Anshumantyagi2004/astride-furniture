@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { Truck, RotateCcw, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Truck, RotateCcw, ShieldCheck, ArrowRight, Heart } from 'lucide-react';
 import CustomButton from './deatileProductCardButton';
 import gsap from 'gsap';
 
@@ -27,6 +27,53 @@ export default function DetailPageCard({ product }: { product: any }) {
   const [activeImage, setActiveImage] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'description' | 'features' | 'specs' | 'application'>('description');
   const tabContentRef = useRef<HTMLDivElement>(null);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  useEffect(() => {
+    if (product) {
+      const saved = localStorage.getItem("astride_wishlist");
+      if (saved) {
+        try {
+          const list = JSON.parse(saved);
+          const exists = list.some((item: any) => item.id.toString() === product.id.toString());
+          setIsWishlisted(exists);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }, [product]);
+
+  const handleToggleWishlist = () => {
+    if (!product) return;
+    const saved = localStorage.getItem("astride_wishlist");
+    let list: any[] = [];
+    if (saved) {
+      try {
+        list = JSON.parse(saved);
+      } catch (e) {}
+    }
+    
+    const exists = list.some((item: any) => item.id.toString() === product.id.toString());
+    if (exists) {
+      list = list.filter((item: any) => item.id.toString() !== product.id.toString());
+      setIsWishlisted(false);
+    } else {
+      const discountVal = product.discount || "60%";
+      list.push({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        originalPrice: product.originalPrice || product.price * 2,
+        discount: discountVal.replace("-", ""),
+        image: activeImage || product.image,
+        rating: product.rating || 4.7
+      });
+      setIsWishlisted(true);
+    }
+    localStorage.setItem("astride_wishlist", JSON.stringify(list));
+    window.dispatchEvent(new Event("astride_wishlist_updated"));
+  };
 
   // Set initial selected color and active image when product changes
   useEffect(() => {
@@ -177,15 +224,60 @@ export default function DetailPageCard({ product }: { product: any }) {
             dangerouslySetInnerHTML={{ __html: product.shortDescription || `Premium ergonomic seat tailored for long sessions, perfect for gaming setups and casual office workspace styling.` }}
           />
 
-          <p className="text-[13px] font-semibold mb-5">
+          <p className="text-[13px] font-semibold text-neutral-800 mb-5">
             Stock is available & ready to ship!
           </p>
 
+          {/* Top 5 Specifications Section */}
+          {product.specifications && product.specifications.length > 0 && (
+            <div className="mb-6 border border-neutral-200/50 bg-[#FAFAFA]/80 rounded-2xl p-5" style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
+              <div className="text-[11px] font-semibold text-neutral-500 tracking-[0.15em] uppercase mb-4">
+                Product Specifications
+              </div>
+              <div className="flex flex-col">
+                {product.specifications.slice(0, 5).map((spec: any, idx: number) => (
+                  <div 
+                    key={idx} 
+                    className="flex justify-between items-center py-2.5 border-b border-neutral-200/60 last:border-b-0"
+                  >
+                    <span className="text-[11px] font-semibold text-neutral-700 uppercase tracking-wider">
+                      {spec.name || spec.key}
+                    </span>
+                    <span className="text-[13px] font-bold text-neutral-900">
+                      {spec.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <hr className="border-neutral-200 mb-5" />
 
-          <div className="flex items-baseline gap-3 mb-5">
-            <span className="text-[28px] lg:text-[30px] font-semibold tracking-tighter">Rs. {product.price.toLocaleString()}</span>
-            <span className="text-sm text-neutral-400 line-through font-medium">Rs. {product.originalPrice.toLocaleString()}</span>
+          <div className="flex justify-between items-center mb-5 gap-4 flex-wrap sm:flex-nowrap">
+            <div className="flex items-baseline gap-3">
+              <span className="text-[28px] lg:text-[30px] font-semibold tracking-tighter">Rs. {product.price.toLocaleString()}</span>
+              <span className="text-sm text-neutral-400 line-through font-medium">Rs. {product.originalPrice.toLocaleString()}</span>
+            </div>
+            
+            <button
+              onClick={handleToggleWishlist}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-semibold tracking-wide transition-all duration-300 select-none hover:scale-105 active:scale-95 ${
+                isWishlisted
+                  ? "border-red-200 bg-red-50 text-red-600 hover:bg-red-100/80 shadow-[0_2px_10px_rgba(239,68,68,0.12)]"
+                  : "border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50 text-neutral-600 hover:shadow-sm"
+              }`}
+            >
+              <Heart 
+                size={14} 
+                className={`transition-all duration-300 ${
+                  isWishlisted 
+                    ? "fill-red-500 text-red-500 scale-110 animate-[bounce_1s_infinite]" 
+                    : "text-neutral-500 group-hover:scale-110"
+                }`} 
+              />
+              <span>{isWishlisted ? "Wishlisted" : "Add to Wishlist"}</span>
+            </button>
           </div>
 
           <hr className="border-neutral-200 mb-5" />
@@ -301,10 +393,61 @@ export default function DetailPageCard({ product }: { product: any }) {
             </div>
 
             {/* Tab Contents */}
-            <div ref={tabContentRef} className="text-[13.5px] leading-relaxed text-neutral-700">
+            <div ref={tabContentRef} className="text-base md:text-[17px] leading-relaxed text-neutral-900 font-normal rich-text-override">
+              <style dangerouslySetInnerHTML={{ __html: `
+                .rich-text-override, .rich-text-override * {
+                  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+                  font-size: 15.5px !important;
+                  color: #1f2937 !important;
+                  line-height: 1.8 !important;
+                }
+                .rich-text-override strong, .rich-text-override strong * {
+                  font-weight: 700 !important;
+                  color: #000000 !important;
+                }
+                .rich-text-override ul {
+                  list-style-type: disc !important;
+                  padding-left: 20px !important;
+                  margin-top: 10px !important;
+                  margin-bottom: 10px !important;
+                }
+                .rich-text-override ol {
+                  list-style-type: decimal !important;
+                  padding-left: 20px !important;
+                  margin-top: 10px !important;
+                  margin-bottom: 10px !important;
+                }
+                .rich-text-override li {
+                  margin-bottom: 12px !important;
+                }
+                .rich-text-override p {
+                  margin-bottom: 14px !important;
+                }
+                .rich-text-override h1 {
+                  font-size: 22px !important;
+                  font-weight: 700 !important;
+                  color: #000000 !important;
+                  margin-top: 20px !important;
+                  margin-bottom: 10px !important;
+                }
+                .rich-text-override h2 {
+                  font-size: 19px !important;
+                  font-weight: 600 !important;
+                  color: #000000 !important;
+                  margin-top: 18px !important;
+                  margin-bottom: 8px !important;
+                }
+                .rich-text-override h3 {
+                  font-size: 17px !important;
+                  font-weight: 600 !important;
+                  color: #000000 !important;
+                  margin-top: 16px !important;
+                  margin-bottom: 6px !important;
+                }
+              `}} />
               {activeTab === 'description' && (
                 <div 
-                  className="animate-fade-in font-medium text-neutral-700 space-y-4"
+                  className="animate-fade-in space-y-4"
                   dangerouslySetInnerHTML={{
                     __html: product.longDescription || `Meet the ${product.name} — built for those who live and breathe performance. Wrapped in sleek, premium upholstery with breathable spandex panels, it keeps you cool under pressure. The soft velour neck pillow and memory foam lumbar support mould to your posture, making long gaming sessions feel effortless. Precision-designed carbon-textured 4D armrests provide versatile positioning, while the newly engineered Frog Mechanism gives you complete control over recline and tilt. Features a heavy-duty metal base, Class 4 gas lift, and smooth-rolling casters. The ultimate premium chair under ₹20,000 for users in India.`
                   }}
@@ -314,7 +457,7 @@ export default function DetailPageCard({ product }: { product: any }) {
               {activeTab === 'features' && (
                 product.keyfeatures ? (
                   <div 
-                    className="animate-fade-in font-medium text-neutral-700 space-y-4"
+                    className="animate-fade-in space-y-4"
                     dangerouslySetInnerHTML={{ __html: product.keyfeatures }}
                   />
                 ) : (
@@ -343,29 +486,9 @@ export default function DetailPageCard({ product }: { product: any }) {
                 <div className="overflow-x-auto max-h-[300px] overflow-y-auto pr-1">
                   <table className="w-full text-left border-collapse border border-neutral-300 text-[12.5px]">
                     <tbody>
-                      {[
-                        { name: 'Upholstery', value: 'Spandex Fabric + PU Leather' },
-                        { name: 'Lumbar Support', value: 'Yes' },
-                        { name: 'Back Support', value: product.backSupport || 'High Back' },
-                        { name: 'Armrest', value: '4D' },
-                        { name: 'Capacity', value: product.capacity || '150 Kg' },
-                        { name: 'Hours of usage', value: product.hours || '> 12Hrs' },
-                        { name: 'Headrest', value: 'Yes' },
-                        { name: 'Maximum Seat Height', value: '57 cm' },
-                        { name: 'Minimum Seat Height', value: '49 cm' },
-                        { name: 'Armrest Height Range', value: '7 cm' },
-                        { name: 'Backrest Height', value: '88 cm' },
-                        { name: 'Backrest Shoulder Width', value: '51 cm' },
-                        { name: 'Seat Dimensions', value: '50 x 54 cm' },
-                        { name: 'Lumbar Support Type', value: 'Height Adjustable & Removable' },
-                        { name: 'Lumbar Support Material', value: 'Velour Upholstery' },
-                        { name: 'Foam Type', value: 'Memory Foam' },
-                        { name: 'Adjustable Neck Pillow', value: 'Yes' },
-                        { name: 'Wheel Size', value: '6 cm' },
-                        { name: 'Wheel Type', value: 'PU Wheels' },
-                      ].map((spec, idx) => (
+                      {(product.specifications || []).map((spec: any, idx: number) => (
                         <tr key={idx} className="border-b border-neutral-300 hover:bg-neutral-200/50 transition-colors">
-                          <td className="py-2 px-3 font-semibold text-neutral-600 border-r border-neutral-300 w-1/2">{spec.name}</td>
+                          <td className="py-2 px-3 font-semibold text-neutral-600 border-r border-neutral-300 w-1/2">{spec.name || spec.key}</td>
                           <td className="py-2 px-3 text-neutral-800 font-semibold w-1/2">{spec.value}</td>
                         </tr>
                       ))}
@@ -377,7 +500,7 @@ export default function DetailPageCard({ product }: { product: any }) {
               {activeTab === 'application' && (
                 product.application ? (
                   <div 
-                    className="animate-fade-in font-medium text-neutral-700 space-y-4"
+                    className="animate-fade-in space-y-4"
                     dangerouslySetInnerHTML={{ __html: product.application }}
                   />
                 ) : isBarStool ? (

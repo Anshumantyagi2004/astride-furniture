@@ -51,47 +51,57 @@ export default function Page() {
     }, []);
 
     const getProduct = async () => {
-        try {
-            setLoading(true);
-            const { data } = await axios.get(`/api/product/${params.slug}`);
+        setLoading(true);
+        let retries = 3;
+        while (retries > 0) {
+            try {
+                const { data } = await axios.get(`/api/product/${params.slug}`);
 
-            if (data.success) {
-                const product = data.product;
-                setProductName(product.productName);
-                setShortDescription(product.shortDescription);
-                setLongDescription(product.longDescription);
-                setKeyfeatures(product.keyfeatures || "");
-                setApplication(product.application || "");
-                setWhychoose(product.whychoose || "");
-                setOldPrice(product.oldPrice);
-                setRealPrice(product.realPrice);
-                setCategory(product.category?._id);
-                setVideoLinks(product.videoLinks?.length ? product.videoLinks : [""]);
-                setSpecifications(product.specifications
-                    ?.length ? product.specifications : [{ key: "", value: "", },
-                ]);
-                setColorVariants(
-                    product.colorVariants?.length
-                        ? product.colorVariants.map((variant) => ({
-                            colorName: variant.colorName,
-                            images: [],
-                            previews: variant.images.map((img) => img.url),
-                        }))
-                        : [
-                            {
-                                colorName: "",
+                if (data.success) {
+                    const product = data.product;
+                    setProductName(product.productName);
+                    setShortDescription(product.shortDescription);
+                    setLongDescription(product.longDescription);
+                    setKeyfeatures(product.keyfeatures || "");
+                    setApplication(product.application || "");
+                    setWhychoose(product.whychoose || "");
+                    setOldPrice(product.oldPrice);
+                    setRealPrice(product.realPrice);
+                    setCategory(product.category?._id);
+                    setVideoLinks(product.videoLinks?.length ? product.videoLinks : [""]);
+                    setSpecifications(product.specifications
+                        ?.length ? product.specifications : [{ key: "", value: "", },
+                    ]);
+                    setColorVariants(
+                        product.colorVariants?.length
+                            ? product.colorVariants.map((variant) => ({
+                                colorName: variant.colorName,
                                 images: [],
-                                previews: [],
-                            },
-                        ]
-                );
+                                previews: variant.images.map((img) => img.url),
+                            }))
+                            : [
+                                {
+                                    colorName: "",
+                                    images: [],
+                                    previews: [],
+                                },
+                            ]
+                    );
+                    setLoading(false);
+                    return; // exit if successful
+                }
+            } catch (error) {
+                console.log(`Fetch failed (Retries left: ${retries - 1})...`, error);
+                retries--;
+                if (retries === 0) {
+                    toast.error("Failed to fetch product");
+                } else {
+                    // Wait 1.5 seconds before retrying
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                }
             }
-        } catch (error) {
-            console.log(error);
-            toast.error("Failed to fetch product");
-        } finally {
-            setLoading(false);
         }
+        setLoading(false);
     };
 
     // GET CATEGORIES
