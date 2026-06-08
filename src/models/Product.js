@@ -72,6 +72,24 @@ const productSchema = new mongoose.Schema(
             required: true,
         },
 
+        // KEY FEATURES
+        keyfeatures: {
+            type: String,
+            trim: true,
+        },
+
+        // APPLICATION
+        application: {
+            type: String,
+            trim: true,
+        },
+
+        // WHY CHOOSE ASTRIDE
+        whychoose: {
+            type: String,
+            trim: true,
+        },
+
         // VIDEO LINKS
         videoLinks: [
             {

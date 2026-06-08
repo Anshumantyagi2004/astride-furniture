@@ -25,7 +25,7 @@ export default function DetailPageCard({ product }: { product: any }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState('Red');
   const [activeImage, setActiveImage] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'description' | 'features' | 'specs' | 'details'>('description');
+  const [activeTab, setActiveTab] = useState<'description' | 'features' | 'specs' | 'application'>('description');
   const tabContentRef = useRef<HTMLDivElement>(null);
 
   // Set initial selected color and active image when product changes
@@ -100,65 +100,67 @@ export default function DetailPageCard({ product }: { product: any }) {
     );
   }
 
-      const allVariantImages = product?.colorVariants?.reduce(
-        (acc: any[], variant: any) => {
-          if (variant.images) {
-            return [...acc, ...variant.images];
-          }
-          return acc;
-        },
-        []
-      ) || [];
+  const allVariantImages = product?.colorVariants?.reduce(
+    (acc: any[], variant: any) => {
+      if (variant.images) {
+        return [...acc, ...variant.images];
+      }
+      return acc;
+    },
+    []
+  ) || [];
 
-      return (
-        <div 
-          className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-white min-h-screen font-sans"
-          style={{ fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
-        >
-          {/* Breadcrumbs */}
-          <div className="text-[12px] text-neutral-400 font-medium mb-6 flex items-center gap-1.5 tracking-wide">
-            <span className="hover:text-black cursor-pointer transition-colors">Home</span>
-            <span className="text-neutral-300">/</span>
-            <span className="hover:text-black cursor-pointer transition-colors">{product.category}</span>
-            <span className="text-neutral-300">/</span>
-            <span className="text-neutral-600 font-semibold">{product.name}</span>
-          </div>
+  const isBarStool = product.category?.toLowerCase().includes("bar");
 
-          <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 mt-2">
-            {/* Left: Image Gallery */}
-            <div className="w-full lg:w-[44%] lg:sticky lg:top-20 self-start flex gap-4">
-              {/* Thumbnails strip */}
-              {allVariantImages.length > 1 && (
-                <div className="flex flex-col gap-3 w-[70px] md:w-[80px] shrink-0 overflow-y-auto max-h-[400px] md:max-h-[500px] lg:max-h-[calc(100vh-120px)] pr-1 scrollbar-thin">
-                  {allVariantImages.map((img: any, idx: number) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleThumbnailClick(img.url)}
-                      className={`relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAFAFA] border-2 transition-all duration-200 shrink-0 ${
-                        activeImage === img.url ? 'border-black' : 'border-transparent hover:border-neutral-300'
-                      }`}
-                    >
-                      <Image 
-                        src={img.url} 
-                        alt={`Thumbnail ${idx + 1}`} 
-                        fill 
-                        className="object-contain p-1.5 mix-blend-multiply" 
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
+  return (
+    <div 
+      className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-white min-h-screen font-sans"
+      style={{ fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+    >
+      {/* Breadcrumbs */}
+      <div className="text-[12px] text-neutral-400 font-medium mb-6 flex items-center gap-1.5 tracking-wide">
+        <span className="hover:text-black cursor-pointer transition-colors">Home</span>
+        <span className="text-neutral-300">/</span>
+        <span className="hover:text-black cursor-pointer transition-colors">{product.category}</span>
+        <span className="text-neutral-300">/</span>
+        <span className="text-neutral-600 font-semibold">{product.name}</span>
+      </div>
 
-              {/* Main Image */}
-              <div className="flex-1 h-[400px] md:h-[500px] lg:h-[calc(100vh-120px)] flex items-center justify-center relative overflow-hidden group bg-[#FAFAFA] rounded-2xl">
-                <Image 
-                  src={activeImage || product.image} 
-                  alt={product.name} 
-                  fill
-                  className="object-contain p-8 lg:p-12 hover:scale-105 transition-transform duration-700 ease-out mix-blend-multiply"
-                />
-              </div>
+      <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 mt-2">
+        {/* Left: Image Gallery */}
+        <div className="w-full lg:w-[44%] lg:sticky lg:top-20 self-start flex gap-4">
+          {/* Thumbnails strip */}
+          {allVariantImages.length > 1 && (
+            <div className="flex flex-col gap-3 w-[70px] md:w-[80px] shrink-0 overflow-y-auto max-h-[400px] md:max-h-[500px] lg:max-h-[calc(100vh-120px)] pr-1 scrollbar-thin">
+              {allVariantImages.map((img: any, idx: number) => (
+                <button
+                  key={idx}
+                  onClick={() => handleThumbnailClick(img.url)}
+                  className={`relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAFAFA] border-2 transition-all duration-200 shrink-0 ${
+                    activeImage === img.url ? 'border-black' : 'border-transparent hover:border-neutral-300'
+                  }`}
+                >
+                  <Image 
+                    src={img.url} 
+                    alt={`Thumbnail ${idx + 1}`} 
+                    fill 
+                    className="object-contain p-1.5 mix-blend-multiply" 
+                  />
+                </button>
+              ))}
             </div>
+          )}
+
+          {/* Main Image */}
+          <div className="flex-1 h-[400px] md:h-[500px] lg:h-[calc(100vh-120px)] flex items-center justify-center relative overflow-hidden group bg-[#FAFAFA] rounded-2xl">
+            <Image 
+              src={activeImage || product.image} 
+              alt={product.name} 
+              fill
+              className="object-contain p-8 lg:p-12 hover:scale-105 transition-transform duration-700 ease-out mix-blend-multiply"
+            />
+          </div>
+        </div>
 
         {/* Right: Details */}
         <div className="w-full lg:w-[58%] flex flex-col pt-2 text-black">
@@ -279,9 +281,9 @@ export default function DetailPageCard({ product }: { product: any }) {
             <div className="flex border-b border-neutral-300/70 overflow-x-auto scrollbar-none mb-6">
               {[
                 { id: 'description', label: 'Description' },
-                { id: 'features', label: 'Features' },
+                { id: 'features', label: 'Key Features' },
                 { id: 'specs', label: 'Specs' },
-                { id: 'details', label: 'Item Details' }
+                { id: 'application', label: 'Application' }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -310,24 +312,31 @@ export default function DetailPageCard({ product }: { product: any }) {
               )}
 
               {activeTab === 'features' && (
-                <ul className="space-y-3.5">
-                  <li className="flex gap-2">
-                    <span className="text-black font-bold">•</span>
-                    <span><strong className="text-black font-semibold">Adjusts as per you :</strong> The specially designed frog mechanism allows you to lock the chair at different angles apt for different activities.</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-black font-bold">•</span>
-                    <span><strong className="text-black font-semibold">Breathable fabric :</strong> Made with a combination of breathable Spandex and PU leather refrains heat build up and supports better air circulation.</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-black font-bold">•</span>
-                    <span><strong className="text-black font-semibold">Remembers you :</strong> The memory foam lumbar pillow takes the shape of your spine and supports your back.</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-black font-bold">•</span>
-                    <span><strong className="text-black font-semibold">Accommodates you :</strong> The chair features extended headrest, lumbar pillow and has ample space to accommodate you cross legged.</span>
-                  </li>
-                </ul>
+                product.keyfeatures ? (
+                  <div 
+                    className="animate-fade-in font-medium text-neutral-700 space-y-4"
+                    dangerouslySetInnerHTML={{ __html: product.keyfeatures }}
+                  />
+                ) : (
+                  <ul className="space-y-3.5">
+                    <li className="flex gap-2">
+                      <span className="text-black font-bold">•</span>
+                      <span><strong className="text-black font-semibold">Adjusts as per you :</strong> The specially designed frog mechanism allows you to lock the chair at different angles apt for different activities.</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-black font-bold">•</span>
+                      <span><strong className="text-black font-semibold">Breathable fabric :</strong> Made with a combination of breathable Spandex and PU leather refrains heat build up and supports better air circulation.</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-black font-bold">•</span>
+                      <span><strong className="text-black font-semibold">Remembers you :</strong> The memory foam lumbar pillow takes the shape of your spine and supports your back.</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-black font-bold">•</span>
+                      <span><strong className="text-black font-semibold">Accommodates you :</strong> The chair features extended headrest, lumbar pillow and has ample space to accommodate you cross legged.</span>
+                    </li>
+                  </ul>
+                )
               )}
 
               {activeTab === 'specs' && (
@@ -365,29 +374,50 @@ export default function DetailPageCard({ product }: { product: any }) {
                 </div>
               )}
 
-              {activeTab === 'details' && (
-                <div className="space-y-4 font-medium text-neutral-700">
-                  <div>
-                    <h4 className="font-semibold text-black text-[14px] mb-1">Country of Origin</h4>
-                    <p className="text-neutral-600">China</p>
+              {activeTab === 'application' && (
+                product.application ? (
+                  <div 
+                    className="animate-fade-in font-medium text-neutral-700 space-y-4"
+                    dangerouslySetInnerHTML={{ __html: product.application }}
+                  />
+                ) : isBarStool ? (
+                  <div className="space-y-4 font-medium text-neutral-700 animate-fade-in">
+                    <div>
+                      <h4 className="font-semibold text-black text-[14px] mb-1">Kitchen Counter & Islands</h4>
+                      <p className="text-neutral-600">Perfect height and swivel features designed for premium home kitchen setups.</p>
+                    </div>
+                    <hr className="border-neutral-300" />
+                    <div>
+                      <h4 className="font-semibold text-black text-[14px] mb-1">Cafés, Bars & Restaurants</h4>
+                      <p className="text-neutral-600">Durable frame and elegant aesthetics built to withstand high-traffic commercial dining environments.</p>
+                    </div>
+                    <hr className="border-neutral-300" />
+                    <div>
+                      <h4 className="font-semibold text-black text-[14px] mb-1">Lounge & Reception Areas</h4>
+                      <p className="text-neutral-600">Adds a touch of sophistication to modern reception tables and relaxation zones.</p>
+                    </div>
                   </div>
-                  <hr className="border-neutral-300" />
-                  <div>
-                    <h4 className="font-semibold text-black text-[14px] mb-1">Manufacturer</h4>
-                    <p className="text-neutral-600">Green Soul Ergonomics Pvt. Ltd., Maharashtra, India.</p>
-                    <p className="text-xs text-neutral-400 mt-1">Customer Care: +91 8444-956-789 | info@greensoul.online</p>
+                ) : (
+                  <div className="space-y-4 font-medium text-neutral-700 animate-fade-in">
+                    <div>
+                      <h4 className="font-semibold text-black text-[14px] mb-1">Office & Professional Workspace</h4>
+                      <p className="text-neutral-600">Engineered to support 8+ hours of continuous usage with optimal posture correction.</p>
+                    </div>
+                    <hr className="border-neutral-300" />
+                    <div>
+                      <h4 className="font-semibold text-black text-[14px] mb-1">Home Office & Study Rooms</h4>
+                      <p className="text-neutral-600">Compact and stylish design that integrates beautifully into home workspaces without cluttering.</p>
+                    </div>
+                    <hr className="border-neutral-300" />
+                    <div>
+                      <h4 className="font-semibold text-black text-[14px] mb-1">Gaming Setups</h4>
+                      <p className="text-neutral-600">High-back support, comfortable cushioning, and dynamic armrests tailored for gamers.</p>
+                    </div>
                   </div>
-                  <hr className="border-neutral-300" />
-                  <div>
-                    <h4 className="font-semibold text-black text-[14px] mb-1">Manufacturer Contact</h4>
-                    <p className="text-neutral-600">GREEN SOUL ERGONOMICS PRIVATE LIMITED, BUILDING D2 UNIT 8 TO 14, GREEN SPACE VILLAGE VAHULI, VILLAGE VAHULI BHIWANDI, THANE 421101, State: MAHARASHTRA</p>
-                    <p className="text-xs text-neutral-400 mt-1">Phone: +91 8444-956-789 | Email: info@greensoul.online</p>
-                  </div>
-                </div>
+                )
               )}
             </div>
           </div>
-
         </div>
       </div>
     </div>

@@ -19,6 +19,9 @@ export async function POST(req) {
         const realPrice = formData.get("realPrice");
         const shortDescription = formData.get("shortDescription");
         const longDescription = formData.get("longDescription");
+        const keyfeatures = formData.get("keyfeatures");
+        const application = formData.get("application");
+        const whychoose = formData.get("whychoose");
         const videoLinks = JSON.parse(formData.get("videoLinks") || "[]");
         const specifications = JSON.parse(formData.get("specifications") || "[]");
         const colorVariantsData = JSON.parse(
@@ -114,6 +117,9 @@ export async function POST(req) {
             realPrice,
             shortDescription,
             longDescription,
+            keyfeatures,
+            application,
+            whychoose,
             colorVariants: uploadedColorVariants,
             videoLinks,
             specifications,
@@ -139,7 +145,8 @@ export async function GET() {
     try {
         // Only proxy production API when running locally in development
         if (process.env.NODE_ENV === "development") {
-            const response = await fetch("https://astride-furniture.vercel.app/api/product");
+            const productionUrl = process.env.PRODUCTION_URL || "https://astride-furniture.vercel.app";
+            const response = await fetch(`${productionUrl}/api/product`);
             const data = await response.json();
             return NextResponse.json(data, { status: 200 });
         }
