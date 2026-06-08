@@ -82,6 +82,7 @@ export default function Footer() {
                                 { name: "Newsletter", link: "/newsletter" },
                                 { name: "Contact Us", link: "/contact" },
                                 { name: "Bulk Queries", link: "/bulk-queries" },
+                                { name: "Blogs", link: "/blogs" },
                             ].map((item, index) => (
                                 <Link
                                     key={index}
