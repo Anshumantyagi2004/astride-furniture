@@ -53,6 +53,21 @@ export default function Page() {
         }
     };
 
+    const handleStatusUpdate = async (id, newStatus) => {
+        try {
+            const { data } = await axios.put(`/api/order?id=${id}`, { status: newStatus });
+            if (data.success) {
+                toast.success("Order status updated successfully");
+                setOrders(orders.map(order => 
+                    order._id === id ? { ...order, status: newStatus } : order
+                ));
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to update status");
+        }
+    };
+
     useEffect(() => {
         getOrders();
     }, []);
@@ -191,10 +206,28 @@ export default function Page() {
                                                     <span className="text-2xl font-black text-black">₹{order.pricing?.total?.toLocaleString()}</span>
                                                 </div>
 
-                                                <div className="pt-4">
-                                                    <div className="inline-flex items-center gap-2 bg-neutral-100 px-4 py-2 rounded-xl border border-neutral-200">
-                                                        <CreditCard size={16} className="text-neutral-600" />
-                                                        <span className="text-xs font-black text-neutral-700 uppercase tracking-wider">Method: {order.paymentMethod || "COD"}</span>
+                                                <div className="pt-4 space-y-4">
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <div className="inline-flex items-center gap-2 bg-neutral-100 px-4 py-2 rounded-xl border border-neutral-200">
+                                                            <CreditCard size={16} className="text-neutral-600" />
+                                                            <span className="text-xs font-black text-neutral-700 uppercase tracking-wider">Method: {order.paymentMethod || "COD"}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="pt-2 border-t border-neutral-100">
+                                                        <label className="text-xs text-neutral-400 font-bold uppercase tracking-wider block mb-2">Order Status</label>
+                                                        <select
+                                                            value={order.status || "Pending"}
+                                                            onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
+                                                            className="w-full bg-white border border-neutral-200 text-sm font-bold rounded-xl px-3.5 py-2.5 text-neutral-800 focus:outline-none focus:ring-2 focus:ring-black cursor-pointer shadow-sm"
+                                                        >
+                                                            <option value="Pending">Pending</option>
+                                                            <option value="Confirmed">Confirmed</option>
+                                                            <option value="Processing / Packing">Processing / Packing</option>
+                                                            <option value="Shipped">Shipped</option>
+                                                            <option value="Out for Delivery">Out for Delivery</option>
+                                                            <option value="Delivered">Delivered</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -220,7 +253,7 @@ export default function Page() {
                                                             />
                                                         </div>
                                                         <div className="flex-1 min-w-0 space-y-1">
-                                                            <h4 className="text-xl font-extrabold text-neutral-950 leading-snug break-words">{product.productName}</h4>
+                                                            <h4 className="text-3xl lg:text-4xl font-extrabold text-neutral-950 leading-snug break-words">{product.productName}</h4>
                                                             <p className="text-xs text-neutral-400 font-mono">
                                                                 ID: <span className="select-all font-semibold text-neutral-600">{product.productId || product._id}</span>
                                                             </p>
