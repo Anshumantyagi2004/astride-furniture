@@ -25,15 +25,10 @@ const orderSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
         },
-
         productName: String,
-
         image: String,
-
         color: String,
-
         quantity: Number,
-
         price: Number,
       },
     ],
@@ -52,18 +47,17 @@ const orderSchema = new mongoose.Schema(
       default: "COD",
     },
 
-    // orderStatus: {
-    //   type: String,
-    //   default: "Pending",
-    // },
+    status: {
+      type: String,
+      default: "Pending",
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const Order =
-  mongoose.models.Order ||
-  mongoose.model("Order", orderSchema);
+delete mongoose.models.Order;
+const Order = mongoose.model("Order", orderSchema);
 
 export default Order;

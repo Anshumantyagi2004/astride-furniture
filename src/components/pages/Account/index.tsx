@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
   User, 
@@ -37,13 +38,15 @@ interface OrderItem {
   price: number;
   image: string;
   quantity: number;
+  productId?: string;
+  color?: string;
 }
 
 interface Order {
   id: string;
   date: string;
   total: number;
-  status: "Delivered" | "Shipped" | "Processing" | "Cancelled";
+  status: "Pending" | "Confirmed" | "Processing" | "Processing / Packing" | "Shipped" | "Out for Delivery" | "Delivered" | "Cancelled";
   items: OrderItem[];
 }
 
@@ -155,13 +158,15 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
           id: o._id,
           date: new Date(o.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }),
           total: o.pricing?.total || 0,
-          status: o.orderStatus || "Processing",
+          status: o.status || o.orderStatus || "Pending",
           items: (o.products || []).map((p: any) => ({
             id: p._id || p.productId,
             name: p.productName,
             price: p.price,
             image: p.image,
             quantity: p.quantity,
+            productId: p.productId,
+            color: p.color,
           })),
         }));
         setOrders(mappedOrders);
@@ -490,69 +495,134 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                         <div key={order.id} className="border border-slate-200/80 rounded-2xl overflow-hidden bg-slate-50/10 hover:border-slate-300 transition-all">
                           
                           {/* Order Card Header */}
-                          <div className="bg-slate-50/80 px-6 py-4 border-b border-slate-200/60 flex flex-wrap justify-between items-center gap-4">
-                            <div className="flex items-center gap-6">
+                          <div className="bg-slate-50/80 px-6 py-5 border-b border-slate-200/60 flex flex-wrap justify-between items-center gap-4">
+                            <div className="flex items-center gap-8">
                               <div>
-                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Date</p>
-                                <p className="text-xs font-bold text-slate-600">{order.date}</p>
+                                <p className="text-[11px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Date</p>
+                                <p className="text-sm md:text-base font-bold text-slate-800">{order.date}</p>
                               </div>
                               <div>
-                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Total</p>
-                                <p className="text-xs font-black text-slate-850 font-extrabold">₹{order.total.toLocaleString()}</p>
+                                <p className="text-[11px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Total</p>
+                                <p className="text-sm md:text-base font-black text-slate-800 font-extrabold">₹{order.total.toLocaleString()}</p>
                               </div>
                             </div>
                             <div>
-                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 text-right">Order Ref</p>
-                              <p className="text-xs font-mono font-bold text-slate-650">{order.id}</p>
+                              <p className="text-[11px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1 text-right">Order ID</p>
+                              <p className="text-sm md:text-base font-mono font-bold text-slate-800 text-right">{order.id}</p>
                             </div>
                           </div>
 
                           {/* Order Card Items & Status */}
-                          <div className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                          <div className="p-6 flex flex-col xl:flex-row justify-between items-start gap-8">
                             
-                            <div className="space-y-4 flex-1">
+                            <div className="space-y-6 flex-1 w-full">
                               {order.items.map((item) => (
-                                <div key={item.id} className="flex gap-4 items-center">
-                                  <div className="relative w-14 h-14 bg-white rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-slate-100">
+                                <div
+                                  key={item.id}
+                                  className="flex flex-col sm:flex-row items-start sm:items-center gap-5 rounded-2xl p-4 bg-white/50 hover:bg-white border border-transparent hover:border-slate-200 hover:shadow-sm transition-all"
+                                >
+                                  <Link
+                                    href={`/products/${item.productId || item.id}`}
+                                    className="relative w-28 h-28 rounded-2xl overflow-hidden bg-white border border-slate-200 shrink-0 group"
+                                  >
                                     <Image
                                       src={item.image}
                                       alt={item.name}
                                       fill
-                                      className="object-contain p-1.5 mix-blend-multiply"
+                                      className="object-contain p-2 mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
                                     />
-                                  </div>
-                                  <div>
-                                    <h4 className="font-extrabold text-slate-800 text-xs leading-snug">{item.name}</h4>
-                                    <p className="text-[10px] text-slate-400 font-bold mt-1">QTY: {item.quantity}</p>
+                                  </Link>
+
+                                  <div className="flex-1 w-full">
+                                    <Link href={`/products/${item.productId || item.id}`}>
+                                      <h4 className="text-lg md:text-xl font-bold text-slate-900 hover:text-black transition">
+                                        {item.name}
+                                      </h4>
+                                    </Link>
+
+                                    {item.color && (
+                                      <div className="mt-2">
+                                        <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs md:text-sm font-bold text-slate-700">
+                                          {item.color}
+                                        </span>
+                                      </div>
+                                    )}
+
+                                    <div className="mt-4 flex flex-wrap items-center gap-6">
+                                      <div className="w-20 md:w-24 shrink-0">
+                                        <p className="text-[10px] md:text-xs uppercase tracking-wider font-bold text-slate-400">
+                                          Price
+                                        </p>
+                                        <p className="text-base md:text-lg font-bold text-slate-900">
+                                          ₹{item.price.toLocaleString()}
+                                        </p>
+                                      </div>
+
+                                      <div className="w-20 md:w-24 shrink-0">
+                                        <p className="text-[10px] md:text-xs uppercase tracking-wider font-bold text-slate-400">
+                                          Quantity
+                                        </p>
+                                        <p className="text-base md:text-lg font-bold text-slate-900">
+                                          {item.quantity}
+                                        </p>
+                                      </div>
+
+                                      <div className="w-20 md:w-24 shrink-0">
+                                        <p className="text-[10px] md:text-xs uppercase tracking-wider font-bold text-slate-400">
+                                          Total
+                                        </p>
+                                        <p className="text-base md:text-lg font-bold text-slate-500">
+                                          ₹{(item.price * item.quantity).toLocaleString()}
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               ))}
                             </div>
 
                             {/* Status badge and actions */}
-                            <div className="flex flex-col md:items-end gap-3.5 shrink-0">
+                            <div className="flex flex-col md:items-end gap-5 shrink-0 w-full xl:w-[220px] self-start mt-2 xl:mt-4 xl:mr-4">
                               <div className="flex items-center gap-2">
                                 {order.status === "Delivered" && (
                                   <>
-                                    <CheckCircle size={14} className="text-emerald-500" />
-                                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-wider">Delivered</span>
+                                    <CheckCircle size={16} className="text-emerald-500" />
+                                    <span className="text-[11px] font-black text-emerald-500 uppercase tracking-wider">Delivered</span>
                                   </>
                                 )}
                                 {order.status === "Shipped" && (
                                   <>
-                                    <Truck size={14} className="text-slate-600" />
-                                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider">Shipped</span>
+                                    <Truck size={16} className="text-blue-500" />
+                                    <span className="text-[11px] font-black text-blue-500 uppercase tracking-wider">Shipped</span>
                                   </>
                                 )}
-                                {order.status === "Processing" && (
+                                {order.status === "Out for Delivery" && (
                                   <>
-                                    <div className="w-2.5 h-2.5 rounded-full bg-amber-450 animate-pulse" />
-                                    <span className="text-[10px] font-black text-amber-500 uppercase tracking-wider">Processing</span>
+                                    <Truck size={16} className="text-indigo-500" />
+                                    <span className="text-[11px] font-black text-indigo-500 uppercase tracking-wider">Out for Delivery</span>
+                                  </>
+                                )}
+                                {(order.status === "Processing" || order.status === "Processing / Packing") && (
+                                  <>
+                                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+                                    <span className="text-[11px] font-black text-amber-500 uppercase tracking-wider">Processing / Packing</span>
+                                  </>
+                                )}
+                                {order.status === "Confirmed" && (
+                                  <>
+                                    <CheckCircle size={16} className="text-teal-500" />
+                                    <span className="text-[11px] font-black text-teal-500 uppercase tracking-wider">Confirmed</span>
+                                  </>
+                                )}
+                                {order.status === "Pending" && (
+                                  <>
+                                    <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+                                    <span className="text-[11px] font-black text-rose-500 uppercase tracking-wider">Pending</span>
                                   </>
                                 )}
                               </div>
 
-                              <div className="flex items-center gap-2.5">
+                              <div className="flex flex-row md:flex-col items-stretch justify-end gap-3 w-full mt-2">
                                 <button
                                   onClick={() => {
                                     order.items.forEach(item => {
@@ -568,18 +638,17 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                       window.dispatchEvent(cartEvent);
                                     });
                                   }}
-                                  className="px-4 py-2 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase tracking-wider hover:bg-slate-800 transition-all"
+                                  className="flex-1 px-5 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-slate-800 transition-all shadow-md active:scale-95"
                                 >
                                   Reorder
                                 </button>
                                 <button
                                   onClick={() => alert(`Tracking updates for ${order.id} will be sent to your device.`)}
-                                  className="px-4 py-2 bg-slate-100 border border-slate-200 text-slate-650 rounded-lg text-[9px] font-black uppercase tracking-wider hover:bg-slate-200 transition-all"
+                                  className="flex-1 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-slate-50 transition-all shadow-sm active:scale-95"
                                 >
                                   Track
                                 </button>
                               </div>
-
                             </div>
 
                           </div>

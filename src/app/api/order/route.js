@@ -54,3 +54,45 @@ export async function GET() {
     );
   }
 }
+
+// Add these at the bottom of src/app/api/order/route.js
+export async function PUT(req) {
+  try {
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    const { status } = await req.json();
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+    return NextResponse.json({
+      success: true,
+      message: "Order status updated successfully",
+      order,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 500 }
+    );
+  }
+}
+export async function DELETE(req) {
+  try {
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    await Order.findByIdAndDelete(id);
+    return NextResponse.json({
+      success: true,
+      message: "Order deleted successfully",
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 500 }
+    );
+  }
+}
