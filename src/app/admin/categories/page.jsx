@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { UploadCloud, Tag, Trash2 } from "lucide-react";
+import { UploadCloud, Tag, Trash2, Pencil, X } from "lucide-react";
 import Sidebar from "@/components/Admin/Sidebar";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -13,6 +13,7 @@ export default function Page() {
     const [imageFile, setImageFile] = useState(null);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [editingId, setEditingId] = useState(null);
 
     const handleImageChange = (e) => {
         const file = e.target.files?.[0];
@@ -39,24 +40,76 @@ export default function Page() {
         }
     };
 
+    const deleteCategory = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this category?")) return;
+        try {
+            const { data } = await axios.delete(`/api/category?id=${id}`);
+            if (data.success) {
+                toast.success("Category deleted successfully");
+                getCategories();
+                if (editingId === id) {
+                    cancelEdit();
+                }
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to delete category");
+        }
+    };
+
+    const handleEdit = (category) => {
+        setEditingId(category._id);
+        setCategoryName(category.name);
+        setImagePreview(category.image);
+        setImageFile(null);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setCategoryName("");
+        setImageFile(null);
+        setImagePreview(null);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             const formData = new FormData();
             formData.append("name", categoryName);
-            formData.append("image", imageFile);
-            const { data } = await axios.post("/api/category", formData);
-
-            if (data.success) {
-                toast.success("Category Added Successfully");
-                // console.log(data.category);
-                getCategories();
-                setCategoryName("");
-                setImageFile(null);
-                setImagePreview(null);
+            
+            if (editingId) {
+                formData.append("id", editingId);
+                if (imageFile) {
+                    formData.append("image", imageFile);
+                }
+                const { data } = await axios.put("/api/category", formData);
+                if (data.success) {
+                    toast.success("Category Updated Successfully");
+                    getCategories();
+                    cancelEdit();
+                } else {
+                    toast.error(data.message);
+                }
             } else {
-                toast.error(data.message);
+                if (!imageFile) {
+                    toast.error("Please upload an image for the category");
+                    return;
+                }
+                formData.append("image", imageFile);
+                const { data } = await axios.post("/api/category", formData);
+                if (data.success) {
+                    toast.success("Category Added Successfully");
+                    getCategories();
+                    setCategoryName("");
+                    setImageFile(null);
+                    setImagePreview(null);
+                } else {
+                    toast.error(data.message);
+                }
             }
         } catch (error) {
             console.log(error);
@@ -76,12 +129,23 @@ export default function Page() {
             <main className="flex-1 p-6">
                 <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-lg p-8">
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-800">
-                            Add Category
-                        </h1>
+                        <div className="flex justify-between items-center">
+                            <h1 className="text-3xl font-bold text-gray-800">
+                                {editingId ? "Edit Category" : "Add Category"}
+                            </h1>
+                            {editingId && (
+                                <button
+                                    onClick={cancelEdit}
+                                    className="flex items-center gap-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded-full font-semibold transition"
+                                >
+                                    <X size={14} />
+                                    Cancel Edit
+                                </button>
+                            )}
+                        </div>
 
                         <p className="text-gray-500 mt-2">
-                            Create a new category with name and image
+                            {editingId ? "Update category details and image" : "Create a new category with name and image"}
                         </p>
                     </div>
 
@@ -120,7 +184,7 @@ export default function Page() {
                                 />
 
                                 <p className="text-gray-600 font-medium">
-                                    Click to upload image
+                                    {editingId ? "Click to change category image" : "Click to upload image"}
                                 </p>
 
                                 <span className="text-sm text-gray-400 mt-1">
@@ -154,11 +218,13 @@ export default function Page() {
                             )}
                         </div>
 
-                        <button type="submit"
-                            className="w-full bg-black text-white py-3 rounded-2xl font-semibold hover:opacity-90 transition"
-                        >
-                            Add Category
-                        </button>
+                        <div className="flex gap-4">
+                            <button type="submit"
+                                className="w-full bg-black text-white py-3 rounded-2xl font-semibold hover:opacity-90 transition"
+                            >
+                                {editingId ? "Update Category" : "Add Category"}
+                            </button>
+                        </div>
                     </form>
                 </div>
             </main>
@@ -201,11 +267,20 @@ export default function Page() {
                                             </p>
                                         </div>
 
-                                        <button onClick={() => deleteCategory(category._id)}
-                                            className="p-3 rounded-full bg-red-100 hover:bg-red-200 transition"
-                                        >
-                                            <Trash2 className="text-red-600" size={18} />
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button onClick={() => handleEdit(category)}
+                                                className="p-3 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition"
+                                                title="Edit Category"
+                                            >
+                                                <Pencil size={18} />
+                                            </button>
+                                            <button onClick={() => deleteCategory(category._id)}
+                                                className="p-3 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition"
+                                                title="Delete Category"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
