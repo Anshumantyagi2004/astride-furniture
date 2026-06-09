@@ -135,6 +135,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
 
             return {
               id: prod._id,
+              slug: prod.slug,
               name: prod.productName,
               price: prod.realPrice,
               originalPrice: prod.oldPrice,
@@ -161,7 +162,10 @@ export default function DetailPage({ productId }: { productId?: string }) {
           allProducts = [...dbProducts, ...fallbackProducts];
         }
 
-        const found = allProducts.find(p => p.id.toString() === productId?.toString()) || allProducts[0];
+        const found = allProducts.find(p => 
+          p.id.toString() === productId?.toString() || 
+          p.slug === productId
+        ) || allProducts[0];
         setProduct(found);
       } catch (err) {
         console.error("Error loading product detail data:", err);

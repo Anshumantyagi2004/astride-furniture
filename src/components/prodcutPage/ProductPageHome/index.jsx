@@ -111,6 +111,23 @@ export default function ProductPageHome() {
   const [wishlisted, setWishlisted] = useState({});
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('category');
+      if (cat) {
+        const decoded = decodeURIComponent(cat);
+        let match = TABS.find(t => t.toLowerCase() === decoded.toLowerCase());
+        if (!match && decoded.toLowerCase().includes('bar')) {
+           match = "Bar Stool";
+        }
+        if (match) {
+          setSelectedCategory(match);
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const saved = localStorage.getItem("astride_wishlist");
     if (saved) {
       try {
