@@ -162,7 +162,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
           allProducts = [...dbProducts, ...fallbackProducts];
         }
 
-        const found = allProducts.find(p => 
+        const found = allProducts.find((p: any) => 
           p.id.toString() === productId?.toString() || 
           p.slug === productId
         ) || allProducts[0];
