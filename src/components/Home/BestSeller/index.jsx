@@ -188,11 +188,11 @@ export default function BestSeller() {
       <div className="max-w-[1440px] mx-auto">
         
         {/* Header Area */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 border-b border-gray-100 pb-4">
+        <div className="flex flex-row items-center justify-between mb-8 border-b border-gray-100 pb-4 px-2">
           <h2 className="text-3xl md:text-[32px] font-medium text-[#111111]">
             Bestsellers
           </h2>
-          <Link href="/products" className="text-sm font-semibold text-[#111111] hover:text-gray-500 transition-colors mt-4 md:mt-0 flex items-center gap-2">
+          <Link href="/products" className="text-[16px] font-semibold text-[#111111] hover:text-gray-500 transition-colors flex items-center gap-2">
             Browse all products 
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />

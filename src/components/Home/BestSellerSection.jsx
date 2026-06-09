@@ -135,7 +135,7 @@ const BestSellerSectionCard = ({ product }) => {
             <div className="px-3 md:px-6 pt-2 md:pt-3 pb-3 md:pb-6 relative">
                 
                 {/* TITLE */}
-                <h3 className="text-[13px] md:text-xl font-bold text-zinc-900 line-clamp-1">
+                <h3 className="text-[16px] md:text-xl font-bold text-zinc-900 leading-tight">
                     {product.name}
                 </h3>
 
@@ -273,7 +273,7 @@ export default function BestSellerSection() {
                 {/* SECTION HEADER */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div className="flex flex-col items-start text-left">
-                        <span className="inline-flex items-center text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2">
+                        <span className="inline-flex md:hidden items-center text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2">
                             EXPLORE BESTSELLERS
                         </span>
                         <div className="text-5xl sm:text-6xl lg:text-[4rem] font-extrabold uppercase leading-[0.9] tracking-tighter">

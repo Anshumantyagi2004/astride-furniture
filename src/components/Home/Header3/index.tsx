@@ -50,10 +50,10 @@ export default function Header3() {
             >
               {/* Text Content */}
               <div className="flex flex-col z-10 max-w-[60%]">
-                <span className="text-[9px] font-bold tracking-[0.15em] text-zinc-600 uppercase mb-3">
+                <span className="text-[14px] font-bold tracking-[0.15em] text-zinc-600 uppercase mb-3">
                   {card.subtitle}
                 </span>
-                <h3 className="text-[26px] sm:text-[28px] font-serif text-zinc-800 leading-[1.2] mb-4">
+                <h3 className="text-[32px] font-serif text-zinc-800 leading-[1.2] mb-4">
                   {card.title.split(' ').map((word, i) => (
                     <span key={i} className="block">{word}</span>
                   ))}

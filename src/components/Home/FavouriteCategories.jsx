@@ -106,12 +106,12 @@ const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleW
             {/* Card Details Area */}
             <div className="px-5 pb-5 pt-1">
                 {/* Brand/Subtitle */}
-                <div className="text-[9px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">
+                <div className="text-[15px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">
                     Astride Premium
                 </div>
 
                 {/* Product Title */}
-                <h3 className="text-sm sm:text-base font-semibold text-gray-800 line-clamp-1 group-hover:text-slate-900 transition-colors duration-300">
+                <h3 className="text-[16px] font-semibold text-gray-800 line-clamp-1 group-hover:text-slate-900 transition-colors duration-300">
                     {product.name}
                 </h3>
 

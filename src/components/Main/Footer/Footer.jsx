@@ -27,7 +27,7 @@ export default function Footer() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-12 lg:gap-20">
                     {/* LOGO + ABOUT */}
-                    <div className="flex flex-col items-start text-left max-w-xl">
+                    <div className="flex flex-col items-center text-center lg:items-start lg:text-left max-w-xl mx-auto lg:mx-0">
                         <Link href="/" className="inline-block">
                             <Image
                                 src="/logo.webp"
@@ -45,7 +45,7 @@ export default function Footer() {
                         </p>
 
                         {/* SOCIAL ICONS */}
-                        <div className="flex items-center gap-4 mt-6 justify-start">
+                        <div className="flex items-center gap-4 mt-6 justify-center lg:justify-start">
                             {[
                                 FaInstagram,
                                 FaYoutube,
@@ -67,13 +67,13 @@ export default function Footer() {
                     {/* LINKS CONTAINER */}
                     <div className="grid grid-cols-2 gap-8 sm:gap-12 lg:gap-10">
                         {/* COMPANY */}
-                        <div>
+                        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
                             <h3 className="text-xl md:text-2xl font-bold mb-6 relative inline-block text-white">
                                 Company
-                                <span className="absolute left-0 -bottom-2 w-10 md:w-14 h-[3px] bg-zinc-500 rounded-full"></span>
+                                <span className="absolute left-1/2 -translate-x-1/2 lg:left-0 lg:translate-x-0 -bottom-2 w-10 md:w-14 h-[3px] bg-zinc-500 rounded-full"></span>
                             </h3>
 
-                            <div className="flex flex-col gap-3 md:gap-4 text-sm md:text-base">
+                            <div className="flex flex-col items-center lg:items-start gap-3 md:gap-4 text-sm md:text-base">
                                 {[
                                     { name: "Home", link: "/" },
                                     { name: "Our Story", link: "/our-story" },
@@ -94,13 +94,13 @@ export default function Footer() {
                         </div>
 
                         {/* USEFUL LINKS */}
-                        <div>
+                        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
                             <h3 className="text-xl md:text-2xl font-bold mb-6 relative inline-block text-white">
                                 Useful Links
-                                <span className="absolute left-0 -bottom-2 w-10 md:w-14 h-[3px] bg-zinc-500 rounded-full"></span>
+                                <span className="absolute left-1/2 -translate-x-1/2 lg:left-0 lg:translate-x-0 -bottom-2 w-10 md:w-14 h-[3px] bg-zinc-500 rounded-full"></span>
                             </h3>
 
-                            <div className="flex flex-col gap-3 md:gap-4 text-sm md:text-base">
+                            <div className="flex flex-col items-center lg:items-start gap-3 md:gap-4 text-sm md:text-base">
                                 {[
                                     { name: "Refund Policy", link: "/refund-policy" },
                                     { name: "Cancellation Policy", link: "/cancellation-policy" },

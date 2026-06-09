@@ -80,17 +80,18 @@ export default function FAQ() {
 
         {/* Left Column */}
         <div
-          className={`lg:col-span-5 flex flex-col gap-4 lg:sticky lg:top-24 self-start transition-all duration-700 ease-out ${
+          className={`lg:col-span-5 flex flex-col items-center text-center lg:items-start lg:text-left gap-4 lg:sticky lg:top-24 self-start transition-all duration-700 ease-out ${
             visible
               ? 'opacity-100 translate-x-0'
               : 'opacity-0 -translate-x-8'
           }`}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 justify-center lg:justify-start">
             <div className="w-6 h-px bg-neutral-400" />
             <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-[0.28em]">
               Support &amp; Clarity
             </span>
+            <div className="w-6 h-px bg-neutral-400 lg:hidden" />
           </div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl text-neutral-900 font-black tracking-tight leading-[1.05] uppercase">
@@ -101,12 +102,12 @@ export default function FAQ() {
             </span>
           </h2>
 
-          <p className="text-neutral-500 text-sm md:text-[15px] font-medium leading-relaxed max-w-xs mt-1">
+          <p className="text-neutral-500 text-sm md:text-[15px] font-medium leading-relaxed max-w-xs mx-auto lg:mx-0 mt-1">
             Everything you need to know about our ergonomic technology,
             trial policies, and purchasing experience.
           </p>
 
-          <div className="mt-4 inline-flex items-center gap-2 bg-white/80 border border-neutral-200 rounded-full px-4 py-2 w-fit shadow-sm">
+          <div className="mt-4 hidden lg:inline-flex items-center gap-2 bg-white/80 border border-neutral-200 rounded-full px-4 py-2 w-fit shadow-sm">
             <div className="w-2 h-2 rounded-full bg-emerald-400" />
             <span className="text-[11px] font-bold text-neutral-600 tracking-wide">
               {faqData.length} questions answered
