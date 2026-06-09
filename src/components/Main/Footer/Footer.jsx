@@ -76,10 +76,10 @@ export default function Footer() {
                             <div className="flex flex-col items-center lg:items-start gap-3 md:gap-4 text-sm md:text-base">
                                 {[
                                     { name: "Home", link: "/" },
-                                    { name: "Our Story", link: "/our-story" },
+                                    { name: "About", link: "/about" },
                                     { name: "Newsletter", link: "/newsletter" },
                                     { name: "Contact Us", link: "/contact" },
-                                    { name: "Bulk Queries", link: "/bulk-queries" },
+                                    { name: "Bulk Queries", link: "/contact" },
                                     { name: "Blogs", link: "/blogs" },
                                 ].map((item, index) => (
                                     <Link
