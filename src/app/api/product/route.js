@@ -143,15 +143,14 @@ export async function POST(req) {
 
 export async function GET() {
     try {
-        // Only proxy production API when running locally in development
+        // Proxy production API when running locally to bypass DB connection issues
         if (process.env.NODE_ENV === "development") {
             const productionUrl = process.env.PRODUCTION_URL || "https://astride-furniture.vercel.app";
-            const response = await fetch(`${productionUrl}/api/product`);
+            const response = await fetch(`${productionUrl}/api/product`, { cache: "no-store" });
             const data = await response.json();
             return NextResponse.json(data, { status: 200 });
         }
 
-        // On production (Vercel), query the MongoDB database directly
         await connectDB();
         const products = await Product.find().populate("category").sort({ createdAt: -1 });
 
