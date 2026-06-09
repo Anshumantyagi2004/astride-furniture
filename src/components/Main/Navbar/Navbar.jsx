@@ -30,6 +30,7 @@ import "swiper/css/navigation";
 export default function Navbar() {
   const [hideTopBar, setHideTopBar] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
   const router = useRouter();
 
@@ -261,7 +262,15 @@ export default function Navbar() {
       </motion.div>
 
       <div className="relative z-20 bg-[#161316]/90 backdrop-blur-xl border-b border-[#453027] shadow-[0_0_40px_rgba(255,109,41,0.08)]">
-        <div className="lg:px-15 px-4 flex items-center justify-between gap-4 py-2 md:py-0">
+        <div className="lg:px-15 px-4 flex items-center justify-between gap-4 py-2 md:py-0 relative">
+          {/* Hamburger Menu for Mobile */}
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="md:hidden text-[#BABABA] hover:text-white p-1 transition-colors"
+          >
+            <Menu size={24} />
+          </button>
+
           <div className="hidden md:flex items-center bg-white/5 border-b border-[#453027] overflow-hidden hover:border-[#FF6D29] focus-within:border-[#FF6D29] transition-all duration-300 shadow-lg backdrop-blur-xl">
             <div className="px-2 text-[#FF6D29]">
               <Search size={20} />
@@ -269,11 +278,18 @@ export default function Navbar() {
             <input
               type="text"
               placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+                }
+              }}
               className="bg-transparent w-full py-2 outline-none text-[16px] placeholder:text-[#BABABA] text-white"
             />
           </div>
 
-          <Link href="/" className="shrink-0 md:pr-25 flex items-center">
+          <Link href="/" className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 shrink-0 md:pr-25 flex items-center">
             <Image
               src="/logo.webp"
               alt="logo"
@@ -284,7 +300,7 @@ export default function Navbar() {
           </Link>
 
           <div className="flex items-center gap-4 md:gap-5 text-white">
-            <Link href="/wishlist" className="text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110">
+            <Link href="/wishlist" className="hidden md:block text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110">
               <Heart size={24} strokeWidth={1.8} />
             </Link>
 
@@ -293,9 +309,12 @@ export default function Navbar() {
               onMouseEnter={() => setIsCartOpen(true)}
               onMouseLeave={() => setIsCartOpen(false)}
             >
-              <Link
-                href={"/cart"}
-                className="relative text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110 flex items-center justify-center"
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.dispatchEvent(new CustomEvent('open-cart-sidebar'));
+                }}
+                className="relative text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110 flex items-center justify-center cursor-pointer"
               >
                 <ShoppingCart size={26} strokeWidth={1.8} />
                 {cartItems.reduce((acc, item) => acc + item.quantity, 0) > 0 && (
@@ -303,7 +322,7 @@ export default function Navbar() {
                     {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
                   </span>
                 )}
-              </Link>
+              </button>
 
               {/* Cart Popover */}
               {isCartOpen && (
@@ -484,6 +503,123 @@ export default function Navbar() {
                 </button>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Menu Drawer */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-[2000] md:hidden">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          {/* Drawer Panel */}
+          <div className="fixed inset-y-0 left-0 w-[80%] max-w-[340px] bg-[#121212] border-r border-zinc-800/80 p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-in slide-in-from-left duration-300">
+            <div>
+              {/* Header */}
+              <div className="flex items-center justify-between pb-6 border-b border-zinc-800">
+                <Image
+                  src="/logo.webp"
+                  alt="logo"
+                  width={120}
+                  height={50}
+                  className="h-8 w-auto object-contain brightness-0 invert opacity-95"
+                />
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-zinc-400 hover:text-white transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              {/* Search Box */}
+              <div className="mt-6 flex items-center bg-white/5 border border-zinc-800 rounded-lg overflow-hidden hover:border-zinc-600 focus-within:border-zinc-555 transition-all duration-300">
+                <div className="px-3 text-zinc-400">
+                  <Search size={18} />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setIsMobileMenuOpen(false);
+                      router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+                    }
+                  }}
+                  className="bg-transparent w-full py-2.5 outline-none text-sm placeholder:text-zinc-500 text-white"
+                />
+              </div>
+
+              {/* Home & Wishlist Links inside Mobile Menu */}
+              <div className="mt-6 flex flex-col gap-3">
+                <Link
+                  href="/"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 text-sm font-bold text-zinc-300 hover:text-white uppercase tracking-wider py-3 px-4 bg-zinc-900/40 hover:bg-zinc-900 border border-zinc-800/80 rounded-xl transition-all duration-300 shadow-sm"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-300">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                  <span>Home</span>
+                </Link>
+
+                <Link
+                  href="/wishlist"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 text-sm font-bold text-zinc-300 hover:text-white uppercase tracking-wider py-3 px-4 bg-zinc-900/40 hover:bg-zinc-900 border border-zinc-800/80 rounded-xl transition-all duration-300 mb-6 shadow-sm"
+                >
+                  <Heart size={18} className="text-zinc-300" />
+                  <span>My Wishlist</span>
+                </Link>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="mt-4">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-3 px-4">
+                  Categories
+                </h3>
+                <nav className="flex flex-col gap-1.5">
+                  {categoryList.map((category) => (
+                    <Link
+                      key={category._id || category.name}
+                      href={`/products?category=${encodeURIComponent(category.name)}`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center justify-between text-[14px] font-bold text-zinc-300 hover:text-white uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-zinc-900/50 transition-all duration-300 border-l-2 border-transparent hover:border-zinc-400"
+                    >
+                      <span>{category.name}</span>
+                      <ChevronRight size={14} className="text-zinc-500 hover:text-white transition-colors" />
+                    </Link>
+                  ))}
+                </nav>
+              </div>
+            </div>
+
+            {/* Bottom Footer Info */}
+            <div className="mt-auto pt-6 border-t border-zinc-800 flex flex-col gap-4">
+              <div className="flex flex-col gap-3 text-xs font-semibold tracking-wider text-zinc-400">
+                <a
+                  href="tel:7311164111"
+                  className="hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <Phone size={14} className="text-zinc-500" />
+                  <span>Support: 7311164111</span>
+                </a>
+                <Link
+                  href="/about"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="hover:text-white transition-colors py-1 flex items-center gap-2"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-650"></span>
+                  <span>About Astrides</span>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       )}

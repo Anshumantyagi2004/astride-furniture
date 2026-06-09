@@ -34,27 +34,29 @@ export default function Home() {
     <main className="min-h-screen">
       <Header0/>
        <Header3 />
-      
-       <HeroSection/>
+    
       
       <Category />
      
       <Marquee1 />
       <BentoCategories/>
       <FavouriteCategories />
+      <PreloadModelViewer/>
       <BrandAboutSection />
+      
       <Marquee2Hover />
+      <Chair_split/>
       <ChairSection />
       <Header2 />
       <BestSeller/>
       <WhyUs />
-      <Chair_split/>
+      
       <BrandTrustSection />
       <BestSellerSection/>
       <ClientLogoSlider />
       <Reviews />
       <VideoTestimonials />
-      <PreloadModelViewer/>
+      
       <BulkQueryForm />
       <FAQ/>
     </main>

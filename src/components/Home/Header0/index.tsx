@@ -56,32 +56,32 @@ export default function Header0() {
 
   if (showFinder) {
     return (
-      <section id="circular-chairs" className="relative w-full h-[85vh] min-h-[600px] overflow-hidden bg-zinc-900">
+      <section id="circular-chairs" className="relative w-full h-[70vh] min-h-[520px] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
         <ChairFinder onBack={() => setShowFinder(false)} />
       </section>
     );
   }
 
   return (
-    <section id="circular-chairs" className="relative w-full h-[85vh] min-h-[600px] overflow-hidden bg-zinc-900">
+    <section id="circular-chairs" className="relative w-full h-[70vh] min-h-[520px] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/Png/main_banner.png"
           alt="Main Banner"
           fill
-          className="object-cover object-center"
+          className="object-cover object-center md:object-center object-[70%_center]"
           priority
         />
       </div>
 
       {/* Content Overlay */}
-      <div className="relative z-10 w-full h-full max-w-[1500px] mx-auto px-4 md:px-12 lg:px-16 flex flex-col justify-center">
+      <div className="relative z-10 w-full h-full max-w-[1500px] mx-auto px-5 md:px-12 lg:px-16 flex flex-col justify-start md:justify-center pt-14 md:pt-0">
         <motion.div 
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="max-w-3xl text-white mb-10 md:mb-16"
+          className="max-w-[240px] xs:max-w-xs md:max-w-3xl text-white mb-6 md:mb-16"
         >
           <motion.span 
             variants={itemVariants}
@@ -94,13 +94,13 @@ export default function Header0() {
           </motion.span>
           <motion.h1 
             variants={itemVariants}
-            className="text-5xl md:text-7xl font-serif mb-6 tracking-tight leading-[1.1] max-w-2xl md:max-w-3xl"
+            className="text-4xl md:text-7xl font-serif mb-4 md:mb-6 tracking-tight leading-[1.1] max-w-2xl md:max-w-3xl"
           >
             Sit Better, Perform Better
           </motion.h1>
           <motion.p 
             variants={itemVariants}
-            className="text-lg md:text-xl font-light text-white/90 leading-relaxed mb-10 max-w-md"
+            className="text-sm md:text-xl font-light text-white/90 leading-relaxed mb-7 md:mb-10 max-w-xs md:max-w-md"
           >
             Discover ergonomic office chairs and advanced gaming chairs crafted for all-day comfort. Enhance your workspace and gaming zone with durable, stylish seating solutions.
           </motion.p>

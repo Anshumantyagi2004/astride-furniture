@@ -60,7 +60,7 @@ const Model = ({ url, isMobile }: { url: string; isMobile: boolean }) => {
         const box = new THREE.Box3().setFromObject(clonedScene);
         const size = box.getSize(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
-        const baseScale = 3 / (maxDim || 1);
+        const baseScale = (3 / (maxDim || 1)) * 0.9;
         return isMobile ? baseScale * 0.7 : baseScale;
     }, [clonedScene, isMobile]);
 
@@ -93,8 +93,8 @@ const CameraRig = ({
             targetLook.current.set(0, 0, 0);
         } else if (o >= 0.15 && o < 0.4) {
             // Section 1: Premium Headrest (Top of the chair)
-            targetPos.current.set(-1.0 * zoom * dScale, 1.3 * s, 1.6 * zoom * dScale);
-            targetLook.current.set(0, 1.3 * s, 0);
+            targetPos.current.set(-1.0 * zoom * dScale, 1.15 * s, 1.6 * zoom * dScale);
+            targetLook.current.set(0, 1.05 * s, 0);
         } else if (o >= 0.4 && o < 0.65) {
             // Section 2: Lumbar Support (Middle back)
             targetPos.current.set(1.5 * zoom * dScale, -0.2 * s, 1.5 * zoom * dScale);

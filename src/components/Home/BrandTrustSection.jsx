@@ -166,11 +166,13 @@ export default function BrandTrustSection() {
                     <div className="hidden sm:block h-6 w-px bg-zinc-300 flex-shrink-0" />
 
                     <div className="flex items-center gap-6 sm:gap-8">
-                        <div className="relative w-[100px] sm:w-[125px] h-[32px] sm:h-[40px] opacity-85 hover:opacity-100 transition-opacity duration-300">
-                            <Image src="/Logo/amazon.webp" alt="Amazon" fill className="object-contain scale-[1.5] sm:scale-[1.65]" />
+                        {/* Amazon */}
+                        <div className="flex items-center justify-center h-[110px] sm:h-[100px] opacity-85 hover:opacity-100 transition-opacity duration-300">
+                            <Image src="/Logo/amazon.webp" alt="Amazon" width={130} height={40} className="object-contain h-full w-auto" />
                         </div>
-                        <div className="relative w-[90px] sm:w-[110px] h-[32px] sm:h-[40px] opacity-85 hover:opacity-100 transition-opacity duration-300">
-                            <Image src="/Logo/FLIPKART_Webp.webp" alt="Flipkart" fill className="object-contain" />
+                        {/* Flipkart */}
+                        <div className="flex items-center justify-center h-[40px] sm:h-[38px] opacity-85 hover:opacity-100 transition-opacity duration-300">
+                            <Image src="/Logo/FLIPKART_Webp.webp" alt="Flipkart" width={80} height={28} className="object-contain h-full w-auto" />
                         </div>
                     </div>
                 </div>

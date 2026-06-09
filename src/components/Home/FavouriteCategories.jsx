@@ -250,18 +250,15 @@ export default function FavouriteCategories() {
     const activeProducts = productsList.filter(p => p.category === activeCategory);
 
     return (
-        <section className="w-full py-16 bg-[#F8F9FA] overflow-hidden">
+        <section className="w-full pt-16 pb-10 bg-[#F8F9FA] overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col items-start text-left mb-4">
                     <span className="inline-flex items-center text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2">
                         Explore Collections
                     </span>
-                    <div 
-                        className="text-5xl sm:text-6xl lg:text-[4.5rem] font-black uppercase leading-[0.85] tracking-tighter"
-                        style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
-                    >
+                    <div className="text-5xl sm:text-6xl lg:text-[4rem] font-extrabold uppercase leading-[0.9] tracking-tighter">
                         <span className="block text-[#161316]">TRENDING</span>
-                        <span className="block text-transparent [-webkit-text-stroke:2px_#18181b]">NOW</span>
+                        <span className="block text-transparent [-webkit-text-stroke:1.5px_#18181b]">NOW</span>
                     </div>
                 </div>
 
