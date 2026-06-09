@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Button from '../Button_ProductPageCard/Button_prodctPageCard';
 import { useRouter } from 'next/navigation';
@@ -6,9 +6,33 @@ import { useRouter } from 'next/navigation';
 const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
   const router = useRouter();
   
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const images = product.allImages && product.allImages.length > 0 
+    ? product.allImages 
+    : [product.image];
+
+  useEffect(() => {
+    if (isHovered && images.length > 1) {
+      timerRef.current = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      }, 1000);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
+      setCurrentImageIndex(0);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isHovered, images.length]);
+  
   return (
     <div 
       onClick={() => router.push(`/products/${product.id}`)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className="group relative w-full max-w-[280px] h-[340px] bg-white rounded-[28px] p-4 pb-5 pt-3.5 border border-slate-100 shadow-sm flex flex-col justify-between overflow-hidden cursor-pointer hover:scale-[1.02] hover:shadow-md transition-all duration-300"
     >
       {/* Background radial reflection glow for added visual shine */}
@@ -41,15 +65,27 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
       </div>
 
       {/* Image Area with simpler rendering */}
-      <div className="relative w-full h-[52%] flex items-center justify-center z-[5] my-0.5">
+      <div className="relative w-full h-[52%] flex flex-col items-center justify-center z-[5] my-0.5">
         <Image
-          src={product.image}
+          src={images[currentImageIndex] || product.image}
           alt={product.name}
-          width={280}
-          height={280}
-          className="object-contain h-full w-auto scale-100 hover:scale-105 transition-transform duration-300"
+          fill
+          className="object-contain p-2 scale-100 hover:scale-105 transition-opacity duration-500 ease-in-out"
+          sizes="(max-width: 768px) 100vw, 33vw"
           loading="lazy"
         />
+
+        {/* Pagination Dots */}
+        {images.length > 1 && (
+          <div className="absolute bottom-0 flex gap-1.5 justify-center w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+            {images.map((_, idx) => (
+              <div 
+                key={idx} 
+                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? 'w-3 bg-slate-800' : 'w-1.5 bg-slate-300'}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Bottom Metadata */}

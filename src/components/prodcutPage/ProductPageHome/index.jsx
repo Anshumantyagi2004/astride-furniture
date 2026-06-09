@@ -179,8 +179,13 @@ export default function ProductPageHome() {
               (v) => v.images && v.images.length > 0
             )?.images?.[0]?.url;
 
-            // Old logic:
-            // image: prod.images && prod.images[0] ? prod.images[0].url : "/Png1/chair12_ErgoFit.webp",
+            // Extract all image URLs across all color variants
+            const allImages = prod.colorVariants?.reduce((acc, variant) => {
+              if (variant.images) {
+                return [...acc, ...variant.images.map((img) => img.url)];
+              }
+              return acc;
+            }, []) || [];
 
             return {
               id: prod._id,
@@ -189,6 +194,7 @@ export default function ProductPageHome() {
               originalPrice: prod.oldPrice,
               discount: `-${discPercent}%`,
               image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+              allImages: Array.from(new Set(allImages)),
               category: normalizedCategory,
               backSupport: prod.backSupport || "High Back",
               height: prod.height || "5'7\" - 6'6\"",
