@@ -38,6 +38,7 @@ export default function Page() {
         {
             colorName: "",
             images: [],
+            existingImages: [],
             previews: [],
         },
     ]);
@@ -77,12 +78,14 @@ export default function Page() {
                             ? product.colorVariants.map((variant) => ({
                                 colorName: variant.colorName,
                                 images: [],
+                                existingImages: variant.images || [],
                                 previews: variant.images.map((img) => img.url),
                             }))
                             : [
                                 {
                                     colorName: "",
                                     images: [],
+                                    existingImages: [],
                                     previews: [],
                                 },
                             ]
@@ -138,6 +141,7 @@ export default function Page() {
             {
                 colorName: "",
                 images: [],
+                existingImages: [],
                 previews: [],
             },
         ]);
@@ -159,36 +163,76 @@ export default function Page() {
         setColorVariants(updated);
     };
 
-    // IMAGE CHANGE
-    const handleImageChange = (index, e) => {
+    // IMAGE CHANGE WITH AUTO-CONVERSION TO WEBP
+    const handleImageChange = async (index, e) => {
         const files = Array.from(e.target.files);
 
-        const updated = [...colorVariants];
+        const convertToWebP = (file) => {
+            return new Promise((resolve, reject) => {
+                if (file.type === "image/webp") {
+                    resolve(file);
+                    return;
+                }
 
-        updated[index].images = files;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new window.Image();
+                    img.onload = () => {
+                        const canvas = document.createElement("canvas");
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext("2d");
+                        if (!ctx) { resolve(file); return; }
+                        ctx.drawImage(img, 0, 0);
+                        canvas.toBlob((blob) => {
+                            if (!blob) { resolve(file); return; }
+                            const webpFile = new File([blob], `${file.name.replace(/\\.[^/.]+$/, "")}.webp`, { type: "image/webp" });
+                            resolve(webpFile);
+                        }, "image/webp", 0.85);
+                    };
+                    img.onerror = () => reject(new Error("Failed to load image"));
+                    img.src = event.target.result;
+                };
+                reader.onerror = () => reject(new Error("Failed to read file"));
+                reader.readAsDataURL(file);
+            });
+        };
 
-        updated[index].previews = files.map((file) =>
-            URL.createObjectURL(file)
-        );
+        try {
+            const webpFiles = await Promise.all(files.map((file) => convertToWebP(file)));
+            const updated = [...colorVariants];
 
-        setColorVariants(updated);
+            updated[index].images = [...updated[index].images, ...webpFiles];
+            updated[index].previews = [
+                ...updated[index].previews,
+                ...webpFiles.map((file) => URL.createObjectURL(file))
+            ];
+
+            setColorVariants(updated);
+        } catch (error) {
+            console.error("Error converting images:", error);
+            toast.error("Failed to process one or more images.");
+        }
     };
 
-    const removeVariantImage = (
-        variantIndex,
-        imageIndex
-    ) => {
+    const removeVariantImage = (variantIndex, imageIndex) => {
         const updated = [...colorVariants];
+        const previewUrl = updated[variantIndex].previews[imageIndex];
 
-        updated[variantIndex].images.splice(
-            imageIndex,
-            1
-        );
+        updated[variantIndex].previews.splice(imageIndex, 1);
 
-        updated[variantIndex].previews.splice(
-            imageIndex,
-            1
-        );
+        if (previewUrl.startsWith("blob:")) {
+            const existingCount = updated[variantIndex].existingImages?.length || 0;
+            const newFileIndex = imageIndex - existingCount;
+            if (newFileIndex >= 0) {
+                updated[variantIndex].images.splice(newFileIndex, 1);
+            }
+        } else {
+            const oldImageIndex = updated[variantIndex].existingImages?.findIndex(img => img.url === previewUrl);
+            if (oldImageIndex !== undefined && oldImageIndex >= 0) {
+                updated[variantIndex].existingImages.splice(oldImageIndex, 1);
+            }
+        }
 
         setColorVariants(updated);
     };
@@ -267,6 +311,7 @@ export default function Page() {
                 (variant) => ({
                     colorName: variant.colorName,
                     imageCount: variant.images.length,
+                    existingImages: variant.existingImages || [],
                 })
             );
 
@@ -612,8 +657,9 @@ export default function Page() {
                                                 >
                                                     <Image
                                                         src={image}
-                                                        alt=""
+                                                        alt="Preview"
                                                         fill
+                                                        unoptimized
                                                         className="object-cover"
                                                     />
 

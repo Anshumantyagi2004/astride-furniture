@@ -109,76 +109,55 @@ export async function PUT(req, { params }) {
             formData.get("colorVariants") || "[]"
         );
 
-        let uploadedColorVariants = [];
+        // Determine which old images to keep
+        const allExistingImagesToKeep = colorVariantsData.flatMap(v => (v.existingImages || []).map(img => img.imageField));
 
-        const hasNewImages = colorVariantsData.some((_, index) =>
-            formData.getAll(`variant_${index}`).length > 0
-        );
-
-        if (hasNewImages) {
-            // DELETE OLD IMAGES
-            for (const variant of product.colorVariants) {
-                for (const image of variant.images) {
-                    await deleteFromR2(image.imageField);
+        const imagesToDelete = [];
+        for (const variant of product.colorVariants) {
+            for (const image of variant.images) {
+                if (!allExistingImagesToKeep.includes(image.imageField)) {
+                    imagesToDelete.push(image.imageField);
                 }
             }
+        }
 
-            // UPLOAD NEW IMAGES
-            for (
-                let variantIndex = 0;
-                variantIndex < colorVariantsData.length;
-                variantIndex++
-            ) {
-                const variant =
-                    colorVariantsData[variantIndex];
+        // Delete removed images asynchronously
+        await Promise.all(imagesToDelete.map(imageField => deleteFromR2(imageField)));
 
-                const files = formData.getAll(
-                    `variant_${variantIndex}`
-                );
+        // Upload new images and merge with existing ones
+        const uploadedColorVariants = await Promise.all(
+            colorVariantsData.map(async (variant, variantIndex) => {
+                const files = formData.getAll(`variant_${variantIndex}`);
 
-                const uploadedImages = [];
+                const uploadedImages = await Promise.all(
+                    files.map(async (image) => {
+                        const bytes = await image.arrayBuffer();
+                        const buffer = Buffer.from(bytes);
+                        const extension = path.extname(image.name);
+                        const fileName = `${Date.now()}-${generateSlug(productName)}-${variant.colorName}-${crypto.randomBytes(2).toString("hex")}${extension}`;
 
-                for (const image of files) {
-                    const bytes =
-                        await image.arrayBuffer();
-
-                    const buffer = Buffer.from(bytes);
-
-                    const extension = path.extname(
-                        image.name
-                    );
-
-                    const fileName =
-                        `${Date.now()}-${generateSlug(
-                            productName
-                        )}-${variant.colorName}-${crypto
-                            .randomBytes(2)
-                            .toString("hex")}${extension}`;
-
-                    const uploadedImage =
-                        await uploadToR2({
+                        const uploadedImage = await uploadToR2({
                             file: buffer,
                             folder: "products",
                             fileName,
                             contentType: image.type,
                         });
 
-                    uploadedImages.push({
-                        url: uploadedImage.url,
-                        imageField:
-                            uploadedImage.key,
-                    });
-                }
+                        return {
+                            url: uploadedImage.url,
+                            imageField: uploadedImage.key,
+                        };
+                    })
+                );
 
-                uploadedColorVariants.push({
+                return {
                     colorName: variant.colorName,
-                    images: uploadedImages,
-                });
-            }
+                    images: [...(variant.existingImages || []), ...uploadedImages],
+                };
+            })
+        );
 
-            product.colorVariants =
-                uploadedColorVariants;
-        }
+        product.colorVariants = uploadedColorVariants;
 
         product.productName = productName;
         product.slug = generateSlug(productName);
