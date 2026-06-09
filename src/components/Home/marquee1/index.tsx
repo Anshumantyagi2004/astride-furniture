@@ -12,7 +12,7 @@ const Marquee1 = () => {
   ];
 
   return (
-    <section className="w-full">
+    <section className="w-full hidden md:block">
       <div className="px-6 mb-8 text-center block md:hidden bg-[#F8F9FA] pt-8">
         <span className="text-[10px] tracking-[0.25em] font-extrabold uppercase text-slate-400 block mb-3">
           Anatomy of Comfort

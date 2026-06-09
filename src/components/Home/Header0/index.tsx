@@ -85,22 +85,24 @@ export default function Header0() {
         >
           <motion.span 
             variants={itemVariants}
-            className="text-xs md:text-sm font-medium tracking-[0.2em] uppercase mb-4 block text-white/60"
+            className="text-[13px] md:text-sm font-medium tracking-[0.2em] uppercase mb-4 block text-white/60"
           >
-            <span className="text-white font-extrabold mr-2 tracking-[0.25em] bg-white/10 px-2 py-0.5 rounded border border-white/20">
+            <span className="text-white font-extrabold mr-[3px] md:mr-2 tracking-[0.25em] bg-white/10 px-2 py-0.5 rounded border border-white/20">
               ASTRIDE
             </span> 
+            <br className="md:hidden" />
             CHAIR COLLECTION
           </motion.span>
           <motion.h1 
             variants={itemVariants}
-            className="text-4xl md:text-7xl font-serif mb-4 md:mb-6 tracking-tight leading-[1.1] max-w-2xl md:max-w-3xl"
+            className="text-[37px] md:text-7xl font-serif mb-4 md:mb-6 tracking-tight leading-[1.1] max-w-2xl md:max-w-3xl"
           >
-            Sit Better, Perform Better
+            Sit Better,<br className="md:hidden" /> Perform Better
           </motion.h1>
           <motion.p 
             variants={itemVariants}
-            className="text-sm md:text-xl font-light text-white/90 leading-relaxed mb-7 md:mb-10 max-w-xs md:max-w-md"
+            className="font-light text-white/90 leading-relaxed mb-7 md:mb-10 max-w-xs md:max-w-md md:text-xl text-[16.5px]"
+            style={{ fontSize: "var(--desc-size, 16.5px)" }}
           >
             Discover ergonomic office chairs and advanced gaming chairs crafted for all-day comfort. Enhance your workspace and gaming zone with durable, stylish seating solutions.
           </motion.p>
@@ -110,7 +112,7 @@ export default function Header0() {
               <div className="absolute left-0 w-14 h-14 rounded-full border border-white/50 group-hover:scale-110 group-hover:bg-white/10 flex items-center justify-center transition-all duration-500">
                 <ChevronRight className="w-5 h-5 text-white group-hover:translate-x-1 transition-transform duration-300" />
               </div>
-              <span className="pl-20 pr-6 text-sm font-semibold tracking-widest uppercase text-white group-hover:translate-x-2 transition-transform duration-500">
+              <span className="pl-20 pr-6 text-[15px] md:text-sm font-semibold tracking-widest uppercase text-white group-hover:translate-x-2 transition-transform duration-500">
                 View Collection
               </span>
             </Link>

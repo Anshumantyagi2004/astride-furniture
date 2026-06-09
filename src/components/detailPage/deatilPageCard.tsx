@@ -233,12 +233,12 @@ export default function DetailPageCard({ product }: { product: any }) {
       style={{ fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
     >
       {/* Breadcrumbs */}
-      <div className="text-[10px] md:text-[12px] text-neutral-400 font-medium mb-6 flex flex-wrap items-center gap-x-1.5 gap-y-1 tracking-wide leading-relaxed">
+      <div className="text-[13px] md:text-[15px] text-neutral-400 font-medium mb-6 flex flex-wrap items-center gap-x-1.5 gap-y-1 tracking-wide leading-relaxed">
         <span className="hover:text-black cursor-pointer transition-colors whitespace-nowrap">Home</span>
         <span className="text-neutral-300">/</span>
         <span className="hover:text-black cursor-pointer transition-colors whitespace-nowrap">{product.category}</span>
         <span className="text-neutral-300">/</span>
-        <span className="text-neutral-600 font-semibold text-[11px] md:text-[13px]">{product.name}</span>
+        <span className="text-neutral-600 font-semibold text-[14px] md:text-[16px]">{product.name}</span>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 mt-2">
@@ -333,10 +333,10 @@ export default function DetailPageCard({ product }: { product: any }) {
                     key={idx} 
                     className="flex justify-between items-start py-2.5 border-b border-neutral-200/60 last:border-b-0 gap-4"
                   >
-                    <span className="text-[11px] font-semibold text-neutral-700 uppercase tracking-wider shrink-0 mt-0.5">
+                    <span className="text-[12px] font-semibold text-neutral-700 uppercase tracking-wider shrink-0 mt-0.5">
                       {spec.name || spec.key}
                     </span>
-                    <span className="text-[13px] font-bold text-neutral-900 text-right leading-tight max-w-[70%]">
+                    <span className="text-[14px] font-bold text-neutral-900 text-right leading-tight max-w-[70%]">
                       {spec.value}
                     </span>
                   </div>

@@ -132,7 +132,7 @@ export default function BrandTrustSection() {
 
                                 {/* Label */}
                                 <p
-                                    className="text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500"
+                                    className="text-[14px] font-bold uppercase tracking-[0.16em] text-zinc-500 text-center"
                                 >
                                     {item.label}
                                 </p>
