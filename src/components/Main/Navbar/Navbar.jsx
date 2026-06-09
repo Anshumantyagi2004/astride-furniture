@@ -13,11 +13,19 @@ import {
   User,
   Phone,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   X,
   Menu,
 } from "lucide-react";
 
 import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
+
+// Swiper imports
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 
 export default function Navbar() {
   const [hideTopBar, setHideTopBar] = useState(false);
@@ -38,7 +46,7 @@ export default function Navbar() {
   };
 
   const adminLayout = pathname.startsWith("/admin");
-  if (adminLayout) return null;
+  
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -50,7 +58,6 @@ export default function Navbar() {
     };
 
     window.addEventListener("scroll", handleScroll);
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -69,7 +76,12 @@ export default function Navbar() {
       setCartItems([]);
     }
   };
+  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Dynamic Data Fetching
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     loadCart();
@@ -88,6 +100,26 @@ export default function Navbar() {
     window.addEventListener('add-to-cart', handleStorageChange);
     window.addEventListener('astride_cart_updated', handleStorageChange);
 
+    // Fetch dynamic categories and products
+    const fetchData = async () => {
+      try {
+        const catRes = await fetch("/api/category");
+        const catData = await catRes.json();
+        if (catData?.success) {
+          setCategories(catData.categories);
+        }
+        
+        const prodRes = await fetch("/api/product");
+        const prodData = await prodRes.json();
+        if (prodData?.success) {
+          setProducts(prodData.products);
+        }
+      } catch (err) {
+        console.error("Error fetching navbar data:", err);
+      }
+    };
+    fetchData();
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('add-to-cart', handleStorageChange);
@@ -101,47 +133,83 @@ export default function Navbar() {
     'Gaming Chair': {
       label: 'Gaming Chair',
       chairs: [
-        { name: 'ACE Pro Gaming', image: '/Png1/chair4_ACE.webp', tag: 'Bestseller', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'Apex Gaming', image: '/Png1/chair9_FitWell.webp', tag: 'Pro', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'RGB Gaming Chair', image: '/Product/InfographicDesign-1.webp', tag: 'Premium', buyUrl: '#buy', learnUrl: '#learn' }
+        { name: 'ACE Pro Gaming', image: '/Png1/chair4_ACE.webp', tag: 'Bestseller', buyUrl: '#buy' },
+        { name: 'Apex Gaming', image: '/Png1/chair9_FitWell.webp', tag: 'Pro', buyUrl: '#buy' },
+        { name: 'RGB Gaming Chair', image: '/Product/InfographicDesign-1.webp', tag: 'Premium', buyUrl: '#buy' }
       ]
     },
     'Executive Chair': {
       label: 'Executive Chair',
       chairs: [
-        { name: 'AlphaGrey', image: '/Png1/chair6_AlphaGrey.webp', tag: 'Premium Mesh', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'ErgoFit Executive', image: '/Png1/chair12_ErgoFit.webp', tag: 'High Back', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'Executive Mesh Chair', image: '/Product/AlphaBrown_8.webp', tag: 'Bestseller', buyUrl: '#buy', learnUrl: '#learn' }
+        { name: 'AlphaGrey', image: '/Png1/chair6_AlphaGrey.webp', tag: 'Premium Mesh', buyUrl: '#buy' },
+        { name: 'ErgoFit Executive', image: '/Png1/chair12_ErgoFit.webp', tag: 'High Back', buyUrl: '#buy' },
+        { name: 'Executive Mesh Chair', image: '/Product/AlphaBrown_8.webp', tag: 'Bestseller', buyUrl: '#buy' }
       ]
     },
     'Staff Chair': {
       label: 'Staff Chair',
       chairs: [
-        { name: 'Delton Staff', image: '/Png1/Chair7_Delton.webp', tag: 'Comfort', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'AIRSENSE Task', image: '/Png1/chair5_AIRSENSE.webp', tag: 'Aero Mesh', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'Amica Black', image: '/Png1/Chair6a_Amica Black .webp', tag: 'Classic', buyUrl: '#buy', learnUrl: '#learn' }
+        { name: 'Delton Staff', image: '/Png1/Chair7_Delton.webp', tag: 'Comfort', buyUrl: '#buy' },
+        { name: 'AIRSENSE Task', image: '/Png1/chair5_AIRSENSE.webp', tag: 'Aero Mesh', buyUrl: '#buy' },
+        { name: 'Amica Black', image: '/Png1/Chair6a_Amica Black .webp', tag: 'Classic', buyUrl: '#buy' }
       ]
     },
     'Study Chair': {
       label: 'Study Chair',
       chairs: [
-        { name: 'ErgoFit Pro', image: '/Product/1.webp', tag: 'Students', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'Comfort Office', image: '/Product/Infographic-6.webp', tag: 'Comfort', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'Modern Workspace', image: '/Product/InfographicDesign-1.webp', tag: 'Compact', buyUrl: '#buy', learnUrl: '#learn' }
+        { name: 'ErgoFit Pro', image: '/Product/1.webp', tag: 'Students', buyUrl: '#buy' },
+        { name: 'Comfort Office', image: '/Product/Infographic-6.webp', tag: 'Comfort', buyUrl: '#buy' },
+        { name: 'Modern Workspace', image: '/Product/InfographicDesign-1.webp', tag: 'Compact', buyUrl: '#buy' }
       ]
     },
     'Bar Stool': {
       label: 'Bar Stool',
       chairs: [
-        { name: 'Zenith Stool', image: '/Png1/chair10_FitWell.webp', tag: 'Counter Stool', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'Apex Stool', image: '/Png1/chair9_FitWell.webp', tag: 'Bestseller', buyUrl: '#buy', learnUrl: '#learn' },
-        { name: 'Luxury Bar Stool', image: '/Product/AlphaBrown_8.webp', tag: 'Premium', buyUrl: '#buy', learnUrl: '#learn' }
+        { name: 'Zenith Stool', image: '/Png1/chair10_FitWell.webp', tag: 'Counter Stool', buyUrl: '#buy' },
+        { name: 'Apex Stool', image: '/Png1/chair9_FitWell.webp', tag: 'Bestseller', buyUrl: '#buy' },
+        { name: 'Luxury Bar Stool', image: '/Product/AlphaBrown_8.webp', tag: 'Premium', buyUrl: '#buy' }
       ]
     }
   };
 
-  const CATEGORY_KEYS = ['Gaming Chair', 'Executive Chair', 'Staff Chair', 'Study Chair', 'Bar Stool'];
-  const activeCategory = activeMenu ? CHAIR_CATEGORIES[activeMenu] : null;
+  const fallbackCategories = [
+    { _id: 'gaming-chair', name: 'Gaming Chair' },
+    { _id: 'executive-chair', name: 'Executive Chair' },
+    { _id: 'staff-chair', name: 'Staff Chair' },
+    { _id: 'study-chair', name: 'Study Chair' },
+    { _id: 'bar-stool', name: 'Bar Stool' },
+  ];
+
+  const categoryList = categories.length > 0 ? categories : fallbackCategories;
+  
+  // Find current active category
+  const activeCategoryObj = categoryList.find(c => c.name.toLowerCase().trim() === activeMenu?.toLowerCase().trim());
+  
+  // Retrieve display products
+  let displayChairs = [];
+  if (activeMenu) {
+    if (products.length > 0 && activeCategoryObj) {
+      displayChairs = products
+        .filter(p => {
+          if (!p.category) return false;
+          const pCatId = typeof p.category === 'object' ? p.category._id : p.category;
+          return pCatId === activeCategoryObj._id;
+        })
+        .map(p => ({
+          name: p.productName,
+          image: p.colorVariants?.[0]?.images?.[0]?.url || '/placeholder.png',
+          buyUrl: `/products/${p.slug}`,
+          tag: p.whychoose || '',
+        }));
+    }
+    
+    // If no products found via database filter, check if static CHAIR_CATEGORIES has predefined items
+    if (displayChairs.length === 0) {
+      displayChairs = CHAIR_CATEGORIES[activeMenu]?.chairs || [];
+    }
+  }
+
+  if (adminLayout) return null;
 
   return (
     <header className="w-full font-[Barlow] sticky -top-1 z-[1000] relative select-none" onMouseLeave={() => setActiveMenu(null)}>
@@ -158,18 +226,14 @@ export default function Navbar() {
         className="bg-[#161316]/95 backdrop-blur-xl text-white overflow-hidden border-b border-[#453027]"
       >
         <div className="max-w-7xl mx-auto px-4 h-11 flex items-center justify-between">
-
           {/* SOCIAL ICONS */}
           <div className="flex items-center gap-3">
-
             <button className="w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:bg-[#FF6D29] transition-all duration-300 flex items-center justify-center hover:scale-110">
               <FaFacebookF size={14} />
             </button>
-
             <button className="w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:bg-[#FF6D29] transition-all duration-300 flex items-center justify-center hover:scale-110">
               <FaInstagram size={15} />
             </button>
-
             <button className="w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:bg-[#FF6D29] transition-all duration-300 flex items-center justify-center hover:scale-110">
               <FaYoutube size={15} />
             </button>
@@ -177,8 +241,7 @@ export default function Navbar() {
 
           {/* CENTER TEXT */}
           <p className="hidden lg:block text-sm font-medium tracking-wide text-[#BABABA]">
-            Tollfree Number 7311164111
-
+            Tollfree Number 7311164111{" "}
             <span className="underline cursor-pointer ml-1 hover:text-[#FF6D29] transition-all duration-300">
               Call Now!
             </span>
@@ -186,12 +249,10 @@ export default function Navbar() {
 
           {/* RIGHT SIDE */}
           <div className="flex items-center gap-6 text-sm font-medium text-[#BABABA]">
-
             <Link href="/contact" className="flex items-center gap-2 hover:text-[#FF6D29] transition-all duration-300">
               <Phone size={16} />
               Support
             </Link>
-
             <Link href="/about" className="hover:text-[#FF6D29] transition-all duration-300">
               About
             </Link>
@@ -201,8 +262,6 @@ export default function Navbar() {
 
       <div className="relative z-20 bg-[#161316]/90 backdrop-blur-xl border-b border-[#453027] shadow-[0_0_40px_rgba(255,109,41,0.08)]">
         <div className="lg:px-15 px-4 flex items-center justify-between gap-4 py-2 md:py-0">
-          
-
           <div className="hidden md:flex items-center bg-white/5 border-b border-[#453027] overflow-hidden hover:border-[#FF6D29] focus-within:border-[#FF6D29] transition-all duration-300 shadow-lg backdrop-blur-xl">
             <div className="px-2 text-[#FF6D29]">
               <Search size={20} />
@@ -239,7 +298,6 @@ export default function Navbar() {
                 className="relative text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110 flex items-center justify-center"
               >
                 <ShoppingCart size={26} strokeWidth={1.8} />
-
                 {cartItems.reduce((acc, item) => acc + item.quantity, 0) > 0 && (
                   <span className="absolute -top-2 -right-2 bg-gradient-to-r from-[#FF6D29] to-[#ff8b55] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg">
                     {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
@@ -322,20 +380,19 @@ export default function Navbar() {
 
       <div className="bg-[#161316] border-b border-[#453027] shadow-sm hidden md:block">
         <div className="lg:px-15 px-4 relative flex items-center justify-center">
-
           {/* NAVIGATION */}
           <nav className="hidden md:flex items-center justify-center gap-10 pt-3 pb-4 overflow-x-auto whitespace-nowrap text-[17px] font-bold text-[#BABABA] scrollbar-hide">
-            {CATEGORY_KEYS.map((category) => (
+            {categoryList.map((category) => (
               <button
-                key={category}
-                onMouseEnter={() => setActiveMenu(category)}
+                key={category._id || category.name}
+                onMouseEnter={() => setActiveMenu(category.name)}
                 className={`relative group transition-all duration-300 px-3 py-1 uppercase tracking-wider text-sm font-black ${
-                  activeMenu === category ? 'text-white' : 'text-[#BABABA] hover:text-white'
+                  activeMenu === category.name ? 'text-white' : 'text-[#BABABA] hover:text-white'
                 }`}
               >
-                <span>{category}</span>
+                <span>{category.name}</span>
                 <span className={`absolute left-0 -bottom-1 h-[2px] bg-zinc-500 transition-all duration-300 ${
-                  activeMenu === category ? 'w-full' : 'w-0 group-hover:w-full'
+                  activeMenu === category.name ? 'w-full' : 'w-0 group-hover:w-full'
                 }`}></span>
               </button>
             ))}
@@ -354,48 +411,79 @@ export default function Navbar() {
       </div>
 
       {/* MEGA MENU DROPDOWN */}
-      {activeCategory && (
-        <div className="absolute left-0 top-full w-full bg-[#f3f4f6] border-b border-gray-300 text-gray-900 py-8 px-12 z-[90] shadow-lg animate-in fade-in slide-in-from-top-2 duration-200"
+      {activeMenu && displayChairs.length > 0 && (
+        <div 
+          className="absolute left-0 top-full w-full bg-[#f3f4f6] border-b border-gray-300 text-gray-900 py-8 px-12 z-[90] shadow-lg animate-in fade-in slide-in-from-top-2 duration-200"
           onMouseEnter={() => setActiveMenu(activeMenu)}
           onMouseLeave={() => setActiveMenu(null)}
         >
-          <div className="max-w-2xl mx-auto">
-            <div className="grid grid-cols-3 gap-6 justify-items-center">
-              {activeCategory.chairs.map((chair, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center group relative cursor-pointer w-full max-w-[150px]"
-                >
-                  {/* Visual Container */}
-                  <div className="relative w-full aspect-square bg-white border border-gray-200 rounded-2xl flex items-center justify-center p-3 hover:bg-gray-50 group-hover:border-zinc-500 transition-all duration-300 shadow-sm">
-                    <div className="relative w-[85%] h-[85%] transform group-hover:scale-105 transition-transform duration-500 ease-out flex items-center justify-center">
-                      <Image
-                        src={chair.image}
-                        alt={chair.name}
-                        fill
-                        className="object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.15)]"
-                        sizes="15vw"
-                      />
+          <div className="max-w-7xl mx-auto relative px-10">
+            <Swiper
+              modules={[Navigation]}
+              navigation={{
+                nextEl: '.swiper-button-next-custom',
+                prevEl: '.swiper-button-prev-custom',
+              }}
+              slidesPerView={1}
+              spaceBetween={20}
+              centerInsufficientSlides={true}
+              breakpoints={{
+                640: { slidesPerView: 2, spaceBetween: 20 },
+                768: { slidesPerView: 3, spaceBetween: 24 },
+                1024: { slidesPerView: 4, spaceBetween: 28 },
+                1280: { slidesPerView: 5, spaceBetween: 32 },
+              }}
+              className="w-full"
+            >
+              {displayChairs.map((chair, index) => (
+                <SwiperSlide key={index}>
+                  <Link 
+                    href={chair.buyUrl || '#'} 
+                    onClick={() => setActiveMenu(null)}
+                    className="flex flex-col items-center group relative cursor-pointer w-full"
+                  >
+                    {/* Visual Container */}
+                    <div className="relative w-full aspect-square bg-white border border-gray-100 rounded-[28px] flex flex-col items-center justify-center p-2 hover:bg-gray-50 group-hover:border-gray-300 group-hover:shadow-xl transition-all duration-500 shadow-sm overflow-hidden">
+                      <div className="relative w-full h-full transform group-hover:scale-105 transition-transform duration-700 ease-out flex items-center justify-center">
+                        {chair.image && chair.image !== '/placeholder.png' ? (
+                          <Image
+                            src={chair.image}
+                            alt={chair.name}
+                            fill
+                            className="object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.12)] p-2"
+                            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center justify-center gap-2 opacity-50">
+                            <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+                            <span className="text-[9px] uppercase tracking-wider text-gray-500 font-bold">Loading...</span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Name Overlay on Hover */}
+                      <div className="absolute bottom-3 left-0 w-full text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 px-2 z-10">
+                        <span className="bg-white/95 backdrop-blur-md text-[10px] font-extrabold text-gray-800 px-3 py-1.5 rounded-full shadow-sm inline-block line-clamp-1 max-w-[95%] border border-gray-100 uppercase tracking-wide">
+                          {chair.name}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-
-                  {/* Metadata */}
-                  <div className="mt-2 flex flex-col items-center gap-1 w-full">
-                    <span className="font-extrabold text-gray-900 text-xs tracking-tight text-center group-hover:text-zinc-700 transition-all">
-                      {chair.name}
-                    </span>
-                    <div className="mt-0.5">
-                      <Link
-                        href={chair.buyUrl}
-                        className="text-[10px] font-black text-gray-500 hover:text-zinc-900 underline underline-offset-4 decoration-zinc-400 hover:decoration-zinc-900 transition-colors uppercase tracking-wider"
-                      >
-                        Buy
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+                  </Link>
+                </SwiperSlide>
               ))}
-            </div>
+            </Swiper>
+
+            {/* Custom Navigation Arrows */}
+            {displayChairs.length > 4 && (
+              <>
+                <button className="swiper-button-prev-custom absolute -left-2 top-1/2 -translate-y-1/2 z-50 w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-md hover:bg-gray-50 hover:border-gray-400 transition-all text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed">
+                  <ChevronLeft size={20} />
+                </button>
+                <button className="swiper-button-next-custom absolute -right-2 top-1/2 -translate-y-1/2 z-50 w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-md hover:bg-gray-50 hover:border-gray-400 transition-all text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed">
+                  <ChevronRight size={20} />
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

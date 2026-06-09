@@ -23,7 +23,7 @@ const CATEGORIES: BentoCategory[] = [
     image: '/Png1/chair11_octave.webp',
     colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
     imageClass: 'absolute -right-6 bottom-0 w-[45%] h-[95%] min-h-[220px] max-h-[340px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-    href: '/products?category=Gaming Chair'
+    href: '/products?category=Gaming%20Chair'
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ const CATEGORIES: BentoCategory[] = [
     image: '/Png1/Chair6a_Amica Black .webp',
     colSpan: 'lg:col-span-4 md:col-span-5 col-span-12',
     imageClass: 'absolute -right-4 bottom-0 w-[55%] h-[80%] min-h-[180px] max-h-[260px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-    href: '/products?category=Staff Chair'
+    href: '/products?category=Staff%20Chair'
   },
   {
     id: 3,
@@ -41,7 +41,7 @@ const CATEGORIES: BentoCategory[] = [
     image: '/Png1/chair5_AIRSENSE.webp',
     colSpan: 'lg:col-span-4 md:col-span-5 col-span-12',
     imageClass: 'absolute -right-4 bottom-0 w-[55%] h-[80%] min-h-[180px] max-h-[260px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-    href: '/products?category=Study Chair'
+    href: '/products?category=Study%20Chair'
   },
   {
     id: 4,
@@ -50,7 +50,7 @@ const CATEGORIES: BentoCategory[] = [
     image: '/Png1/chair6c_Rapid Black .webp',
     colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
     imageClass: 'absolute -right-6 bottom-0 w-[45%] h-[95%] min-h-[220px] max-h-[340px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-    href: '/products?category=Bar Stool'
+    href: '/products?category=Bar%20Stool'
   }
 ];
 

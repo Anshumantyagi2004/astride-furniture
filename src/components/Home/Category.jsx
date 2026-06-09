@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export default function Category() {
     const [categories, setCategories] = useState([]);
@@ -57,12 +58,12 @@ export default function Category() {
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 md:gap-6 lg:gap-8 max-w-[1400px] mx-auto">
 
-                            {[...categories, ...categories,].map(
+                            {categories.map(
                                 (category, index) => (
-                                    <motion.div
-                                        key={index}
+                                    <Link key={index} href={`/products?category=${encodeURIComponent(category.name)}`} className="w-full block">
+                                        <motion.div
                                         initial={{ opacity: 0, y: 40 }}
                                         whileInView={{ opacity: 1, y: 0 }}
                                         transition={{
@@ -104,6 +105,7 @@ export default function Category() {
 
                                         <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-zinc-800 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
                                     </motion.div>
+                                    </Link>
                                 ))}
                         </div>
                     </>)}

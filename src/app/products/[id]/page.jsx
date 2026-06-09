@@ -16,7 +16,7 @@ export default function ProductDetailPage({ params }) {
   const productId = unwrappedParams?.id;
 
   return (
-    <div className="min-h-screen bg-white pt-24 pb-12">
+    <div className="min-h-screen bg-white pt-0 pb-12">
       <DetailPage productId={productId} />
     </div>
   );
