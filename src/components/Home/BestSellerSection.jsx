@@ -71,7 +71,8 @@ const BestSellerSectionCard = ({ product }) => {
         <div
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative rounded-2xl md:rounded-3xl border border-zinc-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+            onClick={() => router.push(`/products/${product.id}`)}
+            className="group relative rounded-2xl md:rounded-3xl border border-zinc-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-pointer"
         >
             {/* SALE / DISCOUNT BADGE */}
             <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20 flex flex-col gap-1 md:gap-2">

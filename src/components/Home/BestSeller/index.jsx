@@ -2,8 +2,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const BestSellerCard = ({ product }) => {
+  const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const timerRef = useRef(null);
@@ -43,7 +45,10 @@ const BestSellerCard = ({ product }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div>
+      <div 
+        onClick={() => router.push(`/products/${product.id}`)}
+        className="cursor-pointer"
+      >
         {/* Image Container - Reduced aspect ratio for shorter length */}
         <div className="relative w-full aspect-[4/3.3] bg-[#F5F5F5] rounded-[24px] p-5 mb-4 overflow-hidden flex flex-col items-center justify-center transition-colors duration-300 group-hover:bg-[#EFEFEF]">
           {/* Tag */}
