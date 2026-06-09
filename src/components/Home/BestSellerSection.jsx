@@ -1,101 +1,264 @@
 "use client";
-
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-import {
-    Heart,
-    Eye,
-    Star,
-} from "lucide-react";
-
+import { useRouter } from "next/navigation";
+import { Heart, Eye, Star } from "lucide-react";
 import { BsCartPlus } from "react-icons/bs";
 
-const products = [
-    {
-        id: 1,
-        name: "ErgoFit Chair",
-        price: "₹12,999",
-        oldPrice: "₹21,999",
-        image: "/Png1/chair4_ACE.webp",
-        rating: 5,
-        discount: "30% OFF",
-        tag: "Best Seller",
-    },
-    {
-        id: 2,
-        name: "Alpha Brown Chair",
-        price: "₹15,499",
-        oldPrice: "₹24,999",
-        image: "/Png1/Chair7_Delton.webp",
-        rating: 4,
-        discount: "20% OFF",
-        tag: "Premium Choice",
-    },
-    {
-        id: 3,
-        name: "Luxury Gaming Chair",
-        price: "₹18,999",
-        oldPrice: "₹28,999",
-        image: "/Png1/chair11_octave.webp",
-        rating: 5,
-        discount: "35% OFF",
-        tag: "Top Rated",
-    },
-    {
-        id: 4,
-        name: "Modern Office Chair",
-        price: "₹11,999",
-        oldPrice: "₹18,999",
-        image: "/Png1/chair6_AlphaGrey.webp",
-        rating: 4,
-        discount: "25% OFF",
-        tag: "Ergonomic Focus",
-    },
-    {
-        id: 5,
-        name: "Executive Chair",
-        price: "₹19,999",
-        oldPrice: "₹31,999",
-        image: "/Png1/chair4_ACE.webp",
-        rating: 5,
-        discount: "40% OFF",
-        tag: "Luxury Tier",
-    },
-    {
-        id: 6,
-        name: "Comfort Pro Chair",
-        price: "₹13,499",
-        oldPrice: "₹22,999",
-        image: "/Png1/Chair7_Delton.webp",
-        rating: 4,
-        discount: "18% OFF",
-        tag: "Popular",
-    },
-    {
-        id: 7,
-        name: "Premium Desk Chair",
-        price: "₹14,999",
-        oldPrice: "₹25,999",
-        image: "/Png1/chair11_octave.webp",
-        rating: 5,
-        discount: "28% OFF",
-        tag: "New Arrival",
-    },
-    {
-        id: 8,
-        name: "Elite Workspace Chair",
-        price: "₹17,499",
-        oldPrice: "₹27,999",
-        image: "/Png1/chair6_AlphaGrey.webp",
-        rating: 5,
-        discount: "32% OFF",
-        tag: "Special Edition",
-    },
-];
+const BestSellerSectionCard = ({ product }) => {
+    const router = useRouter();
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
+    const timerRef = useRef(null);
+    const [isWishlisted, setIsWishlisted] = useState(false);
+
+    const images = product.allImages && product.allImages.length > 0 
+        ? product.allImages 
+        : [product.image];
+
+    useEffect(() => {
+        if (isHovered && images.length > 1) {
+            timerRef.current = setInterval(() => {
+                setCurrentImageIndex((prev) => (prev + 1) % images.length);
+            }, 1000);
+        } else {
+            if (timerRef.current) clearInterval(timerRef.current);
+            setCurrentImageIndex(0);
+        }
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, [isHovered, images.length]);
+
+    const handleAddToCart = (e) => {
+        e.stopPropagation();
+        const cartItem = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            quantity: 1
+        };
+        window.dispatchEvent(new CustomEvent('add-to-cart', { detail: cartItem }));
+    };
+
+    const toggleWishlist = (e) => {
+        e.stopPropagation();
+        setIsWishlisted(!isWishlisted);
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem("astride_wishlist") || "[]"); } catch (err) {}
+        if (!isWishlisted) {
+            if (!list.some(p => p.id === product.id)) {
+                list.push({ ...product });
+            }
+        } else {
+            list = list.filter(p => p.id !== product.id);
+        }
+        localStorage.setItem("astride_wishlist", JSON.stringify(list));
+        window.dispatchEvent(new Event("astride_wishlist_updated"));
+    };
+
+    // Auto-check wishlist status on mount
+    useEffect(() => {
+        try {
+            const list = JSON.parse(localStorage.getItem("astride_wishlist") || "[]");
+            if (list.some(p => p.id === product.id)) setIsWishlisted(true);
+        } catch (err) {}
+    }, [product.id]);
+
+    return (
+        <div
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="group relative rounded-2xl md:rounded-3xl border border-zinc-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+        >
+            {/* SALE / DISCOUNT BADGE */}
+            <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20 flex flex-col gap-1 md:gap-2">
+                <div className="px-2 py-1 md:px-3.5 md:py-1.5 rounded-full bg-zinc-900 text-white text-[8px] md:text-[11px] font-bold tracking-wider shadow-sm uppercase">
+                    {product.discount}
+                </div>
+                <div className="hidden md:block px-2.5 py-1 rounded-full bg-white/90 border border-zinc-200 text-zinc-700 text-[10px] font-semibold tracking-wide shadow-sm">
+                    {product.tag}
+                </div>
+            </div>
+
+            {/* QUICK ACTION BUTTONS */}
+            <div className="hidden md:flex absolute top-4 right-4 z-20 flex-col gap-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button 
+                    onClick={toggleWishlist}
+                    className={`w-10 h-10 rounded-full border border-zinc-200 flex items-center justify-center transition-colors duration-300 shadow-md ${
+                        isWishlisted ? "bg-zinc-900 text-white" : "bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white"
+                    }`}
+                >
+                    <Heart size={16} className={isWishlisted ? "fill-current" : ""} />
+                </button>
+
+                <button 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/products/${product.id}`);
+                    }}
+                    className="w-10 h-10 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-colors duration-300 shadow-md"
+                >
+                    <Eye size={16} />
+                </button>
+            </div>
+
+            {/* PRODUCT IMAGE CONTAINER */}
+            <div className="relative h-[160px] md:h-[290px] flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-50/50 to-transparent">
+                <div className="relative z-10 p-3 md:p-6 w-full h-[130px] md:h-[230px] flex flex-col items-center justify-center">
+                    <Image
+                        src={images[currentImageIndex] || product.image}
+                        alt={product.name}
+                        fill
+                        className="object-contain p-4 md:p-6 drop-shadow-[0_15px_30px_rgba(0,0,0,0.08)] scale-100 group-hover:scale-105 transition-all duration-500"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                    />
+                </div>
+                
+                {/* Pagination Dots */}
+                {images.length > 1 && (
+                    <div className="absolute bottom-2 flex gap-1.5 justify-center w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                        {images.map((_, idx) => (
+                            <div 
+                                key={idx} 
+                                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? 'w-3 bg-zinc-800' : 'w-1.5 bg-zinc-300'}`}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* PRODUCT DETAILS */}
+            <div className="px-3 md:px-6 pt-2 md:pt-3 pb-3 md:pb-6 relative">
+                
+                {/* TITLE */}
+                <h3 className="text-[13px] md:text-xl font-bold text-zinc-900 line-clamp-1">
+                    {product.name}
+                </h3>
+
+                {/* RATING */}
+                <div className="flex items-center gap-0.5 md:gap-1 mt-0.5 md:mt-1">
+                    {[...Array(5)].map((_, i) => (
+                        <Star
+                            key={i}
+                            size={10}
+                            className={`md:w-[13px] md:h-[13px] ${
+                                i < product.rating
+                                    ? "fill-yellow-500 text-yellow-500"
+                                    : "fill-zinc-200 text-zinc-200"
+                            }`}
+                        />
+                    ))}
+
+                    <span className="hidden md:inline text-xs text-zinc-400 ml-1 font-medium">
+                        ({product.rating}.0 Reviews)
+                    </span>
+                </div>
+
+                {/* DESCRIPTION */}
+                <p className="hidden md:block text-zinc-500 text-[13px] mt-2.5 leading-relaxed line-clamp-2">
+                    {product.description}
+                </p>
+
+                {/* PRICE AND CART */}
+                <div className="flex items-end justify-between mt-2 md:mt-5 pt-2 md:pt-4 border-t border-zinc-100">
+                    <div>
+                        <p className="text-zinc-400 text-[10px] md:text-xs line-through mb-0 md:mb-0.5">
+                            ₹{product.originalPrice.toLocaleString("en-IN")}
+                        </p>
+
+                        <h4 className="text-sm md:text-2xl font-black text-zinc-900 tracking-tight">
+                            ₹{product.price.toLocaleString("en-IN")}
+                        </h4>
+                    </div>
+
+                    {/* CART BUTTON */}
+                    <button 
+                        onClick={handleAddToCart}
+                        className="w-7 h-7 md:w-11 md:h-11 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-colors duration-300 shadow-md"
+                    >
+                        <BsCartPlus className="w-3.5 h-3.5 md:w-[18px] md:h-[18px]" />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export default function BestSellerSection() {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchProducts() {
+            try {
+                setLoading(true);
+                const res = await fetch("/api/product");
+                const data = await res.json();
+                if (data.success && data.products && data.products.length > 0) {
+                    const mappedProducts = data.products.map((prod) => {
+                        const discPercent = prod.oldPrice && prod.realPrice
+                            ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
+                            : 60;
+                        
+                        let normalizedCategory = "Ergonomic Focus";
+                        const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
+                        if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) normalizedCategory = "Premium Choice";
+                        else if (dbCategory.includes("STUDY")) normalizedCategory = "Best Seller";
+                        else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) normalizedCategory = "Top Rated";
+
+                        const blackVariant = prod.colorVariants?.find((v) => v.colorName?.toLowerCase() === "black");
+                        const blackImage = blackVariant?.images?.[0]?.url;
+                        const fallbackImage = prod.colorVariants?.find((v) => v.images && v.images.length > 0)?.images?.[0]?.url;
+
+                        const colorImages = prod.colorVariants?.reduce((acc, variant) => {
+                            if (variant.images) {
+                                return [...acc, ...variant.images.map((img) => img.url)];
+                            }
+                            return acc;
+                        }, []) || [];
+                        const rootImages = prod.images ? prod.images.map(img => img.url || img) : [];
+                        const allImages = [...rootImages, ...colorImages];
+
+                        return {
+                            id: prod._id,
+                            name: prod.productName,
+                            price: prod.realPrice,
+                            originalPrice: prod.oldPrice,
+                            discount: `${discPercent}% OFF`,
+                            tag: normalizedCategory,
+                            image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+                            allImages: Array.from(new Set(allImages)),
+                            rating: prod.rating || 5,
+                            description: prod.shortDescription || "Premium ergonomic chair with breathable mesh, adjustable comfort, and modern luxury aesthetics."
+                        };
+                    });
+                    
+                    // Filter products to pick ones that have multiple images
+                    const multipleImageProducts = mappedProducts.filter(p => p.allImages.length > 1);
+                    
+                    // Fill up to 8 products
+                    const finalProducts = [...multipleImageProducts];
+                    for (let p of mappedProducts) {
+                        if (finalProducts.length >= 8) break;
+                        if (!finalProducts.find(exist => exist.id === p.id)) {
+                            finalProducts.push(p);
+                        }
+                    }
+                    
+                    setProducts(finalProducts.slice(0, 8));
+                }
+            } catch (err) {
+                console.error("Error fetching products:", err);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchProducts();
+    }, []);
+
     return (
         <section className="relative overflow-hidden bg-zinc-50 py-10">
             {/* Lightweight Background */}
@@ -137,98 +300,17 @@ export default function BestSellerSection() {
                 </div>
 
                 {/* PRODUCTS GRID */}
-                <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-8">
-                    {products.map((product) => (
-                        <div
-                            key={product.id}
-                            className="group relative rounded-2xl md:rounded-3xl border border-zinc-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-                        >
-                            {/* SALE / DISCOUNT BADGE */}
-                            <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20 flex flex-col gap-1 md:gap-2">
-                                <div className="px-2 py-1 md:px-3.5 md:py-1.5 rounded-full bg-zinc-900 text-white text-[8px] md:text-[11px] font-bold tracking-wider shadow-sm uppercase">
-                                    {product.discount}
-                                </div>
-                                <div className="hidden md:block px-2.5 py-1 rounded-full bg-white/90 border border-zinc-200 text-zinc-700 text-[10px] font-semibold tracking-wide shadow-sm">
-                                    {product.tag}
-                                </div>
-                            </div>
-
-                            {/* QUICK ACTION BUTTONS */}
-                            <div className="hidden md:flex absolute top-4 right-4 z-20 flex-col gap-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <button className="w-10 h-10 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-colors duration-300 shadow-md">
-                                    <Heart size={16} />
-                                </button>
-
-                                <button className="w-10 h-10 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-colors duration-300 shadow-md">
-                                    <Eye size={16} />
-                                </button>
-                            </div>
-
-                            {/* PRODUCT IMAGE CONTAINER */}
-                            <div className="relative h-[160px] md:h-[290px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-zinc-50/50 to-transparent">
-                                <div className="relative z-10 p-3 md:p-6 w-full h-[130px] md:h-[230px] flex items-center justify-center">
-                                    <img
-                                        src={product.image}
-                                        alt={product.name}
-                                        className="w-full h-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.08)]"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* PRODUCT DETAILS */}
-                            <div className="px-3 md:px-6 pt-2 md:pt-3 pb-3 md:pb-6 relative">
-                                
-                                {/* TITLE */}
-                                <h3 className="text-[13px] md:text-xl font-bold text-zinc-900 line-clamp-1">
-                                    {product.name}
-                                </h3>
-
-                                {/* RATING */}
-                                <div className="flex items-center gap-0.5 md:gap-1 mt-0.5 md:mt-1">
-                                    {[...Array(5)].map((_, i) => (
-                                        <Star
-                                            key={i}
-                                            size={10}
-                                            className={`md:w-[13px] md:h-[13px] ${
-                                                i < product.rating
-                                                    ? "fill-yellow-500 text-yellow-500"
-                                                    : "fill-zinc-200 text-zinc-200"
-                                            }`}
-                                        />
-                                    ))}
-
-                                    <span className="hidden md:inline text-xs text-zinc-400 ml-1 font-medium">
-                                        ({product.rating}.0 Reviews)
-                                    </span>
-                                </div>
-
-                                {/* DESCRIPTION */}
-                                <p className="hidden md:block text-zinc-500 text-[13px] mt-2.5 leading-relaxed line-clamp-2">
-                                    Premium ergonomic chair with breathable mesh,
-                                    adjustable comfort, and modern luxury aesthetics.
-                                </p>
-
-                                {/* PRICE AND CART */}
-                                <div className="flex items-end justify-between mt-2 md:mt-5 pt-2 md:pt-4 border-t border-zinc-100">
-                                    <div>
-                                        <p className="text-zinc-400 text-[10px] md:text-xs line-through mb-0 md:mb-0.5">
-                                            {product.oldPrice}
-                                        </p>
-
-                                        <h4 className="text-sm md:text-2xl font-black text-zinc-900 tracking-tight">
-                                            {product.price}
-                                        </h4>
-                                    </div>
-
-                                    {/* CART BUTTON */}
-                                    <button className="w-7 h-7 md:w-11 md:h-11 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-colors duration-300 shadow-md">
-                                        <BsCartPlus className="w-3.5 h-3.5 md:w-[18px] md:h-[18px]" />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                {loading ? (
+                    <div className="flex items-center justify-center py-20 w-full">
+                        <div className="w-10 h-10 border-4 border-zinc-200 border-t-zinc-900 rounded-full animate-spin"></div>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-8">
+                        {products.map((product) => (
+                            <BestSellerSectionCard key={product.id} product={product} />
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
     );

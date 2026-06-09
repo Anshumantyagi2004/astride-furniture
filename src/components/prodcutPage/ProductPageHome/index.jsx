@@ -102,7 +102,8 @@ const PRODUCTS = [
 const TABS = ["All Products", "Gaming Chair", "Executive Chair", "Staff Chair", "Study Chair", "Bar Stool"];
 
 export default function ProductPageHome() {
-  const [productsList, setProductsList] = useState(PRODUCTS);
+  const [productsList, setProductsList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All Products");
   const [selectedBackSupport, setSelectedBackSupport] = useState(null);
   const [selectedHours, setSelectedHours] = useState(null);
@@ -146,6 +147,7 @@ export default function ProductPageHome() {
   useEffect(() => {
     async function fetchProducts() {
       try {
+        setLoading(true);
         const res = await fetch("/api/product");
         const data = await res.json();
         if (data.success && data.products && data.products.length > 0) {
@@ -208,6 +210,8 @@ export default function ProductPageHome() {
         }
       } catch (err) {
         console.error("Error fetching products from API:", err);
+      } finally {
+        setLoading(false);
       }
     }
     fetchProducts();
@@ -400,7 +404,31 @@ export default function ProductPageHome() {
 
           {/* ── Product List Grid ── */}
           <main className="flex-1 w-full">
-            {filteredProducts.length === 0 ? (
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10 justify-items-center w-full transition-all duration-300">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="relative rounded-[32px] overflow-hidden bg-white border border-slate-100 min-w-[280px] w-full max-w-[320px] flex flex-col animate-pulse shadow-sm">
+                    {/* Image Container Placeholder */}
+                    <div className="m-3 rounded-[24px] relative h-[260px] bg-[#F8F9FA] flex flex-col items-center justify-center overflow-hidden">
+                      <div className="w-40 h-40 bg-slate-200/40 rounded-full blur-3xl absolute"></div>
+                      <div className="absolute top-3 left-3 w-12 h-6 bg-slate-200/80 rounded-md"></div>
+                      <div className="absolute top-3 right-3 w-[34px] h-[34px] bg-slate-200/80 rounded-full"></div>
+                    </div>
+
+                    {/* Card Details Placeholder */}
+                    <div className="px-6 pb-6 pt-2 flex flex-col flex-1 gap-3">
+                      <div className="w-24 h-2.5 bg-slate-200 rounded-full mt-1"></div>
+                      <div className="w-4/5 h-6 bg-slate-200 rounded-lg"></div>
+                      
+                      <div className="flex items-end gap-2 mt-auto pt-4">
+                        <div className="w-20 h-7 bg-slate-200 rounded-lg"></div>
+                        <div className="w-12 h-4 bg-slate-100 rounded-md mb-0.5"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredProducts.length === 0 ? (
               <div className="bg-white border border-slate-100 rounded-[32px] p-12 text-center shadow-[0_20px_40px_rgba(0,0,0,0.03)] transition-all duration-300">
                 <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">No matching chairs found</p>
                 <button
