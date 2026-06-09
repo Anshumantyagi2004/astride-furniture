@@ -276,14 +276,9 @@ export default function BestSellerSection() {
                         <span className="inline-flex items-center text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2">
                             EXPLORE BESTSELLERS
                         </span>
-                        <div 
-                            className="text-5xl sm:text-6xl lg:text-[4.5rem] font-black uppercase leading-[0.85] tracking-tighter"
-                            style={{
-                                fontFamily: 'Impact, "Arial Black", sans-serif',
-                            }}
-                        >
+                        <div className="text-5xl sm:text-6xl lg:text-[4rem] font-extrabold uppercase leading-[0.9] tracking-tighter">
                             <span className="block text-[#161316]">BEST SELLING</span>
-                            <span className="block text-transparent [-webkit-text-stroke:2px_#18181b] mt-[6px]">CHAIRS</span>
+                            <span className="block text-transparent [-webkit-text-stroke:1.5px_#18181b] mt-[6px]">CHAIRS</span>
                         </div>
                     </div>
 

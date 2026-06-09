@@ -374,75 +374,80 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
               
               {/* MY ACCOUNTS TAB */}
               {activeTab === "account" && (
-                <div>
-                  <div className="flex items-center justify-between border-b border-slate-200/60 pb-6 mb-8">
-                    <h2 className="text-lg font-black text-slate-850 uppercase tracking-wider">Personal Settings</h2>
-                    <button
-                      type="button"
-                      onClick={handleEditToggle}
-                      className="flex items-center gap-2 text-xs font-extrabold text-slate-600 uppercase tracking-wider hover:text-slate-900 hover:brightness-90 transition-all"
-                    >
-                      <Edit size={12} />
-                      {isEditing ? "Cancel" : "Edit Details"}
-                    </button>
-                  </div>
-
-                  <form onSubmit={handleSaveProfile} className="space-y-8">
-                    
-                    {/* Avatar row with premium slate user placeholder */}
-                    <div className="flex justify-start">
-                      <div className="relative w-24 h-24 rounded-full border-4 border-slate-100 shadow-md bg-slate-50 flex items-center justify-center text-slate-500 relative overflow-hidden group">
-                        <User size={36} strokeWidth={1.8} />
-                      </div>
+                <div className="animate-fade-in">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-6 mb-8 gap-4">
+                    <div className="flex flex-col gap-3">
+                      <h2 className="text-[17px] md:text-xl font-medium text-slate-700 tracking-wide">PERSONAL SETTINGS</h2>
+                      <button
+                        type="button"
+                        onClick={handleEditToggle}
+                        className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 uppercase tracking-widest transition-all w-fit"
+                      >
+                        <Edit size={14} />
+                        {isEditing ? "CANCEL" : "EDIT DETAILS"}
+                      </button>
                     </div>
 
+                    {/* Avatar in the edit row on the right side */}
+                    <div className="relative w-24 h-24 rounded-full border-[6px] border-slate-50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white flex items-center justify-center text-slate-500 group overflow-hidden transition-all shrink-0">
+                      <User size={34} strokeWidth={1.5} />
+                      {isEditing && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-sm">
+                          <span className="text-white text-[9px] font-bold uppercase tracking-wider">Change</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleSaveProfile} className="space-y-8 max-w-2xl">
+
                     {/* Inputs Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                    <div className="grid grid-cols-1 gap-y-8">
                       
                       {/* Name */}
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-450">Full Name</label>
+                      <div className="flex flex-col gap-3">
+                        <label className="text-xs font-bold uppercase tracking-widest text-slate-800">FULL NAME</label>
                         <input
                           type="text"
                           name="name"
                           disabled={!isEditing}
                           value={isEditing ? editForm.name : profile.name}
                           onChange={handleInputChange}
-                          className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50/50 disabled:opacity-65 disabled:cursor-not-allowed text-slate-800 text-sm font-semibold outline-none focus:border-slate-850 focus:bg-white transition-all"
+                          className="w-full h-14 px-5 rounded-2xl border border-slate-200 bg-white disabled:bg-white disabled:text-slate-500 disabled:cursor-not-allowed text-slate-700 text-[15px] font-semibold outline-none focus:border-slate-800 transition-all shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
                         />
                       </div>
 
                       {/* Phone */}
-                      <div className="flex flex-col gap-2.5">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-450">Phone Number</label>
-                        <div className="relative flex">
-                          <span className="h-12 px-3.5 border border-r-0 border-slate-200 bg-slate-50 flex items-center justify-center text-sm rounded-l-xl text-slate-550">
+                      <div className="flex flex-col gap-3">
+                        <label className="text-xs font-bold uppercase tracking-widest text-slate-800">PHONE NUMBER</label>
+                        <div className={`relative flex items-center w-full h-14 rounded-2xl border bg-white overflow-hidden transition-all shadow-[0_2px_10px_rgba(0,0,0,0.02)] ${isEditing ? 'border-slate-200 focus-within:border-slate-800' : 'border-slate-200'}`}>
+                          <div className="flex items-center justify-center pl-5 pr-4 text-lg border-r border-slate-100 h-full bg-white text-slate-700">
                             🇮🇳
-                          </span>
+                          </div>
                           <input
                             type="text"
                             name="phone"
                             disabled={!isEditing}
                             value={isEditing ? editForm.phone : profile.phone}
                             onChange={handleInputChange}
-                            className="w-full h-12 px-4 rounded-r-xl border border-slate-200 bg-slate-50/50 disabled:opacity-65 disabled:cursor-not-allowed text-slate-800 text-sm font-semibold outline-none focus:border-slate-850 focus:bg-white transition-all"
+                            className="w-full h-full px-5 bg-white disabled:text-slate-500 disabled:cursor-not-allowed text-slate-700 text-[15px] font-semibold outline-none"
                           />
                         </div>
                       </div>
 
                       {/* Email */}
-                      <div className="flex flex-col gap-2.5 md:col-span-2">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-450">Email Address</label>
-                        <div className="relative">
+                      <div className="flex flex-col gap-3">
+                        <label className="text-xs font-bold uppercase tracking-widest text-slate-800">EMAIL ADDRESS</label>
+                        <div className="relative shadow-[0_2px_10px_rgba(0,0,0,0.02)] rounded-2xl">
                           <input
                             type="email"
                             name="email"
                             disabled={!isEditing}
                             value={isEditing ? editForm.email : profile.email}
                             onChange={handleInputChange}
-                            className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 disabled:opacity-65 disabled:cursor-not-allowed text-slate-800 text-sm font-semibold outline-none focus:border-slate-850 focus:bg-white transition-all"
+                            className="w-full h-14 pl-5 pr-14 rounded-2xl border border-slate-200 bg-white disabled:bg-white disabled:text-slate-500 disabled:cursor-not-allowed text-slate-700 text-[15px] font-semibold outline-none focus:border-slate-800 transition-all"
                           />
-                          <Mail className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                          <Mail className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={20} />
                         </div>
                       </div>
 
@@ -450,19 +455,12 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
 
                     {/* Action buttons */}
                     {isEditing && (
-                      <div className="flex items-center gap-4 pt-6 border-t border-slate-200/60">
+                      <div className="flex items-center gap-4 pt-4">
                         <button
                           type="submit"
-                          className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-slate-850 active:scale-[0.98] transition-all shadow-md shadow-slate-900/5"
+                          className="px-8 py-3.5 bg-slate-900 text-white rounded-2xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 active:scale-[0.98] transition-all shadow-lg shadow-slate-900/10"
                         >
                           Save Changes
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleEditToggle}
-                          className="px-6 py-3 bg-slate-100 text-slate-500 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-slate-200 transition-all"
-                        >
-                          Cancel
                         </button>
                       </div>
                     )}
@@ -495,35 +493,36 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                         <div key={order.id} className="border border-slate-200/80 rounded-2xl overflow-hidden bg-slate-50/10 hover:border-slate-300 transition-all">
                           
                           {/* Order Card Header */}
-                          <div className="bg-slate-50/80 px-6 py-5 border-b border-slate-200/60 flex flex-wrap justify-between items-center gap-4">
-                            <div className="flex items-center gap-8">
-                              <div>
-                                <p className="text-[11px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Date</p>
+                          <div className="bg-slate-50/80 px-5 md:px-6 py-5 border-b border-slate-200/60 flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4">
+                            <div className="flex w-full md:w-auto items-center gap-8 md:gap-8">
+                              <div className="flex-1 md:flex-none">
+                                <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Date</p>
                                 <p className="text-sm md:text-base font-bold text-slate-800">{order.date}</p>
                               </div>
-                              <div>
-                                <p className="text-[11px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Total</p>
+                              <div className="flex-1 md:flex-none">
+                                <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Total</p>
                                 <p className="text-sm md:text-base font-black text-slate-800 font-extrabold">₹{order.total.toLocaleString()}</p>
                               </div>
                             </div>
-                            <div>
-                              <p className="text-[11px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1 text-right">Order ID</p>
-                              <p className="text-sm md:text-base font-mono font-bold text-slate-800 text-right">{order.id}</p>
+                            <div className="w-full md:w-auto text-left md:text-right mt-2 md:mt-0">
+                              <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1 md:text-right">Order ID</p>
+                              <p className="text-sm md:text-base font-mono font-bold text-slate-800 md:text-right break-all">{order.id}</p>
                             </div>
                           </div>
 
                           {/* Order Card Items & Status */}
-                          <div className="p-6 flex flex-col xl:flex-row justify-between items-start gap-8">
+                          <div className="p-5 md:p-6 flex flex-col xl:flex-row justify-between items-start gap-8">
                             
-                            <div className="space-y-6 flex-1 w-full">
+                            <div className="space-y-4 flex-1 w-full">
                               {order.items.map((item) => (
                                 <div
                                   key={item.id}
-                                  className="flex flex-col sm:flex-row items-start sm:items-center gap-5 rounded-2xl p-4 bg-white/50 hover:bg-white border border-transparent hover:border-slate-200 hover:shadow-sm transition-all"
+                                  className="flex flex-row items-center gap-4 rounded-2xl p-4 bg-white/60 border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all"
                                 >
+                                  {/* Image — compact, left side */}
                                   <Link
                                     href={`/products/${item.productId || item.id}`}
-                                    className="relative w-28 h-28 rounded-2xl overflow-hidden bg-white border border-slate-200 shrink-0 group"
+                                    className="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden bg-white border border-slate-200 shrink-0 group"
                                   >
                                     <Image
                                       src={item.image}
@@ -533,47 +532,33 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                     />
                                   </Link>
 
-                                  <div className="flex-1 w-full">
+                                  {/* Details — right side */}
+                                  <div className="flex-1 min-w-0">
                                     <Link href={`/products/${item.productId || item.id}`}>
-                                      <h4 className="text-lg md:text-xl font-bold text-slate-900 hover:text-black transition">
+                                      <h4 className="text-[15px] md:text-lg font-bold text-slate-900 hover:text-black transition leading-snug truncate">
                                         {item.name}
                                       </h4>
                                     </Link>
 
                                     {item.color && (
-                                      <div className="mt-2">
-                                        <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs md:text-sm font-bold text-slate-700">
-                                          {item.color}
-                                        </span>
-                                      </div>
+                                      <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] md:text-xs font-bold text-slate-600 mt-1.5">
+                                        {item.color}
+                                      </span>
                                     )}
 
-                                    <div className="mt-4 flex flex-wrap items-center gap-6">
-                                      <div className="w-20 md:w-24 shrink-0">
-                                        <p className="text-[10px] md:text-xs uppercase tracking-wider font-bold text-slate-400">
-                                          Price
-                                        </p>
-                                        <p className="text-base md:text-lg font-bold text-slate-900">
-                                          ₹{item.price.toLocaleString()}
-                                        </p>
+                                    {/* Price / Qty / Total — 3 cols */}
+                                    <div className="mt-3 grid grid-cols-3 gap-2">
+                                      <div>
+                                        <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Price</p>
+                                        <p className="text-[13px] font-bold text-slate-900">₹{item.price.toLocaleString()}</p>
                                       </div>
-
-                                      <div className="w-20 md:w-24 shrink-0">
-                                        <p className="text-[10px] md:text-xs uppercase tracking-wider font-bold text-slate-400">
-                                          Quantity
-                                        </p>
-                                        <p className="text-base md:text-lg font-bold text-slate-900">
-                                          {item.quantity}
-                                        </p>
+                                      <div>
+                                        <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Qty</p>
+                                        <p className="text-[13px] font-bold text-slate-900">{item.quantity}</p>
                                       </div>
-
-                                      <div className="w-20 md:w-24 shrink-0">
-                                        <p className="text-[10px] md:text-xs uppercase tracking-wider font-bold text-slate-400">
-                                          Total
-                                        </p>
-                                        <p className="text-base md:text-lg font-bold text-slate-500">
-                                          ₹{(item.price * item.quantity).toLocaleString()}
-                                        </p>
+                                      <div>
+                                        <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Total</p>
+                                        <p className="text-[13px] font-bold text-slate-500">₹{(item.price * item.quantity).toLocaleString()}</p>
                                       </div>
                                     </div>
                                   </div>
@@ -679,53 +664,55 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                       </button>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                       {wishlist.map((item) => (
-                        <div key={item.id} className="border border-slate-200/60 rounded-2xl p-5 bg-slate-50/10 relative flex flex-col justify-between hover:border-slate-350 transition-all group hover:shadow-md">
+                        <div key={item.id} className="border border-slate-200/60 rounded-2xl p-3 sm:p-5 bg-slate-50/10 relative flex flex-col justify-between hover:border-slate-350 transition-all group hover:shadow-md">
                           
                           {/* Trash button */}
                           <button
                             onClick={() => handleRemoveWishlist(item.id)}
-                            className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200/50 transition-all md:opacity-0 md:group-hover:opacity-100"
+                            className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200/50 transition-all md:opacity-0 md:group-hover:opacity-100"
                           >
-                            <Trash2 size={12} />
+                            <Trash2 size={10} className="sm:hidden" />
+                            <Trash2 size={12} className="hidden sm:block" />
                           </button>
 
                           {/* Image */}
-                          <div className="relative w-full aspect-square bg-white rounded-xl overflow-hidden flex items-center justify-center border border-slate-100 mb-4 shrink-0">
+                          <div className="relative w-full aspect-square bg-white rounded-xl overflow-hidden flex items-center justify-center border border-slate-100 mb-3 sm:mb-4 shrink-0">
                             <Image
                               src={item.image}
                               alt={item.name}
                               fill
-                              className="object-contain p-3 mix-blend-multiply"
+                              className="object-contain p-2 sm:p-3 mix-blend-multiply"
                             />
                           </div>
 
                           {/* Details */}
                           <div>
-                            <div className="flex items-center gap-1.5 mb-2">
-                              <span className="bg-slate-100 text-slate-700 font-extrabold text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-md border border-slate-200">
+                            <div className="flex items-center gap-1 sm:gap-1.5 mb-1.5 sm:mb-2">
+                              <span className="bg-slate-100 text-slate-700 font-extrabold text-[8px] sm:text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-md border border-slate-200">
                                 -{item.discount}
                               </span>
-                              <div className="flex items-center text-amber-500 text-xs font-bold">
-                                <Star size={10} fill="currentColor" className="mr-0.5 text-amber-400" />
+                              <div className="flex items-center text-amber-500 text-[10px] sm:text-xs font-bold">
+                                <Star size={8} fill="currentColor" className="mr-0.5 text-amber-400 sm:w-2.5 sm:h-2.5" />
                                 {item.rating}
                               </div>
                             </div>
                             
-                            <h4 className="font-extrabold text-slate-800 text-xs mb-1.5 truncate">{item.name}</h4>
+                            <h4 className="font-extrabold text-slate-800 text-[11px] sm:text-xs mb-1 sm:mb-1.5 truncate">{item.name}</h4>
                             
-                            <div className="flex items-baseline gap-2 mb-4">
-                              <span className="text-sm font-black text-slate-900 font-extrabold">₹{item.price.toLocaleString()}</span>
-                              <span className="text-[10px] text-slate-400 line-through">₹{item.originalPrice.toLocaleString()}</span>
+                            <div className="flex items-baseline gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                              <span className="text-xs sm:text-sm font-black text-slate-900 font-extrabold">₹{item.price.toLocaleString()}</span>
+                              <span className="text-[9px] sm:text-[10px] text-slate-400 line-through">₹{item.originalPrice.toLocaleString()}</span>
                             </div>
                           </div>
 
                           <button
                             onClick={() => handleMoveToCart(item)}
-                            className="w-full py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-slate-800 transition-all active:scale-[0.98] shadow-md shadow-slate-900/5"
+                            className="w-full py-2 sm:py-2.5 bg-slate-900 text-white rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-slate-800 transition-all active:scale-[0.98] shadow-md shadow-slate-900/5"
                           >
-                            <ShoppingCart size={12} />
+                            <ShoppingCart size={10} className="sm:hidden" />
+                            <ShoppingCart size={12} className="hidden sm:block" />
                             Add To Cart
                           </button>
 

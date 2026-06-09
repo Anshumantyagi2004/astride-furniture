@@ -2,7 +2,10 @@
 
 import Image from "next/image";
 import { useState, useCallback, useEffect } from "react";
-// img_from thhe Png1_circular 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import { motion, AnimatePresence } from "framer-motion";
+import "swiper/css";
 
 const ALL_CHAIRS = [
   { src: "/Png1/chair12_ErgoFit.webp", name: "ErgoFit Premium", price: 1299 },
@@ -79,6 +82,7 @@ interface ChairFinderProps {
 export default function ChairFinder({ onBack }: ChairFinderProps) {
   const [sliderValue, setSliderValue] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [isTouched, setIsTouched] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -89,11 +93,14 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
 
   const visibleCount = Math.max(1, Math.ceil(ALL_CHAIRS.length * (1 - sliderValue / 100)));
 
-  const getTimeLabel = useCallback(() => {
-    if (sliderValue < 34) return "QUICK SESSION";
-    if (sliderValue < 67) return "HALF DAY";
-    return "ALL DAY";
-  }, [sliderValue]);
+  // Prepare Swiper rows data
+  const row1 = [...ALL_CHAIRS.slice(0, 5), ...ALL_CHAIRS.slice(0, 5)];
+  const row2 = [...ALL_CHAIRS.slice(5, 10), ...ALL_CHAIRS.slice(5, 10)];
+  const row3 = [...ALL_CHAIRS.slice(10), ...ALL_CHAIRS.slice(10), ...ALL_CHAIRS.slice(10)];
+
+  const handleTouch = () => {
+    setIsTouched(true);
+  };
 
   return (
     <div className="absolute inset-0 z-[999] w-full h-full bg-[#f5f5f5] flex flex-col overflow-hidden pt-[10px] px-[10px]">
@@ -111,36 +118,148 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
       </button>
 
       {/* ── Main content area ── */}
-      <div className="flex-1 relative overflow-hidden">
-        <div className="relative w-full h-full max-w-[1200px] mx-auto transition-all duration-700">
-          {ALL_CHAIRS.map((chair, index) => {
-            const isVisible = index < visibleCount;
-            const pos = getPosition(index, Math.max(1, visibleCount), isMobile);
-
-            return (
-              <div
-                key={chair.name}
-                className="absolute transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]"
-                style={{
-                  left: pos.left,
-                  top: pos.top,
-                  transform: `translate(-50%, -50%) scale(${isVisible ? pos.scale : 0.1})`,
-                  opacity: isVisible ? 1 : 0,
-                  zIndex: pos.zIndex,
-                  pointerEvents: isVisible ? "auto" : "none",
-                }}
-              >
-                <Image
-                  src={chair.src}
-                  alt={chair.name}
-                  width={320}
-                  height={320}
-                  className="w-[150px] h-[150px] md:w-[250px] md:h-[250px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:scale-110 transition-transform duration-300"
-                />
+      <div className="flex-1 relative overflow-hidden flex items-center justify-center">
+        <AnimatePresence mode="wait">
+          {!isTouched ? (
+            /* Auto-scrolling Swiper Rows before touching slider */
+            <motion.div
+              key="moving-swiper"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="w-full h-full flex flex-col justify-center gap-4 md:gap-8 max-w-[1200px] mx-auto py-8"
+            >
+              <div className="text-center mb-2 px-4">
+                <span className="text-zinc-500 text-[10px] tracking-widest uppercase block mb-0.5">Interactive Discovery</span>
+                <h2 className="text-gray-900 text-2xl md:text-3xl font-serif font-bold uppercase tracking-tight">Slide sitting time to find your perfect chair</h2>
               </div>
-            );
-          })}
-        </div>
+              
+              <div className="w-full overflow-hidden">
+                <Swiper
+                  modules={[Autoplay]}
+                  slidesPerView={isMobile ? 3 : 5}
+                  spaceBetween={20}
+                  loop={true}
+                  speed={5000}
+                  autoplay={{
+                    delay: 0,
+                    disableOnInteraction: false,
+                  }}
+                  allowTouchMove={false}
+                  className="pointer-events-none [&_.swiper-wrapper]:!ease-linear"
+                >
+                  {row1.map((chair, idx) => (
+                    <SwiperSlide key={`r1-${idx}`} className="flex justify-center items-center">
+                      <Image
+                        src={chair.src}
+                        alt={chair.name}
+                        width={180}
+                        height={180}
+                        className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+
+              <div className="w-full overflow-hidden">
+                <Swiper
+                  modules={[Autoplay]}
+                  slidesPerView={isMobile ? 3 : 5}
+                  spaceBetween={20}
+                  loop={true}
+                  speed={5000}
+                  autoplay={{
+                    delay: 0,
+                    disableOnInteraction: false,
+                    reverseDirection: true,
+                  }}
+                  allowTouchMove={false}
+                  className="pointer-events-none [&_.swiper-wrapper]:!ease-linear"
+                >
+                  {row2.map((chair, idx) => (
+                    <SwiperSlide key={`r2-${idx}`} className="flex justify-center items-center">
+                      <Image
+                        src={chair.src}
+                        alt={chair.name}
+                        width={180}
+                        height={180}
+                        className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+
+              <div className="w-full overflow-hidden">
+                <Swiper
+                  modules={[Autoplay]}
+                  slidesPerView={isMobile ? 3 : 5}
+                  spaceBetween={20}
+                  loop={true}
+                  speed={5000}
+                  autoplay={{
+                    delay: 0,
+                    disableOnInteraction: false,
+                  }}
+                  allowTouchMove={false}
+                  className="pointer-events-none [&_.swiper-wrapper]:!ease-linear"
+                >
+                  {row3.map((chair, idx) => (
+                    <SwiperSlide key={`r3-${idx}`} className="flex justify-center items-center">
+                      <Image
+                        src={chair.src}
+                        alt={chair.name}
+                        width={180}
+                        height={180}
+                        className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            </motion.div>
+          ) : (
+            /* Normal grid layout when slider is active */
+            <motion.div
+              key="still-grid"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full h-full max-w-[1200px] mx-auto"
+            >
+              {ALL_CHAIRS.map((chair, index) => {
+                const isVisible = index < visibleCount;
+                const pos = getPosition(index, Math.max(1, visibleCount), isMobile);
+
+                return (
+                  <div
+                    key={chair.name}
+                    className="absolute transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]"
+                    style={{
+                      left: pos.left,
+                      top: pos.top,
+                      transform: `translate(-50%, -50%) scale(${isVisible ? pos.scale : 0.1})`,
+                      opacity: isVisible ? 1 : 0,
+                      zIndex: pos.zIndex,
+                      pointerEvents: isVisible ? "auto" : "none",
+                    }}
+                  >
+                    <Image
+                      src={chair.src}
+                      alt={chair.name}
+                      width={320}
+                      height={320}
+                      className="w-[150px] h-[150px] md:w-[250px] md:h-[250px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ── Bottom slider card ── */}
@@ -175,7 +294,12 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
               min={0}
               max={100}
               value={sliderValue}
-              onChange={(e) => setSliderValue(Number(e.target.value))}
+              onChange={(e) => {
+                setSliderValue(Number(e.target.value));
+                handleTouch();
+              }}
+              onTouchStart={handleTouch}
+              onMouseDown={handleTouch}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 touch-none"
               aria-label="Sitting time"
             />

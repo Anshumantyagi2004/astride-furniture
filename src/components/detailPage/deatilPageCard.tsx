@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { Truck, RotateCcw, ShieldCheck, ArrowRight, Heart } from 'lucide-react';
+import { Truck, RotateCcw, ShieldCheck, ArrowRight, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import CustomButton from './deatileProductCardButton';
 import gsap from 'gsap';
 
@@ -28,6 +28,8 @@ export default function DetailPageCard({ product }: { product: any }) {
   const [activeTab, setActiveTab] = useState<'description' | 'features' | 'specs' | 'application'>('description');
   const tabContentRef = useRef<HTMLDivElement>(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   useEffect(() => {
     if (product) {
@@ -93,17 +95,18 @@ export default function DetailPageCard({ product }: { product: any }) {
         (v: any) => v.colorName?.toLowerCase() === selectedColor?.toLowerCase()
       );
       if (variant && variant.images && variant.images.length > 0) {
-        // Only set active image to the first image of the selected variant
-        // if the current activeImage is not already in the selected variant's images
-        const isCurrentInVariant = variant.images.some((img: any) => img.url === activeImage);
-        if (!isCurrentInVariant) {
-          setActiveImage(variant.images[0].url);
-        }
+        setActiveImage((curr) => {
+          const isCurrentInVariant = variant.images.some((img: any) => img.url === curr);
+          if (!isCurrentInVariant) {
+            return variant.images[0].url;
+          }
+          return curr;
+        });
       } else {
         setActiveImage(product.image);
       }
     }
-  }, [selectedColor, product, activeImage]);
+  }, [selectedColor, product]);
 
   const handleThumbnailClick = (imgUrl: string) => {
     setActiveImage(imgUrl);
@@ -159,32 +162,131 @@ export default function DetailPageCard({ product }: { product: any }) {
 
   const isBarStool = product.category?.toLowerCase().includes("bar");
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const goNextImage = () => {
+    const currentUrl = activeImage || product.image;
+    const currentIndex = allVariantImages.findIndex((img: any) => img.url === currentUrl);
+    if (currentIndex !== -1) {
+      let nextImage;
+      if (currentIndex < allVariantImages.length - 1) {
+        nextImage = allVariantImages[currentIndex + 1].url;
+      } else {
+        nextImage = allVariantImages[0].url;
+      }
+      setActiveImage(nextImage);
+      // Synchronize color selection indicator with the active image's variant
+      const variant = product?.colorVariants?.find((v: any) => 
+        v.images?.some((img: any) => img.url === nextImage)
+      );
+      if (variant && variant.colorName) {
+        setSelectedColor(variant.colorName);
+      }
+    }
+  };
+
+  const goPrevImage = () => {
+    const currentUrl = activeImage || product.image;
+    const currentIndex = allVariantImages.findIndex((img: any) => img.url === currentUrl);
+    if (currentIndex !== -1) {
+      let prevImage;
+      if (currentIndex > 0) {
+        prevImage = allVariantImages[currentIndex - 1].url;
+      } else {
+        prevImage = allVariantImages[allVariantImages.length - 1].url;
+      }
+      setActiveImage(prevImage);
+      // Synchronize color selection indicator with the active image's variant
+      const variant = product?.colorVariants?.find((v: any) => 
+        v.images?.some((img: any) => img.url === prevImage)
+      );
+      if (variant && variant.colorName) {
+        setSelectedColor(variant.colorName);
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    
+    if (isLeftSwipe) {
+      goNextImage();
+    } else if (isRightSwipe) {
+      goPrevImage();
+    }
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
   return (
     <div 
       className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-white min-h-screen font-sans"
       style={{ fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
     >
       {/* Breadcrumbs */}
-      <div className="text-[12px] text-neutral-400 font-medium mb-6 flex items-center gap-1.5 tracking-wide">
-        <span className="hover:text-black cursor-pointer transition-colors">Home</span>
+      <div className="text-[10px] md:text-[12px] text-neutral-400 font-medium mb-6 flex flex-wrap items-center gap-x-1.5 gap-y-1 tracking-wide leading-relaxed">
+        <span className="hover:text-black cursor-pointer transition-colors whitespace-nowrap">Home</span>
         <span className="text-neutral-300">/</span>
-        <span className="hover:text-black cursor-pointer transition-colors">{product.category}</span>
+        <span className="hover:text-black cursor-pointer transition-colors whitespace-nowrap">{product.category}</span>
         <span className="text-neutral-300">/</span>
-        <span className="text-neutral-600 font-semibold">{product.name}</span>
+        <span className="text-neutral-600 font-semibold text-[11px] md:text-[13px]">{product.name}</span>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 mt-2">
         {/* Left: Image Gallery */}
-        <div className="w-full lg:w-[44%] lg:sticky lg:top-20 self-start flex gap-4">
+        <div className="w-full lg:w-[44%] lg:sticky lg:top-20 self-start flex flex-col lg:flex-row-reverse gap-4 lg:gap-6">
+          
+          {/* Main Image */}
+          <div 
+            className="w-full lg:flex-1 h-[350px] md:h-[500px] lg:h-[calc(100vh-120px)] flex items-center justify-center relative overflow-hidden group bg-[#FAFAFA] rounded-[32px] lg:rounded-2xl shrink-0"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {allVariantImages.length > 1 && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); goPrevImage(); }}
+                className="absolute left-4 lg:hidden z-10 w-9 h-9 rounded-full bg-white/60 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.06)] flex items-center justify-center text-slate-700 active:bg-white transition-all duration-200 ease-out active:scale-90"
+              >
+                <ChevronLeft size={20} strokeWidth={2.5} />
+              </button>
+            )}
+
+            <Image 
+              src={activeImage || product.image} 
+              alt={product.name} 
+              fill
+              className="object-contain p-8 lg:p-12 hover:scale-105 transition-transform duration-700 ease-out mix-blend-multiply"
+            />
+
+            {allVariantImages.length > 1 && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); goNextImage(); }}
+                className="absolute right-4 lg:hidden z-10 w-9 h-9 rounded-full bg-white/60 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.06)] flex items-center justify-center text-slate-700 active:bg-white transition-all duration-200 ease-out active:scale-90"
+              >
+                <ChevronRight size={20} strokeWidth={2.5} />
+              </button>
+            )}
+          </div>
+
           {/* Thumbnails strip */}
           {allVariantImages.length > 1 && (
-            <div className="flex flex-col gap-3 w-[70px] md:w-[80px] shrink-0 overflow-y-auto max-h-[400px] md:max-h-[500px] lg:max-h-[calc(100vh-120px)] pr-1 scrollbar-thin">
+            <div className="flex flex-row lg:flex-col justify-center lg:justify-start gap-3 w-full lg:w-[80px] shrink-0 overflow-x-auto lg:overflow-y-auto max-h-auto lg:max-h-[calc(100vh-120px)] px-1.5 lg:px-0 pb-2 lg:pb-0 scrollbar-none lg:scrollbar-thin">
               {allVariantImages.map((img: any, idx: number) => (
                 <button
                   key={idx}
                   onClick={() => handleThumbnailClick(img.url)}
-                  className={`relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAFAFA] border-2 transition-all duration-200 shrink-0 ${
-                    activeImage === img.url ? 'border-black' : 'border-transparent hover:border-neutral-300'
+                  className={`relative w-[60px] lg:w-full aspect-square rounded-full lg:rounded-xl bg-[#FAFAFA] border-2 transition-all duration-200 shrink-0 ${
+                    activeImage === img.url ? 'border-black' : 'border-transparent hover:border-neutral-350'
                   }`}
                 >
                   <Image 
@@ -198,15 +300,6 @@ export default function DetailPageCard({ product }: { product: any }) {
             </div>
           )}
 
-          {/* Main Image */}
-          <div className="flex-1 h-[400px] md:h-[500px] lg:h-[calc(100vh-120px)] flex items-center justify-center relative overflow-hidden group bg-[#FAFAFA] rounded-2xl">
-            <Image 
-              src={activeImage || product.image} 
-              alt={product.name} 
-              fill
-              className="object-contain p-8 lg:p-12 hover:scale-105 transition-transform duration-700 ease-out mix-blend-multiply"
-            />
-          </div>
         </div>
 
         {/* Right: Details */}
@@ -220,7 +313,7 @@ export default function DetailPageCard({ product }: { product: any }) {
           </h1>
 
           <div 
-            className="text-[14px] text-neutral-500 leading-relaxed font-medium mb-5 pr-4"
+            className="hidden lg:block text-[14px] text-neutral-500 leading-relaxed font-medium mb-5 pr-4"
             dangerouslySetInnerHTML={{ __html: product.shortDescription || `Premium ergonomic seat tailored for long sessions, perfect for gaming setups and casual office workspace styling.` }}
           />
 
@@ -238,12 +331,12 @@ export default function DetailPageCard({ product }: { product: any }) {
                 {product.specifications.slice(0, 5).map((spec: any, idx: number) => (
                   <div 
                     key={idx} 
-                    className="flex justify-between items-center py-2.5 border-b border-neutral-200/60 last:border-b-0"
+                    className="flex justify-between items-start py-2.5 border-b border-neutral-200/60 last:border-b-0 gap-4"
                   >
-                    <span className="text-[11px] font-semibold text-neutral-700 uppercase tracking-wider">
+                    <span className="text-[11px] font-semibold text-neutral-700 uppercase tracking-wider shrink-0 mt-0.5">
                       {spec.name || spec.key}
                     </span>
-                    <span className="text-[13px] font-bold text-neutral-900">
+                    <span className="text-[13px] font-bold text-neutral-900 text-right leading-tight max-w-[70%]">
                       {spec.value}
                     </span>
                   </div>
@@ -283,35 +376,64 @@ export default function DetailPageCard({ product }: { product: any }) {
           <hr className="border-neutral-200 mb-5" />
 
           <div className="mb-6">
-            <p className="text-[15px] font-semibold mb-3">
-              Select Color
-            </p>
-            <div className="flex flex-wrap gap-4">
-              {(product.colors || []).map((colorName: string) => {
-                const colorHex = COLOR_MAP[colorName.toLowerCase()] || colorName.toLowerCase();
-                const isSelected = selectedColor?.toLowerCase() === colorName?.toLowerCase();
-                
-                return (
-                  <div key={colorName} className="flex flex-col items-center gap-1">
-                    <button 
-                      type="button"
-                      onClick={() => setSelectedColor(colorName)}
-                      style={{ backgroundColor: colorHex }}
-                      className={`w-7 h-7 rounded-full border border-neutral-300 shadow-sm transition-all duration-200 focus:outline-none ${
-                        isSelected 
-                          ? 'ring-2 ring-offset-2 ring-black scale-110' 
-                          : 'hover:scale-105'
-                      }`}
-                      title={colorName}
-                    />
-                    <span className={`text-[10px] font-bold transition-colors tracking-wide ${
-                      isSelected ? 'text-black font-black' : 'text-neutral-500'
-                    }`}>
-                      {colorName}
-                    </span>
+            <div className="flex items-center justify-between sm:block w-full">
+              <div>
+                <p className="text-[15px] font-semibold mb-3">
+                  Select Color
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  {(product.colors || []).map((colorName: string) => {
+                    const colorHex = COLOR_MAP[colorName.toLowerCase()] || colorName.toLowerCase();
+                    const isSelected = selectedColor?.toLowerCase() === colorName?.toLowerCase();
+                    
+                    return (
+                      <div key={colorName} className="flex flex-col items-center gap-1">
+                        <button 
+                          type="button"
+                          onClick={() => {
+                            setSelectedColor(colorName);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          style={{ backgroundColor: colorHex }}
+                          className={`w-7 h-7 rounded-full border border-neutral-300 shadow-sm transition-all duration-200 focus:outline-none ${
+                            isSelected 
+                              ? 'ring-2 ring-offset-2 ring-black scale-110' 
+                              : 'hover:scale-105'
+                          }`}
+                          title={colorName}
+                        />
+                        <span className={`text-[10px] font-bold transition-colors tracking-wide ${
+                          isSelected ? 'text-black font-black' : 'text-neutral-500'
+                        }`}>
+                          {colorName}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Mobile-only Quantity selector */}
+              <div className="sm:hidden flex flex-col items-center self-start">
+                <span className="text-[15px] font-semibold mb-3 text-black">Quantity</span>
+                <div className="flex items-center gap-1.5">
+                  <button 
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors text-black font-medium text-base"
+                  >
+                    -
+                  </button>
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#E5E7EB] text-black font-semibold text-[15px]">
+                    {quantity}
                   </div>
-                );
-              })}
+                  <button 
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors text-black font-medium text-base"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -321,8 +443,8 @@ export default function DetailPageCard({ product }: { product: any }) {
           <div className="flex flex-col gap-3 mb-8">
             {/* Row 1: Quantity & Add to Cart */}
             <div className="flex flex-col sm:flex-row gap-3">
-              {/* Quantity */}
-              <div className="flex items-center gap-1.5">
+              {/* Desktop-only Quantity Selector */}
+              <div className="hidden sm:flex items-center gap-1.5">
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors text-black font-medium text-base"

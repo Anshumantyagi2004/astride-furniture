@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 import ProductPageCard from '../ProductPageCard';
@@ -110,23 +111,31 @@ export default function ProductPageHome() {
   const [selectedCapacity, setSelectedCapacity] = useState(null);
   const [maxPrice, setMaxPrice] = useState(25000);
   const [wishlisted, setWishlisted] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchParams = useSearchParams();
+  const catParam = searchParams ? searchParams.get('category') : null;
+  const searchParam = searchParams ? searchParams.get('search') : null;
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const cat = params.get('category');
-      if (cat) {
-        const decoded = decodeURIComponent(cat);
-        let match = TABS.find(t => t.toLowerCase() === decoded.toLowerCase());
-        if (!match && decoded.toLowerCase().includes('bar')) {
-           match = "Bar Stool";
-        }
-        if (match) {
-          setSelectedCategory(match);
-        }
+    if (catParam) {
+      const decoded = decodeURIComponent(catParam);
+      let match = TABS.find(t => t.toLowerCase() === decoded.toLowerCase());
+      if (!match && decoded.toLowerCase().includes('bar')) {
+         match = "Bar Stool";
       }
+      if (match) {
+        setSelectedCategory(match);
+      }
+    } else {
+      setSelectedCategory("All Products");
     }
-  }, []);
+    if (searchParam) {
+      setSearchQuery(decodeURIComponent(searchParam));
+    } else {
+      setSearchQuery("");
+    }
+  }, [catParam, searchParam]);
 
   useEffect(() => {
     const saved = localStorage.getItem("astride_wishlist");
@@ -267,12 +276,18 @@ export default function ProductPageHome() {
     setMaxPrice(25000);
   };
 
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const activeFiltersCount = [selectedBackSupport, selectedHours, selectedCapacity, maxPrice !== 25000 ? true : null].filter(Boolean).length;
+
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans px-4 md:px-8 py-8 md:py-16 select-none overflow-x-hidden">
-      <div className="max-w-[1600px] mx-auto w-full">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans select-none overflow-x-hidden">
+      
+      {/* ── Page Header ── */}
+      <div className="max-w-[1600px] mx-auto px-4 md:px-8 pt-8 md:pt-16 pb-0">
         
-        {/* ── Breadcrumb Navigation ── */}
-        <div className="flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-10 transition-all duration-300">
+        {/* Breadcrumb */}
+        <div className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6 md:mb-10">
           <span className="hover:text-slate-900 cursor-pointer transition-colors">Home</span>
           <span>/</span>
           <span className="hover:text-slate-900 cursor-pointer transition-colors">Products</span>
@@ -280,171 +295,251 @@ export default function ProductPageHome() {
           <span className="text-slate-900">{selectedCategory}</span>
         </div>
 
-        {/* ── Dynamic Category Title Header ── */}
-        <div className="text-center mb-12 transition-all duration-300">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-black mb-5">
+        {/* Title */}
+        <div className="text-center mb-6 md:mb-12">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-black mb-3 md:mb-5">
             {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory === "Gaming Chair" ? "Gaming Series" : selectedCategory === "Executive Chair" ? "Executive Series" : selectedCategory === "Staff Chair" ? "Staff Series" : selectedCategory === "Study Chair" ? "Study Series" : "Premium Bar Stools"}
           </h1>
-          <p className="max-w-3xl mx-auto text-sm md:text-base text-neutral-500 leading-relaxed font-medium">
-            Discover Astride's premium ergonomics — masterfully engineered seating built for long-session endurance, proactive posture correction, adjustable support components, and premium styling.
+          <p className="max-w-2xl mx-auto text-xs md:text-base text-neutral-500 leading-relaxed font-medium px-2">
+            Discover Astride's premium ergonomics — masterfully engineered seating built for long-session endurance, proactive posture correction, and premium styling.
           </p>
         </div>
 
-        {/* ── Pill Tab Navigation ── */}
-        <div className="flex justify-center items-center gap-3 md:gap-4 flex-wrap pb-4 mb-16 max-w-4xl mx-auto">
-          {TABS.map((tab) => {
-            const isActive = selectedCategory === tab;
-            return (
-              <button
-                key={tab}
-                onClick={() => setSelectedCategory(tab)}
-                className={`relative px-6 py-3 rounded-full font-bold uppercase text-[11px] md:text-xs tracking-widest focus:outline-none transition-all duration-300 ${
-                  isActive 
-                    ? "bg-black text-white shadow-lg scale-105" 
-                    : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-black"
-                }`}
-              >
-                <span>{tab}</span>
-              </button>
-            );
-          })}
+        {/* ── Category Tabs — Horizontal Scrollable on Mobile ── */}
+        <div className="relative mb-4 md:mb-8">
+          {/* Mobile Swipe Hint */}
+          <div className="flex items-center justify-between text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] px-1 mb-2.5 md:hidden select-none">
+            <span>Select Category</span>
+            <span className="flex items-center gap-1.5 text-slate-600 font-extrabold animate-pulse">
+              Swipe
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 md:gap-3 overflow-x-auto pb-2 md:flex-wrap md:justify-center md:overflow-visible scrollbar-hide relative z-0" style={{ scrollbarWidth: 'none' }}>
+            {TABS.map((tab) => {
+              const isActive = selectedCategory === tab;
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setSelectedCategory(tab)}
+                  className={`shrink-0 px-4 md:px-6 py-2.5 md:py-3 rounded-full font-bold uppercase text-[10px] md:text-xs tracking-widest focus:outline-none transition-all duration-300 ${
+                    isActive 
+                      ? "bg-black text-white shadow-lg scale-105" 
+                      : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-black"
+                  }`}
+                >
+                  {tab}
+                </button>
+              );
+            })}
+          </div>
+          {/* Fade mask for mobile overflow */}
+          <div className="absolute right-0 bottom-2 top-[22px] w-12 bg-gradient-to-l from-[#f8fafc] to-transparent pointer-events-none md:hidden z-10" />
         </div>
 
-        {/* ── Main Catalog Grid (Two Column) ── */}
+        {/* ── Mobile Filter Bar ── */}
+        <div className="flex lg:hidden items-center justify-between mb-4 px-0">
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            {filteredProducts.length} Products
+          </p>
+          <button
+            onClick={() => setIsFilterOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-black text-white text-[11px] font-bold uppercase tracking-wider transition-all active:scale-95"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
+            Filters{activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ""}
+          </button>
+        </div>
+      </div>
+
+      {/* ── Mobile Filter Drawer (Slide-up) ── */}
+      {isFilterOpen && (
+        <div className="lg:hidden fixed inset-0 z-[1000]">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setIsFilterOpen(false)}
+          />
+          {/* Panel */}
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-black">Filters</h2>
+              <div className="flex items-center gap-4">
+                {activeFiltersCount > 0 && (
+                  <button onClick={clearFilters} className="text-[10px] font-black text-red-500 uppercase tracking-widest">
+                    Clear All
+                  </button>
+                )}
+                <button onClick={() => setIsFilterOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Back Support */}
+            <div className="mb-7 border-b border-slate-100 pb-7">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Back Support</h3>
+              <div className="flex flex-wrap gap-3">
+                {["High Back"].map((bs) => (
+                  <button
+                    key={bs}
+                    onClick={() => setSelectedBackSupport(selectedBackSupport === bs ? null : bs)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold border transition-all ${selectedBackSupport === bs ? 'bg-black text-white border-black' : 'bg-white text-slate-600 border-slate-200'}`}
+                  >
+                    {bs}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Hours */}
+            <div className="mb-7 border-b border-slate-100 pb-7">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Hours of Usage</h3>
+              <div className="flex flex-wrap gap-3">
+                {["6-8 Hours", "8+ Hours"].map((hr) => (
+                  <button
+                    key={hr}
+                    onClick={() => setSelectedHours(selectedHours === hr ? null : hr)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold border transition-all ${selectedHours === hr ? 'bg-black text-white border-black' : 'bg-white text-slate-600 border-slate-200'}`}
+                  >
+                    {hr}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Capacity */}
+            <div className="mb-7 border-b border-slate-100 pb-7">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Capacity (in KGs)</h3>
+              <div className="flex flex-wrap gap-3">
+                {["120 kg", "150 kg"].map((cap) => (
+                  <button
+                    key={cap}
+                    onClick={() => setSelectedCapacity(selectedCapacity === cap ? null : cap)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold border transition-all ${selectedCapacity === cap ? 'bg-black text-white border-black' : 'bg-white text-slate-600 border-slate-200'}`}
+                  >
+                    {cap}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className="mb-8">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Max Price</h3>
+                <span className="text-sm font-black text-slate-900">₹{maxPrice.toLocaleString()}</span>
+              </div>
+              <input
+                type="range" min={0} max={25000} step={500} value={maxPrice}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                className="w-full accent-slate-900 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none"
+              />
+            </div>
+
+            <button
+              onClick={() => setIsFilterOpen(false)}
+              className="w-full py-4 bg-black text-white rounded-2xl text-xs font-bold uppercase tracking-widest"
+            >
+              Show {filteredProducts.length} Products
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Main Content ── */}
+      <div className="max-w-[1600px] mx-auto px-4 md:px-8 pb-12">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
-          {/* ── Sidebar Filters ── */}
-          <aside className="w-full lg:w-[280px] shrink-0 lg:sticky lg:top-32 h-fit lg:pr-8 bg-neutral-50 p-6 rounded-2xl border border-neutral-100 transition-all duration-300">
+          {/* ── Desktop Sidebar Filters ── */}
+          <aside className="hidden lg:block w-full lg:w-[280px] shrink-0 lg:sticky lg:top-32 h-fit lg:pr-8 bg-neutral-50 p-6 rounded-2xl border border-neutral-100">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-4 mb-6">
               <h2 className="text-sm font-bold uppercase tracking-widest text-black">Filters</h2>
-              {(selectedCategory !== "All Products" || selectedBackSupport || selectedHours || selectedCapacity || maxPrice !== 25000) && (
-                <button
-                  onClick={clearFilters}
-                  className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:text-red-600 transition-colors"
-                >
+              {(selectedBackSupport || selectedHours || selectedCapacity || maxPrice !== 25000) && (
+                <button onClick={clearFilters} className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:text-red-600 transition-colors">
                   Clear All
                 </button>
               )}
             </div>
 
-            {/* Back Support */}
             <div className="mb-8">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4">Back Support</h3>
               <div className="flex flex-col gap-2">
                 {["High Back"].map((bs) => (
                   <label key={bs} className="flex items-center gap-3 cursor-pointer text-xs font-bold text-slate-650 group">
-                    <input
-                      type="radio"
-                      name="backSupport"
-                      checked={selectedBackSupport === bs}
-                      onChange={() => setSelectedBackSupport(selectedBackSupport === bs ? null : bs)}
-                      className="accent-slate-900 w-4 h-4 cursor-pointer"
-                    />
+                    <input type="radio" name="backSupport" checked={selectedBackSupport === bs} onChange={() => setSelectedBackSupport(selectedBackSupport === bs ? null : bs)} className="accent-slate-900 w-4 h-4 cursor-pointer" />
                     <span className="group-hover:text-slate-905 transition-colors">{bs}</span>
                   </label>
                 ))}
               </div>
             </div>
 
-            {/* Hours of Usage */}
             <div className="mb-8">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4">Hours of Usage</h3>
               <div className="flex flex-col gap-2">
                 {["6-8 Hours", "8+ Hours"].map((hr) => (
                   <label key={hr} className="flex items-center gap-3 cursor-pointer text-xs font-bold text-slate-650 group">
-                    <input
-                      type="radio"
-                      name="hours"
-                      checked={selectedHours === hr}
-                      onChange={() => setSelectedHours(selectedHours === hr ? null : hr)}
-                      className="accent-slate-900 w-4 h-4 cursor-pointer"
-                    />
+                    <input type="radio" name="hours" checked={selectedHours === hr} onChange={() => setSelectedHours(selectedHours === hr ? null : hr)} className="accent-slate-900 w-4 h-4 cursor-pointer" />
                     <span className="group-hover:text-slate-905 transition-colors">{hr}</span>
                   </label>
                 ))}
               </div>
             </div>
 
-            {/* Capacity (in KGs) */}
             <div className="mb-8">
               <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4">Capacity (in KGs)</h3>
               <div className="flex flex-col gap-2">
                 {["120 kg", "150 kg"].map((cap) => (
                   <label key={cap} className="flex items-center gap-3 cursor-pointer text-xs font-bold text-slate-650 group">
-                    <input
-                      type="radio"
-                      name="capacity"
-                      checked={selectedCapacity === cap}
-                      onChange={() => setSelectedCapacity(selectedCapacity === cap ? null : cap)}
-                      className="accent-slate-900 w-4 h-4 cursor-pointer"
-                    />
+                    <input type="radio" name="capacity" checked={selectedCapacity === cap} onChange={() => setSelectedCapacity(selectedCapacity === cap ? null : cap)} className="accent-slate-900 w-4 h-4 cursor-pointer" />
                     <span className="group-hover:text-slate-905 transition-colors">{cap}</span>
                   </label>
                 ))}
               </div>
             </div>
 
-            {/* Price Filter */}
             <div className="pt-2">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Max Price</h3>
                 <span className="text-[13px] font-black text-slate-900">₹{maxPrice.toLocaleString()}</span>
               </div>
-              <input
-                type="range"
-                min={0}
-                max={25000}
-                step={500}
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full accent-slate-900 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none"
-              />
+              <input type="range" min={0} max={25000} step={500} value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} className="w-full accent-slate-900 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none" />
             </div>
           </aside>
 
-          {/* ── Product List Grid ── */}
+          {/* ── Product Grid ── */}
           <main className="flex-1 w-full">
             {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10 justify-items-center w-full transition-all duration-300">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 w-full">
                 {[...Array(8)].map((_, i) => (
-                  <div key={i} className="relative rounded-[32px] overflow-hidden bg-white border border-slate-100 min-w-[280px] w-full max-w-[320px] flex flex-col animate-pulse shadow-sm">
-                    {/* Image Container Placeholder */}
-                    <div className="m-3 rounded-[24px] relative h-[260px] bg-[#F8F9FA] flex flex-col items-center justify-center overflow-hidden">
-                      <div className="w-40 h-40 bg-slate-200/40 rounded-full blur-3xl absolute"></div>
-                      <div className="absolute top-3 left-3 w-12 h-6 bg-slate-200/80 rounded-md"></div>
-                      <div className="absolute top-3 right-3 w-[34px] h-[34px] bg-slate-200/80 rounded-full"></div>
+                  <div key={i} className="relative rounded-[24px] md:rounded-[32px] overflow-hidden bg-white border border-slate-100 w-full flex flex-col animate-pulse shadow-sm">
+                    <div className="m-2 md:m-3 rounded-[18px] md:rounded-[24px] relative h-[160px] md:h-[260px] bg-[#F8F9FA] flex flex-col items-center justify-center overflow-hidden">
+                      <div className="w-24 h-24 bg-slate-200/40 rounded-full blur-3xl absolute"></div>
                     </div>
-
-                    {/* Card Details Placeholder */}
-                    <div className="px-6 pb-6 pt-2 flex flex-col flex-1 gap-3">
-                      <div className="w-24 h-2.5 bg-slate-200 rounded-full mt-1"></div>
-                      <div className="w-4/5 h-6 bg-slate-200 rounded-lg"></div>
-                      
-                      <div className="flex items-end gap-2 mt-auto pt-4">
-                        <div className="w-20 h-7 bg-slate-200 rounded-lg"></div>
-                        <div className="w-12 h-4 bg-slate-100 rounded-md mb-0.5"></div>
+                    <div className="px-3 md:px-6 pb-4 md:pb-6 pt-2 flex flex-col flex-1 gap-2 md:gap-3">
+                      <div className="w-16 h-2 bg-slate-200 rounded-full mt-1"></div>
+                      <div className="w-4/5 h-4 bg-slate-200 rounded-lg"></div>
+                      <div className="flex items-end gap-2 mt-auto pt-3">
+                        <div className="w-16 h-5 bg-slate-200 rounded-lg"></div>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="bg-white border border-slate-100 rounded-[32px] p-12 text-center shadow-[0_20px_40px_rgba(0,0,0,0.03)] transition-all duration-300">
+              <div className="bg-white border border-slate-100 rounded-[32px] p-12 text-center shadow-[0_20px_40px_rgba(0,0,0,0.03)]">
                 <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest">No matching chairs found</p>
-                <button
-                  onClick={clearFilters}
-                  className="mt-4 px-6 py-2.5 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-transform"
-                >
+                <button onClick={clearFilters} className="mt-4 px-6 py-2.5 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-transform">
                   Reset Filters
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10 justify-items-center w-full transition-all duration-300">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 lg:gap-10 w-full">
                 {filteredProducts.map((prod) => (
-                  <div
-                    key={prod.id}
-                    className="w-full flex justify-center animate-fade-in"
-                  >
+                  <div key={prod.id} className="w-full flex justify-center animate-fade-in">
                     <ProductPageCard
                       product={prod}
                       isWishlisted={wishlisted[prod.id]}

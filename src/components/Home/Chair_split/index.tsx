@@ -37,7 +37,7 @@ export default function Chair_split() {
     return (
         <div
             ref={containerRef}
-            className="hidden md:block relative w-full h-[155vh] bg-black text-white"
+            className="hidden md:block relative w-full h-[155vh] bg-black text-white -mt-24 md:-mt-36"
             style={{
                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
             }}
