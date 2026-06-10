@@ -10,7 +10,7 @@ const TermsConditionsPage = dynamic(() => import('@/components/pages/termsCondit
 
 export const metadata = {
   title: 'Terms & Conditions — Astride Furniture',
-  description: 'Terms and conditions governing the use of TissueKart website and purchases.',
+  description: 'Terms and conditions governing the use of Astride Furniture website and purchases.',
 };
 
 export default function TermsConditions() {

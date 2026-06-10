@@ -106,8 +106,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.4 }}
-            className="text-white text-6xl sm:text-8xl lg:text-[10rem] font-black uppercase leading-none tracking-tighter"
-            style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+            className="text-white text-5xl sm:text-7xl lg:text-8xl font-extrabold uppercase leading-none tracking-tight font-sans"
           >
             About Us
           </motion.h1>
@@ -135,8 +134,7 @@ export default function AboutPage() {
           >
             <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-4">Who We Are</p>
             <h2
-              className="text-5xl sm:text-6xl font-black uppercase leading-[0.9] tracking-tighter mb-0"
-              style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+              className="text-5xl sm:text-6xl font-extrabold uppercase leading-[0.9] tracking-tight mb-0"
             >
               <span className="block text-[#161316]">MADE FOR</span>
               <span className="block text-transparent [-webkit-text-stroke:2px_#18181b]">MAKERS</span>
@@ -172,8 +170,7 @@ export default function AboutPage() {
               className="text-center"
             >
               <p
-                className="text-white text-5xl sm:text-6xl font-black uppercase leading-none tracking-tighter"
-                style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+                className="text-white text-5xl sm:text-6xl font-extrabold uppercase leading-none tracking-tighter"
               >
                 {stat.value}
               </p>
@@ -199,8 +196,7 @@ export default function AboutPage() {
           >
             <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-4">Our Journey</p>
             <h2
-              className="text-5xl sm:text-6xl font-black uppercase leading-[0.9] tracking-tighter"
-              style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+              className="text-5xl sm:text-6xl font-extrabold uppercase leading-[0.9] tracking-tight"
             >
               <span className="block text-[#161316]">THE STORY</span>
               <span className="block text-transparent [-webkit-text-stroke:2px_#18181b]">SO FAR</span>
@@ -213,7 +209,7 @@ export default function AboutPage() {
             title: "2018",
             content: (
               <div className="space-y-4">
-                <h4 className="text-2xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>The Workshop Begins</h4>
+                <h4 className="text-2xl sm:text-3xl font-bold text-zinc-900 uppercase tracking-tight">The Workshop Begins</h4>
                 <p className="text-zinc-600 text-base md:text-lg leading-relaxed max-w-xl font-light">
                   Founded in New Delhi with a single prototype and a dream of redefining the workspace chair. Our journey started in a tiny workshop with one mission: zero compromises on back health.
                 </p>
@@ -224,7 +220,7 @@ export default function AboutPage() {
             title: "2020",
             content: (
               <div className="space-y-4">
-                <h4 className="text-2xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>First Product Launch</h4>
+                <h4 className="text-2xl sm:text-3xl font-bold text-zinc-900 uppercase tracking-tight">First Product Launch</h4>
                 <p className="text-zinc-600 text-base md:text-lg leading-relaxed max-w-xl font-light">
                   Astride Ace hits the market and sells out within 3 weeks. The waitlist begins. This marked our evolution from custom prototypes to scaling a revolutionary product.
                 </p>
@@ -235,7 +231,7 @@ export default function AboutPage() {
             title: "2021",
             content: (
               <div className="space-y-4">
-                <h4 className="text-2xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>Pan-India Distribution</h4>
+                <h4 className="text-2xl sm:text-3xl font-bold text-zinc-900 uppercase tracking-tight">Pan-India Distribution</h4>
                 <p className="text-zinc-600 text-base md:text-lg leading-relaxed max-w-xl font-light">
                   Expanded to 40+ cities, partnered with leading e-commerce platforms, crossed 10,000 units sold. Delivering ergonomics comfort across the nation.
                 </p>
@@ -246,7 +242,7 @@ export default function AboutPage() {
             title: "2023",
             content: (
               <div className="space-y-4">
-                <h4 className="text-2xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>International Expansion</h4>
+                <h4 className="text-2xl sm:text-3xl font-bold text-zinc-900 uppercase tracking-tight">International Expansion</h4>
                 <p className="text-zinc-600 text-base md:text-lg leading-relaxed max-w-xl font-light">
                   Launched in UAE, Singapore, and the UK. Our ergonomic standards surpass European benchmarks, making comfort global.
                 </p>
@@ -257,7 +253,7 @@ export default function AboutPage() {
             title: "2025",
             content: (
               <div className="space-y-4">
-                <h4 className="text-2xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>Astride 2.0</h4>
+                <h4 className="text-2xl sm:text-3xl font-bold text-zinc-900 uppercase tracking-tight">Astride 2.0</h4>
                 <p className="text-zinc-600 text-base md:text-lg leading-relaxed max-w-xl font-light">
                   Introduced our next-gen mesh technology and smart posture tracking features. 50K+ happy customers and growing.
                 </p>
@@ -277,8 +273,7 @@ export default function AboutPage() {
         >
           <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-6">Ready?</p>
           <h2
-            className="text-white text-5xl sm:text-7xl lg:text-8xl font-black uppercase leading-none tracking-tighter mb-8"
-            style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+            className="text-white text-5xl sm:text-7xl lg:text-8xl font-extrabold uppercase leading-none tracking-tight mb-8"
           >
             Find Your<br />
             <span className="text-transparent [-webkit-text-stroke:2px_white]">Perfect Seat</span>

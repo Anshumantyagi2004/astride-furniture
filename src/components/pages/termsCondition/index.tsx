@@ -4,15 +4,15 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const sections = [
-  { id: 'intro', title: '1. Introduction', content: 'Welcome to TissueKart. By accessing or using our website, you agree to comply with and be bound by the following terms and conditions.' },
+  { id: 'intro', title: '1. Introduction', content: 'Welcome to Astride. By accessing or using our website, you agree to comply with and be bound by the following terms and conditions.' },
   { id: 'use', title: '2. Use of Website', content: 'You agree to use this website only for lawful purposes and in a way that does not infringe the rights of others or restrict their use.' },
-  { id: 'product', title: '3. Product Information', content: 'We strive to ensure that all product details, pricing, and images are accurate. However, TissueKart reserves the right to modify or update information at any time without prior notice.' },
+  { id: 'product', title: '3. Product Information', content: 'We strive to ensure that all product details, pricing, and images are accurate. However, Astride reserves the right to modify or update information at any time without prior notice.' },
   { id: 'orders', title: '4. Orders & Payments', content: 'All orders placed through the website are subject to acceptance and availability. We reserve the right to cancel or refuse any order at our discretion.' },
-  { id: 'shipping', title: '5. Shipping & Delivery', content: 'Delivery timelines are estimates and may vary depending on location and external factors. TissueKart is not liable for delays caused by courier or unforeseen circumstances.' },
+  { id: 'shipping', title: '5. Shipping & Delivery', content: 'Delivery timelines are estimates and may vary depending on location and external factors. Astride is not liable for delays caused by courier or unforeseen circumstances.' },
   { id: 'returns', title: '6. Returns & Replacement', content: 'Products are eligible for replacement only in case of damaged, defective, or incorrect items, as per our Return & Refund Policy.' },
-  { id: 'accounts', title: '7. User Accounts', content: 'You are responsible for maintaining the confidentiality of your account and password. TissueKart is not responsible for unauthorized access.' },
-  { id: 'intellectual', title: '8. Intellectual Property', content: 'All content on this website including text, images, logos, and design is the property of TissueKart and may not be used without permission.' },
-  { id: 'liability', title: '9. Limitation of Liability', content: 'TissueKart shall not be held liable for any indirect or consequential damages arising from the use of our website or products.' },
+  { id: 'accounts', title: '7. User Accounts', content: 'You are responsible for maintaining the confidentiality of your account and password. Astride is not responsible for unauthorized access.' },
+  { id: 'intellectual', title: '8. Intellectual Property', content: 'All content on this website including text, images, logos, and design is the property of Astride and may not be used without permission.' },
+  { id: 'liability', title: '9. Limitation of Liability', content: 'Astride shall not be held liable for any indirect or consequential damages arising from the use of our website or products.' },
   { id: 'changes', title: '10. Changes to Terms', content: 'We reserve the right to update these terms at any time. Continued use of the website means you accept the updated terms.' }
 ];
 
@@ -35,14 +35,13 @@ export default function TermsConditionsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-4"
           >
-            TissueKart Agreement
+            Astride Agreement
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl sm:text-7xl font-black uppercase tracking-tighter"
-            style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+            className="text-5xl sm:text-7xl font-extrabold uppercase tracking-[0.05em] text-white font-sans"
           >
             Terms & Conditions
           </motion.h1>
@@ -52,7 +51,7 @@ export default function TermsConditionsPage() {
             transition={{ delay: 0.2 }}
             className="text-zinc-400 text-sm max-w-xl mx-auto mt-4 leading-relaxed font-light"
           >
-            Please read these terms carefully before using TissueKart services.
+            Please read these terms carefully before using Astride services.
           </motion.p>
         </div>
       </div>
@@ -97,7 +96,7 @@ export default function TermsConditionsPage() {
                 transition={{ duration: 0.4, delay: index * 0.05 }}
                 className="bg-white border border-zinc-200/60 rounded-3xl p-6 hover:border-zinc-800 transition-all duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.01)]"
               >
-                <h3 className="text-lg font-black text-zinc-900 uppercase tracking-tight mb-3" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
+                <h3 className="text-lg font-bold text-zinc-900 uppercase tracking-tight mb-3">
                   {sec.title}
                 </h3>
                 <p className="text-zinc-600 text-sm leading-relaxed font-light">
@@ -116,7 +115,7 @@ export default function TermsConditionsPage() {
             className="bg-[#161316] text-white rounded-3xl p-8 shadow-xl relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-80 h-80 bg-white/[0.02] rounded-full blur-2xl" />
-            <h3 className="text-2xl font-black uppercase tracking-tight mb-4" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
+            <h3 className="text-2xl font-bold uppercase tracking-tight mb-4">
               11. Contact Us
             </h3>
             <p className="text-zinc-400 text-sm leading-relaxed mb-6 font-light">
@@ -125,11 +124,11 @@ export default function TermsConditionsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-semibold tracking-wider uppercase">
               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
                 <span className="text-zinc-500 text-[10px] mb-1">Email</span>
-                <span className="text-white text-xs sm:text-sm">support@tissuekart.com</span>
+                <span className="text-white text-xs sm:text-sm">support@astridefurniture.com</span>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
                 <span className="text-zinc-500 text-[10px] mb-1">Phone</span>
-                <span className="text-white text-xs sm:text-sm">+91-XXXXXXXXXX</span>
+                <span className="text-white text-xs sm:text-sm">+91-8810540823</span>
               </div>
             </div>
           </motion.div>
