@@ -153,7 +153,7 @@ export default function WishlistPage() {
                       </div>
                     </div>
                     
-                    <h4 className="font-extrabold text-slate-800 text-xs mb-1.5 truncate">{item.name}</h4>
+                    <h4 className="font-extrabold text-slate-800 text-base mb-1.5 truncate">{item.name}</h4>
                     
                     <div className="flex items-baseline gap-2 mb-4">
                       <span className="text-sm font-black text-slate-900 font-extrabold">₹{item.price.toLocaleString()}</span>

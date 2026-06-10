@@ -53,7 +53,7 @@ function ParallaxSection() {
   return (
     <div
       ref={container}
-      className="relative flex items-center justify-center h-[85vh] overflow-hidden"
+      className="relative flex items-center justify-center h-[35vh] md:h-[80vh] lg:h-[85vh] overflow-hidden"
       style={{ clipPath: 'polygon(0% 0, 100% 0%, 100% 100%, 0 100%)' }}
     >
       {/* Overlay */}
@@ -87,7 +87,7 @@ export default function AboutPage() {
     <main className="bg-[#F8F9FA] text-[#161316]" style={{ fontFamily: '"Inter", sans-serif' }}>
 
       {/* ── HERO ── */}
-      <div ref={heroContainer} className="h-screen overflow-hidden relative">
+      <div ref={heroContainer} className="h-[50vh] overflow-hidden relative">
         <motion.div style={{ y: heroY }} className="relative w-full h-full">
           <Image
             src={bannerImage}
@@ -101,7 +101,7 @@ export default function AboutPage() {
         </motion.div>
 
         {/* Hero text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-end pb-32 text-center z-20 px-6">
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-32 md:pt-40 text-center z-20 px-6">
           <motion.h1
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -125,7 +125,7 @@ export default function AboutPage() {
       </div>
 
       {/* ── INTRO COPY ── */}
-      <section className="max-w-5xl mx-auto px-6 py-24 lg:py-32">
+      <section className="max-w-5xl mx-auto px-6 py-6 md:py-12 lg:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -268,7 +268,7 @@ export default function AboutPage() {
       />
 
       {/* ── CTA ── */}
-      <section className="py-28 px-6 text-center bg-[#161316]">
+      <section className="py-16 md:py-28 px-6 text-center bg-[#161316]">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
