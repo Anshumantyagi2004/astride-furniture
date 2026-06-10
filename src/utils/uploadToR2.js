@@ -18,20 +18,28 @@ export const uploadToR2 = async ({ file, folder, fileName, contentType }) => {
       
       finalContentType = "image/webp";
 
-      // Start with decent dimensions (up to 1200px wide for good quality details)
-      // and iteratively adjust quality to target around 200kb size
-      let quality = 80;
+      // Start with clean dimensions (up to 1000px wide for balanced quality details)
+      // and iteratively adjust quality to target around 100kb size
+      let quality = 75;
       optimizedBuffer = await sharp(file)
-        .resize({ width: 1200, withoutEnlargement: true })
+        .resize({ width: 1000, withoutEnlargement: true })
         .webp({ quality })
         .toBuffer();
 
-      // If buffer is too large (more than 220 KB), decrease quality iteratively
-      while (optimizedBuffer.length > 225280 && quality > 20) {
+      // If buffer is too large (more than 110 KB), decrease quality iteratively
+      while (optimizedBuffer.length > 112640 && quality > 15) {
         quality -= 10;
         optimizedBuffer = await sharp(file)
-          .resize({ width: 1200, withoutEnlargement: true })
+          .resize({ width: 1000, withoutEnlargement: true })
           .webp({ quality })
+          .toBuffer();
+      }
+      
+      // If still too large after quality drop, scale down width to 800px to enforce 100kb limit
+      if (optimizedBuffer.length > 112640) {
+        optimizedBuffer = await sharp(file)
+          .resize({ width: 800, withoutEnlargement: true })
+          .webp({ quality: 65 })
           .toBuffer();
       }
     } catch (err) {
