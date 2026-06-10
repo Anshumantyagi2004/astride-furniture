@@ -21,6 +21,7 @@ import FAQ from "@/components/Home/FAQ";
 import HeroSection from '@/components/Home/Hero';
 import Header3 from '@/components/Home/Header3';
 import Header0 from '@/components/Home/Header0';
+import Newletter from '@/components/Home/Newletter';
 // Lazy loaded — only the 3 heaviest components
 // Reviews: uses GSAP + ScrollTrigger (large bundle)
 const Reviews = dynamic(() => import('@/components/Home/Reviews'));
@@ -58,6 +59,7 @@ export default function Home() {
       <VideoTestimonials />
       
       <BulkQueryForm />
+      <Newletter/>
       <FAQ/>
     </main>
   );
