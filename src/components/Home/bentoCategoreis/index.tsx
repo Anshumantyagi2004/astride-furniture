@@ -29,7 +29,7 @@ const CATEGORIES: BentoCategory[] = [
     id: 2,
     title: 'Staff Chair',
     subtitle: 'Sleek executive task chairs engineered to maximize posture.',
-    image: '/Png1/Chair4_ACE.webp',
+    image: '/Png1/chair4_ACE.webp',
     colSpan: 'lg:col-span-4 md:col-span-5 col-span-12',
     imageClass: 'absolute right-2 bottom-0 w-[45%] h-[90%] max-h-[320px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
     href: '/products?category=Staff%20Chair'

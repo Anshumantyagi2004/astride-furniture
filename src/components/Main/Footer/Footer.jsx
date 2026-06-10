@@ -77,7 +77,6 @@ export default function Footer() {
                                 {[
                                     { name: "Home", link: "/" },
                                     { name: "About", link: "/about" },
-                                    { name: "Newsletter", link: "/newsletter" },
                                     { name: "Contact Us", link: "/contact" },
                                     { name: "Bulk Queries", link: "/contact" },
                                     { name: "Blogs", link: "/blogs" },
