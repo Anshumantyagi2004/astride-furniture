@@ -67,7 +67,7 @@ export default function Header0() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/Png/main_banner.png"
+          src="/Png1/main_banner.jpg"
           alt="Main Banner"
           fill
           className="object-cover object-center md:object-center object-[70%_center]"
@@ -76,51 +76,15 @@ export default function Header0() {
       </div>
 
       {/* Content Overlay */}
-      <div className="relative z-10 w-full h-full max-w-[1500px] mx-auto px-5 md:px-12 lg:px-16 flex flex-col justify-start md:justify-center pt-14 md:pt-0">
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="max-w-[240px] xs:max-w-xs md:max-w-3xl text-white mb-6 md:mb-16"
+      <div className="absolute left-6 sm:left-10 md:left-16 lg:left-24 bottom-[150px] sm:bottom-[165px] md:bottom-[195px] lg:bottom-[235px] z-10">
+        <Link
+          href="/products"
+          className="inline-flex items-center justify-center bg-[#131313] hover:bg-[#8B5CF6] text-white font-black px-8 py-3.5 rounded-full shadow-[4px_4px_0_#000] border-[2.5px] border-black hover:shadow-[1px_1px_0_#000] hover:translate-y-[3px] hover:translate-x-[3px] transition-all duration-150 text-xs sm:text-sm tracking-wider uppercase"
         >
-          <motion.span 
-            variants={itemVariants}
-            className="text-[13px] md:text-sm font-medium tracking-[0.2em] uppercase mb-4 block text-white/60"
-          >
-            <span className="text-white font-extrabold mr-[3px] md:mr-2 tracking-[0.25em] bg-white/10 px-2 py-0.5 rounded border border-white/20">
-              ASTRIDE
-            </span> 
-            <br className="md:hidden" />
-            CHAIR COLLECTION
-          </motion.span>
-          <motion.h1 
-            variants={itemVariants}
-            className="text-[37px] md:text-7xl font-serif mb-4 md:mb-6 tracking-tight leading-[1.1] max-w-2xl md:max-w-3xl"
-          >
-            Sit Better,<br className="md:hidden" /> Perform Better
-          </motion.h1>
-          <motion.p 
-            variants={itemVariants}
-            className="font-light text-white/90 leading-relaxed mb-7 md:mb-10 max-w-xs md:max-w-md md:text-xl text-[16.5px]"
-            style={{ fontSize: "var(--desc-size, 16.5px)" }}
-          >
-            Discover ergonomic office chairs and advanced gaming chairs crafted for all-day comfort. Enhance your workspace and gaming zone with durable, stylish seating solutions.
-          </motion.p>
-          
-          <motion.div variants={itemVariants}>
-            <Link href="/products" className="group inline-flex items-center relative h-14">
-              <div className="absolute left-0 w-14 h-14 rounded-full border border-white/50 group-hover:scale-110 group-hover:bg-white/10 flex items-center justify-center transition-all duration-500">
-                <ChevronRight className="w-5 h-5 text-white group-hover:translate-x-1 transition-transform duration-300" />
-              </div>
-              <span className="pl-20 pr-6 text-[15px] md:text-sm font-semibold tracking-widest uppercase text-white group-hover:translate-x-2 transition-transform duration-500">
-                View Collection
-              </span>
-            </Link>
-          </motion.div>
-        </motion.div>
+          Shop All
+          <span className="ml-2 text-base">→</span>
+        </Link>
       </div>
-
-      {/* Bottom Pagination */}
       
     </section>
   );

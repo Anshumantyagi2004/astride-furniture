@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import DetailPageCard from './deatilPageCard';
 import Reviews from '../Home/Reviews';
 import DetailedHero from './detailed_hero';
+import Loader from "@/components/ui/loader";
+import Reviews_New from '../Home/Reviews';
 
 export default function DetailPage({ productId }: { productId?: string }) {
   const [product, setProduct] = useState<any>(null);
@@ -178,10 +180,10 @@ export default function DetailPage({ productId }: { productId?: string }) {
 
   if (loading) {
     return (
-      <div className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-white min-h-screen flex items-center justify-center font-sans">
+      <div className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-[#ffffff] min-h-screen flex items-center justify-center font-sans">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest">Loading Premium Seating...</p>
+          <Loader />
+          <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest mt-4">Loading Premium Seating...</p>
         </div>
       </div>
     );
@@ -265,8 +267,8 @@ export default function DetailPage({ productId }: { productId?: string }) {
         </section>
       )}
 
-      <Reviews />
-      <DetailedHero/>
+      <Reviews_New/>
+      
     </div>
   );
 }

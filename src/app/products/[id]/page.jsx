@@ -3,10 +3,12 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 
+import Loader from "@/components/ui/loader";
+
 const DetailPage = dynamic(() => import('@/components/detailPage/detailPage'), {
   loading: () => (
     <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="w-10 h-10 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
+      <Loader />
     </div>
   )
 });

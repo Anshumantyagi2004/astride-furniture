@@ -14,14 +14,14 @@ body {
   /* Normal default font */
 }
 
-/* Forum only for headings */
+/* Plus Jakarta Sans only for headings */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-forum);
+  font-family: var(--font-sans);
 }
 
 @theme inline {
@@ -146,4 +146,17 @@ h6 {
   html {
     @apply font-sans;
   }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
 }

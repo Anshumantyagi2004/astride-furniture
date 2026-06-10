@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+const sans = Plus_Jakarta_Sans({
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700", "800"],
+    variable: "--font-sans",
+});
 
 const chairData = [
     { 
@@ -54,7 +61,7 @@ function ChairCard({ chair, index }) {
             key={index}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden hover:border-zinc-400 hover:-translate-y-3 transition-all duration-300 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] min-w-[290px] max-w-[320px] snap-center flex-shrink-0 md:min-w-0 md:max-w-none cursor-pointer"
+            className={`group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden hover:border-zinc-400 hover:-translate-y-3 transition-all duration-300 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] min-w-[290px] max-w-[320px] snap-center flex-shrink-0 md:min-w-0 md:max-w-none cursor-pointer ${sans.className}`}
         >
             {/* HOVER GLOW */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
@@ -104,10 +111,10 @@ function ChairCard({ chair, index }) {
             <div className="relative z-10 px-6 pb-5 bg-white">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="text-xl text-[#161316] font-semibold">
+                        <h3 className={`text-xl text-[#161316] font-bold ${sans.className}`}>
                             {chair.name}
                         </h3>
-                        <p className="text-[#6B7280] text-sm mt-1">
+                        <p className={`text-[#8B5CF6] text-sm font-semibold mt-1 ${sans.className}`}>
                             {chair.subtitle}
                         </p>
                     </div>
@@ -122,16 +129,16 @@ function ChairCard({ chair, index }) {
 
 export default function ChairSection() {
     return (
-        <section className="relative overflow-hidden bg-[#f1f3f5] pb-20 pt-10 border-t border-t-white">
+        <section className={`relative overflow-hidden bg-[#f1f3f5] pb-20 pt-10 border-t border-t-white ${sans.className}`}>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-zinc-400/10 blur-[180px] rounded-full"></div>
             <div className="relative z-10 md:px-25 px-4 lg:px-10">
                 <div className="text-center mb-8">
-                    <p className="uppercase tracking-[5px] text-zinc-500 text-sm font-semibold">
+                    <p className={`uppercase tracking-[5px] text-[#8B5CF6] text-sm font-extrabold ${sans.className}`}>
                         Premium Ergonomics
                     </p>
-                    <h2 className="text-4xl md:text-6xl font-bold text-[#161316] leading-none mt-2">
+                    <h2 className={`text-4xl md:text-6xl font-black text-[#161316] leading-none mt-2 ${sans.className}`}>
                         Designed For <br />
-                        Modern Workspace
+                        <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold">Modern Workspace</span>
                     </h2>
                 </div>
 

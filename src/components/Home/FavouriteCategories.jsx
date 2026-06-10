@@ -6,6 +6,14 @@ import { Heart } from "lucide-react";
 import { BsCartPlus } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+const sans = Plus_Jakarta_Sans({
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700", "800"],
+    variable: "--font-sans",
+});
+
 const TABS = ["Gaming Chair", "Office Chair", "Staff Chair", "Study Chair", "Bar Stool"];
 
 const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleWishlist }) => {
@@ -49,7 +57,7 @@ const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleW
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => router.push(`/products/${product.id}`)}
-            className="group relative rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 hover:border-slate-300/80 hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] min-w-[270px] sm:min-w-0 snap-start flex-shrink-0 cursor-pointer"
+            className="group relative rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 hover:border-slate-300/80 hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] min-w-[270px] sm:min-w-0 snap-start flex-shrink-0 cursor-pointer font-sans"
         >
             {/* Action Buttons (Fade in on hover) */}
             <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
@@ -99,43 +107,43 @@ const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleW
                 )}
 
                 {/* Premium Rating Badge - Bottom-Left */}
-                <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-[6px] border border-gray-100 shadow-xs text-[10px] font-bold text-gray-700 flex items-center gap-1">
+                <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-[6px] border border-gray-100 shadow-xs text-[10px] font-bold text-gray-700 flex items-center gap-1 font-sans">
                     <span>{ratingValue}</span>
-                    <span className="text-[#03a685] text-xs">★</span>
+                    <span className="text-[#8B5CF6] text-xs">★</span>
                     <span className="text-gray-400 font-normal">({ratingReviews})</span>
                 </div>
             </div>
 
             {/* Card Details Area */}
-            <div className="px-5 pb-5 pt-1">
+            <div className="px-5 pb-5 pt-1 font-sans">
                 {/* Brand/Subtitle */}
-                <div className="text-[15px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-[#8B5CF6] mb-1 font-sans">
                     Astride Premium
                 </div>
 
                 {/* Product Title */}
-                <h3 className="text-[16px] font-semibold text-gray-800 line-clamp-1 group-hover:text-slate-900 transition-colors duration-300">
+                <h3 className="text-[16px] font-semibold text-gray-800 line-clamp-1 group-hover:text-[#8B5CF6] transition-colors duration-300 font-sans">
                     {product.name}
                 </h3>
 
                 {/* Pricing Row */}
-                <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-base sm:text-[17px] font-bold text-gray-900">
+                <div className="flex items-baseline gap-2 mt-2 font-sans">
+                    <span className="text-base sm:text-[17px] font-bold text-gray-900 font-sans">
                         ₹{salePrice.toLocaleString("en-IN")}
                     </span>
 
-                    <span className="text-xs text-gray-400 line-through">
+                    <span className="text-xs text-gray-400 line-through font-sans">
                         ₹{originalPrice.toLocaleString("en-IN")}
                     </span>
 
-                    <span className="text-[10px] sm:text-[11px] font-bold text-[#03a685]">
+                    <span className="text-[11px] font-bold text-[#EC4899] font-sans">
                         {discountText} OFF
                     </span>
                 </div>
             </div>
 
             {/* Decorative subtle bottom hover bar */}
-            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#161316] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
         </motion.div>
     );
 };
@@ -253,15 +261,26 @@ export default function FavouriteCategories() {
     const activeProducts = productsList.filter(p => p.category === activeCategory);
 
     return (
-        <section className="w-full pt-16 pb-10 bg-[#F8F9FA] overflow-hidden">
+        <section className={`w-full pt-16 pb-10 bg-[#F8F9FA] overflow-hidden ${sans.className}`}>
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col items-start text-left mb-4">
-                    <span className="inline-flex items-center text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2">
+                    <span className="inline-flex items-center text-[#8B5CF6] text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2 font-sans">
                         Explore Collections
                     </span>
-                    <div className="text-5xl sm:text-6xl lg:text-[4rem] font-extrabold uppercase leading-[0.9] tracking-tighter">
-                        <span className="block text-[#161316]">TRENDING</span>
-                        <span className="block text-transparent [-webkit-text-stroke:1.5px_#18181b]">NOW</span>
+                    <div className="text-5xl sm:text-6xl lg:text-[4rem] font-extrabold uppercase leading-[0.9] tracking-tighter font-sans">
+                        <span className="block text-[#161316] font-sans">TRENDING</span>
+                        <span 
+                            className="block font-sans font-black"
+                            style={{
+                                backgroundImage: "linear-gradient(to right, #8B5CF6, #EC4899, #F97316)",
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor: "transparent",
+                                backgroundClip: "text",
+                                color: "transparent"
+                            }}
+                        >
+                            NOW
+                        </span>
                     </div>
                 </div>
 
