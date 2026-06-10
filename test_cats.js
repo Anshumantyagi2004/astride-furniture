@@ -14,5 +14,5 @@ https.get('https://astride-furniture.vercel.app/api/category', (res) => {
     }
   });
 }).on('error', (err) => {
-  console.error("Error fetching:", err.message);
+  console.error("Error fetching:");
 });
