@@ -193,7 +193,7 @@ export default function Page() {
                     img.onerror = () => reject(new Error("Failed to load image"));
                     img.src = event.target.result;
                 };
-                reader.onerror = () => reject(new Error("Failed to read file"));
+                reader.onerror = () => reject(new Error("Failed to read image file"));
                 reader.readAsDataURL(file);
             });
         };
@@ -210,8 +210,8 @@ export default function Page() {
 
             setColorVariants(updated);
         } catch (error) {
-            console.error("Error converting images:", error);
-            toast.error("Failed to process one or more images.");
+            console.error("Error converting images client-side:", error);
+            toast.error(`Image processing failed: ${error.message}`);
         }
     };
 
