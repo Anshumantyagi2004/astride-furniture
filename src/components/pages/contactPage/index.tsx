@@ -155,8 +155,8 @@ export default function ContactPage() {
                         required
                         value={formData.fullName}
                         onChange={handleInputChange}
-                        placeholder="John Doe"
-                        className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350"
+                        placeholder="Name"
+                        className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
                       />
                       <User className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
                     </div>
@@ -172,8 +172,8 @@ export default function ContactPage() {
                         required
                         value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="johndoe@email.com"
-                        className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350"
+                        placeholder="Email"
+                        className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
                       />
                       <Mail className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
                     </div>
@@ -188,8 +188,8 @@ export default function ContactPage() {
                         name="companyName"
                         value={formData.companyName}
                         onChange={handleInputChange}
-                        placeholder="Company Ltd"
-                        className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350"
+                        placeholder="Company (optional)"
+                        className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
                       />
                       <Briefcase className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
                     </div>
@@ -208,8 +208,8 @@ export default function ContactPage() {
                         required
                         value={formData.phoneNumber}
                         onChange={handleInputChange}
-                        placeholder="9876543210"
-                        className="w-full h-12 px-4 rounded-r-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350"
+                        placeholder="Phone Number"
+                        className="w-full h-12 px-4 rounded-r-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
                       />
                     </div>
                   </div>
@@ -223,8 +223,8 @@ export default function ContactPage() {
                       required
                       value={formData.state}
                       onChange={handleInputChange}
-                      placeholder="Delhi"
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350"
+                      placeholder="State"
+                      className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
                     />
                   </div>
  
@@ -237,8 +237,8 @@ export default function ContactPage() {
                       required
                       value={formData.city}
                       onChange={handleInputChange}
-                      placeholder="New Delhi"
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350"
+                      placeholder="City"
+                      className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
                     />
                   </div>
 
@@ -252,8 +252,8 @@ export default function ContactPage() {
                         rows={4}
                         value={formData.message}
                         onChange={handleInputChange}
-                        placeholder="Write your query here..."
-                        className="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 resize-none"
+                        placeholder="Message"
+                        className="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 resize-none placeholder:text-sm placeholder:font-normal"
                       />
                       <MessageSquare className="absolute right-4 top-4 text-slate-400 pointer-events-none" size={16} />
                     </div>

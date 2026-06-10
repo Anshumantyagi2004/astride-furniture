@@ -10,7 +10,7 @@ const PrivacyPolicyPage = dynamic(() => import('@/components/pages/PrivacyPolicy
 
 export const metadata = {
   title: 'Privacy Policy — Astride Furniture',
-  description: 'Privacy Policy of Matrix Tissue Private Limited detailing how we collect, store, and safeguard your personal data.',
+  description: 'Privacy Policy of Astride Furniture detailing how we collect, store, and safeguard your personal data.',
 };
 
 export default function PrivacyPolicy() {

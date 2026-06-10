@@ -15,7 +15,7 @@ export default function RefundPolicyPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-4"
           >
-            Matrix Tissue
+            Astride
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
@@ -69,7 +69,7 @@ export default function RefundPolicyPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-semibold tracking-wider uppercase">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
               <span className="text-zinc-500 text-[10px] mb-1">Email</span>
-              <span className="text-white text-xs sm:text-sm">matrixtissues@gmail.com</span>
+              <span className="text-white text-xs sm:text-sm">support@astridefurniture.com</span>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
               <span className="text-zinc-500 text-[10px] mb-1">Phone</span>

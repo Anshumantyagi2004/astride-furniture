@@ -167,12 +167,26 @@ export default function BrandTrustSection() {
 
                     <div className="flex items-center gap-6 sm:gap-8">
                         {/* Amazon */}
-                        <div className="flex items-center justify-center h-[110px] sm:h-[100px] opacity-85 hover:opacity-100 transition-opacity duration-300">
-                            <Image src="/Logo/amazon.webp" alt="Amazon" width={130} height={40} className="object-contain h-full w-auto" />
+                        <div className="flex items-center justify-center h-[110px] sm:h-[100px] opacity-85 transition-all duration-300 group/amazon">
+                            <Image 
+                                src="/Logo/amazon.webp" 
+                                alt="Amazon" 
+                                width={130} 
+                                height={41} 
+                                className="object-contain h-full w-auto transition-transform duration-300 group-hover/amazon:scale-105" 
+                                style={{ transform: "translateY(8px)" }} 
+                            />
                         </div>
                         {/* Flipkart */}
-                        <div className="flex items-center justify-center h-[40px] sm:h-[38px] opacity-85 hover:opacity-100 transition-opacity duration-300">
-                            <Image src="/Logo/FLIPKART_Webp.webp" alt="Flipkart" width={80} height={28} className="object-contain h-full w-auto" />
+                        <div className="flex items-center justify-center h-[40px] sm:h-[38px] opacity-85 transition-all duration-300 group/flipkart">
+                            <Image 
+                                src="/Logo/FLIPKART_Webp.webp" 
+                                alt="Flipkart" 
+                                width={80} 
+                                height={28} 
+                                className="object-contain h-full w-auto transition-transform duration-300 group-hover/flipkart:scale-105" 
+                                style={{ transform: "translateY(0px)" }} 
+                            />
                         </div>
                     </div>
                 </div>
