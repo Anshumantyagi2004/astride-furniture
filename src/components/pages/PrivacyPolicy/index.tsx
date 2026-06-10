@@ -47,8 +47,7 @@ export default function PrivacyPolicyPage() {
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl sm:text-7xl font-black uppercase tracking-tighter"
-            style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+            className="text-5xl sm:text-7xl font-extrabold uppercase tracking-[0.05em] text-white font-sans"
           >
             Privacy Policy
           </motion.h1>
@@ -103,7 +102,7 @@ export default function PrivacyPolicyPage() {
                 transition={{ duration: 0.4, delay: index * 0.05 }}
                 className="bg-white border border-zinc-200/60 rounded-3xl p-6 hover:border-zinc-800 transition-all duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.01)]"
               >
-                <h3 className="text-lg font-black text-zinc-900 uppercase tracking-tight mb-3" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
+                <h3 className="text-lg font-bold text-zinc-900 uppercase tracking-tight mb-3">
                   {sec.title}
                 </h3>
                 <p className="text-zinc-600 text-sm leading-relaxed font-light">

@@ -76,7 +76,7 @@ export default function ContactPage() {
         
         {/* Header */}
         <div className="text-center mb-16 flex flex-col gap-3">
-          <h1 className="text-slate-900 text-5xl sm:text-7xl lg:text-8xl font-black uppercase leading-none tracking-tighter" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
+          <h1 className="text-slate-900 text-5xl sm:text-7xl lg:text-8xl font-extrabold uppercase leading-none tracking-tight">
             Contact Us
           </h1>
           <p className="max-w-2xl mx-auto text-base md:text-lg text-slate-500 font-semibold leading-relaxed">
@@ -167,7 +167,7 @@ export default function ContactPage() {
                     <label className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-slate-400">Email Address</label>
                     <div className="relative">
                       <input
-                        type="type"
+                        type="email"
                         name="email"
                         required
                         value={formData.email}

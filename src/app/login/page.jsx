@@ -96,8 +96,7 @@ export default function Page() {
 
           <div className="relative z-10 my-auto py-10">
             <h1 
-              className="text-5xl font-black leading-none uppercase tracking-tighter"
-              style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+              className="text-5xl font-extrabold leading-none uppercase tracking-tight"
             >
               Welcome to
               <br />
@@ -168,8 +167,7 @@ export default function Page() {
           {/* TITLE */}
           <div className="mb-8 text-center">
             <h2 
-              className="text-4xl sm:text-5xl font-black text-[#1b2530] uppercase tracking-tighter"
-              style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+              className="text-4xl sm:text-5xl font-extrabold text-[#1b2530] uppercase tracking-tight"
             >
               {isLogin ? "Welcome Back" : "Create Account"}
             </h2>

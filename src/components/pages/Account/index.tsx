@@ -298,7 +298,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
         {/* Dashboard Title Header with Slate Lettering */}
         <div className="flex flex-col gap-1.5 mb-12">
           <p className="text-slate-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">Dashboard</p>
-          <h1 className="text-slate-900 text-5xl sm:text-7xl lg:text-8xl font-black uppercase leading-none tracking-tighter" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
+          <h1 className="text-slate-900 text-5xl sm:text-7xl lg:text-8xl font-extrabold uppercase leading-none tracking-tight">
             Profile Shell
           </h1>
         </div>
