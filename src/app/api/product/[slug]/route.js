@@ -194,7 +194,7 @@ export async function PUT(req, { params }) {
         return NextResponse.json(
             {
                 success: false,
-                message: "Internal server error",
+                message: error.message || "Internal server error",
             },
             { status: 500 }
         );
