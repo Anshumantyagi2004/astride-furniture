@@ -232,7 +232,7 @@ export default function Navbar() {
         }}
         className="bg-[#161316]/95 backdrop-blur-xl text-white overflow-hidden border-b border-[#453027]"
       >
-        <div className="max-w-7xl mx-auto px-4 h-11 flex items-center justify-between">
+        <div className="lg:px-15 px-4 h-11 flex items-center justify-between">
           {/* SOCIAL ICONS */}
           <div className="flex items-center gap-3">
             <button className="w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:bg-[#FF6D29] transition-all duration-300 flex items-center justify-center hover:scale-110">
@@ -487,8 +487,11 @@ export default function Navbar() {
                       </div>
                       
                       {/* Name Overlay on Hover */}
-                      <div className="absolute bottom-3 left-0 w-full text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 px-2 z-10">
-                        <span className="bg-white/95 backdrop-blur-md text-[10px] font-extrabold text-gray-800 px-3 py-1.5 rounded-full shadow-sm inline-block line-clamp-1 max-w-[95%] border border-gray-100 uppercase tracking-wide">
+                      <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 px-2 pb-2 z-10">
+                        <span
+                          className="bg-white/95 backdrop-blur-md text-gray-800 px-2.5 py-1.5 rounded-xl shadow-sm block border border-gray-100 uppercase tracking-wide text-center"
+                          style={{ fontSize: '9px', fontWeight: 800, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.35' }}
+                        >
                           {chair.name}
                         </span>
                       </div>

@@ -376,8 +376,8 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
               {activeTab === "account" && (
                 <div className="animate-fade-in">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-6 mb-8 gap-4">
-                    <div className="flex flex-col gap-3">
-                      <h2 className="text-[17px] md:text-xl font-medium text-slate-700 tracking-wide">PERSONAL SETTINGS</h2>
+                    <div className="flex items-center gap-4">
+                      <h2 className="text-2xl md:text-3xl font-light text-slate-700 tracking-wide">PERSONAL SETTINGS</h2>
                       <button
                         type="button"
                         onClick={handleEditToggle}

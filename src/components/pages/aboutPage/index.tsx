@@ -87,7 +87,7 @@ export default function AboutPage() {
     <main className="bg-[#F8F9FA] text-[#161316]" style={{ fontFamily: '"Inter", sans-serif' }}>
 
       {/* ── HERO ── */}
-      <div ref={heroContainer} className="h-screen overflow-hidden relative">
+      <div ref={heroContainer} className="h-[50vh] overflow-hidden relative">
         <motion.div style={{ y: heroY }} className="relative w-full h-full">
           <Image
             src={bannerImage}
@@ -125,7 +125,7 @@ export default function AboutPage() {
       </div>
 
       {/* ── INTRO COPY ── */}
-      <section className="max-w-5xl mx-auto px-6 py-10 md:py-24 lg:py-32">
+      <section className="max-w-5xl mx-auto px-6 py-6 md:py-12 lg:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}

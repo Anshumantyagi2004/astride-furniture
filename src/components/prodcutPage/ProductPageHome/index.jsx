@@ -137,6 +137,18 @@ export default function ProductPageHome() {
     }
   }, [catParam, searchParam]);
 
+  // Reset specific filters when category changes to avoid empty result sets
+  useEffect(() => {
+    setSelectedBackSupport(null);
+    setSelectedHours(null);
+    setSelectedCapacity(null);
+  }, [selectedCategory]);
+
+  // Reset price filter to default when category changes to avoid empty results
+  useEffect(() => {
+    setMaxPrice(25000);
+  }, [selectedCategory]);
+
   useEffect(() => {
     const saved = localStorage.getItem("astride_wishlist");
     if (saved) {
