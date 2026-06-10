@@ -4,13 +4,15 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart } from "lucide-react";
 import { BsCartPlus } from "react-icons/bs";
+import { useRouter } from "next/navigation";
 
-const TABS = ["Gaming Chair", "Executive Chair", "Staff Chair", "Study Chair", "Bar Stool"];
+const TABS = ["Gaming Chair", "Office Chair", "Staff Chair", "Study Chair", "Bar Stool"];
 
 const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleWishlist }) => {
     const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
     const [isHovered, setIsHovered] = React.useState(false);
     const timerRef = React.useRef(null);
+    const router = useRouter();
 
     const images = product.allImages && product.allImages.length > 0 
         ? product.allImages 
@@ -46,7 +48,8 @@ const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleW
             whileHover={{ y: -6 }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 hover:border-slate-300/80 hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] min-w-[270px] sm:min-w-0 snap-start flex-shrink-0"
+            onClick={() => router.push(`/products/${product.id}`)}
+            className="group relative rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 hover:border-slate-300/80 hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] min-w-[270px] sm:min-w-0 snap-start flex-shrink-0 cursor-pointer"
         >
             {/* Action Buttons (Fade in on hover) */}
             <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
@@ -195,7 +198,7 @@ export default function FavouriteCategories() {
                         if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
                             normalizedCategory = "Gaming Chair";
                         } else if (dbCategory.includes("EXECUTIVE")) {
-                            normalizedCategory = "Executive Chair";
+                            normalizedCategory = "Office Chair";
                         } else if (dbCategory.includes("STAFF")) {
                             normalizedCategory = "Staff Chair";
                         } else if (dbCategory.includes("STUDY")) {
@@ -203,7 +206,7 @@ export default function FavouriteCategories() {
                         } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) {
                             normalizedCategory = "Bar Stool";
                         } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
-                            normalizedCategory = "Executive Chair";
+                            normalizedCategory = "Office Chair";
                         }
 
                         const blackVariant = prod.colorVariants?.find((v) => v.colorName?.toLowerCase() === "black");

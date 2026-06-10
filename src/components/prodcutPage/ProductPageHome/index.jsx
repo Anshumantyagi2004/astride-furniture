@@ -45,7 +45,7 @@ const PRODUCTS = [
     originalPrice: 35999,
     discount: "-57%",
     image: "/Png1/chair4_ACE.webp",
-    category: "Executive Chair",
+    category: "Office Chair",
     backSupport: "High Back",
     height: "5'7\" - 6'6\"",
     hours: "8+ Hours",
@@ -60,7 +60,7 @@ const PRODUCTS = [
     originalPrice: 29999,
     discount: "-58%",
     image: "/Png1/chair5_AIRSENSE.webp",
-    category: "Executive Chair",
+    category: "Office Chair",
     backSupport: "High Back",
     height: "4'11\" - 5'10\"",
     hours: "6-8 Hours",
@@ -100,7 +100,7 @@ const PRODUCTS = [
   },
 ];
 
-const TABS = ["All Products", "Gaming Chair", "Executive Chair", "Staff Chair", "Study Chair", "Bar Stool"];
+const TABS = ["All Products", "Gaming Chair", "Office Chair", "Staff Chair", "Study Chair", "Bar Stool"];
 
 export default function ProductPageHome() {
   const [productsList, setProductsList] = useState([]);
@@ -171,7 +171,7 @@ export default function ProductPageHome() {
             if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
               normalizedCategory = "Gaming Chair";
             } else if (dbCategory.includes("EXECUTIVE")) {
-              normalizedCategory = "Executive Chair";
+              normalizedCategory = "Office Chair";
             } else if (dbCategory.includes("STAFF")) {
               normalizedCategory = "Staff Chair";
             } else if (dbCategory.includes("STUDY")) {
@@ -179,7 +179,7 @@ export default function ProductPageHome() {
             } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) {
               normalizedCategory = "Bar Stool";
             } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
-              normalizedCategory = "Executive Chair";
+              normalizedCategory = "Office Chair";
             }
 
             const blackVariant = prod.colorVariants?.find(
@@ -215,6 +215,8 @@ export default function ProductPageHome() {
               capacity: prod.capacity || "150 kg",
             };
           });
+          console.log("Mapped products count:", mappedProducts.length);
+          console.log("Categories of products:", mappedProducts.map(p => p.category));
           setProductsList(mappedProducts);
         }
       } catch (err) {
@@ -298,7 +300,7 @@ export default function ProductPageHome() {
         {/* Title */}
         <div className="text-center mb-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-black mb-3 md:mb-5">
-            {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory === "Gaming Chair" ? "Gaming Series" : selectedCategory === "Executive Chair" ? "Executive Series" : selectedCategory === "Staff Chair" ? "Staff Series" : selectedCategory === "Study Chair" ? "Study Series" : "Premium Bar Stools"}
+            {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory === "Gaming Chair" ? "Gaming Series" : selectedCategory === "Office Chair" ? "Office Series" : selectedCategory === "Staff Chair" ? "Staff Series" : selectedCategory === "Study Chair" ? "Study Series" : "Premium Bar Stools"}
           </h1>
           <p className="max-w-2xl mx-auto text-xs md:text-base text-neutral-500 leading-relaxed font-medium px-2">
             Discover Astride's premium ergonomics — masterfully engineered seating built for long-session endurance, proactive posture correction, and premium styling.

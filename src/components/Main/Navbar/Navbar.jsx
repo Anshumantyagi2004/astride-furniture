@@ -107,7 +107,13 @@ export default function Navbar() {
         const catRes = await fetch("/api/category");
         const catData = await catRes.json();
         if (catData?.success) {
-          setCategories(catData.categories);
+          const mappedCats = catData.categories.map(cat => {
+            if (cat.name === "Executive Chair") {
+              return { ...cat, name: "Office Chair" };
+            }
+            return cat;
+          });
+          setCategories(mappedCats);
         }
         
         const prodRes = await fetch("/api/product");
@@ -139,8 +145,8 @@ export default function Navbar() {
         { name: 'RGB Gaming Chair', image: '/Product/InfographicDesign-1.webp', tag: 'Premium', buyUrl: '#buy' }
       ]
     },
-    'Executive Chair': {
-      label: 'Executive Chair',
+    'Office Chair': {
+      label: 'Office Chair',
       chairs: [
         { name: 'AlphaGrey', image: '/Png1/chair6_AlphaGrey.webp', tag: 'Premium Mesh', buyUrl: '#buy' },
         { name: 'ErgoFit Executive', image: '/Png1/chair12_ErgoFit.webp', tag: 'High Back', buyUrl: '#buy' },
@@ -175,7 +181,7 @@ export default function Navbar() {
 
   const fallbackCategories = [
     { _id: 'gaming-chair', name: 'Gaming Chair' },
-    { _id: 'executive-chair', name: 'Executive Chair' },
+    { _id: 'executive-chair', name: 'Office Chair' },
     { _id: 'staff-chair', name: 'Staff Chair' },
     { _id: 'study-chair', name: 'Study Chair' },
     { _id: 'bar-stool', name: 'Bar Stool' },
