@@ -261,7 +261,7 @@ export default function BestSellerSection() {
     }, []);
 
     return (
-        <section className="relative overflow-hidden bg-zinc-50 py-10">
+        <section className="relative overflow-hidden bg-zinc-50 py-5">
             {/* Lightweight Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-20 left-[-80px] w-[250px] h-[250px] bg-zinc-200/20 rounded-full blur-[50px]" />
@@ -271,7 +271,7 @@ export default function BestSellerSection() {
             <div className="relative z-10 lg:px-15 md:px-10 px-6">
                 
                 {/* SECTION HEADER */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-5">
                     <div className="flex flex-col items-start text-left">
                         <span className="inline-flex md:hidden items-center text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2">
                             EXPLORE BESTSELLERS
