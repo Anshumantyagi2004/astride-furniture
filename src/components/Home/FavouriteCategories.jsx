@@ -261,13 +261,13 @@ export default function FavouriteCategories() {
     const activeProducts = productsList.filter(p => p.category === activeCategory);
 
     return (
-        <section className={`w-full pt-16 pb-10 bg-[#F8F9FA] overflow-hidden ${sans.className}`}>
+        <section className={`w-full pt-4 pb-10 bg-[#F8F9FA] overflow-hidden ${sans.className}`}>
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col items-start text-left mb-4">
                     <span className="inline-flex items-center text-[#8B5CF6] text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2 font-sans">
                         Explore Collections
                     </span>
-                    <div className="text-5xl sm:text-6xl lg:text-[4rem] font-extrabold uppercase leading-[0.9] tracking-tighter font-sans">
+                    <div className="text-5xl sm:text-6xl lg:text-[4rem] font-extrabold uppercase leading-[0.8] tracking-tighter font-sans">
                         <span className="block text-[#161316] font-sans">TRENDING</span>
                         <span 
                             className="block font-sans font-black"

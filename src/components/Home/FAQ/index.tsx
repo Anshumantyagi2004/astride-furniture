@@ -45,7 +45,7 @@ export default function FAQ() {
   };
 
   return (
-    <section className={`w-full py-8 md:py-16 bg-[#FAFAFA] border-t border-neutral-100 ${sans.className}`} id="faq">
+    <section className={`w-full pt-2 pb-8 md:pt-4 md:pb-16 bg-[#FAFAFA] border-t border-neutral-100 ${sans.className}`} id="faq">
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-20 items-start">
         
         {/* Left Column */}

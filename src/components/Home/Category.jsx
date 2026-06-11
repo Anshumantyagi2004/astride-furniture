@@ -38,7 +38,7 @@ export default function Category() {
     }, []);
 
     return (
-        <section className={`relative overflow-hidden bg-[#FAFAFA] py-16 ${sans.className}`}>
+        <section className={`relative overflow-hidden bg-[#FAFAFA] pt-2 pb-16 ${sans.className}`}>
 
             {/* HEADING */}
             <div className="relative z-10 md:px-15 px-4 mb-10 max-w-[1400px] mx-auto">

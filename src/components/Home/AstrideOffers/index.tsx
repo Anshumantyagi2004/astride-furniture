@@ -78,7 +78,7 @@ export default function AstrideOffers() {
 
   return (
     <section 
-      className="w-full bg-[#FFFFFF] py-16 px-6 md:px-12 lg:px-20 overflow-hidden"
+      className="w-full bg-[#FFFFFF] pt-2 pb-4 md:pt-3 md:pb-6 px-6 md:px-12 lg:px-20 overflow-hidden"
       style={{
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
       }}
