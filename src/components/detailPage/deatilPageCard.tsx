@@ -307,7 +307,7 @@ export default function DetailPageCard({ product }: { product: any }) {
 
           {/* Main Image */}
           <div 
-            className="order-1 w-full h-[280px] md:h-[360px] lg:h-[400px] xl:h-[440px] flex items-center justify-center relative group rounded-[28px] border-[2.5px] border-[#131313] bg-[radial-gradient(ellipse_at_50%_78%,#ece4d2,#fff_72%)] shadow-[6px_6px_0_#131313]"
+            className="order-1 w-full aspect-square relative group rounded-[28px] border-[2.5px] border-[#131313] bg-white shadow-[6px_6px_0_#131313] overflow-hidden flex items-center justify-center"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -326,9 +326,7 @@ export default function DetailPageCard({ product }: { product: any }) {
             </div>
 
             {/* Handwritten Note */}
-            <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rotate-[-2.5deg] border-b-4 border-[#8B5CF6] text-[18px] md:text-[22px] font-bold text-[#8B5CF6] whitespace-nowrap z-20 pointer-events-none">
-              Astride 
-            </span>
+            
             {allVariantImages.length > 1 && (
               <button 
                 onClick={(e) => { e.stopPropagation(); goPrevImage(); }}
@@ -338,12 +336,33 @@ export default function DetailPageCard({ product }: { product: any }) {
               </button>
             )}
 
-            <Image 
-              src={activeImage || product.image} 
-              alt={product.name} 
-              fill
-              className="object-contain p-8 lg:p-12 hover:scale-105 transition-transform duration-700 ease-out mix-blend-multiply"
-            />
+            {(() => {
+              const currentSrc = activeImage || product.image;
+              const isLifestyle = currentSrc && (
+                currentSrc.includes("unsplash") || 
+                currentSrc.includes("lifestyle") ||
+                currentSrc.includes("setup") ||
+                currentSrc.includes("/Product/") ||
+                currentSrc.includes("/product/")
+              );
+              
+              if (isLifestyle) {
+                return (
+                  <img 
+                    src={currentSrc} 
+                    alt={product.name} 
+                    className="w-full h-full object-cover block"
+                  />
+                );
+              }
+              return (
+                <img 
+                  src={currentSrc} 
+                  alt={product.name} 
+                  className="w-full h-full object-contain p-6 block"
+                />
+              );
+            })()}
 
             {allVariantImages.length > 1 && (
               <button 

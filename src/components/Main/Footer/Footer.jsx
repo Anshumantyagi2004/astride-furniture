@@ -27,9 +27,9 @@ export default function Footer() {
     };
 
     return (
-        <footer className="bg-[#131313] text-white pt-[70px] font-sans">
+        <footer className="bg-[#131313] text-white pt-[40px] font-sans">
             <div className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.4fr] gap-10 pb-[54px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.4fr] gap-10 pb-[28px]">
                     
                     {/* Brand Section */}
                     <div>
@@ -139,15 +139,20 @@ export default function Footer() {
                         <div className="space-y-[14px] text-[#bdbdbd] text-[14px]">
                             <div className="flex items-center gap-[10px]">
                                 <FaPhone className="text-white shrink-0" size={14} />
-                                <a href="tel:+918888888888" className="hover:text-white transition-colors font-sans">
-                                    +91 88888 88888
+                                <a href="tel:+917311164111" className="hover:text-white transition-colors font-sans">
+                                    +91 73111 64111
                                 </a>
                             </div>
-                            <div className="flex items-center gap-[10px]">
-                                <FaEnvelope className="text-white shrink-0" size={14} />
-                                <a href="mailto:support@astride.com" className="hover:text-white transition-colors font-sans">
-                                    support@astride.com
-                                </a >
+                            <div className="flex items-start gap-[10px]">
+                                <FaEnvelope className="text-white shrink-0 mt-1" size={14} />
+                                <div className="flex flex-col">
+                                    <a href="mailto:support@astride.in" className="hover:text-white transition-colors font-sans">
+                                        support@astride.in
+                                    </a>
+                                    <a href="mailto:sales@astride.in" className="hover:text-white transition-colors font-sans mt-0.5">
+                                        sales@astride.in
+                                    </a>
+                                </div>
                             </div>
                             <div className="flex items-center gap-[10px]">
                                 <FaRegClock className="text-white shrink-0" size={14} />
@@ -188,9 +193,9 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="border-t-[1.5px] border-[#2c2c2c] py-[22px] flex flex-wrap justify-between items-center gap-[14px] text-[13px] text-[#8b8b8b]">
+                <div className="border-t-[1.5px] border-[#2c2c2c] py-[12px] flex flex-wrap justify-between items-center gap-[14px] text-[13px] text-[#8b8b8b]">
                     <span>© {new Date().getFullYear()} Astrides Pvt Ltd. All rights reserved.</span>
-                    <span className="text-[#DCF351] font-medium tracking-wide">good chair. good mood. good day.</span>
+                    <span className="text-[#DCF351] font-medium tracking-wide">Good Chair. Good Mood. Good Day.</span>
                 </div>
             </div>
         </footer>

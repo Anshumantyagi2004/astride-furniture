@@ -128,7 +128,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="w-full h-full flex flex-col justify-center gap-4 md:gap-8 max-w-[1200px] mx-auto py-8"
+              className="w-full h-full flex flex-col justify-center gap-4 md:gap-8 mx-auto py-8"
             >
               <div className="text-center mb-2 px-4">
                 <span className="text-zinc-500 text-[10px] tracking-widest uppercase block mb-0.5">Interactive Discovery</span>
@@ -228,7 +228,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full h-full max-w-[1200px] mx-auto"
+              className="relative w-full h-full mx-auto"
             >
               {ALL_CHAIRS.map((chair, index) => {
                 const isVisible = index < visibleCount;

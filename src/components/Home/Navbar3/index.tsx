@@ -200,6 +200,10 @@ export default function Navbar3() {
                         — Call now!
                     </div>
 
+                    <div className="hidden md:block text-slate-300 text-[12px] tracking-wider uppercase font-semibold">
+                        GST: <span className="font-bold text-white">07AALCM4232E1ZN</span>
+                    </div>
+
                     <nav className="hidden md:flex items-center gap-[22px]">
                         <Link href="/#bulk" className="hover:text-lime-500 transition-colors">
                             Bulk orders
@@ -227,24 +231,16 @@ export default function Navbar3() {
                     <Link
                         href="/"
                         aria-label="Astride home"
-                        className="flex items-center gap-[10px] text-2xl tracking-[0.02em] font-bold text-slate-900"
+                        className="flex items-center shrink-0"
                     >
-                        <svg
-                            viewBox="0 0 40 40"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2.6}
-                            strokeLinejoin="round"
-                            className="w-[38px] h-[38px]"
-                        >
-                            <path d="M20 4 5 13v14l15 9 15-9V13L20 4z" />
-                            <path d="M20 13l-7 4v7l7 4 7-4v-7l-7-4z" />
-                        </svg>
-
-                        <span>
-                            ASTRIDE
-                            <sup className="text-[10px] align-super">®</sup>
-                        </span>
+                        <Image
+                            src="/logo.webp"
+                            alt="Astride"
+                            width={170}
+                            height={80}
+                            className="h-10 md:h-14 w-auto object-contain"
+                            priority
+                        />
                     </Link>
 
                     {/* Desktop Navigation */}
@@ -272,14 +268,6 @@ export default function Navbar3() {
 
                     {/* Right Side */}
                     <div className="flex items-center gap-[18px]">
-
-                        {/* Find Chair Button */}
-                        <button
-                            onClick={handleFindYourChair}
-                            className="hidden md:inline-flex items-center rounded-full border border-slate-900 px-4 py-2 text-sm font-medium transition hover:bg-slate-900 hover:text-white cursor-pointer"
-                        >
-                            Find your chair
-                        </button>
 
                         {/* Search */}
                         <Link
