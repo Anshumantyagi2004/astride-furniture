@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
@@ -11,7 +11,7 @@ const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
 });
 
-const PRODUCTS = [
+const STATIC_FALLBACKS = [
   {
     id: "10",
     name: "FitWell Pro",
@@ -59,6 +59,85 @@ const PRODUCTS = [
 ];
 
 export default function CompeteTheVibe() {
+  const [products, setProducts] = useState<any[]>(STATIC_FALLBACKS);
+
+  useEffect(() => {
+    async function fetchVibeProducts() {
+      try {
+        const res = await fetch("/api/product");
+        const data = await res.json();
+
+        if (data.success && data.products && data.products.length > 0) {
+          // Filter for products that have multiple variant images
+          const multiImageProducts = data.products.filter((prod: any) => {
+            const imageCount = prod.colorVariants?.reduce(
+              (acc: number, variant: any) => acc + (variant.images?.length || 0),
+              0
+            ) || 0;
+            return imageCount > 1;
+          });
+
+          // If we have products, map the first 4
+          if (multiImageProducts.length > 0) {
+            const mapped = multiImageProducts.slice(0, 4).map((prod: any, idx: number) => {
+              const discPercent = prod.oldPrice && prod.realPrice
+                ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
+                : 60;
+
+              let normalizedCategory = "Ergonomic Chair";
+              const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
+              if (dbCategory.includes("BAR")) {
+                normalizedCategory = "Bar Stool";
+              } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK")) {
+                normalizedCategory = "Staff Chair";
+              }
+
+              const blackVariant = prod.colorVariants?.find(
+                (v: any) => v.colorName?.toLowerCase() === "black"
+              );
+              const blackImage = blackVariant?.images?.[0]?.url;
+              const fallbackImage = prod.colorVariants?.find(
+                (v: any) => v.images && v.images.length > 0
+              )?.images?.[0]?.url;
+
+              // Predefined stickers for dynamic elements
+              const stickers = [
+                { text: "staff fave", bg: "bg-[#DCF351] text-[#131313]" },
+                { text: "", bg: "" },
+                { text: "new drop", bg: "bg-[#DCF351] text-[#131313]" },
+                { text: "boss mode", bg: "bg-[#EC4899] text-white" }
+              ];
+              const stickerChoice = stickers[idx % stickers.length];
+
+              return {
+                id: prod._id || prod.slug,
+                name: prod.productName,
+                category: normalizedCategory,
+                image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+                oldPrice: `₹${(prod.oldPrice || prod.realPrice * 2).toLocaleString()}`,
+                price: `₹${prod.realPrice.toLocaleString()}`,
+                rawPrice: prod.realPrice,
+                sticker: stickerChoice.text,
+                stickerBg: stickerChoice.bg
+              };
+            });
+
+            // Fill up with fallbacks if fewer than 4 items fetched
+            if (mapped.length < 4) {
+              const needed = 4 - mapped.length;
+              setProducts([...mapped, ...STATIC_FALLBACKS.slice(0, needed)]);
+            } else {
+              setProducts(mapped);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching recommended vibe products:", e);
+      }
+    }
+    fetchVibeProducts();
+  }, []);
+
   return (
     <section className={`pt-2 pb-4 md:pt-3 md:pb-6 bg-white ${sans.className}`}>
       <div className="max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12">
@@ -89,7 +168,7 @@ export default function CompeteTheVibe() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 gap-[30px] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {PRODUCTS.map((product) => (
+          {products.map((product) => (
             <Link
               key={product.id}
               href={`/products/${product.id}`}
