@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import Image from 'next/image';
 import { useScroll, useTransform, motion } from 'framer-motion';
 import { Timeline } from '@/components/ui/timeline';
-import bannerImage from './banner_2.webp';
+import bannerImage from './about_image.png';
 
 const stats = [
   { value: '2018', label: 'Founded' },
