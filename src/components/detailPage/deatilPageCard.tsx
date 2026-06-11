@@ -276,11 +276,38 @@ export default function DetailPageCard({ product }: { product: any }) {
 
       <div className="flex flex-col lg:flex-row gap-6 xl:gap-10 mt-5">
         {/* Left: Image Gallery */}
-        <div className="w-full lg:w-[44%] flex flex-col gap-3">
+        <div className="w-full lg:w-[46%] flex flex-col lg:flex-row gap-4">
           
+          {/* Thumbnails strip */}
+          {allVariantImages.length > 1 && (
+            <div className="order-2 lg:order-1 flex flex-row lg:flex-col gap-3 shrink-0 overflow-x-auto lg:overflow-y-auto max-h-[96px] lg:max-h-[480px] xl:max-h-[540px] pb-2 lg:pb-0 scrollbar-none w-full lg:w-[80px] xl:w-[90px] justify-center lg:justify-start">
+              {allVariantImages.map((img: any, idx: number) => {
+                const isActive = activeImage === img.url;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleThumbnailClick(img.url)}
+                    className={`relative w-[64px] lg:w-full aspect-square bg-white border-[2.5px] rounded-[14px] p-2 flex items-center justify-center transition-all duration-200 shrink-0 hover:-translate-y-1 lg:hover:-translate-x-1 ${
+                      isActive 
+                        ? 'border-[#8B5CF6] shadow-[3px_3px_0_#8B5CF6] -rotate-2' 
+                        : 'border-[#131313] shadow-[3px_3px_0_rgba(19,19,19,0.85)]'
+                    }`}
+                  >
+                    <Image 
+                      src={img.url} 
+                      alt={`Thumbnail ${idx + 1}`} 
+                      fill 
+                      className="object-contain p-1.5 mix-blend-multiply" 
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {/* Main Image */}
           <div 
-            className="w-full h-[300px] md:h-[420px] lg:h-[480px] xl:h-[540px] flex items-center justify-center relative group rounded-[28px] border-[2.5px] border-[#131313] bg-[radial-gradient(ellipse_at_50%_78%,#ece4d2,#fff_72%)] shadow-[6px_6px_0_#131313] shrink-0"
+            className="order-1 lg:order-2 flex-grow h-[300px] md:h-[420px] lg:h-[480px] xl:h-[540px] flex items-center justify-center relative group rounded-[28px] border-[2.5px] border-[#131313] bg-[radial-gradient(ellipse_at_50%_78%,#ece4d2,#fff_72%)] shadow-[6px_6px_0_#131313]"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -328,37 +355,10 @@ export default function DetailPageCard({ product }: { product: any }) {
             )}
           </div>
 
-          {/* Thumbnails strip */}
-          {allVariantImages.length > 1 && (
-            <div className="flex flex-row justify-center lg:justify-start gap-3.5 shrink-0 overflow-x-auto mt-4 pb-2 scrollbar-none w-full">
-              {allVariantImages.map((img: any, idx: number) => {
-                const isActive = activeImage === img.url;
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => handleThumbnailClick(img.url)}
-                    className={`relative w-[72px] lg:w-[86px] aspect-square bg-white border-[2.5px] rounded-[14px] p-2.5 flex items-center justify-center transition-all duration-200 shrink-0 hover:-translate-y-1 ${
-                      isActive 
-                        ? 'border-[#8B5CF6] shadow-[3px_3px_0_#8B5CF6] -rotate-2' 
-                        : 'border-[#131313] shadow-[3px_3px_0_rgba(19,19,19,0.85)]'
-                    }`}
-                  >
-                    <Image 
-                      src={img.url} 
-                      alt={`Thumbnail ${idx + 1}`} 
-                      fill 
-                      className="object-contain p-2 mix-blend-multiply" 
-                    />
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
         </div>
 
         {/* Right: Details */}
-        <div className="w-full lg:w-[58%] flex flex-col pt-1 text-black">
+        <div className="w-full lg:w-[50%] flex flex-col pt-1 text-black">
           
           <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#EC4899]">
             {product.category}

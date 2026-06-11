@@ -1,5 +1,38 @@
 import Image from "next/image";
 
+// ==========================================
+// CONFIGURATION INTERFACE FOR PLATFORM LOGOS
+// ==========================================
+// Customize the sizes (height and width) of the logos here.
+const LOGO_CONFIG = {
+  amazon: {
+    // Height & Width on Mobile
+    mobileHeight: "200px",
+    mobileWidth: "auto",
+    // Vertical alignment offset on Mobile
+    mobileTranslateY: "0px",
+    
+    // Height & Width on Desktop (md screens and up)
+    desktopHeight: "83px",
+    desktopWidth: "auto",
+    // Vertical alignment offset on Desktop
+    desktopTranslateY: "3px",
+  },
+  flipkart: {
+    // Height & Width on Mobile
+    mobileHeight: "24px",
+    mobileWidth: "auto",
+    // Vertical alignment offset on Mobile
+    mobileTranslateY: "0px",
+    
+    // Height & Width on Desktop (md screens and up)
+    desktopHeight: "30px",
+    desktopWidth: "auto",
+    // Vertical alignment offset on Desktop
+    desktopTranslateY: "-3px",
+  }
+};
+
 export default function StatsSection_New() {
   const stats = [
     { num: "75,000", symbol: "+", label: "Orders delivered", symbolSize: "text-[40px] md:text-[52px] lg:text-[62px]", translate: "translate-y-[-10px]" },
@@ -42,23 +75,49 @@ export default function StatsSection_New() {
           </span>
 
           <div className="flex items-center">
-            <Image
-              src="/Logo/amazon.webp"
-              alt="Amazon"
-              width={100}
-              height={24}
-              className="h-[24px] md:h-[28px] w-auto object-contain"
-            />
+            {/* Amazon Logo Wrapper */}
+            <div 
+              style={{
+                "--h-mobile": LOGO_CONFIG.amazon.mobileHeight,
+                "--w-mobile": LOGO_CONFIG.amazon.mobileWidth,
+                "--h-desktop": LOGO_CONFIG.amazon.desktopHeight,
+                "--w-desktop": LOGO_CONFIG.amazon.desktopWidth,
+                "--ty-mobile": LOGO_CONFIG.amazon.mobileTranslateY,
+                "--ty-desktop": LOGO_CONFIG.amazon.desktopTranslateY,
+              } as React.CSSProperties}
+              className="flex items-center"
+            >
+              <Image
+                src="/Logo/amazon.webp"
+                alt="Amazon"
+                width={200}
+                height={94}
+                className="h-[var(--h-mobile)] w-[var(--w-mobile)] md:h-[var(--h-desktop)] md:w-[var(--w-desktop)] [transform:translateY(var(--ty-mobile))] md:[transform:translateY(var(--ty-desktop))] object-contain"
+              />
+            </div>
           </div>
 
           <div className="flex items-center">
-            <Image
-              src="/Logo/FLIPKART_Webp.webp"
-              alt="Flipkart"
-              width={100}
-              height={24}
-              className="h-[24px] md:h-[28px] w-auto object-contain"
-            />
+            {/* Flipkart Logo Wrapper */}
+            <div
+              style={{
+                "--h-mobile": LOGO_CONFIG.flipkart.mobileHeight,
+                "--w-mobile": LOGO_CONFIG.flipkart.mobileWidth,
+                "--h-desktop": LOGO_CONFIG.flipkart.desktopHeight,
+                "--w-desktop": LOGO_CONFIG.flipkart.desktopWidth,
+                "--ty-mobile": LOGO_CONFIG.flipkart.mobileTranslateY,
+                "--ty-desktop": LOGO_CONFIG.flipkart.desktopTranslateY,
+              } as React.CSSProperties}
+              className="flex items-center"
+            >
+              <Image
+                src="/Logo/FLIPKART_Webp.webp"
+                alt="Flipkart"
+                width={100}
+                height={24}
+                className="h-[var(--h-mobile)] w-[var(--w-mobile)] md:h-[var(--h-desktop)] md:w-[var(--w-desktop)] [transform:translateY(var(--ty-mobile))] md:[transform:translateY(var(--ty-desktop))] object-contain"
+              />
+            </div>
           </div>
         </div>
       </div>

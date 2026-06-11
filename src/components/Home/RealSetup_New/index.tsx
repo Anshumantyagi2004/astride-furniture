@@ -43,7 +43,7 @@ export default function RealSetup_New() {
 
   return (
     <section
-      className="w-full py-14 md:py-16 px-5 md:px-8 lg:px-16 overflow-hidden"
+      className="w-full pt-2 pb-6 md:pt-4 md:pb-8 px-5 md:px-8 lg:px-16 overflow-hidden"
       style={{
         backgroundColor: "#F5EFE6",
         backgroundImage:

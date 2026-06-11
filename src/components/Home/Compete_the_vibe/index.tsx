@@ -60,7 +60,7 @@ const PRODUCTS = [
 
 export default function CompeteTheVibe() {
   return (
-    <section className={`py-20 md:py-24 bg-white ${sans.className}`}>
+    <section className={`pt-6 pb-20 md:pt-10 md:pb-24 bg-white ${sans.className}`}>
       <div className="max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12">
         
         {/* Header section */}
