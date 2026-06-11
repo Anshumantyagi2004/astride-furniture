@@ -342,6 +342,8 @@ export default function DetailPageCard({ product }: { product: any }) {
                 currentSrc.includes("unsplash") || 
                 currentSrc.includes("lifestyle") ||
                 currentSrc.includes("setup") ||
+                currentSrc.includes("infographic") ||
+                currentSrc.includes("banner") ||
                 currentSrc.includes("/Product/") ||
                 currentSrc.includes("/product/")
               );
