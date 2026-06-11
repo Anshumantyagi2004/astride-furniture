@@ -44,7 +44,7 @@ const modes = [
 
 export default function Header6_New() {
   return (
-    <section className="w-full bg-[#080808] py-14 px-5 md:px-8 lg:px-16 overflow-hidden relative">
+    <section className="w-full bg-[#080808] py-6 px-5 md:px-8 lg:px-16 overflow-hidden relative">
 
       {/* Ambient glow blobs */}
       <div className="pointer-events-none absolute top-0 left-[250px] w-[400px] h-[300px] rounded-full bg-[#8B5CF6]/10 blur-[80px]" />
@@ -123,11 +123,11 @@ export default function Header6_New() {
             <Link
               key={mode.label}
               href={mode.link}
-              className="group relative w-full rounded-[16px] md:rounded-[20px] overflow-hidden bg-[#111111] flex flex-col cursor-pointer transition-all duration-350 hover:-translate-y-2 hover:shadow-2xl select-none outline-none focus:outline-none active:outline-none"
+              className="group relative w-full h-[270px] md:h-[350px] rounded-[16px] md:rounded-[20px] overflow-hidden bg-[#111111] cursor-pointer transition-all duration-350 hover:-translate-y-2 hover:shadow-2xl select-none outline-none focus:outline-none active:outline-none"
               style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.08)" }}
             >
-              {/* Image */}
-              <div className="relative aspect-[4/3.2] w-full overflow-hidden outline-none">
+              {/* Image filling entire card */}
+              <div className="absolute inset-0 w-full h-full overflow-hidden outline-none">
                 <Image
                   src={mode.img}
                   alt={mode.alt}
@@ -136,34 +136,34 @@ export default function Header6_New() {
                   unoptimized
                 />
                 {/* Layered gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#111111] to-transparent pointer-events-none" />
-
-                {/* Accent badge top-right */}
-                <div
-                  className="absolute top-2.5 right-2.5 text-[15px] md:text-[18px] w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center bg-black/50 backdrop-blur-sm border border-white/10 select-none"
-                >
-                  {mode.badge}
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black from-30% via-black/70 via-55% to-transparent pointer-events-none" />
               </div>
 
-              {/* Text */}
-              <div className="px-3 md:px-4 pt-3 md:pt-4 pb-4 md:pb-5 flex flex-col gap-[4px] md:gap-[6px] outline-none">
-                <p className="text-white font-black text-[11px] md:text-[12.5px] tracking-[0.16em] uppercase select-none">
+              {/* Accent badge top-right */}
+              <div
+                className="absolute top-2.5 right-2.5 text-[15px] md:text-[18px] w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center bg-black/50 backdrop-blur-sm border border-white/10 select-none z-20"
+              >
+                {mode.badge}
+              </div>
+
+              {/* Text overlay — pinned to the very bottom */}
+              <div className="absolute bottom-0 left-0 right-0 z-20 px-4 md:px-5 pb-8 md:pb-10 flex flex-col gap-[3px] md:gap-[5px] outline-none">
+                <p className="text-white font-black text-[12px] md:text-[13.5px] tracking-[0.16em] uppercase select-none">
                   {mode.label}
                 </p>
-                <p className="text-white/45 text-[10px] md:text-[11.5px] leading-snug select-none">{mode.tagline}</p>
+                <p className="text-white/45 text-[10.5px] md:text-[12px] leading-snug select-none">{mode.tagline}</p>
                 <div
-                  className="mt-1.5 md:mt-2 text-[10px] md:text-[11.5px] font-bold uppercase tracking-widest flex items-center gap-1 transition-all duration-200 w-fit outline-none"
+                  className="mt-1 md:mt-2 text-[10.5px] md:text-[12px] font-black uppercase tracking-[0.18em] flex items-center gap-1 transition-all duration-200 w-fit outline-none"
                   style={{ color: mode.accent }}
                 >
                   Shop Now <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">→</span>
                 </div>
               </div>
 
-              {/* Hover glow at bottom */}
+              {/* Hover glow outline */}
               <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-[16px] md:rounded-[20px] outline-none"
-                style={{ boxShadow: `inset 0 0 0 1.5px ${mode.accent}40` }}
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-[16px] md:rounded-[20px] z-20"
+                style={{ boxShadow: `inset 0 0 0 1.5px ${mode.accent}50` }}
               />
             </Link>
           ))}
