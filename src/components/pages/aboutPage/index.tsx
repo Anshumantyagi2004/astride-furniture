@@ -264,8 +264,20 @@ export default function AboutPage() {
       />
 
       {/* ── CTA ── */}
-      <section className="py-16 md:py-28 px-6 text-center bg-[#161316]">
+      <section className="relative py-16 md:py-28 px-6 text-center overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/Png1/about_2.jpeg"
+            alt="Find Your Perfect Seat Background"
+            fill
+            style={{ objectFit: 'cover', objectPosition: 'center' }}
+          />
+          <div className="absolute inset-0 bg-black/40" />
+        </div>
+
         <motion.div
+          className="relative z-10"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
