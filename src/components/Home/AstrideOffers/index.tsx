@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Loader from '../../ui/loader';
 
 export default function AstrideOffers() {
   const [productsList, setProductsList] = useState<any[]>([]);
@@ -111,72 +112,78 @@ export default function AstrideOffers() {
         </div>
 
         {/* Dynamic Deals Layout Panel */}
-        <div className="w-full relative">
+        <div className="w-full relative min-h-[460px]">
           
-          {/* Slider Container */}
-          <div 
-            ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory items-stretch pr-[calc(50%+12px)] md:pr-[calc(33.333%+8px)] lg:pr-[calc(25%+6px)] scroll-pl-6 scroll-pr-[calc(50%+12px)] md:scroll-pr-[calc(33.333%+8px)] lg:scroll-pr-[calc(25%+6px)]"
-          >
-            {productsList.map((deal) => {
-              return (
-                <Link 
-                  key={deal.id}
-                  href={`/products/${deal.id}`}
-                  className="w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] h-[460px] shrink-0 flex flex-col justify-between bg-white rounded-[14px] p-4 snap-start group relative border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313] hover:-translate-y-1 hover:shadow-[8px_8px_0_#131313] transition-all duration-300"
-                >
-                  
-                  <div>
-                    {/* Top Image Container */}
-                    <div className="relative w-full h-[220px] bg-[#f4f4f5] rounded-[10px] border-2 border-transparent group-hover:border-[#131313] flex items-center justify-center p-3 mb-4 transition-all duration-300 overflow-hidden">
-                      {/* Tag Badge */}
-                      {deal.tag && (
-                        <span className="absolute top-3 left-3 bg-[#EC4899] text-white text-[10px] font-black tracking-wider px-2.5 py-1 uppercase rounded-sm z-10 border border-[#131313] shadow-[2px_2px_0_#131313]">
-                          {deal.tag}
-                        </span>
-                      )}
-                      
-                      <div className="relative transform group-hover:scale-110 transition-transform duration-500 ease-out flex items-center justify-center w-[95%] h-[95%]">
-                        <img 
-                          src={deal.image} 
-                          alt={deal.name} 
-                          className="w-full h-full object-contain drop-shadow-xl"
-                        />
+          {productsList.length === 0 ? (
+            <div className="h-[460px] mr-[calc(50%+12px)] md:mr-[calc(33.333%+8px)] lg:mr-[calc(25%+6px)] flex items-center justify-center bg-[#f4f4f5] rounded-[14px] border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313]">
+              <Loader />
+            </div>
+          ) : (
+            /* Slider Container */
+            <div 
+              ref={scrollContainerRef}
+              className="flex gap-6 overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory items-stretch pr-[calc(50%+12px)] md:pr-[calc(33.333%+8px)] lg:pr-[calc(25%+6px)] scroll-pl-6 scroll-pr-[calc(50%+12px)] md:scroll-pr-[calc(33.333%+8px)] lg:scroll-pr-[calc(25%+6px)]"
+            >
+              {productsList.map((deal) => {
+                return (
+                  <Link 
+                    key={deal.id}
+                    href={`/products/${deal.id}`}
+                    className="w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] h-[460px] shrink-0 flex flex-col justify-between bg-white rounded-[14px] p-4 snap-start group relative border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313] hover:-translate-y-1 hover:shadow-[8px_8px_0_#131313] transition-all duration-300"
+                  >
+                    
+                    <div>
+                      {/* Top Image Container */}
+                      <div className="relative w-full h-[220px] bg-[#f4f4f5] rounded-[10px] border-2 border-transparent group-hover:border-[#131313] flex items-center justify-center p-3 mb-4 transition-all duration-300 overflow-hidden">
+                        {/* Tag Badge */}
+                        {deal.tag && (
+                          <span className="absolute top-3 left-3 bg-[#EC4899] text-white text-[10px] font-black tracking-wider px-2.5 py-1 uppercase rounded-sm z-10 border border-[#131313] shadow-[2px_2px_0_#131313]">
+                            {deal.tag}
+                          </span>
+                        )}
+                        
+                        <div className="relative transform group-hover:scale-110 transition-transform duration-500 ease-out flex items-center justify-center w-[95%] h-[95%]">
+                          <img 
+                            src={deal.image} 
+                            alt={deal.name} 
+                            className="w-full h-full object-contain drop-shadow-xl"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Product Info Block */}
+                      <div className="flex flex-col gap-1.5">
+                        <h3 className="font-extrabold text-[#111111] text-[16px] tracking-wide font-sans mb-1 truncate uppercase">
+                          {deal.name}
+                        </h3>
+                        
+                        <p className="text-neutral-600 text-[12px] leading-relaxed line-clamp-2 min-h-[36px] max-h-[36px] overflow-hidden">
+                          {deal.description}
+                        </p>
                       </div>
                     </div>
 
-                    {/* Product Info Block */}
-                    <div className="flex flex-col gap-1.5">
-                      <h3 className="font-extrabold text-[#111111] text-[16px] tracking-wide font-sans mb-1 truncate uppercase">
-                        {deal.name}
-                      </h3>
+                    {/* Pricing Block */}
+                    <div className="flex flex-col gap-1 mt-auto pt-3 border-t-2 border-dashed border-neutral-200">
+                      <div className="flex items-baseline gap-1 text-[#111111]">
+                        <span className="text-sm font-bold font-sans">Rs.</span>
+                        <span className="text-[28px] font-black tracking-tight">{deal.dealPrice.toLocaleString()}</span>
+                      </div>
                       
-                      <p className="text-neutral-600 text-[12px] leading-relaxed line-clamp-2 min-h-[36px] max-h-[36px] overflow-hidden">
-                        {deal.description}
-                      </p>
+                      <div className="text-[13px] font-extrabold text-[#D11243] tracking-wide uppercase">
+                        {deal.discountPercentage}% off, save Rs. {deal.savings.toLocaleString()}
+                      </div>
+                      
+                      <div className="text-[12px] text-neutral-500 font-bold mt-0.5 line-through decoration-neutral-400">
+                        Original Price: Rs. {deal.originalPrice.toLocaleString()}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Pricing Block */}
-                  <div className="flex flex-col gap-1 mt-auto pt-3 border-t-2 border-dashed border-neutral-200">
-                    <div className="flex items-baseline gap-1 text-[#111111]">
-                      <span className="text-sm font-bold font-sans">Rs.</span>
-                      <span className="text-[28px] font-black tracking-tight">{deal.dealPrice.toLocaleString()}</span>
-                    </div>
-                    
-                    <div className="text-[13px] font-extrabold text-[#D11243] tracking-wide uppercase">
-                      {deal.discountPercentage}% off, save Rs. {deal.savings.toLocaleString()}
-                    </div>
-                    
-                    <div className="text-[12px] text-neutral-500 font-bold mt-0.5 line-through decoration-neutral-400">
-                      Original Price: Rs. {deal.originalPrice.toLocaleString()}
-                    </div>
-                  </div>
-
-                </Link>
-              );
-            })}
-          </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
 
           {/* Fixed Right Blue Card - Positioned Absolutely over the sliding track so cards slide underneath it */}
           <div className="absolute right-0 top-0 h-[460px] w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] bg-[#0058A3] rounded-[14px] overflow-hidden flex flex-col justify-between z-20 text-white border-[2.5px] border-[#131313] shadow-[6px_6px_0_#131313]">

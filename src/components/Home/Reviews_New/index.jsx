@@ -33,7 +33,7 @@ const reviews = [
 export default function Reviews_New() {
   return (
     <section
-      className="w-full py-16 md:py-24 px-5 md:px-8 lg:px-16 relative overflow-hidden"
+      className="w-full pt-16 pb-0 md:pt-24 md:pb-0 px-5 md:px-8 lg:px-16 relative overflow-hidden"
       style={{
         backgroundColor: "#F5EFE6",
         backgroundImage:
