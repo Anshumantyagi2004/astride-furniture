@@ -142,7 +142,7 @@ export default function Chair_split() {
                 <div className="flex flex-col gap-5 pointer-events-auto">
 
                     {/* Badge */}
-                    <span className="text-[12px] font-extrabold tracking-[0.2em] text-white/40 uppercase">Find Your Perfect Fit</span>
+                    
 
                     {/* Heading */}
                     <h2 className="text-[54px] lg:text-[72px] xl:text-[80px] font-black uppercase leading-[1.0] tracking-[-0.02em] text-white">
