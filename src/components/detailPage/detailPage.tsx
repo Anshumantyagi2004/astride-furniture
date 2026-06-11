@@ -5,7 +5,8 @@ import DetailPageCard from './deatilPageCard';
 import Reviews from '../Home/Reviews';
 import DetailedHero from './detailed_hero';
 import Loader from "@/components/ui/loader";
-import Reviews_New from '../Home/Reviews';
+import Reviews_New from '../Home/Reviews_New';
+import CompeteTheVibe from '../Home/Compete_the_vibe';
 
 export default function DetailPage({ productId }: { productId?: string }) {
   const [product, setProduct] = useState<any>(null);
@@ -201,74 +202,10 @@ export default function DetailPage({ productId }: { productId?: string }) {
     <div className="w-full bg-white">
       <DetailPageCard product={product} />
       
-      {product.whychoose && (
-        <section className="w-full bg-white py-12 border-t border-gray-100">
-          <div className="max-w-[1380px] mx-auto px-4 md:px-8 lg:px-10">
-            <h3 className="text-2xl md:text-3xl font-bold text-center text-slate-800 mb-8 tracking-tight">
-              Why Choose Astride
-            </h3>
-            <div 
-              className="max-w-4xl mx-auto text-base md:text-[17px] text-neutral-900 font-normal leading-relaxed space-y-4 rich-text-override"
-            >
-              <style dangerouslySetInnerHTML={{ __html: `
-                .rich-text-override, .rich-text-override * {
-                  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-                  font-size: 15.5px !important;
-                  color: #1f2937 !important;
-                  line-height: 1.8 !important;
-                }
-                .rich-text-override strong, .rich-text-override strong * {
-                  font-weight: 700 !important;
-                  color: #000000 !important;
-                }
-                .rich-text-override ul {
-                  list-style-type: disc !important;
-                  padding-left: 20px !important;
-                  margin-top: 10px !important;
-                  margin-bottom: 10px !important;
-                }
-                .rich-text-override ol {
-                  list-style-type: decimal !important;
-                  padding-left: 20px !important;
-                  margin-top: 10px !important;
-                  margin-bottom: 10px !important;
-                }
-                .rich-text-override li {
-                  margin-bottom: 12px !important;
-                }
-                .rich-text-override p {
-                  margin-bottom: 14px !important;
-                }
-                .rich-text-override h1 {
-                  font-size: 22px !important;
-                  font-weight: 700 !important;
-                  color: #000000 !important;
-                  margin-top: 20px !important;
-                  margin-bottom: 10px !important;
-                }
-                .rich-text-override h2 {
-                  font-size: 19px !important;
-                  font-weight: 600 !important;
-                  color: #000000 !important;
-                  margin-top: 18px !important;
-                  margin-bottom: 8px !important;
-                }
-                .rich-text-override h3 {
-                  font-size: 17px !important;
-                  font-weight: 600 !important;
-                  color: #000000 !important;
-                  margin-top: 16px !important;
-                  margin-bottom: 6px !important;
-                }
-              `}} />
-              <div dangerouslySetInnerHTML={{ __html: product.whychoose }} />
-            </div>
-          </div>
-        </section>
-      )}
+
 
       <Reviews_New/>
-      
+      <CompeteTheVibe />
     </div>
   );
 }

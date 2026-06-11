@@ -11,6 +11,7 @@ const modes = [
     accent: "#C8F135",
     img: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=600&q=80",
     alt: "Work mode office chair setup",
+    link: "/products?category=Office%20Chair",
   },
   {
     label: "STUDY MODE",
@@ -19,6 +20,7 @@ const modes = [
     accent: "#818CF8",
     img: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80",
     alt: "Study mode desk setup",
+    link: "/products?category=Study%20Chair",
   },
   {
     label: "GAME MODE",
@@ -27,6 +29,7 @@ const modes = [
     accent: "#EC4899",
     img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80",
     alt: "Gaming setup with RGB lighting",
+    link: "/products?category=Gaming%20Chair",
   },
   {
     label: "CHILL MODE",
@@ -35,6 +38,7 @@ const modes = [
     accent: "#F97316",
     img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
     alt: "Chill lounge chair setup",
+    link: "/products?category=Bar%20Stool",
   },
 ];
 
@@ -116,54 +120,52 @@ export default function Header6_New() {
         {/* ── Cards Grid ── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 flex-1">
           {modes.map((mode) => (
-            <div
+            <Link
               key={mode.label}
-              className="group relative w-full rounded-[16px] md:rounded-[20px] overflow-hidden bg-[#111111] flex flex-col cursor-pointer transition-all duration-350 hover:-translate-y-2 hover:shadow-2xl"
+              href={mode.link}
+              className="group relative w-full rounded-[16px] md:rounded-[20px] overflow-hidden bg-[#111111] flex flex-col cursor-pointer transition-all duration-350 hover:-translate-y-2 hover:shadow-2xl select-none outline-none focus:outline-none active:outline-none"
               style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.08)" }}
             >
               {/* Image */}
-              <div className="relative aspect-[4/3.2] w-full overflow-hidden">
+              <div className="relative aspect-[4/3.2] w-full overflow-hidden outline-none">
                 <Image
                   src={mode.img}
                   alt={mode.alt}
                   fill
-                  className="object-cover object-center group-hover:scale-108 transition-transform duration-600 ease-out"
+                  className="object-cover object-center group-hover:scale-108 transition-transform duration-600 ease-out select-none outline-none"
                   unoptimized
                 />
                 {/* Layered gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-[#111111]/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#111111] to-transparent pointer-events-none" />
 
                 {/* Accent badge top-right */}
                 <div
-                  className="absolute top-2.5 right-2.5 text-[15px] md:text-[18px] w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center bg-black/50 backdrop-blur-sm border border-white/10"
+                  className="absolute top-2.5 right-2.5 text-[15px] md:text-[18px] w-7 h-7 md:w-9 md:h-9 rounded-full flex items-center justify-center bg-black/50 backdrop-blur-sm border border-white/10 select-none"
                 >
                   {mode.badge}
                 </div>
               </div>
 
-
-
               {/* Text */}
-              <div className="px-3 md:px-4 pt-3 md:pt-4 pb-4 md:pb-5 flex flex-col gap-[4px] md:gap-[6px]">
-                <p className="text-white font-black text-[11px] md:text-[12.5px] tracking-[0.16em] uppercase">
+              <div className="px-3 md:px-4 pt-3 md:pt-4 pb-4 md:pb-5 flex flex-col gap-[4px] md:gap-[6px] outline-none">
+                <p className="text-white font-black text-[11px] md:text-[12.5px] tracking-[0.16em] uppercase select-none">
                   {mode.label}
                 </p>
-                <p className="text-white/45 text-[10px] md:text-[11.5px] leading-snug">{mode.tagline}</p>
-                <Link
-                  href="#shop"
-                  className="mt-1.5 md:mt-2 text-[10px] md:text-[11.5px] font-bold uppercase tracking-widest flex items-center gap-1 transition-all duration-200 w-fit"
+                <p className="text-white/45 text-[10px] md:text-[11.5px] leading-snug select-none">{mode.tagline}</p>
+                <div
+                  className="mt-1.5 md:mt-2 text-[10px] md:text-[11.5px] font-bold uppercase tracking-widest flex items-center gap-1 transition-all duration-200 w-fit outline-none"
                   style={{ color: mode.accent }}
                 >
                   Shop Now <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">→</span>
-                </Link>
+                </div>
               </div>
 
               {/* Hover glow at bottom */}
               <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-[16px] md:rounded-[20px]"
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none rounded-[16px] md:rounded-[20px] outline-none"
                 style={{ boxShadow: `inset 0 0 0 1.5px ${mode.accent}40` }}
               />
-            </div>
+            </Link>
           ))}
         </div>
 

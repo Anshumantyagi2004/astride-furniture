@@ -287,7 +287,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f1f3f5] text-slate-800 py-16 md:py-24 px-4 md:px-8 select-none relative overflow-hidden" style={{ fontFamily: '"Inter", sans-serif' }}>
+    <div className="min-h-screen bg-[#f1f3f5] text-slate-800 pt-6 pb-16 md:pt-10 md:pb-24 px-4 md:px-8 select-none relative overflow-hidden" style={{ fontFamily: '"Inter", sans-serif' }}>
       
       {/* Subtle monochrome ambient glow */}
       <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] rounded-full bg-slate-400/5 blur-[100px] pointer-events-none" />
@@ -296,9 +296,9 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
       <div className="max-w-[1300px] mx-auto relative z-10">
         
         {/* Dashboard Title Header with Slate Lettering */}
-        <div className="flex flex-col gap-1.5 mb-12">
+        <div className="flex flex-col gap-1 mb-6">
           <p className="text-slate-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">Dashboard</p>
-          <h1 className="text-slate-900 text-5xl sm:text-7xl lg:text-8xl font-extrabold uppercase leading-none tracking-tight">
+          <h1 className="text-slate-900 text-3xl sm:text-4xl lg:text-5xl font-extrabold uppercase leading-none tracking-tight">
             Profile Shell
           </h1>
         </div>

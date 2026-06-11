@@ -27,7 +27,7 @@ export default function Newletter() {
   };
 
   return (
-    <div className="w-full h-[60vh] min-h-[440px] p-[clamp(1rem,3vw,2rem)] flex items-center justify-center bg-white relative overflow-hidden">
+    <div id="newsletter" className="w-full h-[60vh] min-h-[440px] p-[clamp(1rem,3vw,2rem)] flex items-center justify-center bg-white relative overflow-hidden">
       {/* Background Glow */}
       <div className="absolute inset-0 bg-slate-50/50 pointer-events-none" />
 

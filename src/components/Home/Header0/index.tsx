@@ -76,7 +76,10 @@ export default function Header0() {
       </div>
 
       {/* Content Overlay */}
-      <div className="absolute left-6 sm:left-10 md:left-16 lg:left-24 bottom-[150px] sm:bottom-[165px] md:bottom-[195px] lg:bottom-[235px] z-10">
+      <div 
+        className="absolute left-6 sm:left-10 md:left-16 lg:left-24 bottom-[150px] sm:bottom-[165px] md:bottom-[195px] lg:bottom-[235px] z-10"
+        style={{ transform: "translateY(54.5px)" }}
+      >
         <Link
           href="/products"
           className="inline-flex items-center justify-center bg-[#131313] hover:bg-[#8B5CF6] text-white font-black px-8 py-3.5 rounded-full shadow-[4px_4px_0_#000] border-[2.5px] border-black hover:shadow-[1px_1px_0_#000] hover:translate-y-[3px] hover:translate-x-[3px] transition-all duration-150 text-xs sm:text-sm tracking-wider uppercase"

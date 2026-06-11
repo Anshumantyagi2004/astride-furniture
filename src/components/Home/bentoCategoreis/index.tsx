@@ -20,6 +20,7 @@ interface BentoCategory {
   colSpan: string; // Tailwind grid-column span e.g. 'lg:col-span-8'
   imageClass: string; // Custom image positioning classes
   href: string;
+  translate?: string; // Optional Tailwind translate class to move up/down
 }
 
 const CATEGORIES: BentoCategory[] = [
@@ -29,8 +30,9 @@ const CATEGORIES: BentoCategory[] = [
     subtitle: 'Explore high-performance racing cockpits designed for ultimate lumbar support and game-winning comfort.',
     image: '/Png1/chair11_octave.webp',
     colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
-    imageClass: 'absolute right-2 bottom-0 w-[45%] h-[90%] max-h-[320px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-    href: '/products?category=Gaming%20Chair'
+    imageClass: 'absolute right-2 bottom-0 w-[32%] h-[80%] transform group-hover:scale-105 transition-transform duration-500 ease-out',
+    href: '/products?category=Gaming%20Chair',
+    translate: '-translate-y-3'
   },
   {
     id: 2,
@@ -38,8 +40,9 @@ const CATEGORIES: BentoCategory[] = [
     subtitle: 'Sleek executive task chairs engineered to maximize posture.',
     image: '/Png1/chair4_ACE.webp',
     colSpan: 'lg:col-span-4 md:col-span-5 col-span-12',
-    imageClass: 'absolute right-2 bottom-0 w-[45%] h-[90%] max-h-[320px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-    href: '/products?category=Staff%20Chair'
+    imageClass: 'absolute right-2 bottom-0 w-[35%] h-[80%] transform group-hover:scale-105 transition-transform duration-500 ease-out',
+    href: '/products?category=Staff%20Chair',
+    translate: '-translate-y-9'
   },
   {
     id: 3,
@@ -47,8 +50,9 @@ const CATEGORIES: BentoCategory[] = [
     subtitle: 'Self-adjusting active tension cradles.',
     image: '/Png1/chair5_AIRSENSE.webp',
     colSpan: 'lg:col-span-4 md:col-span-5 col-span-12',
-    imageClass: 'absolute right-2 bottom-0 w-[45%] h-[90%] max-h-[320px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-    href: '/products?category=Study%20Chair'
+    imageClass: 'absolute right-2 bottom-0 w-[52%] h-[110%] transform group-hover:scale-105 transition-transform duration-500 ease-out',
+    href: '/products?category=Study%20Chair',
+    translate: ''
   },
   {
     id: 4,
@@ -56,8 +60,9 @@ const CATEGORIES: BentoCategory[] = [
     subtitle: 'Elevate your counter experience with premium luxury bar stools and ergonomic counter-height seating.',
     image: '/Png1/chair6c_Rapid Black .webp',
     colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
-    imageClass: 'absolute right-2 bottom-0 w-[45%] h-[90%] max-h-[320px] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-    href: '/products?category=Bar%20Stool'
+    imageClass: 'absolute right-2 bottom-0 w-[40%] h-[95%] transform group-hover:scale-105 transition-transform duration-500 ease-out',
+    href: '/products?category=Bar%20Stool',
+    translate: ''
   }
 ];
 
@@ -96,7 +101,7 @@ export default function BentoCategories() {
               </div>
 
               {/* Right Side Crop Image */}
-              <div className={category.imageClass}>
+              <div className={`${category.imageClass} ${category.translate || ''}`}>
                 <Image 
                   src={category.image} 
                   alt={category.title} 

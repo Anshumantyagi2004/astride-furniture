@@ -25,7 +25,7 @@ export default function DetailPageCard({ product }: { product: any }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState('Red');
   const [activeImage, setActiveImage] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'description' | 'features' | 'specs' | 'application'>('description');
+  const [activeTab, setActiveTab] = useState<'description' | 'features' | 'specs' | 'application' | 'whychoose'>('description');
   const tabContentRef = useRef<HTMLDivElement>(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
@@ -77,7 +77,7 @@ export default function DetailPageCard({ product }: { product: any }) {
     window.dispatchEvent(new Event("astride_wishlist_updated"));
   };
 
-  // Set initial selected color and active image when product changes
+  // Set initial selected color, active image, and active tab when product changes
   useEffect(() => {
     if (product) {
       const firstVariantWithImages = product.colorVariants?.find((v: any) => v.images && v.images.length > 0);
@@ -86,6 +86,9 @@ export default function DetailPageCard({ product }: { product: any }) {
       
       const initialImage = firstVariantWithImages?.images?.[0]?.url || product.image;
       setActiveImage(initialImage);
+      
+      // Keep description open by default
+      setActiveTab('description');
     }
   }, [product]);
 
@@ -229,25 +232,55 @@ export default function DetailPageCard({ product }: { product: any }) {
 
   return (
     <div 
-      className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-white min-h-screen font-sans"
+      className="max-w-[1380px] mx-auto p-4 md:p-6 lg:p-6 bg-white min-h-screen font-sans"
       style={{ fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
     >
+      <style>{`
+        .description-style ul {
+          list-style: none !important;
+          padding-left: 0 !important;
+          margin: 0 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 16px !important;
+        }
+        .description-style li {
+          position: relative !important;
+          padding-left: 32px !important;
+          list-style-type: none !important;
+          color: #444 !important;
+          font-size: 15px !important;
+          line-height: 1.6 !important;
+          font-family: inherit !important;
+        }
+        .description-style li::before {
+          content: "" !important;
+          position: absolute !important;
+          left: 0 !important;
+          top: 3px !important;
+          width: 19px !important;
+          height: 19px !important;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238B5CF6' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 13 4 4L19 7'/%3E%3C/svg%3E") !important;
+          background-repeat: no-repeat !important;
+          background-size: contain !important;
+        }
+      `}</style>
       {/* Breadcrumbs */}
-      <div className="text-[13px] md:text-[15px] text-neutral-400 font-medium mb-6 flex flex-wrap items-center gap-x-1.5 gap-y-1 tracking-wide leading-relaxed">
+      <div className="text-[12px] md:text-[13px] text-neutral-400 font-medium mb-3 flex flex-wrap items-center gap-x-1.5 gap-y-1 tracking-wide leading-relaxed">
         <span className="hover:text-black cursor-pointer transition-colors whitespace-nowrap">Home</span>
         <span className="text-neutral-300">/</span>
         <span className="hover:text-black cursor-pointer transition-colors whitespace-nowrap">{product.category}</span>
         <span className="text-neutral-300">/</span>
-        <span className="text-neutral-600 font-semibold text-[14px] md:text-[16px]">{product.name}</span>
+        <span className="text-neutral-600 font-semibold text-[13px] md:text-[14px]">{product.name}</span>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 mt-2">
+      <div className="flex flex-col lg:flex-row gap-6 xl:gap-10 mt-5">
         {/* Left: Image Gallery */}
-        <div className="w-full lg:w-[44%] lg:sticky lg:top-20 self-start flex flex-col gap-4">
+        <div className="w-full lg:w-[44%] flex flex-col gap-3">
           
           {/* Main Image */}
           <div 
-            className="w-full h-[350px] md:h-[500px] lg:h-[600px] xl:h-[700px] flex items-center justify-center relative group rounded-[28px] border-[2.5px] border-[#131313] bg-[radial-gradient(ellipse_at_50%_78%,#ece4d2,#fff_72%)] shadow-[6px_6px_0_#131313] shrink-0"
+            className="w-full h-[300px] md:h-[420px] lg:h-[480px] xl:h-[540px] flex items-center justify-center relative group rounded-[28px] border-[2.5px] border-[#131313] bg-[radial-gradient(ellipse_at_50%_78%,#ece4d2,#fff_72%)] shadow-[6px_6px_0_#131313] shrink-0"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -272,9 +305,9 @@ export default function DetailPageCard({ product }: { product: any }) {
             {allVariantImages.length > 1 && (
               <button 
                 onClick={(e) => { e.stopPropagation(); goPrevImage(); }}
-                className="absolute left-4 lg:hidden z-10 w-9 h-9 rounded-full bg-white/60 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.06)] flex items-center justify-center text-slate-700 active:bg-white transition-all duration-200 ease-out active:scale-90"
+                className="absolute left-4 z-10 w-11 h-11 rounded-full bg-white border-2 border-[#131313] shadow-[3px_3px_0_#131313] hover:bg-[#DCF351] hover:-translate-y-0.5 hover:-translate-x-0.5 active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0_#131313] transition-all flex items-center justify-center text-slate-900"
               >
-                <ChevronLeft size={20} strokeWidth={2.5} />
+                <ChevronLeft size={22} strokeWidth={3} />
               </button>
             )}
 
@@ -288,16 +321,16 @@ export default function DetailPageCard({ product }: { product: any }) {
             {allVariantImages.length > 1 && (
               <button 
                 onClick={(e) => { e.stopPropagation(); goNextImage(); }}
-                className="absolute right-4 lg:hidden z-10 w-9 h-9 rounded-full bg-white/60 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.06)] flex items-center justify-center text-slate-700 active:bg-white transition-all duration-200 ease-out active:scale-90"
+                className="absolute right-4 z-10 w-11 h-11 rounded-full bg-white border-2 border-[#131313] shadow-[3px_3px_0_#131313] hover:bg-[#DCF351] hover:-translate-y-0.5 hover:translate-x-0.5 active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0_#131313] transition-all flex items-center justify-center text-slate-900"
               >
-                <ChevronRight size={20} strokeWidth={2.5} />
+                <ChevronRight size={22} strokeWidth={3} />
               </button>
             )}
           </div>
 
           {/* Thumbnails strip */}
           {allVariantImages.length > 1 && (
-            <div className="flex flex-row justify-center lg:justify-start gap-3.5 shrink-0 overflow-x-auto pb-2 scrollbar-none w-full">
+            <div className="flex flex-row justify-center lg:justify-start gap-3.5 shrink-0 overflow-x-auto mt-4 pb-2 scrollbar-none w-full">
               {allVariantImages.map((img: any, idx: number) => {
                 const isActive = activeImage === img.url;
                 return (
@@ -325,45 +358,45 @@ export default function DetailPageCard({ product }: { product: any }) {
         </div>
 
         {/* Right: Details */}
-        <div className="w-full lg:w-[58%] flex flex-col pt-2 text-black">
+        <div className="w-full lg:w-[58%] flex flex-col pt-1 text-black">
           
-          <div className="text-[12px] font-bold tracking-[0.16em] uppercase text-[#EC4899]">
-            {product.category} · SKU AST-{product.id || 'EF12'}
+          <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#EC4899]">
+            {product.category}
           </div>
-          <span className="table mt-3.5 text-neutral-500 font-medium">Comfort that hits different.</span>
+          <span className="table mt-1.5 text-neutral-500 font-medium text-[13px]">Comfort that hits different.</span>
           
-          <h1 className="text-[clamp(36px,4.6vw,60px)] font-bold mt-4 leading-[1.1] tracking-tight">
+          <h1 className="text-[clamp(26px,2.8vw,42px)] font-black mt-2 leading-[1.05] tracking-tight">
             {product.name.split(' ')[0]} <span className="bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">{product.name.split(' ').slice(1).join(' ')}</span>
           </h1>
           
-          <div className="flex items-center gap-2.5 mt-3.5 font-semibold text-[14px]">
-            <span className="text-[#ea580c] tracking-[2px] text-[17px]" aria-hidden="true">★★★★★</span>
+          <div className="flex items-center gap-2.5 mt-2 font-semibold text-[13px]">
+            <span className="text-[#ea580c] tracking-[2px] text-[15px]" aria-hidden="true">★★★★★</span>
             <span>{product.rating || "4.8"}</span>
             <a href="#reviews" className="text-[#777] border-b-[1.5px] border-dashed border-[#999] hover:text-[#EC4899] transition-colors">
               512 verified reviews
             </a>
           </div>
 
-          <div className="flex items-baseline gap-3.5 my-5 flex-wrap">
-            <span className="text-[clamp(30px,3.4vw,42px)] font-bold">₹{product.price.toLocaleString()}</span>
-            <s className="text-[#999] text-[19px]">₹{product.originalPrice.toLocaleString()}</s>
-            <span className="bg-[#DCF351] font-extrabold text-[12px] tracking-[0.06em] px-3 py-1.5 -rotate-2 shadow-[2.5px_2.5px_0_#131313]">
+          <div className="flex items-baseline gap-3.5 my-3 flex-wrap">
+            <span className="text-[clamp(24px,2.6vw,34px)] font-bold">₹{product.price.toLocaleString()}</span>
+            <s className="text-[#999] text-[17px]">₹{product.originalPrice.toLocaleString()}</s>
+            <span className="bg-[#DCF351] font-extrabold text-[11px] tracking-[0.06em] px-2.5 py-1 -rotate-2 shadow-[2px_2px_0_#131313]">
               You save ₹{(product.originalPrice - product.price).toLocaleString()}
             </span>
           </div>
           
-          <p className="text-[12.5px] text-[#888]">Inclusive of all taxes. Free shipping, obviously.</p>
+          <p className="text-[11.5px] text-[#888]">Inclusive of all taxes. Free shipping, obviously.</p>
           
           <div 
-            className="mt-4 text-[#444] max-w-[520px] text-[15px] leading-relaxed"
+            className="mt-2 text-[#444] max-w-[520px] text-[13.5px] leading-relaxed"
             dangerouslySetInnerHTML={{ __html: product.shortDescription || `The chair your back has been manifesting. <strong style="color:#8B5CF6">Dynamic lumbar support</strong> that moves with you, breathable mesh that never gets sweaty, and <strong style="color:#8B5CF6">4D armrests</strong> for marathon sessions — work, ranked, or both.` }}
           />
 
-          <div className="mt-6">
-            <span className="text-[12px] font-bold tracking-[0.14em] uppercase flex gap-2 items-center">
+          <div className="mt-3.5">
+            <span className="text-[11px] font-bold tracking-[0.12em] uppercase flex gap-2 items-center">
               Colour — <span className="text-[#EC4899] normal-case tracking-normal font-bold">{selectedColor}</span>
             </span>
-            <div className="flex gap-3 mt-3">
+            <div className="flex gap-2.5 mt-2">
               {(product.colors || []).map((colorName: string) => {
                 const colorHex = COLOR_MAP[colorName.toLowerCase()] || colorName.toLowerCase();
                 const isSelected = selectedColor?.toLowerCase() === colorName?.toLowerCase();
@@ -376,9 +409,9 @@ export default function DetailPageCard({ product }: { product: any }) {
                       setSelectedColor(colorName);
                     }}
                     style={{ backgroundColor: colorHex }}
-                    className={`w-[42px] h-[42px] rounded-full border-[2.5px] border-[#131313] relative transition-transform duration-150 hover:scale-[1.12] focus:outline-none ${
+                    className={`w-[32px] h-[32px] rounded-full border-[2.5px] border-[#131313] relative transition-transform duration-150 hover:scale-[1.12] focus:outline-none ${
                       isSelected 
-                        ? 'ring-4 ring-offset-2 ring-transparent before:absolute before:-inset-[7px] before:rounded-full before:border-[2.5px] before:border-dashed before:border-[#8B5CF6]' 
+                        ? 'ring-4 ring-offset-2 ring-transparent before:absolute before:-inset-[5px] before:rounded-full before:border-[2px] before:border-dashed before:border-[#8B5CF6]' 
                         : ''
                     }`}
                     title={colorName}
@@ -389,38 +422,29 @@ export default function DetailPageCard({ product }: { product: any }) {
             </div>
           </div>
 
-          <div className="mt-6">
-            <span className="text-[12px] font-bold tracking-[0.14em] uppercase flex gap-2 items-center">
-              Fit — <span className="text-[#EC4899] normal-case tracking-normal font-bold">Standard</span>
-            </span>
-            <div className="flex gap-3 mt-3 flex-wrap">
-              <button className="bg-white border-[2.5px] border-[#131313] rounded-xl px-4.5 py-3 font-bold text-[13px] tracking-[0.05em] uppercase shadow-[3px_3px_0_rgba(19,19,19,0.85)] transition-transform duration-150 hover:-translate-y-0.5">Low profile</button>
-              <button className="bg-[#131313] text-[#DCF351] border-[2.5px] border-[#131313] rounded-xl px-4.5 py-3 font-bold text-[13px] tracking-[0.05em] uppercase shadow-[3px_3px_0_rgba(19,19,19,0.85)] transition-transform duration-150 -rotate-1.5 hover:-translate-y-0.5">Standard</button>
-              <button className="bg-white border-[2.5px] border-[#131313] rounded-xl px-4.5 py-3 font-bold text-[13px] tracking-[0.05em] uppercase shadow-[3px_3px_0_rgba(19,19,19,0.85)] transition-transform duration-150 hover:-translate-y-0.5">Extended height</button>
-            </div>
-          </div>
 
-          <div className="flex gap-4 mt-8 flex-wrap items-stretch">
+
+          <div className="flex gap-3 mt-5 flex-wrap items-stretch">
             {/* Quantity */}
-            <div className="flex items-center border-[2.5px] border-[#131313] rounded-[14px] bg-white shadow-[4px_4px_0_#131313]" aria-label="Quantity">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-[46px] h-full min-h-[54px] bg-transparent border-none text-[22px] font-bold hover:text-[#EC4899]">−</button>
-              <span className="min-w-[34px] text-center font-extrabold text-[17px]">{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)} className="w-[46px] h-full min-h-[54px] bg-transparent border-none text-[22px] font-bold hover:text-[#EC4899]">+</button>
+            <div className="flex items-center border-[2.5px] border-[#131313] rounded-[14px] bg-white shadow-[3px_3px_0_#131313]" aria-label="Quantity">
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-[38px] h-full min-h-[46px] bg-transparent border-none text-[18px] font-bold hover:text-[#EC4899]">−</button>
+              <span className="min-w-[28px] text-center font-extrabold text-[15px]">{quantity}</span>
+              <button onClick={() => setQuantity(quantity + 1)} className="w-[38px] h-full min-h-[46px] bg-transparent border-none text-[18px] font-bold hover:text-[#EC4899]">+</button>
             </div>
             
             {/* Add to cart */}
-            <button onClick={handleAddToCartClick} className="flex-1 min-w-[220px] bg-[#131313] text-white font-bold text-[16px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[4px_4px_0_#131313] hover:translate-y-0.5 transition-transform">
-              Add to cart <span className="ml-2 font-normal">→</span>
+            <button onClick={handleAddToCartClick} className="flex-1 min-w-[200px] bg-[#131313] text-white font-bold text-[15px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 transition-transform">
+              Add to cart <span className="ml-1.5 font-normal">→</span>
             </button>
             
             {/* Wishlist */}
-            <button onClick={handleToggleWishlist} className={`w-[56px] min-h-[54px] border-[2.5px] border-[#131313] rounded-[14px] bg-white grid place-items-center shadow-[4px_4px_0_#131313] transition-transform duration-200 hover:-translate-y-1 ${isWishlisted ? 'group on' : 'group'}`} aria-label="Add to wishlist">
-              <Heart size={24} className={`transition-colors duration-200 ${isWishlisted ? 'fill-[#EC4899] stroke-[#EC4899]' : 'stroke-[#131313] group-hover:stroke-[#EC4899]'}`} />
+            <button onClick={handleToggleWishlist} className={`w-[48px] min-h-[46px] border-[2.5px] border-[#131313] rounded-[14px] bg-white grid place-items-center shadow-[3px_3px_0_#131313] transition-transform duration-200 hover:-translate-y-1 ${isWishlisted ? 'group on' : 'group'}`} aria-label="Add to wishlist">
+              <Heart size={20} className={`transition-colors duration-200 ${isWishlisted ? 'fill-[#EC4899] stroke-[#EC4899]' : 'stroke-[#131313] group-hover:stroke-[#EC4899]'}`} />
             </button>
           </div>
           
-          <div className="mt-3.5 mb-8">
-            <button onClick={handleAddToCartClick} className="w-full min-h-[54px] bg-white text-[#131313] font-bold text-[16px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[4px_4px_0_#131313] hover:bg-[#fafafa] hover:translate-y-0.5 transition-all">
+          <div className="mt-2.5 mb-4">
+            <button onClick={handleAddToCartClick} className="w-full min-h-[46px] py-2.5 bg-white text-[#131313] font-bold text-[15px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] hover:bg-[#fafafa] hover:translate-y-0.5 transition-all">
               Buy it now
             </button>
           </div>
@@ -455,21 +479,13 @@ export default function DetailPageCard({ product }: { product: any }) {
             </div>
           </div>
 
-          {/* Handwritten Note */}
-          <span className="mt-6 inline-block rotate-[-1deg] text-[21px] font-bold text-[#8B5CF6]">
-            your back will thank you ✦
-          </span>
-
         </div>
       </div>
 
       {/* DETAILS Section */}
-      <section className="py-[clamp(60px,8vw,100px)] mt-16 bg-[#FAFAFA] rounded-[32px] border-[2.5px] border-[#131313] px-4 md:px-10 lg:px-16 shadow-[8px_8px_0_#131313] relative overflow-hidden w-full">
-            <div className="mb-10">
-              <span className="inline-block bg-[#DCF351] px-4 py-1.5 rounded-full border-[2.5px] border-[#131313] text-[12px] font-bold tracking-[0.14em] uppercase shadow-[2.5px_2.5px_0_#131313] -rotate-2">
-                The nerd stuff
-              </span>
-              <h2 className="text-[clamp(32px,4.4vw,54px)] font-bold mt-4 leading-[1.05] tracking-tight text-[#131313]">
+      <section className="py-[clamp(60px,8vw,100px)] mt-6 bg-[#FAFAFA] rounded-[32px] border-[2.5px] border-[#131313] px-4 md:px-10 lg:px-16 shadow-[8px_8px_0_#131313] relative overflow-hidden w-full">
+            <div className="mb-6">
+              <h2 className="text-[clamp(32px,4.4vw,54px)] font-bold leading-[1.05] tracking-tight text-[#131313]">
                 Everything <span className="bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">it's packing.</span>
               </h2>
             </div>
@@ -574,7 +590,7 @@ export default function DetailPageCard({ product }: { product: any }) {
                     <div className="px-5 pb-6 text-[#444] text-[15px] leading-[1.6]">
                       {product.application ? (
                         <div 
-                          className="animate-fade-in space-y-4"
+                          className="animate-fade-in space-y-4 description-style"
                           dangerouslySetInnerHTML={{ __html: product.application }}
                         />
                       ) : isBarStool ? (
@@ -630,7 +646,7 @@ export default function DetailPageCard({ product }: { product: any }) {
                     <div className="px-5 pb-6 text-[#444] text-[15px] leading-[1.6]">
                       {product.keyfeatures ? (
                         <div 
-                          className="animate-fade-in space-y-4"
+                          className="animate-fade-in space-y-4 description-style"
                           dangerouslySetInnerHTML={{ __html: product.keyfeatures }}
                         />
                       ) : (
@@ -647,12 +663,54 @@ export default function DetailPageCard({ product }: { product: any }) {
                             <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
                             <div><strong className="text-black font-semibold">Remembers you :</strong> The memory foam lumbar pillow takes the shape of your spine and supports your back.</div>
                           </li>
-                          <li className="flex gap-4 items-start">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
-                            <div><strong className="text-black font-semibold">Accommodates you :</strong> The chair features extended headrest, lumbar pillow and has ample space to accommodate you cross legged.</div>
-                          </li>
                         </ul>
                       )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Why Choose Astride Accordion */}
+                <div className="bg-white border-[2.5px] border-[#131313] rounded-[14px] shadow-[5px_5px_0_#131313] overflow-hidden transition-all">
+                  <button 
+                    onClick={() => setActiveTab(activeTab === 'whychoose' ? ('' as any) : 'whychoose')}
+                    className="w-full flex items-center gap-4 bg-transparent border-none text-left px-5 py-4 font-bold text-[16px]"
+                  >
+                    <span className="flex-none w-[34px] h-[34px] rounded-[10px] bg-[#f4f4f5] border-2 border-[#131313] grid place-items-center">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2" className="w-[18px] h-[18px]"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 16v-4M12 8h.01"/></svg>
+                    </span>
+                    Why Choose Astride
+                    <span className={`ml-auto flex-none w-[30px] h-[30px] rounded-full border-2 border-[#131313] grid place-items-center text-[19px] font-bold transition-transform duration-300 ${activeTab === 'whychoose' ? 'rotate-45 bg-[#EC4899] text-white' : 'bg-[#DCF351] text-[#131313]'}`}>
+                      +
+                    </span>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'whychoose' ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="px-5 pb-6 text-[#444] text-[15px] leading-[1.6]">
+                      <ul className="space-y-4 animate-fade-in">
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Ergonomic Innovation:</strong> ASTRIDE® is dedicated to delivering high-quality office seating solutions that combine comfort, durability, and ergonomic innovation.</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Postural Support:</strong> Designed to support healthy posture and improve productivity through thoughtful ergonomic features.</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Premium Materials:</strong> Manufactured using premium nylon and polypropylene materials for superior durability and dependable long-term performance.</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Adaptive Functionality:</strong> Features adjustable seating functionality that adapts to different users and workspace requirements.</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Versatile Aesthetics:</strong> Combines professional aesthetics with practical usability, making it suitable for both residential and commercial applications.</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Exceptional Value:</strong> Offers exceptional value through its blend of ergonomic comfort, durable construction, modern styling, and reliable performance.</span>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -686,7 +744,6 @@ export default function DetailPageCard({ product }: { product: any }) {
                     <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">4 positions</b>
                   </div>
                 </div>
-                
                 <div className="mt-6 flex justify-center drop-shadow-[0_0_60px_rgba(255,255,255,1)] drop-shadow-[0_0_20px_rgba(255,255,255,0.9)]">
                   <Image src={product.image || "/Png1/chair12_ErgoFit.webp"} alt="Adjustability" width={240} height={230} className="object-contain max-h-[230px]" />
                 </div>

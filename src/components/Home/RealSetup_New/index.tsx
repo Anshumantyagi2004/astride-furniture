@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const setups = [
   {
-    img: "https://images.unsplash.com/photo-1593640408182-31c228c99b53?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80",
     tag: "#GamingSetup",
   },
   {

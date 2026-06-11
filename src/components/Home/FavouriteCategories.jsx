@@ -14,7 +14,7 @@ const sans = Plus_Jakarta_Sans({
     variable: "--font-sans",
 });
 
-const TABS = ["Gaming Chair", "Office Chair", "Staff Chair", "Study Chair", "Bar Stool"];
+const TABS = ["Bar Stool", "Gaming Chair", "Office Chair", "Staff Chair", "Study Chair"];
 
 const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleWishlist }) => {
     const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
@@ -149,7 +149,7 @@ const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleW
 };
 
 export default function FavouriteCategories() {
-    const [activeCategory, setActiveCategory] = useState("Gaming Chair");
+    const [activeCategory, setActiveCategory] = useState("Bar Stool");
     const [productsList, setProductsList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [wishlisted, setWishlisted] = useState({});

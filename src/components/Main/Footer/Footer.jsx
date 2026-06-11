@@ -93,10 +93,10 @@ export default function Footer() {
                         </h4>
                         {[
                             { name: "About Us", link: "/about" },
-                            { name: "Our Story", link: "/about" },
-                            { name: "Careers", link: "#" },
                             { name: "Blog", link: "/blogs" },
                             { name: "Contact Us", link: "/contact" },
+                            { name: "FAQs", link: "/#faq" },
+                            { name: "Track Order", link: "/account" },
                         ].map((item, index) => (
                             <Link
                                 key={index}
@@ -114,11 +114,12 @@ export default function Footer() {
                             Help
                         </h4>
                         {[
-                            { name: "Shipping & Delivery", link: "/shipping-policy" },
-                            { name: "Returns & Refunds", link: "/return-policy" },
-                            { name: "Warranty", link: "#" },
-                            { name: "FAQs", link: "/#faq" },
-                            { name: "Track Order", link: "#" },
+                            { name: "Cancellation Policy", link: "/cancellation-policy" },
+                            { name: "Privacy Policy", link: "/privacy-policy" },
+                            { name: "Refund Policy", link: "/refund-policy" },
+                            { name: "Return Policy", link: "/return-policy" },
+                            { name: "Shipping Policy", link: "/shipping-policy" },
+                            { name: "Terms & Conditions", link: "/terms-conditions" },
                         ].map((item, index) => (
                             <Link
                                 key={index}

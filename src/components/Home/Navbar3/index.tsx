@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -74,6 +74,15 @@ export default function Navbar3() {
     const [categories, setCategories] = useState<any[]>([]);
     const [products, setProducts] = useState<any[]>([]);
     const [cartCount, setCartCount] = useState(0);
+    const dropdownScrollRef = useRef<HTMLDivElement>(null);
+
+    const scrollDropdown = (dir: "left" | "right") => {
+        if (!dropdownScrollRef.current) return;
+        dropdownScrollRef.current.scrollBy({
+            left: dir === "right" ? 234 : -234,
+            behavior: "smooth"
+        });
+    };
 
     const handleFindYourChair = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -192,16 +201,16 @@ export default function Navbar3() {
                     </div>
 
                     <nav className="hidden md:flex items-center gap-[22px]">
-                        <Link href="#bulk" className="hover:text-lime-500 transition-colors">
+                        <Link href="/#bulk" className="hover:text-lime-500 transition-colors">
                             Bulk orders
                         </Link>
 
-                        <Link href="#faq" className="hover:text-lime-500 transition-colors">
+                        <Link href="/contact" className="hover:text-lime-500 transition-colors">
                             Support
                         </Link>
 
-                        <Link href="#about" className="hover:text-lime-500 transition-colors">
-                            About
+                        <Link href="/account" className="hover:text-lime-500 transition-colors">
+                            Profile
                         </Link>
                     </nav>
                 </div>
@@ -368,20 +377,38 @@ export default function Navbar3() {
                 </div>
 
                 {/* Dropdown Mega Menus (similar to Navbar2 but styled for Navbar3 and dynamic) */}
+                {/* Dropdown Mega Menus (similar to Navbar2 but styled for Navbar3 and dynamic) */}
                 {activeMenu && displayChairs.length > 0 && (
                   <div 
                     className="absolute left-0 top-full w-full bg-white border-b border-neutral-200 text-neutral-800 py-6 px-12 z-[900] shadow-xl animate-in fade-in slide-in-from-top-4 duration-300"
                     onMouseEnter={() => setActiveMenu(activeMenu)}
                     onMouseLeave={() => setActiveMenu(null)}
                   >
-                    <div className="max-w-4xl mx-auto">
-                      <div className={`grid ${displayChairs.length === 2 ? 'grid-cols-2 max-w-2xl' : displayChairs.length === 1 ? 'grid-cols-1 max-w-xs' : 'grid-cols-3'} gap-8 mx-auto`}>
+                    <div className="max-w-5xl mx-auto relative px-12">
+                      {/* Left Arrow Button */}
+                      {displayChairs.length > 4 && (
+                        <button
+                          onClick={() => scrollDropdown("left")}
+                          className="absolute -left-1 top-[108px] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border-[2px] border-[#131313] shadow-[2px_2px_0_#131313] flex items-center justify-center hover:bg-[#f0f0f0] transition-colors"
+                          aria-label="Scroll left"
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2.5" className="w-4 h-4">
+                            <path d="M15 18l-6-6 6-6" />
+                          </svg>
+                        </button>
+                      )}
+
+                      <div 
+                        ref={dropdownScrollRef}
+                        className={`flex gap-6 overflow-x-auto scrollbar-none py-2 snap-x snap-mandatory ${displayChairs.length <= 4 ? 'justify-center' : 'justify-start'}`}
+                        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                      >
                         {displayChairs.map((chair, index) => (
                           <Link 
                             key={index}
                             href={chair.buyUrl}
                             onClick={() => setActiveMenu(null)}
-                            className="flex flex-col items-center group relative cursor-pointer"
+                            className="w-[210px] flex-shrink-0 flex flex-col items-center group relative cursor-pointer snap-start"
                           >
                             {/* Visual Container */}
                             <div className="relative w-full aspect-[4/3.2] bg-neutral-50 border border-neutral-200 rounded-2xl flex items-center justify-center p-4 group-hover:bg-neutral-100 group-hover:border-neutral-300 transition-all duration-300">
@@ -399,7 +426,7 @@ export default function Navbar3() {
                             {/* Metadata */}
                             <div className="mt-3 flex flex-col items-center gap-1 w-full">
                               <span 
-                                className="font-extrabold text-neutral-900 text-sm tracking-tight text-center group-hover:underline underline-offset-2 transition-all"
+                                className="font-extrabold text-[#131313] text-sm tracking-tight text-center group-hover:underline underline-offset-2 transition-all"
                                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                               >
                                 {chair.name}
@@ -408,6 +435,19 @@ export default function Navbar3() {
                           </Link>
                         ))}
                       </div>
+
+                      {/* Right Arrow Button */}
+                      {displayChairs.length > 4 && (
+                        <button
+                          onClick={() => scrollDropdown("right")}
+                          className="absolute -right-1 top-[108px] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border-[2px] border-[#131313] shadow-[2px_2px_0_#131313] flex items-center justify-center hover:bg-[#f0f0f0] transition-colors"
+                          aria-label="Scroll right"
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2.5" className="w-4 h-4">
+                            <path d="M9 18l6-6-6-6" />
+                          </svg>
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}

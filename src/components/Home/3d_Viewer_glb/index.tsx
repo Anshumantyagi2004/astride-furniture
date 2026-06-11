@@ -426,7 +426,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                                     key={index}
                                     className={`absolute inset-0 flex transition-all duration-700 ease-in-out ${
                                         sec.align === 'center'
-                                            ? 'items-end justify-center px-12 text-center pb-20'
+                                            ? 'items-start justify-center px-12 text-center pt-24'
                                             : sec.align === 'left'
                                                 ? 'items-center justify-start px-12'
                                                 : 'items-center justify-end px-12'
@@ -438,16 +438,22 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                                 >
                                     {sec.align === 'center' ? (
                                         <div className="max-w-2xl flex flex-col items-center">
-                                            <h1 className="text-white text-7xl font-serif font-bold tracking-tight mb-4 drop-shadow-2xl uppercase">
-                                                {sec.title}
+                                            <h1 className="text-white text-6xl md:text-7xl font-sans font-black tracking-tight mb-4 drop-shadow-2xl uppercase">
+                                                Why <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-sans font-black pr-2">Astride?</span>
                                             </h1>
                                             {sec.subtitle && (
-                                                <p className="text-zinc-400 text-xl font-medium tracking-wide">
+                                                <p 
+                                                    className="absolute bottom-[180px] left-1/2 -translate-x-1/2 text-white text-lg md:text-xl font-semibold tracking-wide w-full max-w-2xl text-center z-20 px-6"
+                                                    style={{
+                                                        textShadow: '0 2px 8px rgba(0,0,0,1), -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 0px 0px 10px rgba(0,0,0,0.8)'
+                                                    }}
+                                                >
                                                     {sec.subtitle}
                                                 </p>
                                             )}
-                                            <div className="mt-12 flex flex-col items-center animate-bounce">
-                                                <span className="text-zinc-500 text-sm tracking-widest uppercase mb-2">Scroll to explore</span>
+                                            {/* Scroll indicator - absolute positioned at bottom of viewport */}
+                                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce z-20">
+                                                <span className="text-zinc-500 text-xs tracking-widest uppercase mb-2">Scroll to explore</span>
                                                 <div className="w-px h-12 bg-gradient-to-b from-zinc-500 to-transparent"></div>
                                             </div>
                                         </div>

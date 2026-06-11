@@ -393,53 +393,57 @@ export default function ProductPageHome() {
               </div>
             </div>
 
-            {/* Back Support */}
-            <div className="mb-7 border-b border-slate-100 pb-7">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Back Support</h3>
-              <div className="flex flex-wrap gap-3">
-                {["High Back"].map((bs) => (
-                  <button
-                    key={bs}
-                    onClick={() => setSelectedBackSupport(selectedBackSupport === bs ? null : bs)}
-                    className={`px-4 py-2 rounded-full text-xs font-bold border transition-all ${selectedBackSupport === bs ? 'bg-black text-white border-black' : 'bg-white text-slate-600 border-slate-200'}`}
-                  >
-                    {bs}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {false && (
+              <>
+                {/* Back Support */}
+                <div className="mb-7 border-b border-slate-100 pb-7">
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Back Support</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {["High Back"].map((bs) => (
+                      <button
+                        key={bs}
+                        onClick={() => setSelectedBackSupport(selectedBackSupport === bs ? null : bs)}
+                        className={`px-4 py-2 rounded-full text-xs font-bold border transition-all ${selectedBackSupport === bs ? 'bg-black text-white border-black' : 'bg-white text-slate-600 border-slate-200'}`}
+                      >
+                        {bs}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-            {/* Hours */}
-            <div className="mb-7 border-b border-slate-100 pb-7">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Hours of Usage</h3>
-              <div className="flex flex-wrap gap-3">
-                {["6-8 Hours", "8+ Hours"].map((hr) => (
-                  <button
-                    key={hr}
-                    onClick={() => setSelectedHours(selectedHours === hr ? null : hr)}
-                    className={`px-4 py-2 rounded-full text-xs font-bold border transition-all ${selectedHours === hr ? 'bg-black text-white border-black' : 'bg-white text-slate-600 border-slate-200'}`}
-                  >
-                    {hr}
-                  </button>
-                ))}
-              </div>
-            </div>
+                {/* Hours */}
+                <div className="mb-7 border-b border-slate-100 pb-7">
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Hours of Usage</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {["6-8 Hours", "8+ Hours"].map((hr) => (
+                      <button
+                        key={hr}
+                        onClick={() => setSelectedHours(selectedHours === hr ? null : hr)}
+                        className={`px-4 py-2 rounded-full text-xs font-bold border transition-all ${selectedHours === hr ? 'bg-black text-white border-black' : 'bg-white text-slate-600 border-slate-200'}`}
+                      >
+                        {hr}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-            {/* Capacity */}
-            <div className="mb-7 border-b border-slate-100 pb-7">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Capacity (in KGs)</h3>
-              <div className="flex flex-wrap gap-3">
-                {["120 kg", "150 kg"].map((cap) => (
-                  <button
-                    key={cap}
-                    onClick={() => setSelectedCapacity(selectedCapacity === cap ? null : cap)}
-                    className={`px-4 py-2 rounded-full text-xs font-bold border transition-all ${selectedCapacity === cap ? 'bg-black text-white border-black' : 'bg-white text-slate-600 border-slate-200'}`}
-                  >
-                    {cap}
-                  </button>
-                ))}
-              </div>
-            </div>
+                {/* Capacity */}
+                <div className="mb-7 border-b border-slate-100 pb-7">
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Capacity (in KGs)</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {["120 kg", "150 kg"].map((cap) => (
+                      <button
+                        key={cap}
+                        onClick={() => setSelectedCapacity(selectedCapacity === cap ? null : cap)}
+                        className={`px-4 py-2 rounded-full text-xs font-bold border transition-all ${selectedCapacity === cap ? 'bg-black text-white border-black' : 'bg-white text-slate-600 border-slate-200'}`}
+                      >
+                        {cap}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Price */}
             <div className="mb-8">
@@ -479,41 +483,45 @@ export default function ProductPageHome() {
               )}
             </div>
 
-            <div className="mb-8">
-              <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4">Back Support</h3>
-              <div className="flex flex-col gap-2">
-                {["High Back"].map((bs) => (
-                  <label key={bs} className="flex items-center gap-3 cursor-pointer text-xs font-bold text-slate-650 group">
-                    <input type="radio" name="backSupport" checked={selectedBackSupport === bs} onChange={() => setSelectedBackSupport(selectedBackSupport === bs ? null : bs)} className="accent-slate-900 w-4 h-4 cursor-pointer" />
-                    <span className="group-hover:text-slate-905 transition-colors">{bs}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+            {false && (
+              <>
+                <div className="mb-8">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4">Back Support</h3>
+                  <div className="flex flex-col gap-2">
+                    {["High Back"].map((bs) => (
+                      <label key={bs} className="flex items-center gap-3 cursor-pointer text-xs font-bold text-slate-650 group">
+                        <input type="radio" name="backSupport" checked={selectedBackSupport === bs} onChange={() => setSelectedBackSupport(selectedBackSupport === bs ? null : bs)} className="accent-slate-900 w-4 h-4 cursor-pointer" />
+                        <span className="group-hover:text-slate-905 transition-colors">{bs}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
 
-            <div className="mb-8">
-              <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4">Hours of Usage</h3>
-              <div className="flex flex-col gap-2">
-                {["6-8 Hours", "8+ Hours"].map((hr) => (
-                  <label key={hr} className="flex items-center gap-3 cursor-pointer text-xs font-bold text-slate-650 group">
-                    <input type="radio" name="hours" checked={selectedHours === hr} onChange={() => setSelectedHours(selectedHours === hr ? null : hr)} className="accent-slate-900 w-4 h-4 cursor-pointer" />
-                    <span className="group-hover:text-slate-905 transition-colors">{hr}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+                <div className="mb-8">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4">Hours of Usage</h3>
+                  <div className="flex flex-col gap-2">
+                    {["6-8 Hours", "8+ Hours"].map((hr) => (
+                      <label key={hr} className="flex items-center gap-3 cursor-pointer text-xs font-bold text-slate-650 group">
+                        <input type="radio" name="hours" checked={selectedHours === hr} onChange={() => setSelectedHours(selectedHours === hr ? null : hr)} className="accent-slate-900 w-4 h-4 cursor-pointer" />
+                        <span className="group-hover:text-slate-905 transition-colors">{hr}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
 
-            <div className="mb-8">
-              <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4">Capacity (in KGs)</h3>
-              <div className="flex flex-col gap-2">
-                {["120 kg", "150 kg"].map((cap) => (
-                  <label key={cap} className="flex items-center gap-3 cursor-pointer text-xs font-bold text-slate-650 group">
-                    <input type="radio" name="capacity" checked={selectedCapacity === cap} onChange={() => setSelectedCapacity(selectedCapacity === cap ? null : cap)} className="accent-slate-900 w-4 h-4 cursor-pointer" />
-                    <span className="group-hover:text-slate-905 transition-colors">{cap}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+                <div className="mb-8">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-4">Capacity (in KGs)</h3>
+                  <div className="flex flex-col gap-2">
+                    {["120 kg", "150 kg"].map((cap) => (
+                      <label key={cap} className="flex items-center gap-3 cursor-pointer text-xs font-bold text-slate-650 group">
+                        <input type="radio" name="capacity" checked={selectedCapacity === cap} onChange={() => setSelectedCapacity(selectedCapacity === cap ? null : cap)} className="accent-slate-900 w-4 h-4 cursor-pointer" />
+                        <span className="group-hover:text-slate-905 transition-colors">{cap}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="pt-2">
               <div className="flex justify-between items-center mb-4">

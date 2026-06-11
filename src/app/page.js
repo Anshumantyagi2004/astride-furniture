@@ -31,6 +31,8 @@ import Enquiry_New from '@/components/Home/Enquiry_new';
 import AboutSection_New from '@/components/Home/About_New';
 import BestSellersSection_New from '@/components/Home/BestSellers_New';
 import RealSetup_New from '@/components/Home/RealSetup_New';
+import AstrideOffers from '@/components/Home/AstrideOffers';
+import CompeteTheVibe from '@/components/Home/Compete_the_vibe';
 // Lazy loaded — only the 3 heaviest components
 // Reviews: uses GSAP + ScrollTrigger (large bundle)
 const Reviews = dynamic(() => import('@/components/Home/Reviews'));
@@ -45,13 +47,15 @@ export default function Home() {
       <Header0/>
        {/* <Header3 /> */}
        <Header5_New/>
+        <Marquee1 />
        <Header6_New/>  
+     
        
     
       
       <Category />
      
-      <Marquee1 />
+     
       <Marquee4_New/>
       <BentoCategories/>
       <FavouriteCategories />
@@ -66,6 +70,7 @@ export default function Home() {
       <BestSeller/>
      
       <WhyUs />
+      <AstrideOffers/>
       <StatsSection_New/> 
       
       {/* <BrandTrustSection /> */}
@@ -75,6 +80,8 @@ export default function Home() {
       <Reviews_New/>
       {/* <Reviews /> */}
       <RealSetup_New/>
+      <CompeteTheVibe/>
+      
       <VideoTestimonials />
       <Enquiry_New/>
       
