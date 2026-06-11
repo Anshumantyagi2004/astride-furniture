@@ -44,7 +44,7 @@ const modes = [
 
 export default function Header6_New() {
   return (
-    <section className="w-full bg-[#080808] py-6 px-5 md:px-8 lg:px-16 overflow-hidden relative">
+    <section className="w-full bg-[#080808] py-14 px-5 md:px-8 lg:px-16 overflow-hidden relative">
 
       {/* Ambient glow blobs */}
       <div className="pointer-events-none absolute top-0 left-[250px] w-[400px] h-[300px] rounded-full bg-[#8B5CF6]/10 blur-[80px]" />
