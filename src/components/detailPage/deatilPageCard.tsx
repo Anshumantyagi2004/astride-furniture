@@ -276,18 +276,18 @@ export default function DetailPageCard({ product }: { product: any }) {
 
       <div className="flex flex-col lg:flex-row gap-6 xl:gap-10 mt-5">
         {/* Left: Image Gallery */}
-        <div className="w-full lg:w-[46%] flex flex-col lg:flex-row gap-4">
+        <div className="w-full lg:w-[38%] 2xl:w-[40%] flex flex-col gap-3">
           
-          {/* Thumbnails strip */}
+          {/* Thumbnails strip - horizontal row below main image */}
           {allVariantImages.length > 1 && (
-            <div className="order-2 lg:order-1 flex flex-row lg:flex-col gap-3 shrink-0 overflow-x-auto lg:overflow-y-auto max-h-[96px] lg:max-h-[480px] xl:max-h-[540px] pb-2 lg:pb-0 scrollbar-none w-full lg:w-[80px] xl:w-[90px] justify-center lg:justify-start">
+            <div className="order-2 flex flex-row gap-2.5 overflow-x-auto pb-1 scrollbar-none w-full justify-start">
               {allVariantImages.map((img: any, idx: number) => {
                 const isActive = activeImage === img.url;
                 return (
                   <button
                     key={idx}
                     onClick={() => handleThumbnailClick(img.url)}
-                    className={`relative w-[64px] lg:w-full aspect-square bg-white border-[2.5px] rounded-[14px] p-2 flex items-center justify-center transition-all duration-200 shrink-0 hover:-translate-y-1 lg:hover:-translate-x-1 ${
+                    className={`relative w-[72px] h-[72px] bg-white border-[2.5px] rounded-[14px] p-2 flex items-center justify-center transition-all duration-200 shrink-0 hover:-translate-y-1 ${
                       isActive 
                         ? 'border-[#8B5CF6] shadow-[3px_3px_0_#8B5CF6] -rotate-2' 
                         : 'border-[#131313] shadow-[3px_3px_0_rgba(19,19,19,0.85)]'
@@ -307,7 +307,7 @@ export default function DetailPageCard({ product }: { product: any }) {
 
           {/* Main Image */}
           <div 
-            className="order-1 lg:order-2 flex-grow h-[300px] md:h-[420px] lg:h-[480px] xl:h-[540px] flex items-center justify-center relative group rounded-[28px] border-[2.5px] border-[#131313] bg-[radial-gradient(ellipse_at_50%_78%,#ece4d2,#fff_72%)] shadow-[6px_6px_0_#131313]"
+            className="order-1 w-full h-[280px] md:h-[360px] lg:h-[400px] xl:h-[440px] flex items-center justify-center relative group rounded-[28px] border-[2.5px] border-[#131313] bg-[radial-gradient(ellipse_at_50%_78%,#ece4d2,#fff_72%)] shadow-[6px_6px_0_#131313]"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -327,7 +327,7 @@ export default function DetailPageCard({ product }: { product: any }) {
 
             {/* Handwritten Note */}
             <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rotate-[-2.5deg] border-b-4 border-[#8B5CF6] text-[18px] md:text-[22px] font-bold text-[#8B5CF6] whitespace-nowrap z-20 pointer-events-none">
-              main character energy.
+              Astride 
             </span>
             {allVariantImages.length > 1 && (
               <button 
@@ -358,12 +358,12 @@ export default function DetailPageCard({ product }: { product: any }) {
         </div>
 
         {/* Right: Details */}
-        <div className="w-full lg:w-[50%] flex flex-col pt-1 text-black">
+        <div className="w-full lg:w-[50%] 2xl:w-[48%] flex flex-col pt-1 text-black">
           
           <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#EC4899]">
             {product.category}
           </div>
-          <span className="table mt-1.5 text-neutral-500 font-medium text-[13px]">Comfort that hits different.</span>
+         
           
           <h1 className="text-[clamp(26px,2.8vw,42px)] font-black mt-2 leading-[1.05] tracking-tight">
             {product.name.split(' ')[0]} <span className="bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">{product.name.split(' ').slice(1).join(' ')}</span>
@@ -385,7 +385,7 @@ export default function DetailPageCard({ product }: { product: any }) {
             </span>
           </div>
           
-          <p className="text-[11.5px] text-[#888]">Inclusive of all taxes. Free shipping, obviously.</p>
+          <p className="text-[11.5px] text-[#888]">Inclusive of all taxes.</p>
           
           <div 
             className="mt-2 text-[#444] max-w-[520px] text-[13.5px] leading-relaxed"
@@ -449,33 +449,21 @@ export default function DetailPageCard({ product }: { product: any }) {
             </button>
           </div>
 
-          {/* Value Props */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <div className="rounded-[12px] border-2 border-[#131313] bg-white px-3 py-4 text-center shadow-[3px_3px_0_rgba(19,19,19,0.85)] flex flex-col items-center justify-center">
-              <span className="mb-1 block text-[20px]">🚚</span>
-              <span className="block text-[11.5px] font-bold uppercase tracking-[0.04em] text-[#131313]">
-                Free
-                <br />
-                Shipping
-              </span>
+          {/* Value Props - Single strip */}
+          <div className="inline-flex items-stretch border-[2.5px] border-[#131313] rounded-[14px] bg-white shadow-[3px_3px_0_#131313] overflow-hidden">
+            <div className="flex-1 flex flex-row items-center justify-center gap-2.5 px-3 py-3">
+              <span className="text-[20px] shrink-0">🚚</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#131313] leading-tight">Free<br/>Shipping</span>
             </div>
-
-            <div className="rounded-[12px] border-2 border-[#131313] bg-white px-3 py-4 text-center shadow-[3px_3px_0_rgba(19,19,19,0.85)] flex flex-col items-center justify-center">
-              <span className="mb-1 block text-[20px]">↩️</span>
-              <span className="block text-[11.5px] font-bold uppercase tracking-[0.04em] text-[#131313]">
-                30 Day
-                <br />
-                Returns
-              </span>
+            <div className="w-[2px] bg-[#131313] shrink-0" />
+            <div className="flex-1 flex flex-row items-center justify-center gap-2.5 px-3 py-3">
+              <span className="text-[20px] shrink-0">↩️</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#131313] leading-tight">30 Day<br/>Returns</span>
             </div>
-
-            <div className="rounded-[12px] border-2 border-[#131313] bg-white px-3 py-4 text-center shadow-[3px_3px_0_rgba(19,19,19,0.85)] col-span-2 sm:col-span-1 flex flex-col items-center justify-center">
-              <span className="mb-1 block text-[20px]">🛡️</span>
-              <span className="block text-[11.5px] font-bold uppercase tracking-[0.04em] text-[#131313]">
-                2 Year
-                <br />
-                Warranty
-              </span>
+            <div className="w-[2px] bg-[#131313] shrink-0" />
+            <div className="flex-1 flex flex-row items-center justify-center gap-2.5 px-3 py-3">
+              <span className="text-[20px] shrink-0">🛡️</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#131313] leading-tight">2 Year<br/>Warranty</span>
             </div>
           </div>
 
@@ -483,7 +471,7 @@ export default function DetailPageCard({ product }: { product: any }) {
       </div>
 
       {/* DETAILS Section */}
-      <section className="py-[clamp(60px,8vw,100px)] mt-6 bg-[#FAFAFA] rounded-[32px] border-[2.5px] border-[#131313] px-4 md:px-10 lg:px-16 shadow-[8px_8px_0_#131313] relative overflow-hidden w-full">
+      <section className="py-[clamp(18px,2.5vw,26px)] mt-1 bg-[#FAFAFA] rounded-[32px] border-[2.5px] border-[#131313] px-4 md:px-10 lg:px-16 shadow-[8px_8px_0_#131313] relative overflow-hidden w-full">
             <div className="mb-6">
               <h2 className="text-[clamp(32px,4.4vw,54px)] font-bold leading-[1.05] tracking-tight text-[#131313]">
                 Everything <span className="bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">it's packing.</span>

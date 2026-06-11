@@ -51,7 +51,7 @@ export default function Reviews_New() {
           <h2 className="text-4xl md:text-6xl font-sans font-black tracking-tight mb-4 uppercase text-[#131313]">
             Loved by <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent">professionals.</span>
           </h2>
-          <p className="text-zinc-600 text-lg md:text-xl font-medium tracking-wide">
+          <p className="text-zinc-600 text-lg md:text-xl font-medium tracking-wide whitespace-nowrap">
             Gamers, devs, and creators who upgraded their setup with Astride comfort.
           </p>
         </div>
