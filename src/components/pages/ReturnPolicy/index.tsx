@@ -75,11 +75,12 @@ export default function ReturnPolicyPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-semibold tracking-wider uppercase">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
               <span className="text-zinc-500 text-[10px] mb-1">Email</span>
-              <span className="text-white text-xs sm:text-sm">support@astridefurniture.com</span>
+              <span className="text-white text-xs sm:text-sm">support@astride.in</span>
+             
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
               <span className="text-zinc-500 text-[10px] mb-1">Phone</span>
-              <span className="text-white text-xs sm:text-sm">+91-8810540823</span>
+              <span className="text-white text-xs sm:text-sm">+91-7311164111</span>
             </div>
           </div>
         </motion.div>

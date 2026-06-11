@@ -33,6 +33,8 @@ import BestSellersSection_New from '@/components/Home/BestSellers_New';
 import RealSetup_New from '@/components/Home/RealSetup_New';
 import AstrideOffers from '@/components/Home/AstrideOffers';
 import CompeteTheVibe from '@/components/Home/Compete_the_vibe';
+import Navbar from '@/components/Main/Navbar/Navbar';
+import CertificationsBento from '@/components/Home/Certification_bento';
 // Lazy loaded — only the 3 heaviest components
 // Reviews: uses GSAP + ScrollTrigger (large bundle)
 const Reviews = dynamic(() => import('@/components/Home/Reviews'));
@@ -44,10 +46,11 @@ const PreloadModelViewer = dynamic(() => import('@/components/Home/PreloadModelV
 export default function Home() {
   return (
     <main className="min-h-screen">
+    
       <Header0/>
        {/* <Header3 /> */}
        <Header5_New/>
-        <Marquee1 />
+      
        <Header6_New/>  
      
        
@@ -62,6 +65,7 @@ export default function Home() {
       <PreloadModelViewer/>
       {/* <BrandAboutSection /> */}
       <AboutSection_New/>
+     <CertificationsBento/>
       
       <Marquee2Hover />
       <Chair_split/>

@@ -96,7 +96,8 @@ export default function ContactPage() {
               </div>
               <div className="min-w-0">
                 <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-1 leading-none">Email</h3>
-                <p className="text-base md:text-lg font-extrabold text-slate-800 truncate">support@astridefurniture.com</p>
+                <p className="text-base md:text-lg font-extrabold text-slate-800">support@astride.in</p>
+                <p className="text-base md:text-lg font-extrabold text-slate-800 mt-1">sales@astride.in</p>
               </div>
             </div>
 
@@ -107,7 +108,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-1 leading-none">Phone</h3>
-                <p className="text-base md:text-lg font-extrabold text-slate-800">+91-8810540823</p>
+                <p className="text-base md:text-lg font-extrabold text-slate-800">+91-7311164111</p>
               </div>
             </div>
 
