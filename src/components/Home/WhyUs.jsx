@@ -46,7 +46,7 @@ export default function WhyUs() {
     ];
 
     return (
-        <section className={`relative py-8 bg-[#F8F9FA] overflow-hidden ${sans.className}`}>
+        <section className={`relative py-2 bg-[#F8F9FA] overflow-hidden ${sans.className}`}>
 
             {/* BACKGROUND — subtle blue/slate blobs, no orange */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -62,16 +62,16 @@ export default function WhyUs() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                     viewport={{ once: true }}
-                    className="text-center max-w-3xl mx-auto mb-8"
+                    className="text-center max-w-3xl mx-auto mb-5"
                 >
-                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#161316] leading-[1.08] tracking-tight font-sans">
+                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#161316] leading-[1.08] tracking-tight font-sans lg:whitespace-nowrap">
                         Designed For{" "}
                         <span className="bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] bg-clip-text text-transparent">
                             Modern Living
                         </span>
                     </h2>
 
-                    <p className="mt-5 text-slate-500 text-base sm:text-lg leading-relaxed max-w-xl mx-auto font-sans">
+                    <p className="mt-3 text-slate-500 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto font-sans line-clamp-2">
                         We combine premium craftsmanship, ergonomic comfort, and
                         contemporary aesthetics to create chairs that enhance both
                         productivity and lifestyle.

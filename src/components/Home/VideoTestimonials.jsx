@@ -68,7 +68,7 @@ export default function VideoTestimonials() {
     const [playingVideo, setPlayingVideo] = useState(null);
 
     return (
-        <section className={`w-full py-10 bg-gray-50 overflow-hidden ${sans.className}`}>
+        <section className={`w-full pt-2 pb-10 bg-gray-50 overflow-hidden ${sans.className}`}>
             <div className="max-w-7xl mx-auto px-6">
                 
                 {/* HEADER */}

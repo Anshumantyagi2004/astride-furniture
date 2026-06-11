@@ -18,7 +18,7 @@ export default function AboutSection_New() {
   return (
     <section
       id="about"
-      className="relative bg-[#F1E8D6] py-[70px] md:py-[90px] lg:py-[120px]"
+      className="relative bg-[#F1E8D6] pt-4 pb-[70px] md:pt-6 md:pb-[90px] lg:pt-8 lg:pb-[120px]"
     >
       <div className="mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">

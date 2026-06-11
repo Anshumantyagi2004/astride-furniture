@@ -323,7 +323,7 @@ export default function BestSellersSection_New() {
   }, []);
 
   return (
-    <section id="shop" className="pt-[30px] pb-[70px] md:pt-[45px] md:pb-[90px] lg:pt-[55px] lg:pb-[120px]">
+    <section id="shop" className="pt-2 pb-[10px] md:pt-3 md:pb-[15px] lg:pt-4 lg:pb-[20px]">
       <div className="mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12">
         {/* Section Header */}
         <div className="mb-12 flex flex-wrap items-end justify-between gap-5">

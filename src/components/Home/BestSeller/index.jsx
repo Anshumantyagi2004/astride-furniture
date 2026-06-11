@@ -189,20 +189,27 @@ export default function BestSeller() {
 
   return (
     <section 
-      className={`w-full bg-white pt-0 pb-12 md:py-16 px-6 md:px-12 lg:px-20 ${sans.className}`} 
+      className={`w-full bg-white pt-2 pb-6 md:pt-4 md:pb-8 px-6 md:px-12 lg:px-20 ${sans.className}`} 
     >
       <div className="max-w-[1440px] mx-auto">
         
         {/* Header Area */}
-        <div className="flex flex-row items-center justify-between mb-8 border-b border-gray-100 pb-4 px-2">
-          <h2 className="text-3xl md:text-[32px] font-medium text-[#111111] font-sans">
-            Bestsellers
-          </h2>
-          <Link href="/products" className="text-[16px] font-semibold text-[#111111] hover:text-[#8B5CF6] transition-colors flex items-center gap-2 font-sans">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-5 px-2">
+          <div>
+            <h2 className={`mt-0 text-[32px] font-black leading-tight text-[#131313] md:text-[42px] lg:text-[48px] ${sans.className}`}>
+              Best{" "}
+              <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold">
+                sellers.
+              </span>
+            </h2>
+          </div>
+
+          <Link
+            href="/products"
+            className={`inline-flex items-center gap-2 rounded-full bg-[#131313] px-6 py-3 font-bold text-white transition duration-300 hover:-translate-y-1 hover:bg-[#1F1F1F] hover:shadow-xl ${sans.className}`}
+          >
             Browse all products 
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
+            <span className="text-lg">→</span>
           </Link>
         </div>
 
