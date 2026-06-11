@@ -2,12 +2,19 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import {
     Armchair,
     HeartHandshake,
     ShieldCheck,
     Sparkles,
 } from "lucide-react";
+
+const sans = Plus_Jakarta_Sans({
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700", "800"],
+    variable: "--font-sans",
+});
 
 export default function WhyUs() {
 
@@ -39,7 +46,7 @@ export default function WhyUs() {
     ];
 
     return (
-        <section className="relative py-8 bg-[#F8F9FA] overflow-hidden">
+        <section className={`relative py-8 bg-[#F8F9FA] overflow-hidden ${sans.className}`}>
 
             {/* BACKGROUND — subtle blue/slate blobs, no orange */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -57,14 +64,14 @@ export default function WhyUs() {
                     viewport={{ once: true }}
                     className="text-center max-w-3xl mx-auto mb-8"
                 >
-                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#161316] leading-[1.08] tracking-tight">
+                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#161316] leading-[1.08] tracking-tight font-sans">
                         Designed For{" "}
-                        <span className="bg-gradient-to-r from-slate-700 to-slate-500 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] bg-clip-text text-transparent">
                             Modern Living
                         </span>
                     </h2>
 
-                    <p className="mt-5 text-slate-500 text-base sm:text-lg leading-relaxed max-w-xl mx-auto">
+                    <p className="mt-5 text-slate-500 text-base sm:text-lg leading-relaxed max-w-xl mx-auto font-sans">
                         We combine premium craftsmanship, ergonomic comfort, and
                         contemporary aesthetics to create chairs that enhance both
                         productivity and lifestyle.
@@ -87,12 +94,12 @@ export default function WhyUs() {
                             <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
 
                             {/* TOP NUMBER */}
-                            <span className="absolute top-7 right-8 text-5xl font-black text-slate-100 group-hover:text-slate-200 transition-colors duration-500 select-none leading-none hidden md:block">
+                            <span className="absolute top-7 right-8 text-5xl font-black text-slate-100 group-hover:text-slate-200 transition-colors duration-500 select-none leading-none hidden md:block font-sans">
                                 {String(index + 1).padStart(2, "0")}
                             </span>
 
                             {/* ICON BOX */}
-                            <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 transition-all duration-400 group-hover:bg-slate-800 group-hover:text-white group-hover:border-slate-800 group-hover:scale-105 shadow-sm flex-shrink-0">
+                            <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-600 transition-all duration-400 group-hover:bg-gradient-to-r group-hover:from-[#8B5CF6] group-hover:to-[#EC4899] group-hover:text-white group-hover:border-transparent group-hover:scale-105 shadow-sm flex-shrink-0">
                                 {/* subtle inner glow on hover */}
                                 <div className="absolute inset-0 rounded-2xl bg-slate-900/0 group-hover:bg-slate-900/10 blur-md transition-all duration-500" />
                                 <div className="relative z-10">{item.icon}</div>
@@ -100,23 +107,23 @@ export default function WhyUs() {
 
                             {/* CONTENT */}
                             <div className="mt-0 md:mt-7 relative z-10 flex-grow">
-                                <h3 className="text-base md:text-xl font-bold text-[#161316] leading-snug tracking-tight">
+                                <h3 className="text-base md:text-xl font-bold text-[#161316] leading-snug tracking-tight font-sans">
                                     {item.title}
                                 </h3>
 
-                                <p className="hidden md:block mt-3 text-slate-500 leading-relaxed text-[14px]">
+                                <p className="hidden md:block mt-3 text-slate-500 leading-relaxed text-[14px] font-sans">
                                     {item.desc}
                                 </p>
 
                                 {/* STAT PILL */}
-                                <div className="hidden md:inline-flex mt-5 items-center gap-1.5 bg-slate-50 border border-slate-200/80 text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full">
+                                <div className="hidden md:inline-flex mt-5 items-center gap-1.5 bg-slate-50 border border-slate-200/80 text-slate-500 text-[10px] font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full font-sans">
                                     <span className="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0" />
                                     {item.stat}
                                 </div>
                             </div>
 
                             {/* BOTTOM ACCENT BAR */}
-                            <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-slate-800 group-hover:w-full transition-all duration-500 rounded-full" />
+                            <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] group-hover:w-full transition-all duration-500 rounded-full" />
                         </motion.div>
                     ))}
                 </div>

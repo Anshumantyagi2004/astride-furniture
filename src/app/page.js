@@ -22,6 +22,17 @@ import HeroSection from '@/components/Home/Hero';
 import Header3 from '@/components/Home/Header3';
 import Header0 from '@/components/Home/Header0';
 import Newletter from '@/components/Home/Newletter';
+import Marquee4_New from '@/components/Home/Marquee4_New';
+import Header5_New from '@/components/Home/Header5_New';
+import Header6_New from '@/components/Home/Header6_New';
+import StatsSection_New from '@/components/Home/WhyUs_New';
+import Reviews_New from '@/components/Home/Reviews_New';
+import Enquiry_New from '@/components/Home/Enquiry_new';
+import AboutSection_New from '@/components/Home/About_New';
+import BestSellersSection_New from '@/components/Home/BestSellers_New';
+import RealSetup_New from '@/components/Home/RealSetup_New';
+import AstrideOffers from '@/components/Home/AstrideOffers';
+import CompeteTheVibe from '@/components/Home/Compete_the_vibe';
 // Lazy loaded — only the 3 heaviest components
 // Reviews: uses GSAP + ScrollTrigger (large bundle)
 const Reviews = dynamic(() => import('@/components/Home/Reviews'));
@@ -34,31 +45,48 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <Header0/>
-       <Header3 />
+       {/* <Header3 /> */}
+       <Header5_New/>
+        <Marquee1 />
+       <Header6_New/>  
+     
+       
     
       
       <Category />
      
-      <Marquee1 />
+     
+      <Marquee4_New/>
       <BentoCategories/>
       <FavouriteCategories />
       <PreloadModelViewer/>
-      <BrandAboutSection />
+      {/* <BrandAboutSection /> */}
+      <AboutSection_New/>
       
       <Marquee2Hover />
       <Chair_split/>
       <ChairSection />
       <Header2 />
       <BestSeller/>
+     
       <WhyUs />
+      <AstrideOffers/>
+      <StatsSection_New/> 
       
-      <BrandTrustSection />
-      <BestSellerSection/>
-      <ClientLogoSlider />
-      <Reviews />
+      {/* <BrandTrustSection /> */}
+      {/* <BestSellerSection/> */}
+       <BestSellersSection_New/>
+      {/* <ClientLogoSlider /> */}
+      <Reviews_New/>
+      {/* <Reviews /> */}
+      <RealSetup_New/>
+      <CompeteTheVibe/>
+      
       <VideoTestimonials />
+      <Enquiry_New/>
       
-      <BulkQueryForm />
+      
+      {/* <BulkQueryForm /> */}
       <Newletter/>
       <FAQ/>
     </main>

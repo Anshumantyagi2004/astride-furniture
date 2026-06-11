@@ -5,6 +5,13 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+const sans = Plus_Jakarta_Sans({
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700", "800"],
+    variable: "--font-sans",
+});
 
 export default function Category() {
     const [categories, setCategories] = useState([]);
@@ -31,26 +38,23 @@ export default function Category() {
     }, []);
 
     return (
-        <section className="relative overflow-hidden bg-[#F4F4F5] py-10">
+        <section className={`relative overflow-hidden bg-[#FAFAFA] py-16 ${sans.className}`}>
 
             {/* HEADING */}
-            <div className="relative z-10 md:px-15 px-4 mb-4">
-                <div className="text-5xl sm:text-6xl lg:text-[4rem] font-extrabold uppercase leading-[0.9] tracking-tighter">
-                    <span className="block text-zinc-900">TRENDING</span>
-                    <span className="block text-transparent [-webkit-text-stroke:1.5px_#27272a] mt-[6px]">PRODUCTS</span>
-                </div>
+            <div className="relative z-10 md:px-15 px-4 mb-10 max-w-[1400px] mx-auto">
+                <p className="uppercase tracking-[5px] text-[#8B5CF6] text-sm font-extrabold mb-2">
+                    Browse Collection
+                </p>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#131313] leading-[1.05] mt-2 tracking-tight">
+                    Trending <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold pr-2">Products</span>
+                </h2>
             </div>
 
-            {/* SOFT BACKGROUND GLOW */}
-            <div className="absolute top-0 left-0 w-96 h-96 bg-zinc-400 blur-[100px] rounded-full" />
-
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-zinc-300/40 blur-[160px] rounded-full" />
-
             {/* CONTENT */}
-            <div className="relative md:px-15 px-4 pt-8">
+            <div className="relative md:px-15 px-4 pt-4">
 
                 {loading ? (
-                    <div className="text-center text-zinc-600 text-lg">
+                    <div className="text-center text-zinc-600 text-lg font-medium">
                         Loading...
                     </div>
                 ) : (
@@ -68,39 +72,30 @@ export default function Category() {
                                             delay: index * 0.02,
                                         }}
                                         viewport={{ once: true }}
-                                        whileHover={{
-                                            y: -8,
-                                        }}
-                                        className="group relative overflow-hidden rounded-3xl bg-white border border-zinc-200 transition-all duration-500 hover:border-zinc-800 hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)]">
+                                        className="group relative overflow-hidden rounded-[14px] bg-white border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313] transition-transform duration-300 hover:-translate-y-2 hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)]">
 
-                                        <div className="relative h-72 overflow-hidden rounded-3xl">
+                                        <div className="relative h-[300px] w-full overflow-hidden bg-white border-b-[2.5px] border-[#131313]">
                                             <img
                                                 src={category.image}
                                                 alt={category.name}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
                                             />
-
-                                            <div className="absolute inset-0 bg-gradient-to-t from-[#161316]/80 via-[#161316]/10 to-transparent" />
-                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-500" />
                                         </div>
 
-                                        <div className="absolute bottom-0 left-0 w-full px-5 py-2">
+                                        <div className="w-full px-5 py-4 bg-white">
                                             <div className="flex items-center justify-between">
                                                 <div>
-                                                    <h3 className="text-white text-xl font-semibold capitalize tracking-wide">
+                                                    <h3 className="text-[#131313] text-lg font-black capitalize tracking-tight group-hover:text-[#EC4899] transition-colors duration-300">
                                                         {category.name}
                                                     </h3>
                                                 </div>
 
-                                                <div className="w-8 h-8 rounded-full
-                                              bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center
-                                              text-white group-hover:bg-zinc-900 group-hover:border-zinc-900 group-hover:text-white transition-all duration-500 group-hover:rotate-45">
-                                                    <ArrowRight size={18} />
+                                                <div className="w-8 h-8 rounded-full border-2 border-[#131313] bg-[#DCF351] flex items-center justify-center text-[#131313] transition-transform duration-300 group-hover:rotate-45 group-hover:bg-[#EC4899] group-hover:text-white">
+                                                    <ArrowRight size={18} strokeWidth={3} />
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-zinc-800 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
                                     </motion.div>
                                     </Link>
                                 ))}

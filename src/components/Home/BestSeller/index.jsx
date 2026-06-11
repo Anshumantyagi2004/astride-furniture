@@ -3,6 +3,13 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+const sans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-sans",
+});
 
 const BestSellerCard = ({ product }) => {
   const router = useRouter();
@@ -41,7 +48,7 @@ const BestSellerCard = ({ product }) => {
 
   return (
     <div 
-      className="flex flex-col group h-full justify-between"
+      className="flex flex-col group h-full justify-between font-sans"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -52,7 +59,7 @@ const BestSellerCard = ({ product }) => {
         {/* Image Container - Reduced aspect ratio for shorter length */}
         <div className="relative w-full aspect-[4/3.3] bg-[#F5F5F5] rounded-[24px] p-5 mb-4 overflow-hidden flex flex-col items-center justify-center transition-colors duration-300 group-hover:bg-[#EFEFEF]">
           {/* Tag */}
-          <div className="absolute top-4 left-4 bg-white px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-widest text-[#111111] shadow-sm z-10 uppercase">
+          <div className="absolute top-4 left-4 bg-white px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-widest text-[#8B5CF6] shadow-sm z-10 uppercase font-sans">
             {product.category || 'Premium'}
           </div>
           
@@ -73,7 +80,7 @@ const BestSellerCard = ({ product }) => {
               {images.map((_, idx) => (
                 <div 
                   key={idx} 
-                  className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? 'w-3 bg-slate-800' : 'w-1.5 bg-slate-300'}`}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? 'w-3 bg-[#8B5CF6]' : 'w-1.5 bg-slate-300'}`}
                 />
               ))}
             </div>
@@ -81,18 +88,18 @@ const BestSellerCard = ({ product }) => {
         </div>
 
         {/* Product Info */}
-        <div className="flex flex-col">
-          <h3 className="text-base font-semibold text-[#111111] mb-1">
+        <div className="flex flex-col font-sans">
+          <h3 className="text-base font-semibold text-[#111111] mb-1 font-sans group-hover:text-[#8B5CF6] transition-colors">
             {product.name}
           </h3>
           {/* Clamped description for compact height */}
-          <p className="text-xs text-[#666666] leading-relaxed mb-2 line-clamp-2">
+          <p className="text-xs text-[#666666] leading-relaxed mb-2 line-clamp-2 font-sans">
             {product.description}
           </p>
-          <div className="font-bold text-xs text-[#111111] tracking-wide mb-3 flex items-center gap-2">
+          <div className="font-bold text-xs text-[#111111] tracking-wide mb-3 flex items-center gap-2 font-sans">
             <span>₹{product.price.toLocaleString("en-IN")}</span>
             <span className="text-gray-400 text-[10px] line-through font-normal">₹{product.originalPrice.toLocaleString("en-IN")}</span>
-            <span className="text-[#03a685] text-[10px]">{product.discount} OFF</span>
+            <span className="text-[#EC4899] text-[10px] font-extrabold">{product.discount} OFF</span>
           </div>
         </div>
       </div>
@@ -100,7 +107,7 @@ const BestSellerCard = ({ product }) => {
       {/* Add to Cart Button */}
       <button 
         onClick={handleAddToCart}
-        className="w-full bg-white border border-[#E5E5E5] text-[#111111] py-2.5 rounded-lg text-xs font-bold tracking-wide hover:bg-[#111111] hover:text-white hover:border-[#111111] transition-all duration-300"
+        className="w-full bg-white border border-[#E5E5E5] text-[#111111] py-2.5 rounded-lg text-xs font-bold tracking-wide hover:bg-[#8B5CF6] hover:text-white hover:border-[#8B5CF6] transition-all duration-300 font-sans cursor-pointer"
       >
         Add to Cart
       </button>
@@ -182,17 +189,16 @@ export default function BestSeller() {
 
   return (
     <section 
-      className="w-full bg-white pt-0 pb-12 md:py-16 px-6 md:px-12 lg:px-20" 
-      style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
+      className={`w-full bg-white pt-0 pb-12 md:py-16 px-6 md:px-12 lg:px-20 ${sans.className}`} 
     >
       <div className="max-w-[1440px] mx-auto">
         
         {/* Header Area */}
         <div className="flex flex-row items-center justify-between mb-8 border-b border-gray-100 pb-4 px-2">
-          <h2 className="text-3xl md:text-[32px] font-medium text-[#111111]">
+          <h2 className="text-3xl md:text-[32px] font-medium text-[#111111] font-sans">
             Bestsellers
           </h2>
-          <Link href="/products" className="text-[16px] font-semibold text-[#111111] hover:text-gray-500 transition-colors flex items-center gap-2">
+          <Link href="/products" className="text-[16px] font-semibold text-[#111111] hover:text-[#8B5CF6] transition-colors flex items-center gap-2 font-sans">
             Browse all products 
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />

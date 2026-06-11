@@ -25,7 +25,7 @@ export default function DetailPageCard({ product }: { product: any }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState('Red');
   const [activeImage, setActiveImage] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'description' | 'features' | 'specs' | 'application'>('description');
+  const [activeTab, setActiveTab] = useState<'description' | 'features' | 'specs' | 'application' | 'whychoose'>('description');
   const tabContentRef = useRef<HTMLDivElement>(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
@@ -77,7 +77,7 @@ export default function DetailPageCard({ product }: { product: any }) {
     window.dispatchEvent(new Event("astride_wishlist_updated"));
   };
 
-  // Set initial selected color and active image when product changes
+  // Set initial selected color, active image, and active tab when product changes
   useEffect(() => {
     if (product) {
       const firstVariantWithImages = product.colorVariants?.find((v: any) => v.images && v.images.length > 0);
@@ -86,6 +86,9 @@ export default function DetailPageCard({ product }: { product: any }) {
       
       const initialImage = firstVariantWithImages?.images?.[0]?.url || product.image;
       setActiveImage(initialImage);
+      
+      // Keep description open by default
+      setActiveTab('description');
     }
   }, [product]);
 
@@ -229,35 +232,82 @@ export default function DetailPageCard({ product }: { product: any }) {
 
   return (
     <div 
-      className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-white min-h-screen font-sans"
+      className="max-w-[1380px] mx-auto p-4 md:p-6 lg:p-6 bg-white min-h-screen font-sans"
       style={{ fontFamily: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
     >
+      <style>{`
+        .description-style ul {
+          list-style: none !important;
+          padding-left: 0 !important;
+          margin: 0 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 16px !important;
+        }
+        .description-style li {
+          position: relative !important;
+          padding-left: 32px !important;
+          list-style-type: none !important;
+          color: #444 !important;
+          font-size: 15px !important;
+          line-height: 1.6 !important;
+          font-family: inherit !important;
+        }
+        .description-style li::before {
+          content: "" !important;
+          position: absolute !important;
+          left: 0 !important;
+          top: 3px !important;
+          width: 19px !important;
+          height: 19px !important;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238B5CF6' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 13 4 4L19 7'/%3E%3C/svg%3E") !important;
+          background-repeat: no-repeat !important;
+          background-size: contain !important;
+        }
+      `}</style>
       {/* Breadcrumbs */}
-      <div className="text-[13px] md:text-[15px] text-neutral-400 font-medium mb-6 flex flex-wrap items-center gap-x-1.5 gap-y-1 tracking-wide leading-relaxed">
+      <div className="text-[12px] md:text-[13px] text-neutral-400 font-medium mb-3 flex flex-wrap items-center gap-x-1.5 gap-y-1 tracking-wide leading-relaxed">
         <span className="hover:text-black cursor-pointer transition-colors whitespace-nowrap">Home</span>
         <span className="text-neutral-300">/</span>
         <span className="hover:text-black cursor-pointer transition-colors whitespace-nowrap">{product.category}</span>
         <span className="text-neutral-300">/</span>
-        <span className="text-neutral-600 font-semibold text-[14px] md:text-[16px]">{product.name}</span>
+        <span className="text-neutral-600 font-semibold text-[13px] md:text-[14px]">{product.name}</span>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-10 xl:gap-16 mt-2">
+      <div className="flex flex-col lg:flex-row gap-6 xl:gap-10 mt-5">
         {/* Left: Image Gallery */}
-        <div className="w-full lg:w-[44%] lg:sticky lg:top-20 self-start flex flex-col lg:flex-row-reverse gap-4 lg:gap-6">
+        <div className="w-full lg:w-[44%] flex flex-col gap-3">
           
           {/* Main Image */}
           <div 
-            className="w-full lg:flex-1 h-[350px] md:h-[500px] lg:h-[calc(100vh-120px)] flex items-center justify-center relative overflow-hidden group bg-[#FAFAFA] rounded-[32px] lg:rounded-2xl shrink-0"
+            className="w-full h-[300px] md:h-[420px] lg:h-[480px] xl:h-[540px] flex items-center justify-center relative group rounded-[28px] border-[2.5px] border-[#131313] bg-[radial-gradient(ellipse_at_50%_78%,#ece4d2,#fff_72%)] shadow-[6px_6px_0_#131313] shrink-0"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
+            {/* Sticker */}
+            <span className="absolute -top-4 left-5 rotate-[-3deg] bg-[#EC4899] px-4 py-2 text-[15px] font-bold text-white shadow-[3px_3px_0_#131313] z-20 pointer-events-none">
+              hot rn 🔥
+            </span>
+
+            {/* Discount */}
+            <div className="absolute right-5 top-5 flex h-[74px] w-[74px] rotate-[8deg] flex-col items-center justify-center rounded-full border-[2.5px] border-[#131313] bg-[#DCF351] text-center font-extrabold shadow-[3px_3px_0_#131313] z-20 pointer-events-none">
+              <small className="text-[10px] uppercase tracking-wide">
+                save
+              </small>
+              <span className="text-[15px]">{product.discount || "24%"}</span>
+            </div>
+
+            {/* Handwritten Note */}
+            <span className="absolute bottom-4 left-1/2 -translate-x-1/2 rotate-[-2.5deg] border-b-4 border-[#8B5CF6] text-[18px] md:text-[22px] font-bold text-[#8B5CF6] whitespace-nowrap z-20 pointer-events-none">
+              main character energy.
+            </span>
             {allVariantImages.length > 1 && (
               <button 
                 onClick={(e) => { e.stopPropagation(); goPrevImage(); }}
-                className="absolute left-4 lg:hidden z-10 w-9 h-9 rounded-full bg-white/60 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.06)] flex items-center justify-center text-slate-700 active:bg-white transition-all duration-200 ease-out active:scale-90"
+                className="absolute left-4 z-10 w-11 h-11 rounded-full bg-white border-2 border-[#131313] shadow-[3px_3px_0_#131313] hover:bg-[#DCF351] hover:-translate-y-0.5 hover:-translate-x-0.5 active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0_#131313] transition-all flex items-center justify-center text-slate-900"
               >
-                <ChevronLeft size={20} strokeWidth={2.5} />
+                <ChevronLeft size={22} strokeWidth={3} />
               </button>
             )}
 
@@ -271,400 +321,435 @@ export default function DetailPageCard({ product }: { product: any }) {
             {allVariantImages.length > 1 && (
               <button 
                 onClick={(e) => { e.stopPropagation(); goNextImage(); }}
-                className="absolute right-4 lg:hidden z-10 w-9 h-9 rounded-full bg-white/60 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.06)] flex items-center justify-center text-slate-700 active:bg-white transition-all duration-200 ease-out active:scale-90"
+                className="absolute right-4 z-10 w-11 h-11 rounded-full bg-white border-2 border-[#131313] shadow-[3px_3px_0_#131313] hover:bg-[#DCF351] hover:-translate-y-0.5 hover:translate-x-0.5 active:translate-x-0 active:translate-y-0 active:shadow-[1px_1px_0_#131313] transition-all flex items-center justify-center text-slate-900"
               >
-                <ChevronRight size={20} strokeWidth={2.5} />
+                <ChevronRight size={22} strokeWidth={3} />
               </button>
             )}
           </div>
 
           {/* Thumbnails strip */}
           {allVariantImages.length > 1 && (
-            <div className="flex flex-row lg:flex-col justify-center lg:justify-start gap-3 w-full lg:w-[80px] shrink-0 overflow-x-auto lg:overflow-y-auto max-h-auto lg:max-h-[calc(100vh-120px)] px-1.5 lg:px-0 pb-2 lg:pb-0 scrollbar-none lg:scrollbar-thin">
-              {allVariantImages.map((img: any, idx: number) => (
-                <button
-                  key={idx}
-                  onClick={() => handleThumbnailClick(img.url)}
-                  className={`relative w-[60px] lg:w-full aspect-square rounded-full lg:rounded-xl bg-[#FAFAFA] border-2 transition-all duration-200 shrink-0 ${
-                    activeImage === img.url ? 'border-black' : 'border-transparent hover:border-neutral-350'
-                  }`}
-                >
-                  <Image 
-                    src={img.url} 
-                    alt={`Thumbnail ${idx + 1}`} 
-                    fill 
-                    className="object-contain p-1.5 mix-blend-multiply" 
-                  />
-                </button>
-              ))}
+            <div className="flex flex-row justify-center lg:justify-start gap-3.5 shrink-0 overflow-x-auto mt-4 pb-2 scrollbar-none w-full">
+              {allVariantImages.map((img: any, idx: number) => {
+                const isActive = activeImage === img.url;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleThumbnailClick(img.url)}
+                    className={`relative w-[72px] lg:w-[86px] aspect-square bg-white border-[2.5px] rounded-[14px] p-2.5 flex items-center justify-center transition-all duration-200 shrink-0 hover:-translate-y-1 ${
+                      isActive 
+                        ? 'border-[#8B5CF6] shadow-[3px_3px_0_#8B5CF6] -rotate-2' 
+                        : 'border-[#131313] shadow-[3px_3px_0_rgba(19,19,19,0.85)]'
+                    }`}
+                  >
+                    <Image 
+                      src={img.url} 
+                      alt={`Thumbnail ${idx + 1}`} 
+                      fill 
+                      className="object-contain p-2 mix-blend-multiply" 
+                    />
+                  </button>
+                );
+              })}
             </div>
           )}
 
         </div>
 
         {/* Right: Details */}
-        <div className="w-full lg:w-[58%] flex flex-col pt-2 text-black">
+        <div className="w-full lg:w-[58%] flex flex-col pt-1 text-black">
           
-          <h1 
-            className="text-xl lg:text-[22px] font-semibold tracking-tight leading-tight mb-4 uppercase"
-            style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
-          >
-            {product.name}
+          <div className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#EC4899]">
+            {product.category}
+          </div>
+          <span className="table mt-1.5 text-neutral-500 font-medium text-[13px]">Comfort that hits different.</span>
+          
+          <h1 className="text-[clamp(26px,2.8vw,42px)] font-black mt-2 leading-[1.05] tracking-tight">
+            {product.name.split(' ')[0]} <span className="bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">{product.name.split(' ').slice(1).join(' ')}</span>
           </h1>
+          
+          <div className="flex items-center gap-2.5 mt-2 font-semibold text-[13px]">
+            <span className="text-[#ea580c] tracking-[2px] text-[15px]" aria-hidden="true">★★★★★</span>
+            <span>{product.rating || "4.8"}</span>
+            <a href="#reviews" className="text-[#777] border-b-[1.5px] border-dashed border-[#999] hover:text-[#EC4899] transition-colors">
+              512 verified reviews
+            </a>
+          </div>
 
+          <div className="flex items-baseline gap-3.5 my-3 flex-wrap">
+            <span className="text-[clamp(24px,2.6vw,34px)] font-bold">₹{product.price.toLocaleString()}</span>
+            <s className="text-[#999] text-[17px]">₹{product.originalPrice.toLocaleString()}</s>
+            <span className="bg-[#DCF351] font-extrabold text-[11px] tracking-[0.06em] px-2.5 py-1 -rotate-2 shadow-[2px_2px_0_#131313]">
+              You save ₹{(product.originalPrice - product.price).toLocaleString()}
+            </span>
+          </div>
+          
+          <p className="text-[11.5px] text-[#888]">Inclusive of all taxes. Free shipping, obviously.</p>
+          
           <div 
-            className="hidden lg:block text-[14px] text-neutral-500 leading-relaxed font-medium mb-5 pr-4"
-            dangerouslySetInnerHTML={{ __html: product.shortDescription || `Premium ergonomic seat tailored for long sessions, perfect for gaming setups and casual office workspace styling.` }}
+            className="mt-2 text-[#444] max-w-[520px] text-[13.5px] leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: product.shortDescription || `The chair your back has been manifesting. <strong style="color:#8B5CF6">Dynamic lumbar support</strong> that moves with you, breathable mesh that never gets sweaty, and <strong style="color:#8B5CF6">4D armrests</strong> for marathon sessions — work, ranked, or both.` }}
           />
 
-          <p className="text-[13px] font-semibold text-neutral-800 mb-5">
-            Stock is available & ready to ship!
-          </p>
-
-          {/* Top 5 Specifications Section */}
-          {product.specifications && product.specifications.length > 0 && (
-            <div className="mb-6 border border-neutral-200/50 bg-[#FAFAFA]/80 rounded-2xl p-5" style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
-              <div className="text-[11px] font-semibold text-neutral-500 tracking-[0.15em] uppercase mb-4">
-                Product Specifications
-              </div>
-              <div className="flex flex-col">
-                {product.specifications.slice(0, 5).map((spec: any, idx: number) => (
-                  <div 
-                    key={idx} 
-                    className="flex justify-between items-start py-2.5 border-b border-neutral-200/60 last:border-b-0 gap-4"
-                  >
-                    <span className="text-[12px] font-semibold text-neutral-700 uppercase tracking-wider shrink-0 mt-0.5">
-                      {spec.name || spec.key}
-                    </span>
-                    <span className="text-[14px] font-bold text-neutral-900 text-right leading-tight max-w-[70%]">
-                      {spec.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
+          <div className="mt-3.5">
+            <span className="text-[11px] font-bold tracking-[0.12em] uppercase flex gap-2 items-center">
+              Colour — <span className="text-[#EC4899] normal-case tracking-normal font-bold">{selectedColor}</span>
+            </span>
+            <div className="flex gap-2.5 mt-2">
+              {(product.colors || []).map((colorName: string) => {
+                const colorHex = COLOR_MAP[colorName.toLowerCase()] || colorName.toLowerCase();
+                const isSelected = selectedColor?.toLowerCase() === colorName?.toLowerCase();
+                
+                return (
+                  <button 
+                    key={colorName}
+                    type="button"
+                    onClick={() => {
+                      setSelectedColor(colorName);
+                    }}
+                    style={{ backgroundColor: colorHex }}
+                    className={`w-[32px] h-[32px] rounded-full border-[2.5px] border-[#131313] relative transition-transform duration-150 hover:scale-[1.12] focus:outline-none ${
+                      isSelected 
+                        ? 'ring-4 ring-offset-2 ring-transparent before:absolute before:-inset-[5px] before:rounded-full before:border-[2px] before:border-dashed before:border-[#8B5CF6]' 
+                        : ''
+                    }`}
+                    title={colorName}
+                    aria-label={colorName}
+                  />
+                );
+              })}
             </div>
-          )}
+          </div>
 
-          <hr className="border-neutral-200 mb-5" />
 
-          <div className="flex justify-between items-center mb-5 gap-4 flex-wrap sm:flex-nowrap">
-            <div className="flex items-baseline gap-3">
-              <span className="text-[28px] lg:text-[30px] font-semibold tracking-tighter">Rs. {product.price.toLocaleString()}</span>
-              <span className="text-sm text-neutral-400 line-through font-medium">Rs. {product.originalPrice.toLocaleString()}</span>
+
+          <div className="flex gap-3 mt-5 flex-wrap items-stretch">
+            {/* Quantity */}
+            <div className="flex items-center border-[2.5px] border-[#131313] rounded-[14px] bg-white shadow-[3px_3px_0_#131313]" aria-label="Quantity">
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-[38px] h-full min-h-[46px] bg-transparent border-none text-[18px] font-bold hover:text-[#EC4899]">−</button>
+              <span className="min-w-[28px] text-center font-extrabold text-[15px]">{quantity}</span>
+              <button onClick={() => setQuantity(quantity + 1)} className="w-[38px] h-full min-h-[46px] bg-transparent border-none text-[18px] font-bold hover:text-[#EC4899]">+</button>
             </div>
             
-            <button
-              onClick={handleToggleWishlist}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-semibold tracking-wide transition-all duration-300 select-none hover:scale-105 active:scale-95 ${
-                isWishlisted
-                  ? "border-red-200 bg-red-50 text-red-600 hover:bg-red-100/80 shadow-[0_2px_10px_rgba(239,68,68,0.12)]"
-                  : "border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50 text-neutral-600 hover:shadow-sm"
-              }`}
-            >
-              <Heart 
-                size={14} 
-                className={`transition-all duration-300 ${
-                  isWishlisted 
-                    ? "fill-red-500 text-red-500 scale-110 animate-[bounce_1s_infinite]" 
-                    : "text-neutral-500 group-hover:scale-110"
-                }`} 
-              />
-              <span>{isWishlisted ? "Wishlisted" : "Add to Wishlist"}</span>
+            {/* Add to cart */}
+            <button onClick={handleAddToCartClick} className="flex-1 min-w-[200px] bg-[#131313] text-white font-bold text-[15px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 transition-transform">
+              Add to cart <span className="ml-1.5 font-normal">→</span>
+            </button>
+            
+            {/* Wishlist */}
+            <button onClick={handleToggleWishlist} className={`w-[48px] min-h-[46px] border-[2.5px] border-[#131313] rounded-[14px] bg-white grid place-items-center shadow-[3px_3px_0_#131313] transition-transform duration-200 hover:-translate-y-1 ${isWishlisted ? 'group on' : 'group'}`} aria-label="Add to wishlist">
+              <Heart size={20} className={`transition-colors duration-200 ${isWishlisted ? 'fill-[#EC4899] stroke-[#EC4899]' : 'stroke-[#131313] group-hover:stroke-[#EC4899]'}`} />
+            </button>
+          </div>
+          
+          <div className="mt-2.5 mb-4">
+            <button onClick={handleAddToCartClick} className="w-full min-h-[46px] py-2.5 bg-white text-[#131313] font-bold text-[15px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] hover:bg-[#fafafa] hover:translate-y-0.5 transition-all">
+              Buy it now
             </button>
           </div>
 
-          <hr className="border-neutral-200 mb-5" />
-
-          <div className="mb-6">
-            <div className="flex items-center justify-between sm:block w-full">
-              <div>
-                <p className="text-[15px] font-semibold mb-3">
-                  Select Color
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  {(product.colors || []).map((colorName: string) => {
-                    const colorHex = COLOR_MAP[colorName.toLowerCase()] || colorName.toLowerCase();
-                    const isSelected = selectedColor?.toLowerCase() === colorName?.toLowerCase();
-                    
-                    return (
-                      <div key={colorName} className="flex flex-col items-center gap-1">
-                        <button 
-                          type="button"
-                          onClick={() => {
-                            setSelectedColor(colorName);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          style={{ backgroundColor: colorHex }}
-                          className={`w-7 h-7 rounded-full border border-neutral-300 shadow-sm transition-all duration-200 focus:outline-none ${
-                            isSelected 
-                              ? 'ring-2 ring-offset-2 ring-black scale-110' 
-                              : 'hover:scale-105'
-                          }`}
-                          title={colorName}
-                        />
-                        <span className={`text-[10px] font-bold transition-colors tracking-wide ${
-                          isSelected ? 'text-black font-black' : 'text-neutral-500'
-                        }`}>
-                          {colorName}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Mobile-only Quantity selector */}
-              <div className="sm:hidden flex flex-col items-center self-start">
-                <span className="text-[15px] font-semibold mb-3 text-black">Quantity</span>
-                <div className="flex items-center gap-1.5">
-                  <button 
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors text-black font-medium text-base"
-                  >
-                    -
-                  </button>
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#E5E7EB] text-black font-semibold text-[15px]">
-                    {quantity}
-                  </div>
-                  <button 
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors text-black font-medium text-base"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <hr className="border-neutral-200 mb-6" />
-
-          {/* Quantity & Actions Container */}
-          <div className="flex flex-col gap-3 mb-8">
-            {/* Row 1: Quantity & Add to Cart */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              {/* Desktop-only Quantity Selector */}
-              <div className="hidden sm:flex items-center gap-1.5">
-                <button 
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors text-black font-medium text-base"
-                >
-                  -
-                </button>
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#E5E7EB] text-black font-semibold text-[15px]">
-                  {quantity}
-                </div>
-                <button 
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors text-black font-medium text-base"
-                >
-                  +
-                </button>
-              </div>
-
-              {/* Add to Cart */}
-              <CustomButton onClick={handleAddToCartClick} variant="primary" fullWidth className="flex-1 ml-1">
-                <span className="text-[14px] tracking-wide font-semibold mr-2">Add To Cart</span>
-                <ArrowRight size={16} strokeWidth={2.5} />
-              </CustomButton>
-            </div>
-
-            {/* Row 2: Buy Now Button */}
-            <CustomButton onClick={handleAddToCartClick} variant="secondary" fullWidth className="mt-1">
-              Buy It Now
-            </CustomButton>
-          </div>
-
           {/* Value Props */}
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { icon: Truck, label: 'Free Shipping' },
-              { icon: RotateCcw, label: 'Return Policy' },
-              { icon: ShieldCheck, label: '3 Yrs Warranty' },
-            ].map((prop, idx) => (
-              <div key={idx} className="flex flex-col items-center justify-center text-center gap-2 bg-[#F8F9FA] rounded-xl py-4 px-2 hover:bg-[#F3F4F6] transition-colors">
-                <prop.icon size={20} strokeWidth={1.5} className="text-black" />
-                <span className="text-[12px] font-semibold text-black tracking-wide">{prop.label}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Premium Specs & Details Tabs Component */}
-          <div className="bg-[#F3F4F6] text-black rounded-[24px] p-6 md:p-8 mt-10 border border-neutral-200 transition-all duration-300">
-            {/* Tab Headers */}
-            <div className="flex border-b border-neutral-300/70 overflow-x-auto scrollbar-none mb-6">
-              {[
-                { id: 'description', label: 'Description' },
-                { id: 'features', label: 'Key Features' },
-                { id: 'specs', label: 'Specs' },
-                { id: 'application', label: 'Application' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className="pb-3 px-4 font-semibold text-[14px] md:text-[15px] whitespace-nowrap transition-all relative flex-1 text-center text-black"
-                >
-                  <span className={activeTab === tab.id ? 'text-black font-bold' : 'text-neutral-500 hover:text-black font-semibold'}>
-                    {tab.label}
-                  </span>
-                  {activeTab === tab.id && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-black rounded-full" />
-                  )}
-                </button>
-              ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="rounded-[12px] border-2 border-[#131313] bg-white px-3 py-4 text-center shadow-[3px_3px_0_rgba(19,19,19,0.85)] flex flex-col items-center justify-center">
+              <span className="mb-1 block text-[20px]">🚚</span>
+              <span className="block text-[11.5px] font-bold uppercase tracking-[0.04em] text-[#131313]">
+                Free
+                <br />
+                Shipping
+              </span>
             </div>
 
-            {/* Tab Contents */}
-            <div ref={tabContentRef} className="text-base md:text-[17px] leading-relaxed text-neutral-900 font-normal rich-text-override">
-              <style dangerouslySetInnerHTML={{ __html: `
-                .rich-text-override, .rich-text-override * {
-                  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-                  font-size: 15.5px !important;
-                  color: #1f2937 !important;
-                  line-height: 1.8 !important;
-                }
-                .rich-text-override strong, .rich-text-override strong * {
-                  font-weight: 700 !important;
-                  color: #000000 !important;
-                }
-                .rich-text-override ul {
-                  list-style-type: disc !important;
-                  padding-left: 20px !important;
-                  margin-top: 10px !important;
-                  margin-bottom: 10px !important;
-                }
-                .rich-text-override ol {
-                  list-style-type: decimal !important;
-                  padding-left: 20px !important;
-                  margin-top: 10px !important;
-                  margin-bottom: 10px !important;
-                }
-                .rich-text-override li {
-                  margin-bottom: 12px !important;
-                }
-                .rich-text-override p {
-                  margin-bottom: 14px !important;
-                }
-                .rich-text-override h1 {
-                  font-size: 22px !important;
-                  font-weight: 700 !important;
-                  color: #000000 !important;
-                  margin-top: 20px !important;
-                  margin-bottom: 10px !important;
-                }
-                .rich-text-override h2 {
-                  font-size: 19px !important;
-                  font-weight: 600 !important;
-                  color: #000000 !important;
-                  margin-top: 18px !important;
-                  margin-bottom: 8px !important;
-                }
-                .rich-text-override h3 {
-                  font-size: 17px !important;
-                  font-weight: 600 !important;
-                  color: #000000 !important;
-                  margin-top: 16px !important;
-                  margin-bottom: 6px !important;
-                }
-              `}} />
-              {activeTab === 'description' && (
-                <div 
-                  className="animate-fade-in space-y-4"
-                  dangerouslySetInnerHTML={{
-                    __html: product.longDescription || `Meet the ${product.name} — built for those who live and breathe performance. Wrapped in sleek, premium upholstery with breathable spandex panels, it keeps you cool under pressure. The soft velour neck pillow and memory foam lumbar support mould to your posture, making long gaming sessions feel effortless. Precision-designed carbon-textured 4D armrests provide versatile positioning, while the newly engineered Frog Mechanism gives you complete control over recline and tilt. Features a heavy-duty metal base, Class 4 gas lift, and smooth-rolling casters. The ultimate premium chair under ₹20,000 for users in India.`
-                  }}
-                />
-              )}
+            <div className="rounded-[12px] border-2 border-[#131313] bg-white px-3 py-4 text-center shadow-[3px_3px_0_rgba(19,19,19,0.85)] flex flex-col items-center justify-center">
+              <span className="mb-1 block text-[20px]">↩️</span>
+              <span className="block text-[11.5px] font-bold uppercase tracking-[0.04em] text-[#131313]">
+                30 Day
+                <br />
+                Returns
+              </span>
+            </div>
 
-              {activeTab === 'features' && (
-                product.keyfeatures ? (
-                  <div 
-                    className="animate-fade-in space-y-4"
-                    dangerouslySetInnerHTML={{ __html: product.keyfeatures }}
-                  />
-                ) : (
-                  <ul className="space-y-3.5">
-                    <li className="flex gap-2">
-                      <span className="text-black font-bold">•</span>
-                      <span><strong className="text-black font-semibold">Adjusts as per you :</strong> The specially designed frog mechanism allows you to lock the chair at different angles apt for different activities.</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-black font-bold">•</span>
-                      <span><strong className="text-black font-semibold">Breathable fabric :</strong> Made with a combination of breathable Spandex and PU leather refrains heat build up and supports better air circulation.</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-black font-bold">•</span>
-                      <span><strong className="text-black font-semibold">Remembers you :</strong> The memory foam lumbar pillow takes the shape of your spine and supports your back.</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-black font-bold">•</span>
-                      <span><strong className="text-black font-semibold">Accommodates you :</strong> The chair features extended headrest, lumbar pillow and has ample space to accommodate you cross legged.</span>
-                    </li>
-                  </ul>
-                )
-              )}
-
-              {activeTab === 'specs' && (
-                <div className="overflow-x-auto max-h-[300px] overflow-y-auto pr-1">
-                  <table className="w-full text-left border-collapse border border-neutral-300 text-[12.5px]">
-                    <tbody>
-                      {(product.specifications || []).map((spec: any, idx: number) => (
-                        <tr key={idx} className="border-b border-neutral-300 hover:bg-neutral-200/50 transition-colors">
-                          <td className="py-2 px-3 font-semibold text-neutral-600 border-r border-neutral-300 w-1/2">{spec.name || spec.key}</td>
-                          <td className="py-2 px-3 text-neutral-800 font-semibold w-1/2">{spec.value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {activeTab === 'application' && (
-                product.application ? (
-                  <div 
-                    className="animate-fade-in space-y-4"
-                    dangerouslySetInnerHTML={{ __html: product.application }}
-                  />
-                ) : isBarStool ? (
-                  <div className="space-y-4 font-medium text-neutral-700 animate-fade-in">
-                    <div>
-                      <h4 className="font-semibold text-black text-[14px] mb-1">Kitchen Counter & Islands</h4>
-                      <p className="text-neutral-600">Perfect height and swivel features designed for premium home kitchen setups.</p>
-                    </div>
-                    <hr className="border-neutral-300" />
-                    <div>
-                      <h4 className="font-semibold text-black text-[14px] mb-1">Cafés, Bars & Restaurants</h4>
-                      <p className="text-neutral-600">Durable frame and elegant aesthetics built to withstand high-traffic commercial dining environments.</p>
-                    </div>
-                    <hr className="border-neutral-300" />
-                    <div>
-                      <h4 className="font-semibold text-black text-[14px] mb-1">Lounge & Reception Areas</h4>
-                      <p className="text-neutral-600">Adds a touch of sophistication to modern reception tables and relaxation zones.</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4 font-medium text-neutral-700 animate-fade-in">
-                    <div>
-                      <h4 className="font-semibold text-black text-[14px] mb-1">Office & Professional Workspace</h4>
-                      <p className="text-neutral-600">Engineered to support 8+ hours of continuous usage with optimal posture correction.</p>
-                    </div>
-                    <hr className="border-neutral-300" />
-                    <div>
-                      <h4 className="font-semibold text-black text-[14px] mb-1">Home Office & Study Rooms</h4>
-                      <p className="text-neutral-600">Compact and stylish design that integrates beautifully into home workspaces without cluttering.</p>
-                    </div>
-                    <hr className="border-neutral-300" />
-                    <div>
-                      <h4 className="font-semibold text-black text-[14px] mb-1">Gaming Setups</h4>
-                      <p className="text-neutral-600">High-back support, comfortable cushioning, and dynamic armrests tailored for gamers.</p>
-                    </div>
-                  </div>
-                )
-              )}
+            <div className="rounded-[12px] border-2 border-[#131313] bg-white px-3 py-4 text-center shadow-[3px_3px_0_rgba(19,19,19,0.85)] col-span-2 sm:col-span-1 flex flex-col items-center justify-center">
+              <span className="mb-1 block text-[20px]">🛡️</span>
+              <span className="block text-[11.5px] font-bold uppercase tracking-[0.04em] text-[#131313]">
+                2 Year
+                <br />
+                Warranty
+              </span>
             </div>
           </div>
+
         </div>
       </div>
+
+      {/* DETAILS Section */}
+      <section className="py-[clamp(60px,8vw,100px)] mt-6 bg-[#FAFAFA] rounded-[32px] border-[2.5px] border-[#131313] px-4 md:px-10 lg:px-16 shadow-[8px_8px_0_#131313] relative overflow-hidden w-full">
+            <div className="mb-6">
+              <h2 className="text-[clamp(32px,4.4vw,54px)] font-bold leading-[1.05] tracking-tight text-[#131313]">
+                Everything <span className="bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">it's packing.</span>
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-[clamp(30px,5vw,70px)] items-start">
+              {/* Accordion List */}
+              <div className="flex flex-col gap-4">
+                
+                {/* Description */}
+                <div className="bg-white border-[2.5px] border-[#131313] rounded-[14px] shadow-[5px_5px_0_#131313] overflow-hidden transition-all">
+                  <button 
+                    onClick={() => setActiveTab(activeTab === 'description' ? ('' as any) : 'description')}
+                    className="w-full flex items-center gap-4 bg-transparent border-none text-left px-5 py-4 font-bold text-[16px]"
+                  >
+                    <span className="flex-none w-[34px] h-[34px] rounded-[10px] bg-[#f4f4f5] border-2 border-[#131313] grid place-items-center">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2" className="w-[18px] h-[18px]"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                    </span>
+                    Description
+                    <span className={`ml-auto flex-none w-[30px] h-[30px] rounded-full border-2 border-[#131313] grid place-items-center text-[19px] font-bold transition-transform duration-300 ${activeTab === 'description' ? 'rotate-45 bg-[#EC4899] text-white' : 'bg-[#DCF351] text-[#131313]'}`}>
+                      +
+                    </span>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'description' ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="px-5 pb-6 text-[#444] text-[15px] leading-[1.6]">
+                      <p className="mb-6">The ErgoFit Premium is our most technologically advanced ergonomic chair yet — developed with orthopedic research to optimize posture, maximize breathability, and keep you locked in through long sessions.</p>
+                      <ul className="space-y-4">
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span>Precision-engineered seat base with adjustable depth</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span>Breathable premium mesh — zero swamp-back</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span>Dynamic lumbar support that auto-adjusts in real time</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span>Multi-dimensional 4D armrests</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span>Smooth 360° revolve + whisper-quiet castors</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Specs */}
+                <div className="bg-white border-[2.5px] border-[#131313] rounded-[14px] shadow-[5px_5px_0_#131313] overflow-hidden transition-all">
+                  <button 
+                    onClick={() => setActiveTab(activeTab === 'specs' ? ('' as any) : 'specs')}
+                    className="w-full flex items-center gap-4 bg-transparent border-none text-left px-5 py-4 font-bold text-[16px]"
+                  >
+                    <span className="flex-none w-[34px] h-[34px] rounded-[10px] bg-[#f4f4f5] border-2 border-[#131313] grid place-items-center">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2" className="w-[18px] h-[18px]"><path d="M14 3v6h6M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6z"/></svg>
+                    </span>
+                    Specifications
+                    <span className={`ml-auto flex-none w-[30px] h-[30px] rounded-full border-2 border-[#131313] grid place-items-center text-[19px] font-bold transition-transform duration-300 ${activeTab === 'specs' ? 'rotate-45 bg-[#EC4899] text-white' : 'bg-[#DCF351] text-[#131313]'}`}>
+                      +
+                    </span>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'specs' ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="px-5 pb-6 text-[#444] text-[14.5px]">
+                      <table className="w-full border-collapse mt-1.5">
+                        <tbody>
+                          {(product.specifications && product.specifications.length > 0 ? product.specifications : [
+                            { name: 'Seat height', value: '18" – 22", gas-lift adjustable' },
+                            { name: 'Armrest height', value: '6" – 10", 4D adjustable' },
+                            { name: 'Weight capacity', value: 'Up to 135 kg' },
+                            { name: 'Assembly', value: '10–15 mins, tools included' }
+                          ]).map((spec: any, idx: number) => (
+                            <tr key={idx}>
+                              <td className="py-2.5 px-1 border-b-[1.5px] border-dashed border-[#d8cdb4] font-bold uppercase text-[12px] tracking-[0.08em] text-[#666] w-[46%]">{spec.name || spec.key}</td>
+                              <td className="py-2.5 px-1 border-b-[1.5px] border-dashed border-[#d8cdb4] text-[14px]">{spec.value}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Application */}
+                <div className="bg-white border-[2.5px] border-[#131313] rounded-[14px] shadow-[5px_5px_0_#131313] overflow-hidden transition-all">
+                  <button 
+                    onClick={() => setActiveTab(activeTab === 'application' ? ('' as any) : 'application')}
+                    className="w-full flex items-center gap-4 bg-transparent border-none text-left px-5 py-4 font-bold text-[16px]"
+                  >
+                    <span className="flex-none w-[34px] h-[34px] rounded-[10px] bg-[#f4f4f5] border-2 border-[#131313] grid place-items-center">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2" className="w-[18px] h-[18px]"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    </span>
+                    Application
+                    <span className={`ml-auto flex-none w-[30px] h-[30px] rounded-full border-2 border-[#131313] grid place-items-center text-[19px] font-bold transition-transform duration-300 ${activeTab === 'application' ? 'rotate-45 bg-[#EC4899] text-white' : 'bg-[#DCF351] text-[#131313]'}`}>
+                      +
+                    </span>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'application' ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="px-5 pb-6 text-[#444] text-[15px] leading-[1.6]">
+                      {product.application ? (
+                        <div 
+                          className="animate-fade-in space-y-4 description-style"
+                          dangerouslySetInnerHTML={{ __html: product.application }}
+                        />
+                      ) : isBarStool ? (
+                        <ul className="space-y-4 animate-fade-in">
+                          <li className="flex gap-4 items-start">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                            <div><strong className="text-black font-semibold">Kitchen Counter & Islands:</strong> Perfect height and swivel features designed for premium home kitchen setups.</div>
+                          </li>
+                          <li className="flex gap-4 items-start">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                            <div><strong className="text-black font-semibold">Cafés, Bars & Restaurants:</strong> Durable frame and elegant aesthetics built to withstand high-traffic commercial dining environments.</div>
+                          </li>
+                          <li className="flex gap-4 items-start">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                            <div><strong className="text-black font-semibold">Lounge & Reception Areas:</strong> Adds a touch of sophistication to modern reception tables and relaxation zones.</div>
+                          </li>
+                        </ul>
+                      ) : (
+                        <ul className="space-y-4 animate-fade-in">
+                          <li className="flex gap-4 items-start">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                            <div><strong className="text-black font-semibold">Office & Professional Workspace:</strong> Engineered to support 8+ hours of continuous usage with optimal posture correction.</div>
+                          </li>
+                          <li className="flex gap-4 items-start">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                            <div><strong className="text-black font-semibold">Home Office & Study Rooms:</strong> Compact and stylish design that integrates beautifully into home workspaces without cluttering.</div>
+                          </li>
+                          <li className="flex gap-4 items-start">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                            <div><strong className="text-black font-semibold">Gaming Setups:</strong> High-back support, comfortable cushioning, and dynamic armrests tailored for gamers.</div>
+                          </li>
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Features */}
+                <div className="bg-white border-[2.5px] border-[#131313] rounded-[14px] shadow-[5px_5px_0_#131313] overflow-hidden transition-all">
+                  <button 
+                    onClick={() => setActiveTab(activeTab === 'features' ? ('' as any) : 'features')}
+                    className="w-full flex items-center gap-4 bg-transparent border-none text-left px-5 py-4 font-bold text-[16px]"
+                  >
+                    <span className="flex-none w-[34px] h-[34px] rounded-[10px] bg-[#f4f4f5] border-2 border-[#131313] grid place-items-center">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2" className="w-[18px] h-[18px]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </span>
+                    Key Features
+                    <span className={`ml-auto flex-none w-[30px] h-[30px] rounded-full border-2 border-[#131313] grid place-items-center text-[19px] font-bold transition-transform duration-300 ${activeTab === 'features' ? 'rotate-45 bg-[#EC4899] text-white' : 'bg-[#DCF351] text-[#131313]'}`}>
+                      +
+                    </span>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'features' ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="px-5 pb-6 text-[#444] text-[15px] leading-[1.6]">
+                      {product.keyfeatures ? (
+                        <div 
+                          className="animate-fade-in space-y-4 description-style"
+                          dangerouslySetInnerHTML={{ __html: product.keyfeatures }}
+                        />
+                      ) : (
+                        <ul className="space-y-4 animate-fade-in">
+                          <li className="flex gap-4 items-start">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                            <div><strong className="text-black font-semibold">Adjusts as per you :</strong> The specially designed frog mechanism allows you to lock the chair at different angles apt for different activities.</div>
+                          </li>
+                          <li className="flex gap-4 items-start">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                            <div><strong className="text-black font-semibold">Breathable fabric :</strong> Made with a combination of breathable Spandex and PU leather refrains heat build up and supports better air circulation.</div>
+                          </li>
+                          <li className="flex gap-4 items-start">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                            <div><strong className="text-black font-semibold">Remembers you :</strong> The memory foam lumbar pillow takes the shape of your spine and supports your back.</div>
+                          </li>
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Why Choose Astride Accordion */}
+                <div className="bg-white border-[2.5px] border-[#131313] rounded-[14px] shadow-[5px_5px_0_#131313] overflow-hidden transition-all">
+                  <button 
+                    onClick={() => setActiveTab(activeTab === 'whychoose' ? ('' as any) : 'whychoose')}
+                    className="w-full flex items-center gap-4 bg-transparent border-none text-left px-5 py-4 font-bold text-[16px]"
+                  >
+                    <span className="flex-none w-[34px] h-[34px] rounded-[10px] bg-[#f4f4f5] border-2 border-[#131313] grid place-items-center">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2" className="w-[18px] h-[18px]"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 16v-4M12 8h.01"/></svg>
+                    </span>
+                    Why Choose Astride
+                    <span className={`ml-auto flex-none w-[30px] h-[30px] rounded-full border-2 border-[#131313] grid place-items-center text-[19px] font-bold transition-transform duration-300 ${activeTab === 'whychoose' ? 'rotate-45 bg-[#EC4899] text-white' : 'bg-[#DCF351] text-[#131313]'}`}>
+                      +
+                    </span>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'whychoose' ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="px-5 pb-6 text-[#444] text-[15px] leading-[1.6]">
+                      <ul className="space-y-4 animate-fade-in">
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Ergonomic Innovation:</strong> ASTRIDE® is dedicated to delivering high-quality office seating solutions that combine comfort, durability, and ergonomic innovation.</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Postural Support:</strong> Designed to support healthy posture and improve productivity through thoughtful ergonomic features.</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Premium Materials:</strong> Manufactured using premium nylon and polypropylene materials for superior durability and dependable long-term performance.</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Adaptive Functionality:</strong> Features adjustable seating functionality that adapts to different users and workspace requirements.</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Versatile Aesthetics:</strong> Combines professional aesthetics with practical usability, making it suitable for both residential and commercial applications.</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7"/></svg>
+                          <span><strong className="text-black font-semibold">Exceptional Value:</strong> Offers exceptional value through its blend of ergonomic comfort, durable construction, modern styling, and reliable performance.</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Dials Card */}
+              <div className="bg-[#131313] text-white rounded-[28px] p-[clamp(26px,3vw,40px)] rotate-[0.8deg] shadow-[10px_10px_0_#8B5CF6] relative">
+                <span className="absolute -top-4 right-5 bg-[#DCF351] text-[#131313] font-bold text-[14px] px-3.5 py-1.5 rotate-[3deg] shadow-[3px_3px_0_rgba(0,0,0,0.6)] border-2 border-[#131313] whitespace-nowrap">
+                  fits everybody ✦
+                </span>
+                <h3 className="font-bold text-[22px] uppercase leading-[1.05]">
+                  One chair. <br/><em className="not-italic bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">Universal adjustability.</em>
+                </h3>
+                
+                <div className="mt-4">
+                  <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
+                    <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Seat height</span>
+                    <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">18" – 22"</b>
+                  </div>
+                  <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
+                    <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Armrest height</span>
+                    <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">6" – 10"</b>
+                  </div>
+                  <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
+                    <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Weight capacity</span>
+                    <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">135 kg</b>
+                  </div>
+                  <div className="flex justify-between items-center py-4">
+                    <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Recline lock</span>
+                    <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">4 positions</b>
+                  </div>
+                </div>
+                <div className="mt-6 flex justify-center drop-shadow-[0_0_60px_rgba(255,255,255,1)] drop-shadow-[0_0_20px_rgba(255,255,255,0.9)]">
+                  <Image src={product.image || "/Png1/chair12_ErgoFit.webp"} alt="Adjustability" width={240} height={230} className="object-contain max-h-[230px]" />
+                </div>
+              </div>
+            </div>
+          </section>
     </div>
   );
 }

@@ -3,12 +3,19 @@
 import { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import {
     FaYoutube,
     FaInstagram,
     FaPlay,
     FaStar,
 } from "react-icons/fa6";
+
+const sans = Plus_Jakarta_Sans({
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700", "800"],
+    variable: "--font-sans",
+});
 
 const videos = [
     {
@@ -61,15 +68,18 @@ export default function VideoTestimonials() {
     const [playingVideo, setPlayingVideo] = useState(null);
 
     return (
-        <section className="w-full py-10 bg-gray-50 overflow-hidden">
+        <section className={`w-full py-10 bg-gray-50 overflow-hidden ${sans.className}`}>
             <div className="max-w-7xl mx-auto px-6">
                 
                 {/* HEADER */}
                 <div className="text-center mb-8 relative">
-                    <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
-                        Video Testimonials
+                    <p className={`uppercase tracking-[5px] text-[#8B5CF6] text-xs font-extrabold mb-2 ${sans.className}`}>
+                        Social Proof
+                    </p>
+                    <h2 className={`text-4xl sm:text-5xl font-black text-slate-900 tracking-tight ${sans.className}`}>
+                        Video <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-black">Testimonials</span>
                     </h2>
-                    <p className="mt-4 text-slate-600 max-w-xl mx-auto text-base sm:text-lg">
+                    <p className={`mt-4 text-slate-600 max-w-xl mx-auto text-base sm:text-lg font-medium ${sans.className}`}>
                         Real people, real comfort. Watch honest reviews from YouTube Shorts and Instagram Reels.
                     </p>
                 </div>
@@ -79,7 +89,7 @@ export default function VideoTestimonials() {
                     {videos.map((video) => (
                         <div
                             key={video.id}
-                            className="w-[85vw] sm:w-[320px] md:w-auto shrink-0 snap-center md:snap-align-none relative rounded-2xl overflow-hidden bg-slate-900 shadow-lg border border-slate-200/50 mr-4 md:mr-0"
+                            className={`w-[85vw] sm:w-[320px] md:w-auto shrink-0 snap-center md:snap-align-none relative rounded-2xl overflow-hidden bg-slate-900 shadow-lg border border-slate-200/50 mr-4 md:mr-0 ${sans.className}`}
                         >
                             {/* VIDEO WRAPPER */}
                             <div className="relative h-[480px] w-full bg-slate-800">
@@ -154,7 +164,7 @@ export default function VideoTestimonials() {
                                                 ))}
                                             </div>
 
-                                            <h3 className="text-white text-base font-bold">
+                                            <h3 className={`text-white text-base font-bold ${sans.className}`}>
                                                 {video.author}
                                             </h3>
 

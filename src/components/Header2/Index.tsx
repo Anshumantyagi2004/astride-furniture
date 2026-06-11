@@ -2,7 +2,14 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import expandedImg from "../../../public/expanded/image_ct.webp";
+
+const sans = Plus_Jakarta_Sans({
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700", "800"],
+    variable: "--font-sans",
+});
 
 interface Hotspot {
     id: string;
@@ -129,7 +136,7 @@ const Header2 = () => {
     const activeHotspot = HOTSPOTS.find((h) => h.id === activeId);
 
     return (
-        <section id="anatomy" ref={containerRef} className="hidden md:flex w-full bg-[#F8F9FA] overflow-hidden relative items-center py-2 md:py-4 border-t border-zinc-200 border-b border-zinc-200">
+        <section id="anatomy" ref={containerRef} className={`hidden md:flex w-full bg-[#F8F9FA] overflow-hidden relative items-center py-2 md:py-4 border-t border-zinc-200 border-b border-zinc-200 ${sans.className}`}>
             {/* Premium Minimalist Background Grid & Ambient Glows */}
             <div className="absolute inset-0 opacity-40">
                 <div className="h-full w-full bg-[linear-gradient(to_right,#00000003_1px,transparent_1px),linear-gradient(to_bottom,#00000003_1px,transparent_1px)] bg-[size:100px_100px]" />
@@ -166,9 +173,9 @@ const Header2 = () => {
                                         >
                                             {/* Pulsing Hotspot Trigger */}
                                             <div className="relative cursor-pointer flex items-center justify-center w-8 h-8 md:w-12 md:h-12">
-                                                <div className={`absolute w-3.5 h-3.5 md:w-6 md:h-6 bg-slate-400/30 rounded-full animate-ping pointer-events-none transition-transform duration-300 ${isActive ? "scale-155" : ""}`} />
-                                                <div className={`absolute w-2 h-2 md:w-4 md:h-4 rounded-full pointer-events-none transition-all duration-300 ${isActive ? "bg-slate-700 scale-125 shadow-[0_0_12px_rgba(71,85,105,0.6)]" : "bg-slate-500/60"}`} />
-                                                <div className="w-1.5 h-1.5 md:w-2.5 md:h-2.5 bg-slate-700 rounded-full ring-[1.5px] md:ring-4 ring-white transition-all duration-300 group-hover:scale-125" />
+                                                <div className={`absolute w-3.5 h-3.5 md:w-6 md:h-6 bg-[#8B5CF6]/30 rounded-full animate-ping pointer-events-none transition-transform duration-300 ${isActive ? "scale-155" : ""}`} />
+                                                <div className={`absolute w-2 h-2 md:w-4 md:h-4 rounded-full pointer-events-none transition-all duration-300 ${isActive ? "bg-[#8B5CF6] scale-125 shadow-[0_0_12px_rgba(139,92,246,0.6)]" : "bg-[#8B5CF6]/50"}`} />
+                                                <div className="w-1.5 h-1.5 md:w-2.5 md:h-2.5 bg-[#8B5CF6] rounded-full ring-[1.5px] md:ring-4 ring-white transition-all duration-300 group-hover:scale-125" />
                                             </div>
                                         </div>
                                     );
@@ -182,26 +189,26 @@ const Header2 = () => {
                         <div className="bg-white/90 backdrop-blur-md border border-zinc-200/80 rounded-[28px] p-5 md:p-6 lg:p-8 shadow-[0_15px_35px_rgba(15,23,42,0.03)] relative overflow-hidden h-auto min-h-[270px] lg:min-h-[320px] flex flex-col justify-between">
                             
                             {/* Decorative Top Accent Line */}
-                            <div className="absolute top-0 left-0 right-0 h-[3.5px] bg-slate-800" />
+                            <div className="absolute top-0 left-0 right-0 h-[3.5px] bg-[#8B5CF6]" />
 
                             <div>
                                 {activeHotspot ? (
                                     // Interactive Spec Detail Mode
                                     <div>
                                         <div className="flex items-center gap-2 mb-4">
-                                            <div className="flex items-center justify-center w-4 h-4 rounded-full bg-slate-100">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-slate-600 animate-pulse" />
+                                            <div className="flex items-center justify-center w-4 h-4 rounded-full bg-[#8B5CF6]/10">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6] animate-pulse" />
                                             </div>
-                                            <span className="text-[10px] sm:text-[11px] tracking-[0.2em] font-extrabold uppercase text-slate-500">
+                                            <span className="text-[10px] sm:text-[11px] tracking-[0.2em] font-extrabold uppercase text-[#8B5CF6] font-sans">
                                                 Technical Specification
                                             </span>
                                         </div>
 
-                                        <h4 className="text-zinc-950 text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 transition-all duration-300 leading-tight">
+                                        <h4 className="text-zinc-950 text-xl md:text-2xl lg:text-[28px] font-extrabold tracking-tight mb-4 transition-all duration-300 leading-tight font-sans whitespace-nowrap">
                                             {activeHotspot.title}
                                         </h4>
 
-                                        <p className="text-zinc-600 text-sm sm:text-base leading-relaxed mb-0 font-medium transition-all duration-300">
+                                        <p className="text-zinc-600 text-sm sm:text-base leading-relaxed mb-0 font-medium transition-all duration-300 font-sans">
                                             {activeHotspot.desc}
                                         </p>
                                     </div>
@@ -209,16 +216,16 @@ const Header2 = () => {
                                     // Default Overview Mode
                                     <div>
                                         <div className="flex items-center gap-2 mb-4">
-                                            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] font-extrabold uppercase text-slate-400">
+                                            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] font-extrabold uppercase text-[#8B5CF6] font-sans">
                                                 Anatomy of Comfort
                                             </span>
                                         </div>
 
-                                        <h3 className="text-zinc-950 text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 leading-tight">
+                                        <h3 className="text-zinc-950 text-xl md:text-2xl lg:text-[28px] font-extrabold tracking-tight mb-4 leading-tight font-sans whitespace-nowrap">
                                             Engineered Down to Every Part
                                         </h3>
 
-                                        <p className="text-zinc-600 text-sm sm:text-base leading-relaxed mb-0 font-medium">
+                                        <p className="text-zinc-600 text-sm sm:text-base leading-relaxed mb-0 font-medium font-sans">
                                             Hover or tap on the indicators to inspect the custom technical specifications and design innovations of our flagship seating framework. Each component has been developed with advanced orthopedic research to optimize sitting posture, maximize breathability, and ensure long-term comfort for developers, gamers, and professionals alike.
                                         </p>
                                     </div>
