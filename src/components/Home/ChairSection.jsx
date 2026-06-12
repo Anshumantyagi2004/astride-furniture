@@ -58,8 +58,8 @@ function ChairCard({ chair, index, products }) {
     const [isHovered, setIsHovered] = useState(false);
 
     const match = products.find(p => 
-        p.productName.toLowerCase().includes(chair.subtitle.toLowerCase()) ||
-        p.productName.toLowerCase().includes(chair.name.toLowerCase())
+        p.productName.toLowerCase() === chair.subtitle.toLowerCase() ||
+        p.productName.toLowerCase().includes(chair.subtitle.toLowerCase())
     );
     const targetUrl = match ? `/products/${match._id}` : `/products`;
 
