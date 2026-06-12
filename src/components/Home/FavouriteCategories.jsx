@@ -14,7 +14,7 @@ const sans = Plus_Jakarta_Sans({
     variable: "--font-sans",
 });
 
-const TABS = ["Bar Stool", "Gaming Chair", "Office Chair", "Staff Chair", "Study Chair"];
+const TABS = ["Bar Stools & Cafe Chair", "Gaming Chair", "Office Chair", "Staff Chair", "Study Chair"];
 
 const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleWishlist }) => {
     const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
@@ -149,7 +149,7 @@ const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleW
 };
 
 export default function FavouriteCategories() {
-    const [activeCategory, setActiveCategory] = useState("Bar Stool");
+    const [activeCategory, setActiveCategory] = useState("Bar Stools & Cafe Chair");
     const [productsList, setProductsList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [wishlisted, setWishlisted] = useState({});
@@ -212,7 +212,7 @@ export default function FavouriteCategories() {
                         } else if (dbCategory.includes("STUDY")) {
                             normalizedCategory = "Study Chair";
                         } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) {
-                            normalizedCategory = "Bar Stool";
+                            normalizedCategory = "Bar Stools & Cafe Chair";
                         } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
                             normalizedCategory = "Office Chair";
                         }

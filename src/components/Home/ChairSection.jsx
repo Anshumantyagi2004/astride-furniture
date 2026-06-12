@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
 
 const sans = Plus_Jakarta_Sans({
@@ -14,8 +15,8 @@ const chairData = [
     { 
         mainImage: "/Png1/img1 (1).webp", 
         hoverImage: "/Png/img1 (2).png", 
-        name: "Classic Comfort", 
-        subtitle: "Ergonomic Comfort",
+        name: "Ergonomic Comfort", 
+        subtitle: "ErgoFit",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
@@ -23,7 +24,7 @@ const chairData = [
         mainImage: "/Png1/chair12_ErgoFit.webp", 
         hoverImage: "/Png1/chair12_ErgoFit12a.png", 
         name: "ErgoFit Premium", 
-        subtitle: "Ergonomic Comfort",
+        subtitle: "Ergonomic White",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
@@ -39,29 +40,36 @@ const chairData = [
         mainImage: "/Png1/chair9_FitWell.webp", 
         hoverImage: "/Png1/chair9_FitWell9a.png", 
         name: "FitWell Basic", 
-        subtitle: "Ergonomic Comfort",
+        subtitle: "FitWell Ergonomic",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
     { 
         mainImage: "/Png1/chair11_octave.webp", 
         hoverImage: "/Png1/chair11_octave11a.png", 
-        name: "Octave Studio", 
-        subtitle: "Ergonomic Comfort",
+        name: "Studio", 
+        subtitle: "Octave",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
 ];
 
-function ChairCard({ chair, index }) {
+function ChairCard({ chair, index, products }) {
     const [isHovered, setIsHovered] = useState(false);
 
+    const match = products.find(p => 
+        p.productName.toLowerCase().includes(chair.subtitle.toLowerCase()) ||
+        p.productName.toLowerCase().includes(chair.name.toLowerCase())
+    );
+    const targetUrl = match ? `/products/${match._id}` : `/products`;
+
     return (
-        <div
+        <Link
+            href={targetUrl}
             key={index}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className={`group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden hover:border-zinc-400 hover:-translate-y-3 transition-all duration-300 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] min-w-[290px] max-w-[320px] snap-center flex-shrink-0 md:min-w-0 md:max-w-none cursor-pointer ${sans.className}`}
+            className={`group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden hover:border-zinc-400 hover:-translate-y-3 transition-all duration-300 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] min-w-[290px] max-w-[320px] snap-center flex-shrink-0 md:min-w-0 md:max-w-none cursor-pointer block ${sans.className}`}
         >
             {/* HOVER GLOW */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
@@ -118,16 +126,33 @@ function ChairCard({ chair, index }) {
                             {chair.subtitle}
                         </p>
                     </div>
-                    <button className="w-11 h-11 rounded-full bg-zinc-950 text-white flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:bg-zinc-800">
+                    <div className="w-11 h-11 rounded-full bg-zinc-950 text-white flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:bg-zinc-800">
                         →
-                    </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }
 
 export default function ChairSection() {
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const res = await fetch("/api/product");
+                const data = await res.json();
+                if (data?.success) {
+                    setProducts(data.products);
+                }
+            } catch (err) {
+                console.error("Error fetching products in ChairSection:", err);
+            }
+        };
+        fetchProducts();
+    }, []);
+
     return (
         <section className={`relative overflow-hidden bg-[#f1f3f5] pb-2 pt-2 border-t border-t-white ${sans.className}`}>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-zinc-400/10 blur-[180px] rounded-full"></div>
@@ -145,7 +170,7 @@ export default function ChairSection() {
                 {/* CARDS */}
                 <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-6 scrollbar-hide md:grid md:grid-cols-2 xl:grid-cols-5 md:gap-6 -mx-4 px-4 md:mx-0 md:px-0">
                     {chairData.map((chair, index) => (
-                        <ChairCard key={index} chair={chair} index={index} />
+                        <ChairCard key={index} chair={chair} index={index} products={products} />
                     ))}
                 </div>
             </div>
