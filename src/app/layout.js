@@ -1,10 +1,8 @@
 import { Forum, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import Footer from "@/components/Main/Footer/Footer";
 import SideMenuAddToCart from "@/components/Main/SideMenuAddToCart";
-import Navbar from "@/components/Main/Navbar/Navbar";
-import Navbar3 from "@/components/Home/Navbar3";
+import LayoutWrapper from "./LayoutWrapper";
 
 const forum = Forum({
   subsets: ["latin"],
@@ -27,11 +25,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${forum.variable} ${sans.variable} ${sans.className}`}>
       <body className="min-h-screen overflow-x-clip max-w-[100vw]">
-        <Navbar3/>
-        {children}
+        <LayoutWrapper>
+          {children}
+        </LayoutWrapper>
         <Toaster position="top-center" />
         <SideMenuAddToCart />
-        <Footer/>
       </body>
     </html>
   );
