@@ -34,6 +34,69 @@ export default function DetailPage({ productId }: { productId?: string }) {
             }
           }
         }
+
+        if (!initialProduct) {
+          const rawCached = sessionStorage.getItem("astride_nav_products_cache");
+          if (rawCached) {
+            const parsed = JSON.parse(rawCached);
+            if (parsed && parsed.length > 0) {
+              const foundDb = parsed.find((p: any) => 
+                p._id?.toString() === productId?.toString() || 
+                p.slug === productId
+              );
+              if (foundDb) {
+                const discPercent = foundDb.oldPrice && foundDb.realPrice
+                  ? Math.round((1 - (foundDb.realPrice / foundDb.oldPrice)) * 100)
+                  : 60;
+                
+                let normalizedCategory = "Ergonomic Chairs";
+                const dbCategory = foundDb.category && foundDb.category.name ? foundDb.category.name.toUpperCase() : "";
+                if (dbCategory.includes("BAR")) {
+                  normalizedCategory = "Bar Stools";
+                } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK")) {
+                  normalizedCategory = "Office Task Chair";
+                }
+
+                const blackVariant = foundDb.colorVariants?.find(
+                  (v: any) => v.colorName?.toLowerCase() === "black"
+                );
+                const blackImage = blackVariant?.images?.[0]?.url;
+                const fallbackImage = foundDb.colorVariants?.find(
+                  (v: any) => v.images && v.images.length > 0
+                )?.images?.[0]?.url;
+
+                const mapped = {
+                  id: foundDb._id,
+                  slug: foundDb.slug,
+                  name: foundDb.productName,
+                  price: foundDb.realPrice,
+                  originalPrice: foundDb.oldPrice,
+                  discount: `-${discPercent}%`,
+                  image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+                  category: normalizedCategory,
+                  backSupport: foundDb.backSupport || "High Back",
+                  height: foundDb.height || "5'7\" - 6'6\"",
+                  hours: foundDb.hours || "8+ Hours",
+                  colors: foundDb.colorVariants && foundDb.colorVariants.length > 0 
+                    ? foundDb.colorVariants.map((v: any) => v.colorName).filter(Boolean)
+                    : [],
+                  colorVariants: foundDb.colorVariants || [],
+                  rating: foundDb.rating || 4.7,
+                  capacity: foundDb.capacity || "150 kg",
+                  shortDescription: foundDb.shortDescription,
+                  longDescription: foundDb.longDescription,
+                  keyfeatures: foundDb.keyfeatures,
+                  application: foundDb.application,
+                  whychoose: foundDb.whychoose,
+                  specifications: foundDb.specifications
+                };
+                initialProduct = mapped;
+                setProduct(mapped);
+                setLoading(false);
+              }
+            }
+          }
+        }
       } catch (e) {
         console.error("Error loading product from cache:", e);
       }
@@ -97,107 +160,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
         }
       } catch (err) {
         console.error("Error loading single product detail data:", err);
-        // Fallback to static products list matching ProductPageHome if no cache
-        if (!initialProduct) {
-          const fallbackProducts = [
-            {
-              id: 1,
-              name: "Astride Assassin Pro",
-              price: 14999,
-              originalPrice: 29999,
-              discount: "-60%",
-              image: "/Png1/chair12_ErgoFit.webp",
-              category: "Ergonomic Chairs",
-              backSupport: "High Back",
-              height: "5'7\" - 6'6\"",
-              hours: "8+ Hours",
-              colors: ["Red", "Black", "Grey", "Blue"],
-              rating: 4.8,
-              capacity: "120 kg",
-            },
-            {
-              id: 2,
-              name: "Astride Monster T-Series",
-              price: 16499,
-              originalPrice: 32999,
-              discount: "-60%",
-              image: "/Png1/Chair7_Delton.webp",
-              category: "Ergonomic Chairs",
-              backSupport: "High Back",
-              height: "5'2\" - 5'10\"",
-              hours: "8+ Hours",
-              colors: ["Black", "Grey"],
-              rating: 4.5,
-              capacity: "120 kg",
-            },
-            {
-              id: 3,
-              name: "Astride Vision Elite",
-              price: 18999,
-              originalPrice: 35999,
-              discount: "-57%",
-              image: "/Png1/chair4_ACE.webp",
-              category: "Office Task Chair",
-              backSupport: "High Back",
-              height: "5'7\" - 6'6\"",
-              hours: "8+ Hours",
-              colors: ["White", "Black"],
-              rating: 4.9,
-              capacity: "150 kg",
-            },
-            {
-              id: 4,
-              name: "Astride Monster S-Mesh",
-              price: 15499,
-              originalPrice: 29999,
-              discount: "-58%",
-              image: "/Png1/chair5_AIRSENSE.webp",
-              category: "Office Task Chair",
-              backSupport: "High Back",
-              height: "4'11\" - 5'10\"",
-              hours: "6-8 Hours",
-              colors: ["Blue", "Red"],
-              rating: 4.6,
-              capacity: "120 kg",
-            },
-            {
-              id: 5,
-              name: "Astride Beast Stealth",
-              price: 19999,
-              originalPrice: 39999,
-              discount: "-60%",
-              image: "/Png1/chair6_AlphaGrey.webp",
-              category: "Bar Stools",
-              backSupport: "High Back",
-              height: "5'7\" - 6'6\"",
-              hours: "8+ Hours",
-              colors: ["Grey", "Black"],
-              rating: 4.7,
-              capacity: "150 kg",
-            },
-            {
-              id: 6,
-              name: "Astride Ghost Phantom",
-              price: 21999,
-              originalPrice: 42999,
-              discount: "-59%",
-              image: "/Png1/Chair6a_Amica Black .webp",
-              category: "Bar Stools",
-              backSupport: "High Back",
-              height: "5'7\" - 6'6\"",
-              hours: "8+ Hours",
-              colors: ["Black"],
-              rating: 4.9,
-              capacity: "150 kg",
-            }
-          ];
-          const found = fallbackProducts.find((p: any) => 
-            p.id.toString() === productId?.toString() || 
-            p.slug === productId
-          ) || fallbackProducts[0];
-          setProduct(found);
-          setLoading(false);
-        }
+        setLoading(false);
       }
     }
     loadProduct();
