@@ -91,21 +91,19 @@ const CertificationsBento = () => {
                 Quality management system for the manufacturing and supply of revolving chairs.<br/>
               </p>
               
-              <div className="w-full rounded-xl overflow-hidden bg-black/30 border border-white/5 relative transform" style={{ height: "90vh", transform: "translateY(-20px)" }}>
+              <div className="w-full rounded-xl overflow-hidden bg-black/30 border border-white/5 relative transform" style={{ aspectRatio: "1 / 1.414", transform: "translateY(-10px)" }}>
                 <iframe 
-                  src="/Pdf/pdf_2.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitH" 
+                  src="/Pdf/pdf_2.pdf#toolbar=0&navpanes=0&scrollbar=0&view=Fit" 
                   className="absolute w-full h-full border-0"
                   style={{ 
-                    pointerEvents: "none",
-                    transform: "scale(1.15)",
-                    transformOrigin: "top center"
+                    pointerEvents: "none"
                   }}
                   scrolling="no"
                   title="ISO 9001:2015 Certificate PDF"
                 />
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center transform" style={{ transform: "translateY(-40px)" }}>
+            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center transform" style={{ transform: "translateY(0)" }}>
               <div>
                 <div className="flex justify-between text-xs py-1">
                   <span className="text-blue-200/60 font-medium">Number</span>
@@ -148,21 +146,19 @@ const CertificationsBento = () => {
                 General-purpose office chair durability standard, 2017 (R2022).
               </p>
               
-              <div className="w-full rounded-xl overflow-hidden bg-black/30 border border-white/5 relative transform" style={{ height: "90vh", transform: "translateY(0)" }}>
+              <div className="w-full rounded-xl overflow-hidden bg-black/30 border border-white/5 relative transform" style={{ aspectRatio: "1 / 1.414", transform: "translateY(0)" }}>
                 <iframe 
-                  src="/Pdf/BIFMA.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitH" 
+                  src="/Pdf/BIFMA.pdf#toolbar=0&navpanes=0&scrollbar=0&view=Fit" 
                   className="absolute w-full h-full border-0"
                   style={{ 
-                    pointerEvents: "none",
-                    transform: "scale(1.45)",
-                    transformOrigin: "top center"
+                    pointerEvents: "none"
                   }}
                   scrolling="no"
                   title="ANSI BIFMA X5.1 PDF"
                 />
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center transform" style={{ transform: "translateY(-40px)" }}>
+            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center transform" style={{ transform: "translateY(0)" }}>
               <span className="text-yellow-200/60 text-xs font-medium">Verification Status</span>
               <span className="text-xs font-mono text-yellow-200 bg-black/20 px-3 py-0.5 rounded-md">
                 Result: Pass
