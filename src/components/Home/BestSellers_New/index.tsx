@@ -244,8 +244,22 @@ export default function BestSellersSection_New() {
 
   useEffect(() => {
     async function fetchProducts() {
+      // 1. Try reading from cache first for instant display
       try {
-        setLoading(true);
+        const cached = sessionStorage.getItem("astride_bestsellers_cache");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.length > 0) {
+            setProductsList(parsed);
+            setLoading(false); // Disable spinner immediately
+          }
+        }
+      } catch (e) {
+        console.error("Failed to parse cached bestsellers:", e);
+      }
+
+      // 2. Fetch fresh products from the API in the background
+      try {
         const res = await fetch("/api/product");
         const data = await res.json();
         if (data.success && data.products && data.products.length > 0) {
@@ -311,7 +325,10 @@ export default function BestSellersSection_New() {
             finalProducts = [...finalProducts, ...singleImageProducts];
           }
           
-          setProductsList(finalProducts.slice(0, 8));
+          const resultList = finalProducts.slice(0, 8);
+          setProductsList(resultList);
+          // Save fresh list to cache
+          sessionStorage.setItem("astride_bestsellers_cache", JSON.stringify(resultList));
         }
       } catch (err) {
         console.error("Error fetching products:", err);

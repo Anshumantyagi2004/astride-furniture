@@ -167,8 +167,22 @@ export default function ProductPageHome() {
 
   useEffect(() => {
     async function fetchProducts() {
+      // 1. Load from cache immediately if present
       try {
-        setLoading(true);
+        const cached = sessionStorage.getItem("astride_products_cache");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.length > 0) {
+            setProductsList(parsed);
+            setLoading(false); // Disable loading spinner immediately
+          }
+        }
+      } catch (e) {
+        console.error("Failed to parse cached products:", e);
+      }
+
+      // 2. Fetch fresh data in the background
+      try {
         const res = await fetch("/api/product");
         const data = await res.json();
         if (data.success && data.products && data.products.length > 0) {
@@ -227,9 +241,10 @@ export default function ProductPageHome() {
               capacity: prod.capacity || "150 kg",
             };
           });
-          console.log("Mapped products count:", mappedProducts.length);
-          console.log("Categories of products:", mappedProducts.map(p => p.category));
+
           setProductsList(mappedProducts);
+          // Save updated list to cache
+          sessionStorage.setItem("astride_products_cache", JSON.stringify(mappedProducts));
         }
       } catch (err) {
         console.error("Error fetching products from API:", err);
