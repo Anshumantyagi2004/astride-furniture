@@ -35,6 +35,8 @@ import AstrideOffers from '@/components/Home/AstrideOffers';
 import CompeteTheVibe from '@/components/Home/Compete_the_vibe';
 import Navbar from '@/components/Main/Navbar/Navbar';
 import CertificationsBento from '@/components/Home/Certification_bento';
+import Marquee5_New from '@/components/Home/Marquee5_New';
+import Marquee6_New from '@/components/Home/Marquee6_New/Index';
 // Lazy loaded — only the 3 heaviest components
 // Reviews: uses GSAP + ScrollTrigger (large bundle)
 const Reviews = dynamic(() => import('@/components/Home/Reviews'));
@@ -70,11 +72,14 @@ export default function Home() {
       
       <Marquee2Hover />
       <Chair_split/>
+     
       <ChairSection />
       <Header2 />
+       <Marquee5_New/>
       <BestSeller/>
      
       <WhyUs />
+      <Marquee6_New/>
       <AstrideOffers/>
       <StatsSection_New/> 
       

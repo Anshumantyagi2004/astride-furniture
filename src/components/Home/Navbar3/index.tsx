@@ -120,6 +120,20 @@ export default function Navbar3() {
     }, []);
 
     useEffect(() => {
+        // 1. Try loading categories and products from cache instantly
+        try {
+            const cachedCats = sessionStorage.getItem("astride_nav_categories_cache");
+            const cachedProds = sessionStorage.getItem("astride_nav_products_cache");
+            if (cachedCats) {
+                setCategories(JSON.parse(cachedCats));
+            }
+            if (cachedProds) {
+                setProducts(JSON.parse(cachedProds));
+            }
+        } catch (e) {
+            console.error("Error loading navbar cache:", e);
+        }
+
         const fetchData = async () => {
             try {
                 const catRes = await fetch("/api/category");
@@ -135,12 +149,14 @@ export default function Navbar3() {
                         return cat;
                     });
                     setCategories(mappedCats);
+                    sessionStorage.setItem("astride_nav_categories_cache", JSON.stringify(mappedCats));
                 }
                 
                 const prodRes = await fetch("/api/product");
                 const prodData = await prodRes.json();
                 if (prodData?.success) {
                     setProducts(prodData.products);
+                    sessionStorage.setItem("astride_nav_products_cache", JSON.stringify(prodData.products));
                 }
             } catch (err) {
                 console.error("Error fetching navbar data:", err);

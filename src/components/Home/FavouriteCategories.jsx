@@ -285,13 +285,21 @@ export default function FavouriteCategories() {
                 </div>
 
                 {/* Fluid active tab switcher */}
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 bg-gray-100 rounded-full max-w-2xl mx-auto mt-4 border border-gray-200/50">
-                    {TABS.map((category) => (
-                        <button
-                            key={category}
-                            onClick={() => setActiveCategory(category)}
-                            className="relative px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-300 focus:outline-none"
-                        >
+                <div className="w-full max-w-3xl mx-auto mt-4 bg-gray-100 rounded-full border border-gray-200/50 px-4 sm:px-6">
+                    <div 
+                        className="flex flex-nowrap items-center gap-2 sm:gap-3 p-2 overflow-x-auto scrollbar-none whitespace-nowrap"
+                        style={{ 
+                            scrollbarWidth: 'none', 
+                            msOverflowStyle: 'none',
+                            justifyContent: 'safe center'
+                        }}
+                    >
+                        {TABS.map((category) => (
+                            <button
+                                key={category}
+                                onClick={() => setActiveCategory(category)}
+                                className="relative flex-shrink-0 px-6 py-3 rounded-full text-sm sm:text-base font-bold transition-colors duration-300 focus:outline-none"
+                            >
                             {activeCategory === category && (
                                 <motion.div
                                     layoutId="activeCategoryBg"
@@ -309,6 +317,7 @@ export default function FavouriteCategories() {
                         </button>
                     ))}
                 </div>
+            </div>
 
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
