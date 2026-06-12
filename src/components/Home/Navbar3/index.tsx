@@ -57,8 +57,8 @@ const CHAIR_CATEGORIES: Record<string, ChairCategory> = {
       { name: "ErgoFit Executive", image: "/Png1/chair12_ErgoFit.webp", tag: "Premium", buyUrl: "/products/chair12-ergofit" }
     ]
   },
-  "Bar Stools": {
-    label: "Bar Stools",
+  "Bar Stools & Cafe Chair": {
+    label: "Bar Stools & Cafe Chair",
     chairs: [
       { name: "Zenith Stool", image: "/Png1/chair10_FitWell.webp", tag: "Counter Stool", buyUrl: "/products/chair10-fitwell" },
       { name: "Apex Stool", image: "/Png1/chair9_FitWell.webp", tag: "Bestseller", buyUrl: "/products/chair9-fitwell" }
@@ -129,6 +129,9 @@ export default function Navbar3() {
                         if (cat.name === "Executive Chair") {
                             return { ...cat, name: "Office Chair" };
                         }
+                        if (cat.name === "Bar Stool" || cat.name === "Bar Stools") {
+                            return { ...cat, name: "Bar Stools & Cafe Chair" };
+                        }
                         return cat;
                     });
                     setCategories(mappedCats);
@@ -151,7 +154,7 @@ export default function Navbar3() {
         "Office Chair",
         "Gaming Chair",
         "Study Chair",
-        "Bar Stools",
+        "Bar Stools & Cafe Chair",
     ];
 
     // Find the category object that matches the hovered item (ignoring case)

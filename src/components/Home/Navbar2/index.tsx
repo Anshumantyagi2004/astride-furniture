@@ -20,8 +20,8 @@ interface ChairCategory {
 }
 
 const CHAIR_CATEGORIES: Record<string, ChairCategory> = {
-  'Bar Stools': {
-    label: 'Bar Stools',
+  'Bar Stools & Cafe Chair': {
+    label: 'Bar Stools & Cafe Chair',
     chairs: [
       { name: 'Zenith Stool', image: '/Png1/chair10_FitWell.png', tag: 'Stool', buyUrl: '#buy', learnUrl: '#learn' },
       { name: 'Apex Stool', image: '/Png1/chair9_FitWell.png', tag: 'Comfort', buyUrl: '#buy', learnUrl: '#learn' }
@@ -45,7 +45,7 @@ const CHAIR_CATEGORIES: Record<string, ChairCategory> = {
   }
 };
 
-const CATEGORY_KEYS = ['Bar Stools', 'Ergonomic Chairs', 'Office Task Chair'];
+const CATEGORY_KEYS = ['Bar Stools & Cafe Chair', 'Ergonomic Chairs', 'Office Task Chair'];
 
 export default function Navbar2() {
   const router = useRouter();

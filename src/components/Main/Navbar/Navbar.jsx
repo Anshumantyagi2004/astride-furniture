@@ -111,6 +111,9 @@ export default function Navbar() {
             if (cat.name === "Executive Chair") {
               return { ...cat, name: "Office Chair" };
             }
+            if (cat.name === "Bar Stool" || cat.name === "Bar Stools") {
+              return { ...cat, name: "Bar Stools & Cafe Chair" };
+            }
             return cat;
           });
           setCategories(mappedCats);
@@ -169,8 +172,8 @@ export default function Navbar() {
         { name: 'Modern Workspace', image: '/Product/InfographicDesign-1.webp', tag: 'Compact', buyUrl: '#buy' }
       ]
     },
-    'Bar Stool': {
-      label: 'Bar Stool',
+    'Bar Stools & Cafe Chair': {
+      label: 'Bar Stools & Cafe Chair',
       chairs: [
         { name: 'Zenith Stool', image: '/Png1/chair10_FitWell.webp', tag: 'Counter Stool', buyUrl: '#buy' },
         { name: 'Apex Stool', image: '/Png1/chair9_FitWell.webp', tag: 'Bestseller', buyUrl: '#buy' },
@@ -184,7 +187,7 @@ export default function Navbar() {
     { _id: 'executive-chair', name: 'Office Chair' },
     { _id: 'staff-chair', name: 'Staff Chair' },
     { _id: 'study-chair', name: 'Study Chair' },
-    { _id: 'bar-stool', name: 'Bar Stool' },
+    { _id: 'bar-stool', name: 'Bar Stools & Cafe Chair' },
   ];
 
   const categoryList = categories.length > 0 ? categories : fallbackCategories;

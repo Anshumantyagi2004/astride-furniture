@@ -100,7 +100,7 @@ const PRODUCTS = [
   },
 ];
 
-const TABS = ["All Products", "Gaming Chair", "Office Chair", "Staff Chair", "Study Chair", "Bar Stool"];
+const TABS = ["All Products", "Gaming Chair", "Office Chair", "Staff Chair", "Study Chair", "Bar Stools & Cafe Chair"];
 
 export default function ProductPageHome() {
   const [productsList, setProductsList] = useState([]);
@@ -121,8 +121,8 @@ export default function ProductPageHome() {
     if (catParam) {
       const decoded = decodeURIComponent(catParam);
       let match = TABS.find(t => t.toLowerCase() === decoded.toLowerCase());
-      if (!match && decoded.toLowerCase().includes('bar')) {
-         match = "Bar Stool";
+      if (!match && (decoded.toLowerCase().includes('bar') || decoded.toLowerCase().includes('stool') || decoded.toLowerCase().includes('cafe'))) {
+         match = "Bar Stools & Cafe Chair";
       }
       if (match) {
         setSelectedCategory(match);
@@ -188,8 +188,8 @@ export default function ProductPageHome() {
               normalizedCategory = "Staff Chair";
             } else if (dbCategory.includes("STUDY")) {
               normalizedCategory = "Study Chair";
-            } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) {
-              normalizedCategory = "Bar Stool";
+            } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) {
+              normalizedCategory = "Bar Stools & Cafe Chair";
             } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
               normalizedCategory = "Office Chair";
             }
@@ -308,11 +308,11 @@ export default function ProductPageHome() {
           <span>/</span>
           <span className="text-slate-900">{selectedCategory}</span>
         </div>
-
+ 
         {/* Title */}
         <div className="text-center mb-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-black mb-3 md:mb-5">
-            {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory === "Gaming Chair" ? "Gaming Series" : selectedCategory === "Office Chair" ? "Office Series" : selectedCategory === "Staff Chair" ? "Staff Series" : selectedCategory === "Study Chair" ? "Study Series" : "Premium Bar Stools"}
+            {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory === "Gaming Chair" ? "Gaming Series" : selectedCategory === "Office Chair" ? "Office Series" : selectedCategory === "Staff Chair" ? "Staff Series" : selectedCategory === "Study Chair" ? "Study Series" : "Premium Bar Stools & Cafe Chairs"}
           </h1>
           <p className="max-w-2xl mx-auto text-xs md:text-base text-neutral-500 leading-relaxed font-medium px-2">
             Discover Astride's premium ergonomics — masterfully engineered seating built for long-session endurance, proactive posture correction, and premium styling.

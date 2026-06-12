@@ -312,11 +312,6 @@ export default function DetailPageCard({ product }: { product: any }) {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Sticker */}
-            <span className="absolute -top-4 left-5 rotate-[-3deg] bg-[#EC4899] px-4 py-2 text-[15px] font-bold text-white shadow-[3px_3px_0_#131313] z-20 pointer-events-none">
-              hot rn 🔥
-            </span>
-
             {/* Discount */}
             <div className="absolute right-5 top-5 flex h-[74px] w-[74px] rotate-[8deg] flex-col items-center justify-center rounded-full border-[2.5px] border-[#131313] bg-[#DCF351] text-center font-extrabold shadow-[3px_3px_0_#131313] z-20 pointer-events-none">
               <small className="text-[10px] uppercase tracking-wide">

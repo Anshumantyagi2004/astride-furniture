@@ -24,7 +24,13 @@ export default function Category() {
             const { data } = await axios.get("/api/category");
 
             if (data.success) {
-                setCategories(data.categories);
+                const mappedCats = data.categories.map((cat) => {
+                    if (cat.name === "Bar Stool" || cat.name === "Bar Stools") {
+                        return { ...cat, name: "Bar Stools & Cafe Chair" };
+                    }
+                    return cat;
+                });
+                setCategories(mappedCats);
             }
         } catch (error) {
             console.log(error);
