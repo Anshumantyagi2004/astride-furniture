@@ -123,6 +123,7 @@ export default function Navbar() {
         const prodData = await prodRes.json();
         if (prodData?.success) {
           setProducts(prodData.products);
+          sessionStorage.setItem("astride_nav_products_cache", JSON.stringify(prodData.products));
         }
       } catch (err) {
         console.error("Error fetching navbar data:", err);
