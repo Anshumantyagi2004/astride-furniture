@@ -9,7 +9,7 @@ const modes = [
     tagline: "Focused. Productive.",
     badge: "🏢",
     accent: "#C8F135",
-    img: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=600&q=80",
+    img: "/Perfect_setup/Office.png",
     alt: "Work mode office chair setup",
     link: "/products?category=Office%20Chair",
   },
@@ -18,7 +18,7 @@ const modes = [
     tagline: "Learn. Grow. Achieve.",
     badge: "📚",
     accent: "#818CF8",
-    img: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80",
+    img: "/Perfect_setup/Study.png",
     alt: "Study mode desk setup",
     link: "/products?category=Study%20Chair",
   },
@@ -27,7 +27,7 @@ const modes = [
     tagline: "Play. Win. Repeat.",
     badge: "🎮",
     accent: "#EC4899",
-    img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80",
+    img: "/Perfect_setup/Game-clean.png",
     alt: "Gaming setup with RGB lighting",
     link: "/products?category=Gaming%20Chair",
   },
@@ -36,7 +36,7 @@ const modes = [
     tagline: "Relax. Unwind.",
     badge: "✨",
     accent: "#F97316",
-    img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
+    img: "/Perfect_setup/Chill.png",
     alt: "Chill lounge chair setup",
     link: "/products?category=Bar%20Stool",
   },
@@ -44,7 +44,7 @@ const modes = [
 
 export default function Header6_New() {
   return (
-    <section className="w-full bg-[#080808] py-14 px-5 md:px-8 lg:px-16 overflow-hidden relative">
+    <section className="w-full bg-[#080808] pt-6 pb-0 px-5 md:px-8 lg:px-16 overflow-hidden relative">
 
       {/* Ambient glow blobs */}
       <div className="pointer-events-none absolute top-0 left-[250px] w-[400px] h-[300px] rounded-full bg-[#8B5CF6]/10 blur-[80px]" />
@@ -68,11 +68,11 @@ export default function Header6_New() {
 
           {/* Heading */}
           <div className="mt-4">
-            <h2 className="text-[44px] md:text-[54px] font-black uppercase leading-[0.95] tracking-[-0.03em] text-white">
+            <h2 className="text-[34px] md:text-[44px] font-black uppercase leading-[0.95] tracking-[-0.03em] text-white">
               Build Your
             </h2>
             <h2
-              className="text-[44px] md:text-[54px] font-black uppercase leading-[0.95] tracking-[-0.03em]"
+              className="text-[36px] md:text-[44px] font-black uppercase leading-[0.95] tracking-[-0.03em]"
               style={{
                 background: "linear-gradient(90deg, #8B5CF6 0%, #EC4899 55%, #F97316 100%)",
                 WebkitBackgroundClip: "text",
@@ -136,7 +136,7 @@ export default function Header6_New() {
                   unoptimized
                 />
                 {/* Layered gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black from-30% via-black/70 via-55% to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 from-5% via-black/30 via-45% to-transparent pointer-events-none" />
               </div>
 
               {/* Accent badge top-right */}
@@ -147,7 +147,7 @@ export default function Header6_New() {
               </div>
 
               {/* Text overlay — pinned to the very bottom */}
-              <div className="absolute bottom-0 left-0 right-0 z-20 px-4 md:px-5 pb-8 md:pb-10 flex flex-col gap-[3px] md:gap-[5px] outline-none">
+              <div className="absolute bottom-0 left-0 right-0 z-20 px-4 md:px-5 pb-4 md:pb-5 flex flex-col gap-[3px] md:gap-[5px] outline-none">
                 <p className="text-white font-black text-[12px] md:text-[13.5px] tracking-[0.16em] uppercase select-none">
                   {mode.label}
                 </p>
