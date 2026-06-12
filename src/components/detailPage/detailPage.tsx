@@ -15,7 +15,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
   useEffect(() => {
     async function loadProduct() {
       if (!productId) return;
-      let initialProduct = null;
+      let initialProduct: any = null;
 
       // 1. Check local cache (sessionStorage) for instant rendering
       try {
