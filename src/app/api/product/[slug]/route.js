@@ -14,7 +14,13 @@ export async function GET(req, { params }) {
     try {
         await connectDB();
         const { slug } = await params;
-        let product = await Product.findOne({ slug: slug }).populate("category");
+        let product = null;
+        if (slug && slug.match(/^[0-9a-fA-F]{24}$/)) {
+            product = await Product.findById(slug).populate("category");
+        }
+        if (!product) {
+            product = await Product.findOne({ slug: slug }).populate("category");
+        }
 
         if (!product && process.env.NODE_ENV === "development") {
             try {
