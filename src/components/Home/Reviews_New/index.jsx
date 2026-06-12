@@ -33,7 +33,7 @@ const reviews = [
 export default function Reviews_New() {
   return (
     <section
-      className="w-full pt-6 pb-0 md:pt-8 md:pb-0 px-5 md:px-8 lg:px-16 relative overflow-hidden"
+      className="w-full pt-2 pb-2 px-5 md:px-8 lg:px-16 relative overflow-hidden"
       style={{
         backgroundColor: "#F5EFE6",
         backgroundImage:
@@ -44,7 +44,7 @@ export default function Reviews_New() {
       <div className="max-w-[1200px] mx-auto">
         
         {/* Section Head */}
-        <div className="text-center mb-16 max-w-2xl mx-auto">
+        <div className="text-center mb-6 max-w-2xl mx-auto">
           <span className="inline-block px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#7C3AED] bg-[#EDE9FE] border border-[#DDD6FE] rounded-full mb-4">
             No cap, just reviews
           </span>
@@ -108,7 +108,7 @@ export default function Reviews_New() {
         </div>
 
         {/* Proof bottom line */}
-        <p className="text-center mt-16 font-bold text-[#131313] text-lg">
+        <p className="text-center mt-6 font-bold text-[#131313] text-lg">
           500+ verified reviews — <span className="bg-gradient-to-r from-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-serif italic text-2xl font-black ml-1">real people, real comfort ♥</span>
         </p>
 

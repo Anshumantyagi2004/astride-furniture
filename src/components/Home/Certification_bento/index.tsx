@@ -4,22 +4,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
   IconCertificate,
-  IconShieldCheck,
   IconArmchair,
-  IconAward,
-  IconWorldCheck,
   IconDownload
 } from '@tabler/icons-react';
-
-
-
-const marqueeItems = [
-  { icon: IconCertificate, label: 'ISO 9001:2015', color: 'text-[#93c5fd]' },
-  { icon: IconShieldCheck, label: 'TÜV Rheinland', color: 'text-[#86efac]' },
-  { icon: IconArmchair, label: 'ANSI BIFMA X5.1', color: 'text-[#fde047]' },
-  { icon: IconAward, label: 'EGAC accredited', color: 'text-[#93c5fd]' },
-  { icon: IconWorldCheck, label: 'IAF recognized', color: 'text-[#86efac]' },
-];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -48,16 +35,16 @@ const itemVariants = {
 
 const CertificationsBento = () => {
   return (
-    <section className="w-full pt-8 pb-16 px-5 md:px-8 lg:px-16 overflow-hidden" style={{ backgroundColor: "#1a1a1a" }}>
+    <section className="w-full pt-6 pb-0 px-5 md:px-8 lg:px-16 overflow-hidden" style={{ backgroundColor: "#1a1a1a" }}>
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
-        <motion.div variants={itemVariants} className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-3">
+        <motion.div variants={itemVariants} className="mb-4 flex flex-col md:flex-row md:items-end justify-between gap-2">
           <div>
-            <h2 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] text-transparent bg-clip-text uppercase tracking-wider mb-1.5" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            <h2 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] text-transparent bg-clip-text uppercase tracking-wider mb-0.5" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Backed By Standards
             </h2>
             <p className="text-sm font-medium text-zinc-400" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
@@ -67,136 +54,120 @@ const CertificationsBento = () => {
           
           <a
             href="/Pdf/BIFMA.pdf"
-            download="BIFMA.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-[#1a1a1a] font-black px-5 py-2.5 rounded-xl transition-all duration-200 text-xs tracking-wider uppercase w-fit cursor-pointer group"
           >
             <IconDownload size={16} stroke={2.5} className="text-white group-hover:text-[#1a1a1a] transition-colors duration-200" />
-            Download BIFMA PDF
+            View BIFMA PDF
           </a>
         </motion.div>
 
-        {/* Marquee strip */}
-        <motion.div
-          variants={itemVariants}
-          className="overflow-hidden rounded-xl bg-[#222] py-3 mb-6"
-          style={{
-            maskImage:
-              'linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)',
-            WebkitMaskImage:
-              'linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)',
-          }}
-        >
-          <div className="flex w-max animate-marquee">
-            {Array.from({ length: 4 }).map((_, trackIdx) => (
-              <div key={trackIdx} className="flex items-center gap-12 pr-12 whitespace-nowrap">
-                {marqueeItems.map((item, i) => {
-                  const Icon = item.icon;
-                  return (
-                    <span
-                      key={i}
-                      className={`inline-flex items-center gap-2 text-xs font-black ${item.color} uppercase tracking-wider whitespace-nowrap opacity-90`}
-                    >
-                      <Icon size={18} stroke={2.5} className={item.color} />
-                      {item.label}
-                    </span>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
         {/* Bento grid */}
-        <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Featured card - ISO */}
-          <motion.div variants={itemVariants} className="md:row-span-2 bg-[#2c405a] rounded-2xl p-6 md:p-8 flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
+          <motion.div variants={itemVariants} className="bg-[#2c405a] rounded-2xl pt-6 pb-9 px-6 md:pt-8 md:pb-10 md:px-8 flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-black/20 flex items-center justify-center mb-6">
-                <IconCertificate size={24} stroke={2.5} className="text-[#93c5fd]" />
-              </div>
-              <h3 className="text-2xl font-semibold text-[#93c5fd] mb-3">
-                ISO 9001:2015
-              </h3>
-              <p className="text-[15px] text-blue-100/90 leading-relaxed mb-8">
-                Quality management system for the manufacturing and supply of
-                revolving chairs. Audited and accredited under EGAC, IAF code 23.
-              </p>
-              
-              <a 
-                href="/Pdf/pdf_2.pdf" 
-                download="ISO-9001-2015.pdf" 
-                className="inline-flex items-center gap-2 bg-black/20 hover:bg-black/40 text-[#93c5fd] font-medium px-4 py-2 rounded-xl transition-all duration-200 text-sm w-fit cursor-pointer group"
-              >
-                <IconDownload size={16} stroke={2.5} className="text-[#93c5fd]" />
-                Certificate
-              </a>
-            </div>
-            <div className="mt-8 pt-5 border-t border-white/10">
-              <div className="flex justify-between text-sm py-2">
-                <span className="text-blue-200/60 font-medium">Number</span>
-                <span className="font-mono text-blue-100 font-medium">25EQQW45</span>
-              </div>
-              <div className="flex justify-between text-sm py-2">
-                <span className="text-blue-200/60 font-medium">Valid until</span>
-                <span className="text-blue-100 font-medium">12 Jan 2029</span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* TUV card */}
-          <motion.div variants={itemVariants} className="bg-[#1f4b23] rounded-2xl p-6 md:p-8 flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
-            <div>
-              <div className="flex items-start sm:items-center justify-between mb-4 flex-col sm:flex-row gap-3">
-                <div className="flex items-center gap-3">
-                  <IconShieldCheck size={28} stroke={2} className="text-[#86efac]" />
-                  <h3 className="text-xl font-semibold text-[#86efac]">
-                    TÜV Rheinland
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-black/20 flex items-center justify-center shrink-0">
+                    <IconCertificate size={22} stroke={2.5} className="text-[#93c5fd]" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#93c5fd] truncate">
+                    ISO 9001:2015
                   </h3>
                 </div>
                 <a 
-                  href="/Pdf/Gst.pdf" 
-                  download="GST.pdf" 
-                  className="inline-flex items-center justify-center w-9 h-9 shrink-0 rounded-xl bg-black/20 text-[#86efac] hover:bg-black/40 transition-all cursor-pointer"
-                  title="Download TUV Certificate"
+                  href="/Pdf/pdf_2.pdf" 
+                  target="_blank"
+                  rel="noopener noreferrer" 
+                  className="w-9 h-9 rounded-xl bg-black/20 hover:bg-black/40 flex items-center justify-center text-[#93c5fd] shrink-0 transition-all duration-200"
+                  title="Open PDF"
                 >
-                  <IconDownload size={18} stroke={2} />
+                  <IconDownload size={18} stroke={2.5} />
                 </a>
               </div>
-              <p className="text-[15px] text-green-100/90 leading-relaxed">
-                Performance and safety test, passed with full compliance.
+              <p className="text-[13px] text-blue-100/80 leading-relaxed mb-3">
+                Quality management system for the manufacturing and supply of revolving chairs. Audited and accredited under EGAC, IAF code 23.
               </p>
+              
+              {/* UPDATED: Relative container with Absolute iframe */}
+              <div className="w-full h-[600px] rounded-xl overflow-hidden bg-black/30 border border-white/5 relative transform" style={{ transform: "translateY(-20px)" }}>
+                <iframe 
+                  src="/Pdf/pdf_2.pdf#toolbar=0&navpanes=0" 
+                  className="absolute w-full border-0"
+                  style={{ 
+                    height: "100%", 
+                    top: "0", 
+                    left: "0" 
+                  }}
+                  title="ISO 9001:2015 Certificate PDF"
+                />
+              </div>
             </div>
-            <p className="text-xs font-mono text-green-200/60 mt-6">
-              IN25N16F 001 · Jan 2026
-            </p>
+            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+              <div>
+                <div className="flex justify-between text-xs py-1">
+                  <span className="text-blue-200/60 font-medium">Number</span>
+                  <span className="font-mono text-blue-100 font-medium">25EQQW45</span>
+                </div>
+                <div className="flex justify-between text-xs py-1">
+                  <span className="text-blue-200/60 font-medium">Valid until</span>
+                  <span className="text-blue-100 font-medium">12 Jan 2029</span>
+                </div>
+              </div>
+              <span className="text-xs font-mono text-blue-200 bg-black/20 px-3 py-0.5 rounded-md">
+                Result: N/A
+              </span>
+            </div>
           </motion.div>
 
           {/* ANSI card */}
-          <motion.div variants={itemVariants} className="bg-[#6b4e16] rounded-2xl p-6 md:p-8 flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
+          <motion.div variants={itemVariants} className="bg-[#6b4e16] rounded-2xl pt-6 pb-9 px-6 md:pt-8 md:pb-10 md:px-8 flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
             <div>
-              <div className="flex items-start sm:items-center justify-between mb-4 flex-col sm:flex-row gap-3">
-                <div className="flex items-center gap-3">
-                  <IconArmchair size={28} stroke={2} className="text-[#fde047]" />
-                  <h3 className="text-xl font-semibold text-[#fde047]">
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-black/20 flex items-center justify-center shrink-0">
+                    <IconArmchair size={22} stroke={2} className="text-[#fde047]" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#fde047] truncate">
                     ANSI BIFMA X5.1
                   </h3>
                 </div>
                 <a 
                   href="/Pdf/BIFMA.pdf" 
-                  download="BIFMA.pdf" 
-                  className="inline-flex items-center justify-center w-9 h-9 shrink-0 rounded-xl bg-black/20 text-[#fde047] hover:bg-black/40 transition-all cursor-pointer"
-                  title="Download ANSI Certificate"
+                  target="_blank"
+                  rel="noopener noreferrer" 
+                  className="w-9 h-9 rounded-xl bg-black/20 hover:bg-black/40 flex items-center justify-center text-[#fde047] shrink-0 transition-all duration-200"
+                  title="Open PDF"
                 >
-                  <IconDownload size={18} stroke={2} />
+                  <IconDownload size={18} stroke={2.5} />
                 </a>
               </div>
-              <p className="text-[15px] text-yellow-100/90 leading-relaxed">
+              <p className="text-[13px] text-yellow-100/80 leading-relaxed mb-3">
                 General-purpose office chair durability standard, 2017 (R2022).
               </p>
+              
+              {/* UPDATED: Relative container with Absolute iframe */}
+              <div className="w-full h-[600px] rounded-xl overflow-hidden bg-black/30 border border-white/5 relative transform" style={{ transform: "translateY(0)" }}>
+                <iframe 
+                  src="/Pdf/BIFMA.pdf#toolbar=0&navpanes=0" 
+                  className="absolute w-full border-0"
+                  style={{ 
+                    height: "100%", 
+                    top: "0", 
+                    left: "0" 
+                  }}
+                  title="ANSI BIFMA X5.1 PDF"
+                />
+              </div>
             </div>
-            <p className="text-xs font-mono text-yellow-200/60 mt-6">
-              Result: Pass
-            </p>
+            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+              <span className="text-yellow-200/60 text-xs font-medium">Verification Status</span>
+              <span className="text-xs font-mono text-yellow-200 bg-black/20 px-3 py-0.5 rounded-md">
+                Result: Pass
+              </span>
+            </div>
           </motion.div>
         </div>
       </motion.div>
@@ -205,4 +176,3 @@ const CertificationsBento = () => {
 };
 
 export default CertificationsBento;
-

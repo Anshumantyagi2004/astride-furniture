@@ -38,10 +38,10 @@ export default function Category() {
     }, []);
 
     return (
-        <section className={`relative overflow-hidden bg-[#FAFAFA] pt-2 pb-16 ${sans.className}`}>
+        <section className={`relative overflow-hidden bg-[#FAFAFA] pt-2 pb-4 ${sans.className}`}>
 
             {/* HEADING */}
-            <div className="relative z-10 md:px-15 px-4 mb-10 max-w-[1400px] mx-auto">
+            <div className="relative z-10 md:px-15 px-4 mb-4 max-w-[1400px] mx-auto">
                 <p className="uppercase tracking-[5px] text-[#8B5CF6] text-sm font-extrabold mb-2">
                     Browse Collection
                 </p>
@@ -51,7 +51,7 @@ export default function Category() {
             </div>
 
             {/* CONTENT */}
-            <div className="relative md:px-15 px-4 pt-4">
+            <div className="relative md:px-15 px-4 pt-2">
 
                 {loading ? (
                     <div className="text-center text-zinc-600 text-lg font-medium">
@@ -82,15 +82,19 @@ export default function Category() {
                                             />
                                         </div>
 
-                                        <div className="w-full px-5 py-4 bg-white">
-                                            <div className="flex items-center justify-between">
-                                                <div>
-                                                    <h3 className="text-[#131313] text-lg font-black capitalize tracking-tight group-hover:text-[#EC4899] transition-colors duration-300">
-                                                        {category.name}
+                                        <div className="w-full px-4 py-4 bg-white">
+                                            <div className="flex items-center justify-between gap-2">
+                                                <div className="min-w-0 flex-1">
+                                                    <h3 className={`text-[#131313] font-black capitalize tracking-tight group-hover:text-[#EC4899] transition-all duration-300 ${
+                                                        category.name.toLowerCase().includes("bar stools") || category.name.length > 18
+                                                            ? "text-[12.5px] xl:text-[13.5px] 2xl:text-base whitespace-nowrap -translate-x-3"
+                                                            : "text-lg"
+                                                    }`} title={category.name}>
+                                                         {category.name}
                                                     </h3>
                                                 </div>
 
-                                                <div className="w-8 h-8 rounded-full border-2 border-[#131313] bg-[#DCF351] flex items-center justify-center text-[#131313] transition-transform duration-300 group-hover:rotate-45 group-hover:bg-[#EC4899] group-hover:text-white">
+                                                <div className="w-8 h-8 rounded-full border-2 border-[#131313] bg-[#DCF351] flex items-center justify-center text-[#131313] transition-transform duration-300 group-hover:rotate-45 group-hover:bg-[#EC4899] group-hover:text-white shrink-0">
                                                     <ArrowRight size={18} strokeWidth={3} />
                                                 </div>
                                             </div>
