@@ -14,7 +14,11 @@ export async function POST(req) {
 
         // FIELDS
         const productName = formData.get("productName");
+
         const category = formData.get("category");
+        // ADD THESE TWO:
+        const metaTitleInput = formData.get("metaTitle");
+        const metaDescriptionInput = formData.get("metaDescription");
         const oldPrice = formData.get("oldPrice");
         const realPrice = formData.get("realPrice");
         const shortDescription = formData.get("shortDescription");
@@ -104,9 +108,8 @@ export async function POST(req) {
         }
 
         // AUTO META
-        const metaTitle = `${productName} | Your Company`;
-
-        const metaDescription = `Buy ${productName} at best price from our company. Discover premium quality products with trusted service.`;
+        const metaTitle = metaTitleInput || `${productName} | Your Company`;
+        const metaDescription = metaDescriptionInput || `Buy ${productName} at best price from our company. Discover premium quality products with trusted service.`;
 
         // CREATE PRODUCT
         const product = await Product.create({

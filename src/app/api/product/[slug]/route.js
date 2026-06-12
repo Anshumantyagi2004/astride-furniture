@@ -74,6 +74,10 @@ export async function PUT(req, { params }) {
 
         const productName = formData.get("productName");
 
+        // ADD THESE TWO:
+        const metaTitleInput = formData.get("metaTitle");
+        const metaDescriptionInput = formData.get("metaDescription");
+
         // DUPLICATE NAME CHECK (excluding current product)
         if (productName) {
             const existingName = await Product.findOne({
@@ -172,11 +176,17 @@ export async function PUT(req, { params }) {
         product.videoLinks = videoLinks;
         product.specifications = specifications;
 
-        product.metaTitle =
-            `${productName} | Your Company`;
-
-        product.metaDescription =
-            `Buy ${productName} at best price from our company.`;
+        // UPDATE METADATA VALUES:
+        if (metaTitleInput !== null && metaTitleInput !== undefined) {
+            product.metaTitle = metaTitleInput;
+        } else if (productName) {
+            product.metaTitle = `${productName} | Your Company`;
+        }
+        if (metaDescriptionInput !== null && metaDescriptionInput !== undefined) {
+            product.metaDescription = metaDescriptionInput;
+        } else if (productName) {
+            product.metaDescription = `Buy ${productName} at best price from our company.`;
+        }
 
         await product.save();
 
