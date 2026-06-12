@@ -87,25 +87,25 @@ const CertificationsBento = () => {
                   <IconDownload size={18} stroke={2.5} />
                 </a>
               </div>
-              <p className="text-[13px] text-blue-100/80 leading-relaxed mb-3">
-                Quality management system for the manufacturing and supply of revolving chairs. Audited and accredited under EGAC, IAF code 23.
+              <p className="text-[13px] text-blue-100/80 leading-relaxed mb-3 mb-8">
+                Quality management system for the manufacturing and supply of revolving chairs.<br/>
               </p>
               
-              {/* UPDATED: Relative container with Absolute iframe */}
-              <div className="w-full h-[600px] rounded-xl overflow-hidden bg-black/30 border border-white/5 relative transform" style={{ transform: "translateY(-20px)" }}>
+              <div className="w-full rounded-xl overflow-hidden bg-black/30 border border-white/5 relative transform" style={{ height: "90vh", transform: "translateY(-20px)" }}>
                 <iframe 
-                  src="/Pdf/pdf_2.pdf#toolbar=0&navpanes=0" 
-                  className="absolute w-full border-0"
+                  src="/Pdf/pdf_2.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitH" 
+                  className="absolute w-full h-full border-0"
                   style={{ 
-                    height: "100%", 
-                    top: "0", 
-                    left: "0" 
+                    pointerEvents: "none",
+                    transform: "scale(1.15)",
+                    transformOrigin: "top center"
                   }}
+                  scrolling="no"
                   title="ISO 9001:2015 Certificate PDF"
                 />
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center transform" style={{ transform: "translateY(-40px)" }}>
               <div>
                 <div className="flex justify-between text-xs py-1">
                   <span className="text-blue-200/60 font-medium">Number</span>
@@ -148,21 +148,21 @@ const CertificationsBento = () => {
                 General-purpose office chair durability standard, 2017 (R2022).
               </p>
               
-              {/* UPDATED: Relative container with Absolute iframe */}
-              <div className="w-full h-[600px] rounded-xl overflow-hidden bg-black/30 border border-white/5 relative transform" style={{ transform: "translateY(0)" }}>
+              <div className="w-full rounded-xl overflow-hidden bg-black/30 border border-white/5 relative transform" style={{ height: "90vh", transform: "translateY(0)" }}>
                 <iframe 
-                  src="/Pdf/BIFMA.pdf#toolbar=0&navpanes=0" 
-                  className="absolute w-full border-0"
+                  src="/Pdf/BIFMA.pdf#toolbar=0&navpanes=0&scrollbar=0&view=FitH" 
+                  className="absolute w-full h-full border-0"
                   style={{ 
-                    height: "100%", 
-                    top: "0", 
-                    left: "0" 
+                    pointerEvents: "none",
+                    transform: "scale(1.45)",
+                    transformOrigin: "top center"
                   }}
+                  scrolling="no"
                   title="ANSI BIFMA X5.1 PDF"
                 />
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center">
+            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center transform" style={{ transform: "translateY(-40px)" }}>
               <span className="text-yellow-200/60 text-xs font-medium">Verification Status</span>
               <span className="text-xs font-mono text-yellow-200 bg-black/20 px-3 py-0.5 rounded-md">
                 Result: Pass
