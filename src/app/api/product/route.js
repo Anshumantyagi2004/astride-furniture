@@ -144,30 +144,41 @@ export async function POST(req) {
     }
 }
 
+// Global in-memory cache for product GET requests (development & production)
+let productCache = null;
+let productCacheTime = 0;
+const CACHE_TTL = 30000; // 30 seconds
+
 export async function GET() {
     try {
+        const now = Date.now();
+        if (productCache && (now - productCacheTime < CACHE_TTL)) {
+            return NextResponse.json(productCache, { status: 200 });
+        }
+
+        let data;
         // Proxy production API when running locally to bypass DB connection issues
         if (process.env.NODE_ENV === "development") {
             const productionUrl = process.env.PRODUCTION_URL || "https://astride-furniture.vercel.app";
             const response = await fetch(`${productionUrl}/api/product`, { cache: "no-store" });
-            const data = await response.json();
-            return NextResponse.json(data, { status: 200 });
-        }
+            data = await response.json();
+        } else {
+            await connectDB();
+            const products = await Product.find(
+                {}, 
+                "productName slug category oldPrice realPrice backSupport height hours colors rating capacity colorVariants metaTitle metaDescription"
+            ).populate("category").sort({ createdAt: -1 });
 
-        await connectDB();
-        const products = await Product.find(
-            {}, 
-            "productName slug category oldPrice realPrice backSupport height hours colors rating capacity colorVariants metaTitle metaDescription"
-        ).populate("category").sort({ createdAt: -1 });
-
-        return NextResponse.json(
-            {
+            data = {
                 success: true,
                 count: products.length,
                 products,
-            },
-            { status: 200 }
-        );
+            };
+        }
+
+        productCache = data;
+        productCacheTime = now;
+        return NextResponse.json(data, { status: 200 });
     } catch (error) {
         console.log(error);
         return NextResponse.json(
