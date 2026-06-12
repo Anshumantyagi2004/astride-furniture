@@ -14,6 +14,10 @@ export default function Page() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    
+    const [metaTitle, setMetaTitle] = useState("");
+    const [metaDescription, setMetaDescription] = useState("");
+
 
     const handleImageChange = (e) => {
         const file = e.target.files?.[0];
@@ -64,14 +68,19 @@ export default function Page() {
         setCategoryName(category.name);
         setImagePreview(category.image);
         setImageFile(null);
+        // LOAD METADATA VALUES:
+        setMetaTitle(category.metaTitle || "");
+        setMetaDescription(category.metaDescription || "");
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
-
     const cancelEdit = () => {
         setEditingId(null);
         setCategoryName("");
         setImageFile(null);
         setImagePreview(null);
+        // CLEAR METADATA STATES:
+        setMetaTitle("");
+        setMetaDescription("");
     };
 
     const handleSubmit = async (e) => {
@@ -80,6 +89,10 @@ export default function Page() {
         try {
             const formData = new FormData();
             formData.append("name", categoryName);
+
+            // APPEND METADATA INPUTS:
+            formData.append("metaTitle", metaTitle);
+            formData.append("metaDescription", metaDescription);
             
             if (editingId) {
                 formData.append("id", editingId);
@@ -107,6 +120,8 @@ export default function Page() {
                     setCategoryName("");
                     setImageFile(null);
                     setImagePreview(null);
+                    setMetaTitle("");
+                    setMetaDescription("");
                 } else {
                     toast.error(data.message);
                 }
@@ -171,6 +186,32 @@ export default function Page() {
                                 />
                             </div>
                         </div>
+                        {/* Meta Title Input */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                SEO Meta Title
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Enter meta title (e.g. Office Chairs | Astride)"
+                                value={metaTitle}
+                                onChange={(e) => setMetaTitle(e.target.value)}
+                                className="w-full px-4 py-3 border border-gray-400 rounded-lg outline-none text-black focus:ring-1 focus:ring-black"
+                            />
+                        </div>
+                        {/* Meta Description Input */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                SEO Meta Description
+                            </label>
+                            <textarea
+                                placeholder="Enter meta description details..."
+                                value={metaDescription}
+                                onChange={(e) => setMetaDescription(e.target.value)}
+                                rows={3}
+                                className="w-full px-4 py-3 border border-gray-400 rounded-lg outline-none text-black focus:ring-1 focus:ring-black"
+                            />
+                        </div>
 
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -217,6 +258,8 @@ export default function Page() {
                                 </div>
                             )}
                         </div>
+
+
 
                         <div className="flex gap-4">
                             <button type="submit"

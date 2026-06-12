@@ -14,6 +14,10 @@ export async function POST(req) {
         const name = formData.get("name");
         const image = formData.get("image");
 
+          // ADD THESE TWO LINES:
+        const metaTitleInput = formData.get("metaTitle");
+        const metaDescriptionInput = formData.get("metaDescription");
+
         if (!name || !image) {
             return NextResponse.json(
                 { success: false, message: "Name and image are required", },
@@ -40,9 +44,10 @@ export async function POST(req) {
             contentType: image.type,
         });
 
-        const metaTitle = `${name} | Your Company`;
+                // CHANGE THESE TWO TO DYNAMICALLY USE USER INPUTS:
+        const metaTitle = metaTitleInput || `${name} | Your Company`;
+        const metaDescription = metaDescriptionInput || `Explore ${name} at our company. Discover premium quality products and trusted solutions.`;
 
-        const metaDescription = `Explore ${name} at our company. Discover premium quality products and trusted solutions.`;
 
         const category = await Category.create({
             name,
@@ -137,6 +142,8 @@ export async function PUT(req) {
         const id = formData.get("id");
         const name = formData.get("name");
         const image = formData.get("image");
+        const metaTitleInput = formData.get("metaTitle");
+        const metaDescriptionInput = formData.get("metaDescription");
 
         if (!id) {
             return NextResponse.json(
@@ -156,7 +163,16 @@ export async function PUT(req) {
         if (name) {
             category.name = name;
             category.slug = generateSlug(name);
+        }
+        // UPDATE METADATA IF USER SENT VALUES:
+        if (metaTitleInput !== null && metaTitleInput !== undefined) {
+            category.metaTitle = metaTitleInput;
+        } else if (name) {
             category.metaTitle = `${name} | Your Company`;
+        }
+        if (metaDescriptionInput !== null && metaDescriptionInput !== undefined) {
+            category.metaDescription = metaDescriptionInput;
+        } else if (name) {
             category.metaDescription = `Explore ${name} at our company. Discover premium quality products and trusted solutions.`;
         }
 
