@@ -2,6 +2,14 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import Loader from "@/components/ui/loader";
 
+// ADD METADATA FOR THE PRODUCTS PAGE:
+export const metadata = {
+    title: "Shop Premium Ergonomic Chairs | Astride",
+    description: "Explore our full collection of premium ergonomic office chairs, gaming chairs, study chairs, and bar stools engineered for ultimate comfort.",
+};
+
+
+
 const ProductPageHome = dynamic(() => import('@/components/prodcutPage/ProductPageHome'), {
   loading: () => (
     <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">

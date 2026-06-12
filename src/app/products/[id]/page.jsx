@@ -1,17 +1,7 @@
 "use client";
 
 import React from 'react';
-import dynamic from 'next/dynamic';
-
-import Loader from "@/components/ui/loader";
-
-const DetailPage = dynamic(() => import('@/components/detailPage/detailPage'), {
-  loading: () => (
-    <div className="min-h-screen bg-white flex items-center justify-center">
-      <Loader />
-    </div>
-  )
-});
+import DetailPage from '@/components/detailPage/detailPage';
 
 export default function ProductDetailPage({ params }) {
   const unwrappedParams = React.use ? React.use(params) : params;
