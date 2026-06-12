@@ -103,8 +103,8 @@ const PRODUCTS = [
 const TABS = ["All Products", "Gaming Chair", "Office Chair", "Staff Chair", "Study Chair", "Bar Stools & Cafe Chair"];
 
 export default function ProductPageHome() {
-  const [productsList, setProductsList] = useState(PRODUCTS);
-  const [loading, setLoading] = useState(false);
+  const [productsList, setProductsList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All Products");
   const [selectedBackSupport, setSelectedBackSupport] = useState(null);
   const [selectedHours, setSelectedHours] = useState(null);
@@ -175,6 +175,70 @@ export default function ProductPageHome() {
           if (parsed && parsed.length > 0) {
             setProductsList(parsed);
             setLoading(false); // Disable loading spinner immediately
+          }
+        } else {
+          // Try loading from Navbar raw products cache (fetched in background on homepage mount)
+          const rawCached = sessionStorage.getItem("astride_nav_products_cache");
+          if (rawCached) {
+            const parsed = JSON.parse(rawCached);
+            if (parsed && parsed.length > 0) {
+              const mappedProducts = parsed.map((prod) => {
+                const discPercent = prod.oldPrice && prod.realPrice
+                  ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
+                  : 60;
+                
+                let normalizedCategory = "Gaming Chair";
+                const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
+                if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
+                  normalizedCategory = "Gaming Chair";
+                } else if (dbCategory.includes("EXECUTIVE")) {
+                  normalizedCategory = "Office Chair";
+                } else if (dbCategory.includes("STAFF")) {
+                  normalizedCategory = "Staff Chair";
+                } else if (dbCategory.includes("STUDY")) {
+                  normalizedCategory = "Study Chair";
+                } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) {
+                  normalizedCategory = "Bar Stools & Cafe Chair";
+                } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
+                  normalizedCategory = "Office Chair";
+                }
+
+                const blackVariant = prod.colorVariants?.find(
+                  (v) => v.colorName?.toLowerCase() === "black"
+                );
+                const blackImage = blackVariant?.images?.[0]?.url;
+                const fallbackImage = prod.colorVariants?.find(
+                  (v) => v.images && v.images.length > 0
+                )?.images?.[0]?.url;
+
+                const allImages = prod.colorVariants?.reduce((acc, variant) => {
+                  if (variant.images) {
+                    return [...acc, ...variant.images.map((img) => img.url)];
+                  }
+                  return acc;
+                }, []) || [];
+
+                return {
+                  id: prod._id,
+                  name: prod.productName,
+                  price: prod.realPrice,
+                  originalPrice: prod.oldPrice,
+                  discount: `-${discPercent}%`,
+                  image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+                  allImages: Array.from(new Set(allImages)),
+                  category: normalizedCategory,
+                  backSupport: prod.backSupport || "High Back",
+                  height: prod.height || "5'7\" - 6'6\"",
+                  hours: prod.hours || "8+ Hours",
+                  colors: prod.colors || ["#0f172a"],
+                  rating: prod.rating || 4.7,
+                  capacity: prod.capacity || "150 kg",
+                };
+              });
+
+              setProductsList(mappedProducts);
+              setLoading(false);
+            }
           }
         }
       } catch (e) {
