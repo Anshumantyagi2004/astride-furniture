@@ -33,23 +33,23 @@ const videos = [
         author: "Rohan Malhotra",
         quote: "The lumbar support is insane. Zero back pain after 10-hour sessions.",
         rating: 5,
-        thumbnail: "https://img.youtube.com/vi/rzfRqSPMfNE/maxresdefault.jpg",
-        embed: "https://www.youtube.com/embed/rzfRqSPMfNE?autoplay=1&mute=0",
-        link: "https://www.youtube.com/shorts/rzfRqSPMfNE?si=WnrwRG_M-E5ymXdT",
+        thumbnail: "https://img.youtube.com/vi/IouzNcfz0Yw/maxresdefault.jpg",
+        embed: "https://www.youtube.com/embed/IouzNcfz0Yw?autoplay=1&mute=0",
+        link: "https://youtu.be/IouzNcfz0Yw?si=Q1uD9dcCqiAxyPFq",
         duration: "0:58",
         accentFrom: "#EC4899",
         accentTo: "#F97316",
     },
     {
         id: 3,
-        platform: "instagram",
+        platform: "youtube",
         tag: "Aesthetic Setup",
         author: "Sneha Patel",
         quote: "My desk setup finally looks Pinterest-worthy. This chair is art.",
         rating: 5,
-        thumbnail: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=600&auto=format&fit=crop",
-        embed: "https://www.instagram.com/reel/DXlZMlbR6YR/embed",
-        link: "https://www.instagram.com/reel/DXlZMlbR6YR/?utm_source=ig_web_copy_link",
+        thumbnail: "https://img.youtube.com/vi/MWfyq3y2C-s/maxresdefault.jpg",
+        embed: "https://www.youtube.com/embed/MWfyq3y2C-s?autoplay=1&mute=0",
+        link: "https://youtube.com/shorts/MWfyq3y2C-s?si=yHliNugfKzGyEbNG",
         duration: "0:30",
         accentFrom: "#F97316",
         accentTo: "#8B5CF6",
@@ -57,13 +57,13 @@ const videos = [
     {
         id: 4,
         platform: "youtube",
-        tag: "Ergonomics Review",
-        author: "Rohan Malhotra",
-        quote: "The lumbar support is insane. Zero back pain after 10-hour sessions.",
+        tag: "Design & Comfort",
+        author: "Kabir Mehta",
+        quote: "Premium build quality and amazing adjustable arms. Highly recommend!",
         rating: 5,
-        thumbnail: "https://img.youtube.com/vi/rzfRqSPMfNE/maxresdefault.jpg",
-        embed: "https://www.youtube.com/embed/rzfRqSPMfNE?autoplay=1&mute=0",
-        link: "https://www.youtube.com/shorts/rzfRqSPMfNE?si=WnrwRG_M-E5ymXdT",
+        thumbnail: "https://img.youtube.com/vi/0OoCSmxvWkw/maxresdefault.jpg",
+        embed: "https://www.youtube.com/embed/0OoCSmxvWkw?autoplay=1&mute=0",
+        link: "https://youtube.com/shorts/0OoCSmxvWkw?si=eL47xyu4TzE3r8CU",
         duration: "0:58",
         accentFrom: "#8B5CF6",
         accentTo: "#3B82F6",
@@ -331,7 +331,7 @@ export default function VideoTestimonials() {
                                 </span>
                             </h2>
                             <p className="mt-2 text-white/40 text-xs sm:text-sm max-w-sm font-medium">
-                                Unfiltered reviews from YouTube Shorts & Instagram Reels. 100% genuine.
+                                Unfiltered reviews from YouTube Shorts. 100% genuine.
                             </p>
                         </div>
 
@@ -340,7 +340,7 @@ export default function VideoTestimonials() {
                             {[
                                 { label: "Reviews", value: "4,200+" },
                                 { label: "Avg Rating", value: "4.9 ★" },
-                            ].map((s) => (
+                             ].map((s) => (
                                 <div key={s.label} className="text-center">
                                     <p className="text-2xl font-black text-white">{s.value}</p>
                                     <p className="text-[10px] text-white/40 font-semibold uppercase tracking-widest mt-0.5">{s.label}</p>
@@ -382,7 +382,7 @@ export default function VideoTestimonials() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: 0.4 }}
-                            href="https://www.youtube.com/@astride-furniture"
+                            href="https://www.youtube.com/results?search_query=astride"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center justify-between gap-3 px-5 py-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 group"
@@ -393,7 +393,7 @@ export default function VideoTestimonials() {
                                 </div>
                                 <div>
                                     <p className="text-white font-bold text-xs">See 200+ more reviews</p>
-                                    <p className="text-white/40 text-[10px]">On YouTube & Instagram</p>
+                                    <p className="text-white/40 text-[10px]">On YouTube</p>
                                 </div>
                             </div>
                             <div className="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#8B5CF6] group-hover:bg-[#8B5CF6]/20 transition-all duration-300">
