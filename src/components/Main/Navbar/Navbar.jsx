@@ -104,8 +104,15 @@ export default function Navbar() {
     // Fetch dynamic categories and products
     const fetchData = async () => {
       try {
-        const catRes = await fetch("/api/category");
-        const catData = await catRes.json();
+        const [catRes, prodRes] = await Promise.all([
+          fetch("/api/category"),
+          fetch("/api/product")
+        ]);
+        const [catData, prodData] = await Promise.all([
+          catRes.json(),
+          prodRes.json()
+        ]);
+
         if (catData?.success) {
           const mappedCats = catData.categories.map(cat => {
             if (cat.name === "Executive Chair") {
@@ -119,8 +126,6 @@ export default function Navbar() {
           setCategories(mappedCats);
         }
         
-        const prodRes = await fetch("/api/product");
-        const prodData = await prodRes.json();
         if (prodData?.success) {
           setProducts(prodData.products);
           sessionStorage.setItem("astride_nav_products_cache", JSON.stringify(prodData.products));
