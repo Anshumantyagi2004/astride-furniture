@@ -103,8 +103,8 @@ const PRODUCTS = [
 const TABS = ["All Products", "Gaming Chair", "Office Chair", "Staff Chair", "Study Chair", "Bar Stools & Cafe Chair"];
 
 export default function ProductPageHome() {
-  const [productsList, setProductsList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [productsList, setProductsList] = useState(PRODUCTS);
+  const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All Products");
   const [selectedBackSupport, setSelectedBackSupport] = useState(null);
   const [selectedHours, setSelectedHours] = useState(null);
