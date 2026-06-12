@@ -30,6 +30,7 @@ export default function Page() {
     const [oldPrice, setOldPrice] = useState("");
     const [realPrice, setRealPrice] = useState("");
     const [category, setCategory] = useState("");
+
     const [colorVariants, setColorVariants] = useState([
         {
             colorName: "",
@@ -39,6 +40,8 @@ export default function Page() {
     ]);
     const [videoLinks, setVideoLinks] = useState([""]);
     const [categories, setCategories] = useState([]);
+    const [metaTitle, setMetaTitle] = useState("");
+    const [metaDescription, setMetaDescription] = useState("");
 
     // SPECS
     const [specifications, setSpecifications] = useState([
@@ -262,6 +265,8 @@ const handleImageChange = async (index, e) => {
             formData.append("oldPrice", oldPrice);
             formData.append("realPrice", realPrice);
             formData.append("category", category);
+            formData.append("metaTitle", metaTitle);
+            formData.append("metaDescription", metaDescription);
             formData.append("videoLinks", JSON.stringify(videoLinks));
             formData.append("specifications", JSON.stringify(specifications));
 
@@ -294,6 +299,8 @@ const handleImageChange = async (index, e) => {
                 setOldPrice("");
                 setRealPrice("");
                 setCategory("");
+                setMetaTitle("");
+                setMetaDescription("");
                 setVideoLinks([""]);
                 setSpecifications([
                     { key: "", value: "", },
@@ -444,6 +451,35 @@ const handleImageChange = async (index, e) => {
                                 placeholder="Write short description"
                                 className="w-full border border-gray-400 rounded-lg p-4 outline-none focus:ring-1 focus:ring-black text-black"
                             />
+                        </div>
+                        
+                        {/* SEO META FIELDS */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    SEO Meta Title
+                                </label>
+                                <input
+                                    type="text"
+                                    value={metaTitle}
+                                    onChange={(e) => setMetaTitle(e.target.value)}
+                                    placeholder="Enter meta title (e.g. Office Chair | Astride)"
+                                    className="w-full border border-gray-400 rounded-lg py-2 px-4 outline-none focus:ring-1 focus:ring-black text-black"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    SEO Meta Description
+                                </label>
+                                <textarea
+                                    rows={1}
+                                    value={metaDescription}
+                                    onChange={(e) => setMetaDescription(e.target.value)}
+                                    placeholder="Enter meta description details..."
+                                    className="w-full border border-gray-400 rounded-lg py-2 px-4 outline-none focus:ring-1 focus:ring-black text-black"
+                                />
+                            </div>
                         </div>
 
                         {/* LONG DESCRIPTION */}
