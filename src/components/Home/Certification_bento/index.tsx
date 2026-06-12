@@ -11,7 +11,7 @@ import {
   IconDownload
 } from '@tabler/icons-react';
 
-const dummyPdf = "data:application/pdf;base64,JVBERi0xLjQKJdfluqgKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqMiAwIG9iajw8L1R5cGUvUGFnZXMvQ291bnQgMS9LaWRzWzMgMCBSXT4+ZW5kb2JqMyAwIG9iajw8L1R5cGUvUGFnZS9QYXJlbnQgMiAwIFIvTWVkaWFCb3hbMCAwIDU5NSA4NDJdL0NvbnRlbnRzIDQgMCBSPj5lbmRvYmo0IDAgb2JqPDwvTGVuZ3RoIDU+PnN0cmVhbQplbmRzdHJlYW1lbmRvYmoKdHJhaWxlcjw8L1NpemUgNS9Sb290IDEgMCBSPj4lJUVPRg==";
+
 
 const marqueeItems = [
   { icon: IconCertificate, label: 'ISO 9001:2015', color: 'text-[#93c5fd]' },
@@ -66,12 +66,12 @@ const CertificationsBento = () => {
           </div>
           
           <a
-            href={dummyPdf}
-            download="all-certificates.pdf"
+            href="/Pdf/BIFMA.pdf"
+            download="BIFMA.pdf"
             className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-[#1a1a1a] font-black px-5 py-2.5 rounded-xl transition-all duration-200 text-xs tracking-wider uppercase w-fit cursor-pointer group"
           >
             <IconDownload size={16} stroke={2.5} className="text-white group-hover:text-[#1a1a1a] transition-colors duration-200" />
-            Download All PDFs
+            Download BIFMA PDF
           </a>
         </motion.div>
 
@@ -123,8 +123,8 @@ const CertificationsBento = () => {
               </p>
               
               <a 
-                href={dummyPdf} 
-                download="iso-certificate.pdf" 
+                href="/Pdf/pdf_2.pdf" 
+                download="ISO-9001-2015.pdf" 
                 className="inline-flex items-center gap-2 bg-black/20 hover:bg-black/40 text-[#93c5fd] font-medium px-4 py-2 rounded-xl transition-all duration-200 text-sm w-fit cursor-pointer group"
               >
                 <IconDownload size={16} stroke={2.5} className="text-[#93c5fd]" />
@@ -154,8 +154,8 @@ const CertificationsBento = () => {
                   </h3>
                 </div>
                 <a 
-                  href={dummyPdf} 
-                  download="tuv-certificate.pdf" 
+                  href="/Pdf/Gst.pdf" 
+                  download="GST.pdf" 
                   className="inline-flex items-center justify-center w-9 h-9 shrink-0 rounded-xl bg-black/20 text-[#86efac] hover:bg-black/40 transition-all cursor-pointer"
                   title="Download TUV Certificate"
                 >
@@ -182,8 +182,8 @@ const CertificationsBento = () => {
                   </h3>
                 </div>
                 <a 
-                  href={dummyPdf} 
-                  download="ansi-certificate.pdf" 
+                  href="/Pdf/BIFMA.pdf" 
+                  download="BIFMA.pdf" 
                   className="inline-flex items-center justify-center w-9 h-9 shrink-0 rounded-xl bg-black/20 text-[#fde047] hover:bg-black/40 transition-all cursor-pointer"
                   title="Download ANSI Certificate"
                 >
