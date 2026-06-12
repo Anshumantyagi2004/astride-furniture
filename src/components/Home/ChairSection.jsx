@@ -31,8 +31,8 @@ const chairData = [
     { 
         mainImage: "/Png1/chair10_FitWell.webp", 
         hoverImage: "/Png1/chair10_FitWell10a.png", 
-        name: "FitWell Pro", 
-        subtitle: "Ergonomic Comfort",
+        name: "Ergonomic Comfort", 
+        subtitle: "FlexPro",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
@@ -57,11 +57,24 @@ const chairData = [
 function ChairCard({ chair, index, products }) {
     const [isHovered, setIsHovered] = useState(false);
 
-    const match = products.find(p => 
-        p.productName.toLowerCase() === chair.subtitle.toLowerCase() ||
-        p.productName.toLowerCase().includes(chair.subtitle.toLowerCase())
-    );
-    const targetUrl = match ? `/products/${match._id}` : `/products`;
+    let targetUrl = "/products";
+    if (chair.subtitle === "ErgoFit" || chair.subtitle === "Ergonomic White") {
+        targetUrl = "/products/6a27a9016149f2acd03556be";
+    } else if (chair.subtitle === "FlexPro") {
+        targetUrl = "/products/6a22688542af57599805060e";
+    } else if (chair.subtitle === "FitWell Ergonomic") {
+        targetUrl = "/products/6a2269068d4f1a8c812a9e92";
+    } else if (chair.subtitle === "Octave") {
+        targetUrl = "/products/6a225caabb685c5865ef3f59";
+    } else {
+        const match = products.find(p => 
+            p.productName.toLowerCase() === chair.subtitle.toLowerCase() ||
+            p.productName.toLowerCase().includes(chair.subtitle.toLowerCase())
+        );
+        if (match) {
+            targetUrl = `/products/${match._id}`;
+        }
+    }
 
     return (
         <Link
