@@ -157,20 +157,38 @@ export default function Navbar3() {
         "Bar Stools & Cafe Chair",
     ];
 
-    // Find the category object that matches the hovered item (ignoring case)
-    const activeCategoryObj = categories.find(
-        (c) => c.name.toLowerCase().trim() === activeMenu?.toLowerCase().trim()
-    );
+    const getNormalizedCategoryName = (p: any) => {
+        if (!p.category) return "";
+        const dbCategory = typeof p.category === "object" && p.category.name ? p.category.name.toUpperCase() : "";
+        if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
+            return "Gaming Chair";
+        }
+        if (dbCategory.includes("EXECUTIVE")) {
+            return "Office Chair";
+        }
+        if (dbCategory.includes("STAFF")) {
+            return "Staff Chair";
+        }
+        if (dbCategory.includes("STUDY")) {
+            return "Study Chair";
+        }
+        if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) {
+            return "Bar Stools & Cafe Chair";
+        }
+        if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
+            return "Office Chair";
+        }
+        return "";
+    };
 
     // Resolve which chairs to show: try dynamic API products first, fallback to static CHAIR_CATEGORIES
     let displayChairs: SeriesChair[] = [];
     if (activeMenu) {
-        if (products.length > 0 && activeCategoryObj) {
+        if (products.length > 0) {
             displayChairs = products
                 .filter((p) => {
-                    if (!p.category) return false;
-                    const pCatId = typeof p.category === "object" ? p.category._id : p.category;
-                    return pCatId === activeCategoryObj._id;
+                    const normalizedCat = getNormalizedCategoryName(p);
+                    return normalizedCat === activeMenu;
                 })
                 .map((p) => ({
                     name: p.productName,

@@ -192,18 +192,38 @@ export default function Navbar() {
 
   const categoryList = categories.length > 0 ? categories : fallbackCategories;
   
-  // Find current active category
-  const activeCategoryObj = categoryList.find(c => c.name.toLowerCase().trim() === activeMenu?.toLowerCase().trim());
-  
+  const getNormalizedCategoryName = (p) => {
+    if (!p.category) return "";
+    const dbCategory = typeof p.category === 'object' && p.category.name ? p.category.name.toUpperCase() : "";
+    if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
+      return "Gaming Chair";
+    }
+    if (dbCategory.includes("EXECUTIVE")) {
+      return "Office Chair";
+    }
+    if (dbCategory.includes("STAFF")) {
+      return "Staff Chair";
+    }
+    if (dbCategory.includes("STUDY")) {
+      return "Study Chair";
+    }
+    if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) {
+      return "Bar Stools & Cafe Chair";
+    }
+    if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
+      return "Office Chair";
+    }
+    return "";
+  };
+
   // Retrieve display products
   let displayChairs = [];
   if (activeMenu) {
-    if (products.length > 0 && activeCategoryObj) {
+    if (products.length > 0) {
       displayChairs = products
         .filter(p => {
-          if (!p.category) return false;
-          const pCatId = typeof p.category === 'object' ? p.category._id : p.category;
-          return pCatId === activeCategoryObj._id;
+          const normalizedCat = getNormalizedCategoryName(p);
+          return normalizedCat === activeMenu;
         })
         .map(p => ({
           name: p.productName,
