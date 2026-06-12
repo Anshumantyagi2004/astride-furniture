@@ -62,6 +62,20 @@ export default function Header0() {
     );
   }
 
+  const prefetchProducts = async () => {
+    try {
+      if (typeof window !== "undefined" && !sessionStorage.getItem("astride_nav_products_cache")) {
+        const res = await fetch("/api/product");
+        const data = await res.json();
+        if (data?.success) {
+          sessionStorage.setItem("astride_nav_products_cache", JSON.stringify(data.products));
+        }
+      }
+    } catch (err) {
+      console.error("Prefetch error:", err);
+    }
+  };
+
   return (
     <section id="circular-chairs" className="relative w-full h-[70vh] min-h-[520px] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
       {/* Background Image */}
@@ -83,6 +97,7 @@ export default function Header0() {
       >
         <Link
           href="/products"
+          onMouseEnter={prefetchProducts}
           style={{ transform: "translateY(32px) translateX(-80px) " }} // Move up by 20px
           className="inline-flex items-center justify-center bg-[#131313] hover:bg-[#8B5CF6] text-white font-black px-8 py-3.5 rounded-full shadow-[4px_4px_0_#000] border-[2.5px] border-black hover:shadow-[1px_1px_0_#000] hover:translate-y-[3px] hover:translate-x-[3px] transition-all duration-150 text-xs sm:text-sm tracking-wider uppercase"
         >
