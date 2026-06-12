@@ -299,7 +299,7 @@ export default function VideoTestimonials() {
 
     return (
         <section
-            className={`relative w-full py-10 lg:py-14 overflow-hidden ${sans.className}`}
+            className={`relative w-full pt-2 pb-10 lg:pt-3 lg:pb-14 overflow-hidden ${sans.className}`}
             style={{ backgroundColor: "#0d0d0d" }}
         >
             {/* Ambient gradient orbs */}

@@ -309,7 +309,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
 
     if (isMobile) {
         return (
-            <div ref={containerRef} className="w-full bg-[#090807] py-10 px-8 flex flex-col gap-6">
+            <div ref={containerRef} className="w-full bg-[#090807] pt-2 pb-10 px-8 flex flex-col gap-6">
                 {/* Title at top */}
                 <div className="text-center">
                     <span className="text-zinc-500 text-[10px] tracking-widest uppercase block mb-0.5">Interactive Experience</span>
@@ -426,7 +426,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                                     key={index}
                                     className={`absolute inset-0 flex transition-all duration-700 ease-in-out ${
                                         sec.align === 'center'
-                                            ? 'items-start justify-center px-12 text-center pt-24'
+                                            ? 'items-start justify-center px-12 text-center pt-10'
                                             : sec.align === 'left'
                                                 ? 'items-center justify-start px-12'
                                                 : 'items-center justify-end px-12'

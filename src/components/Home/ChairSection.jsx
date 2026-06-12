@@ -129,7 +129,7 @@ function ChairCard({ chair, index }) {
 
 export default function ChairSection() {
     return (
-        <section className={`relative overflow-hidden bg-[#f1f3f5] pb-2 pt-10 border-t border-t-white ${sans.className}`}>
+        <section className={`relative overflow-hidden bg-[#f1f3f5] pb-2 pt-2 border-t border-t-white ${sans.className}`}>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-zinc-400/10 blur-[180px] rounded-full"></div>
             <div className="relative z-10 md:px-25 px-4 lg:px-10">
                 <div className="text-center mb-8">

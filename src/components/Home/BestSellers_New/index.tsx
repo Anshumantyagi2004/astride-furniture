@@ -326,13 +326,13 @@ export default function BestSellersSection_New() {
     <section id="shop" className="pt-2 pb-[10px] md:pt-3 md:pb-[15px] lg:pt-4 lg:pb-[20px]">
       <div className="mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12">
         {/* Section Header */}
-        <div className="mb-12 flex flex-wrap items-end justify-between gap-5">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-5">
           <div>
             <span className={`inline-block rounded-full border border-[#131313] bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-[#8B5CF6] ${sans.className}`}>
               Explore bestsellers
             </span>
 
-            <h2 className={`mt-5 text-[36px] font-black leading-tight text-[#131313] md:text-[48px] lg:text-[58px] ${sans.className}`}>
+            <h2 className={`mt-2 text-[36px] font-black leading-tight text-[#131313] md:text-[48px] lg:text-[58px] ${sans.className}`}>
               Best selling{" "}
               <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold">
                 chairs.

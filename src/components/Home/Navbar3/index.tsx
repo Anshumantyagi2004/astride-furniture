@@ -74,6 +74,8 @@ export default function Navbar3() {
     const [categories, setCategories] = useState<any[]>([]);
     const [products, setProducts] = useState<any[]>([]);
     const [cartCount, setCartCount] = useState(0);
+    const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
     const dropdownScrollRef = useRef<HTMLDivElement>(null);
 
     const scrollDropdown = (dir: "left" | "right") => {
@@ -270,22 +272,66 @@ export default function Navbar3() {
                     <div className="flex items-center gap-[18px]">
 
                         {/* Search */}
-                        <Link
-                            href="/products"
-                            className="relative grid place-items-center text-slate-900 hover:text-slate-700 transition-colors"
-                            aria-label="Search"
+                        <div 
+                            className="relative flex items-center bg-transparent transition-all duration-300 rounded-full"
+                            onMouseEnter={() => setIsSearchExpanded(true)}
+                            onMouseLeave={() => {
+                                if (searchQuery === "") {
+                                    setIsSearchExpanded(false);
+                                }
+                            }}
                         >
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2.2}
-                                className="w-[22px] h-[22px]"
+                            <div className={`relative overflow-hidden transition-all duration-350 flex items-center ease-in-out ${isSearchExpanded ? 'w-36 md:w-44 pl-1.5 pr-0.5 opacity-100' : 'w-0 opacity-0 pointer-events-none'}`}>
+                                <input
+                                    type="text"
+                                    placeholder="Search products..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+                                        }
+                                    }}
+                                    className="w-full bg-slate-100 border border-slate-200 rounded-full pl-3 pr-7 py-1 text-xs outline-none text-slate-800 font-medium placeholder:text-slate-400"
+                                />
+                                {searchQuery && (
+                                    <button
+                                        onClick={() => {
+                                            setSearchQuery("");
+                                            setIsSearchExpanded(false);
+                                        }}
+                                        className="absolute right-2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                                        aria-label="Clear search"
+                                    >
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-3.5 h-3.5">
+                                            <path d="M18 6L6 18M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                )}
+                            </div>
+                            <button
+                                onClick={() => {
+                                    if (searchQuery.trim() !== "") {
+                                        router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+                                    } else {
+                                        setIsSearchExpanded(!isSearchExpanded);
+                                    }
+                                }}
+                                className="relative grid place-items-center text-slate-900 hover:text-slate-700 transition-colors shrink-0 cursor-pointer"
+                                aria-label="Search"
                             >
-                                <circle cx="11" cy="11" r="7" />
-                                <path d="m20 20-3.5-3.5" />
-                            </svg>
-                        </Link>
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2.2}
+                                    className="w-[22px] h-[22px]"
+                                >
+                                    <circle cx="11" cy="11" r="7" />
+                                    <path d="m20 20-3.5-3.5" />
+                                </svg>
+                            </button>
+                        </div>
 
                         {/* Wishlist */}
                         <Link
