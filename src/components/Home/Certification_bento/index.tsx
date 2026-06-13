@@ -2,11 +2,16 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
 import {
   IconCertificate,
   IconArmchair,
   IconDownload
 } from '@tabler/icons-react';
+
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -70,7 +75,7 @@ const CertCard = ({
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
-    <div className="w-full relative" style={{ height: "440px", perspective: "1000px" }}>
+    <div className="w-full relative h-[500px] sm:h-[460px] md:h-[440px]" style={{ perspective: "1000px" }}>
       <div 
         style={{
           width: "100%",
@@ -96,7 +101,7 @@ const CertCard = ({
                 <div className="w-10 h-10 rounded-xl bg-black/20 flex items-center justify-center shrink-0">
                   <Icon size={22} stroke={2.5} style={{ color: accentColor }} />
                 </div>
-                <h3 className="text-xl font-bold truncate" style={{ color: accentColor }}>
+                <h3 className="text-lg md:text-xl font-bold truncate" style={{ color: accentColor }}>
                   {title}
                 </h3>
               </div>
@@ -108,18 +113,18 @@ const CertCard = ({
               </button>
             </div>
             
-            <p className="text-[15.5px] font-medium text-white leading-relaxed mb-4">
+            <p className="text-[14px] md:text-[15.5px] font-medium text-white leading-relaxed mb-4">
               {subtitle}
             </p>
-
-            <div className="space-y-3 bg-black/20 p-4.5 rounded-xl border border-white/5 shadow-inner">
-              <h4 className="text-[12px] uppercase tracking-wider font-black text-white/90" style={{ color: accentColor }}>
+ 
+            <div className="space-y-3 bg-black/20 p-3.5 md:p-4.5 rounded-xl border border-white/5 shadow-inner">
+              <h4 className="text-[11px] md:text-[12px] uppercase tracking-wider font-black text-white/90" style={{ color: accentColor }}>
                 {whyTitle}
               </h4>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {whyPoints.map((pt, i) => (
-                  <div key={i} className="flex items-start gap-2.5 text-[16px] leading-relaxed">
-                    <span className="text-[18px] shrink-0 leading-none select-none" style={{ color: accentColor }}>✓</span>
+                  <div key={i} className="flex items-start gap-2 text-[14px] md:text-[16px] leading-relaxed">
+                    <span className="text-[16px] md:text-[18px] shrink-0 leading-none select-none" style={{ color: accentColor }}>✓</span>
                     <p className="text-white/90">
                       <strong className="text-white font-bold">{pt.title}:</strong> {pt.desc}
                     </p>
@@ -196,8 +201,61 @@ const CertCard = ({
 };
 
 const CertificationsBento = () => {
+  const certs = [
+    {
+      title: "ISO 9001:2015",
+      subtitle: "Quality management system for the manufacturing and supply of revolving chairs.",
+      whyTitle: "WHY ASTRIDE IS BETTER THAN COMPETITORS?",
+      whyPoints: [
+        { title: "Standardized Quality", desc: "Unlike generic brands with volatile quality, Astride implements ISO-audited repeatable assembly lines." },
+        { title: "Defect-Free Guarantee", desc: "Our certified production workflow virtually eliminates component mismatches and visual flaws." },
+        { title: "Strict Quality Control", desc: "Every batch undergoes rigorous quality-gate tests before leaving our manufacturing unit." }
+      ],
+      pdfUrl: "/Pdf/pdf_2.pdf",
+      bgColor: "#2c405a",
+      accentColor: "#93c5fd",
+      footerLeft: "Status: Active",
+      footerRight: "Audit: Passed",
+      icon: IconCertificate,
+      iframeHeight: "550px",
+      regNo: "Reg: 25EQQW45"
+    },
+    {
+      title: "ANSI BIFMA X5.1",
+      subtitle: "General-purpose office chair durability standard, 2017 (R2022).",
+      whyTitle: "WHY ASTRIDE IS BETTER THAN COMPETITORS?",
+      whyPoints: [
+        { title: "Ten-Year Durability", desc: "Astride swivels and tilts withstand 120,000+ extreme load cycles vs. competitors' quick wear." },
+        { title: "Heavyweight Safety", desc: "Armrests, backrests, and premium cylinders secure heavy payloads without breaking or leaking." },
+        { title: "Advanced Anti-Topple", desc: "Built with high-spec stability margins to prevent tipping at any dynamic tilt configurations." }
+      ],
+      pdfUrl: "/Pdf/BIFMA.pdf",
+      bgColor: "#1b3f2f",
+      accentColor: "#4ade80",
+      footerLeft: "Status: Active",
+      footerRight: "Safety: Certified",
+      icon: IconArmchair,
+      iframeHeight: "1200px",
+      regNo: "Standard Compliance"
+    }
+  ];
+
   return (
     <section className="w-full pt-8 pb-8 px-5 md:px-8 lg:px-16 overflow-hidden" style={{ backgroundColor: "#1a1a1a" }}>
+      {/* CSS custom override for swiper pagination in this component */}
+      <style jsx global>{`
+        .cert-swiper .swiper-pagination-bullet {
+          background: rgba(255, 255, 255, 0.3) !important;
+          opacity: 1 !important;
+        }
+        .cert-swiper .swiper-pagination-bullet-active {
+          background: #9333EA !important;
+        }
+        .cert-swiper.swiper {
+          overflow: visible !important;
+        }
+      `}</style>
+
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -215,51 +273,32 @@ const CertificationsBento = () => {
           </div>
         </motion.div>
 
-        {/* Bento grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* ISO Card */}
-          <motion.div variants={itemVariants}>
-            <CertCard 
-              title="ISO 9001:2015"
-              subtitle="Quality management system for the manufacturing and supply of revolving chairs."
-              whyTitle="WHY ASTRIDE IS BETTER THAN COMPETITORS?"
-              whyPoints={[
-                { title: "Standardized Quality", desc: "Unlike generic brands with volatile quality, Astride implements ISO-audited repeatable assembly lines." },
-                { title: "Defect-Free Guarantee", desc: "Our certified production workflow virtually eliminates component mismatches and visual flaws." },
-                { title: "Strict Quality Control", desc: "Every batch undergoes rigorous quality-gate tests before leaving our manufacturing unit." }
-              ]}
-              pdfUrl="/Pdf/pdf_2.pdf"
-              bgColor="#2c405a"
-              accentColor="#93c5fd"
-              footerLeft="Status: Active"
-              footerRight="Audit: Passed"
-              icon={IconCertificate}
-              iframeHeight="550px"
-              regNo="Reg: 25EQQW45"
-            />
-          </motion.div>
+        {/* MOBILE SLIDER (Swiper) */}
+        <div className="block md:hidden w-full pb-8">
+          <Swiper
+            modules={[Pagination]}
+            pagination={{ clickable: true }}
+            spaceBetween={20}
+            slidesPerView={1}
+            className="cert-swiper w-full"
+          >
+            {certs.map((cert, idx) => (
+              <SwiperSlide key={idx}>
+                <motion.div variants={itemVariants}>
+                  <CertCard {...cert} />
+                </motion.div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
 
-          {/* ANSI BIFMA Card */}
-          <motion.div variants={itemVariants}>
-            <CertCard 
-              title="ANSI BIFMA X5.1"
-              subtitle="General-purpose office chair durability standard, 2017 (R2022)."
-              whyTitle="WHY ASTRIDE IS BETTER THAN COMPETITORS?"
-              whyPoints={[
-                { title: "Ten-Year Durability", desc: "Astride swivels and tilts withstand 120,000+ extreme load cycles vs. competitors' quick wear." },
-                { title: "Heavyweight Safety", desc: "Armrests, backrests, and premium cylinders secure heavy payloads without breaking or leaking." },
-                { title: "Advanced Anti-Topple", desc: "Built with high-spec stability margins to prevent tipping at any dynamic tilt configurations." }
-              ]}
-              pdfUrl="/Pdf/BIFMA.pdf"
-              bgColor="#1b3f2f"
-              accentColor="#4ade80"
-              footerLeft="Status: Active"
-              footerRight="Safety: Certified"
-              icon={IconArmchair}
-              iframeHeight="1200px"
-              regNo="Standard Compliance"
-            />
-          </motion.div>
+        {/* DESKTOP BENTO GRID */}
+        <div className="hidden md:grid md:grid-cols-2 gap-6">
+          {certs.map((cert, idx) => (
+            <motion.div key={idx} variants={itemVariants}>
+              <CertCard {...cert} />
+            </motion.div>
+          ))}
         </div>
       </motion.div>
     </section>

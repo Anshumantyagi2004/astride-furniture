@@ -29,10 +29,10 @@ export default function Footer() {
     return (
         <footer className="bg-[#131313] text-white pt-[40px] font-sans">
             <div className="max-w-[1280px] mx-auto px-6 md:px-12 lg:px-20">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.4fr] gap-10 pb-[28px]">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.4fr] gap-x-6 gap-y-10 pb-[28px]">
                     
                     {/* Brand Section */}
-                    <div>
+                    <div className="col-span-2 md:col-span-1">
                         <Link href="/" className="inline-flex items-center gap-[10px] text-white hover:opacity-90 transition-opacity">
                             <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth={2.6} strokeLinejoin="round" className="w-[34px] h-[34px]">
                                 <path d="M20 4 5 13v14l15 9 15-9V13L20 4z"/>
@@ -63,9 +63,9 @@ export default function Footer() {
                             ))}
                         </div>
                     </div>
-
+ 
                     {/* Shop Links */}
-                    <div>
+                    <div className="col-span-1">
                         <h4 className="font-sans text-[14px] uppercase tracking-[0.08em] mb-[18px] text-[#DCF351] font-black">
                             Shop
                         </h4>
@@ -85,9 +85,9 @@ export default function Footer() {
                             </Link>
                         ))}
                     </div>
-
+ 
                     {/* Company Links (with Left Border) */}
-                    <div className="lg:border-l lg:border-[#2c2c2c] lg:pl-8">
+                    <div className="col-span-1 lg:border-l lg:border-[#2c2c2c] lg:pl-8">
                         <h4 className="font-sans text-[14px] uppercase tracking-[0.08em] mb-[18px] text-[#DCF351] font-black">
                             Company
                         </h4>
@@ -107,9 +107,9 @@ export default function Footer() {
                             </Link>
                         ))}
                     </div>
-
+ 
                     {/* Help Links (with Left Border) */}
-                    <div className="lg:border-l lg:border-[#2c2c2c] lg:pl-8">
+                    <div className="col-span-1 lg:border-l lg:border-[#2c2c2c] lg:pl-8">
                         <h4 className="font-sans text-[14px] uppercase tracking-[0.08em] mb-[18px] text-[#DCF351] font-black">
                             Help
                         </h4>
@@ -130,9 +130,9 @@ export default function Footer() {
                             </Link>
                         ))}
                     </div>
-
+ 
                     {/* Support Section with Left Border */}
-                    <div className="lg:border-l lg:border-[#2c2c2c] lg:pl-8">
+                    <div className="col-span-1 lg:border-l lg:border-[#2c2c2c] lg:pl-8">
                         <h4 className="font-sans text-[14px] uppercase tracking-[0.08em] mb-[18px] text-[#DCF351] font-black">
                             Support
                         </h4>
