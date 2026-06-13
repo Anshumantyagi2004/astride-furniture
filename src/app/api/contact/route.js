@@ -1,39 +1,38 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
-import Enquiry from "@/models/enquiry/Enquiry";
+import Contact from "@/models/contact/Contact";
 
-// Handle POST request to submit a new corporate enquiry
+// 1. Submit a Contact Form (POST)
 export async function POST(req) {
   try {
     await connectDB();
-
     const body = await req.json();
-    const { fullName, companyName, quantity, email, phone, location } = body;
+    const { fullName, email, companyName, phone, state, city, message } = body;
 
-    // Validate required fields
-    if (!fullName || !companyName || !quantity || !email || !location) {
+    if (!fullName || !email || !state || !city || !message) {
       return NextResponse.json(
         { success: false, message: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const enquiry = await Enquiry.create({
+    const contact = await Contact.create({
       fullName,
-      companyName,
-      quantity: Number(quantity),
       email,
+      companyName: companyName || "",
       phone: phone || "",
-      location,
+      state,
+      city,
+      message,
     });
 
     return NextResponse.json({
       success: true,
-      message: "Enquiry submitted successfully",
-      enquiry,
+      message: "Message sent successfully!",
+      contact,
     });
   } catch (error) {
-    console.error("Enquiry submission error:", error);
+    console.error("Contact Form submission error:", error);
     return NextResponse.json(
       { success: false, message: error.message },
       { status: 500 }
@@ -41,16 +40,14 @@ export async function POST(req) {
   }
 }
 
-// Handle GET request to view enquiries (for admin dashboard)
+// 2. Fetch all Messages (GET)
 export async function GET() {
   try {
     await connectDB();
-
-    const enquiries = await Enquiry.find().sort({ createdAt: -1 });
-
+    const contacts = await Contact.find().sort({ createdAt: -1 });
     return NextResponse.json({
       success: true,
-      enquiries,
+      contacts,
     });
   } catch (error) {
     return NextResponse.json(
@@ -60,7 +57,7 @@ export async function GET() {
   }
 }
 
-// Handle PUT request to update enquiry status
+// 3. Update status (PUT)
 export async function PUT(req) {
   try {
     await connectDB();
@@ -68,7 +65,7 @@ export async function PUT(req) {
     const id = searchParams.get("id");
     const { status } = await req.json();
 
-    const enquiry = await Enquiry.findByIdAndUpdate(
+    const contact = await Contact.findByIdAndUpdate(
       id,
       { status },
       { new: true }
@@ -76,8 +73,8 @@ export async function PUT(req) {
 
     return NextResponse.json({
       success: true,
-      message: "Enquiry status updated successfully",
-      enquiry,
+      message: "Contact status updated successfully",
+      contact,
     });
   } catch (error) {
     return NextResponse.json(
@@ -87,18 +84,18 @@ export async function PUT(req) {
   }
 }
 
-// Handle DELETE request to delete an enquiry
+// 4. Delete message (DELETE)
 export async function DELETE(req) {
   try {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    await Enquiry.findByIdAndDelete(id);
+    await Contact.findByIdAndDelete(id);
 
     return NextResponse.json({
       success: true,
-      message: "Enquiry deleted successfully",
+      message: "Message deleted successfully",
     });
   } catch (error) {
     return NextResponse.json(
