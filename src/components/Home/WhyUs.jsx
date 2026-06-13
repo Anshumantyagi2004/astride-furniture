@@ -10,6 +10,10 @@ import {
     Sparkles,
 } from "lucide-react";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
+
 const sans = Plus_Jakarta_Sans({
     subsets: ["latin"],
     weight: ["400", "500", "600", "700", "800"],
@@ -78,8 +82,41 @@ export default function WhyUs() {
                     </p>
                 </motion.div>
 
-                {/* FEATURE CARDS */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+                {/* MOBILE VIEW (Swiper) */}
+                <div className="block md:hidden w-full pb-4">
+                    <Swiper
+                        modules={[Autoplay]}
+                        spaceBetween={12}
+                        slidesPerView={2}
+                        loop={true}
+                        autoplay={{
+                            delay: 1500,
+                            disableOnInteraction: false,
+                        }}
+                        className="w-full !overflow-hidden"
+                    >
+                        {features.map((item, index) => (
+                            <SwiperSlide key={index} className="w-full pb-2 pr-1">
+                                <div className="group relative rounded-[16px] border-2 border-[#131313] bg-white p-4 flex flex-col items-center justify-center text-center gap-3 overflow-hidden cursor-default min-h-[130px] shadow-[4px_4px_0_#131313] active:translate-y-[2px] active:shadow-[2px_2px_0_#131313] transition-all duration-200">
+                                    {/* ICON BOX */}
+                                    <div className="relative w-11 h-11 rounded-full bg-[#0F1E36] border-2 border-[#131313] flex items-center justify-center text-white flex-shrink-0 shadow-[2px_2px_0_#131313]">
+                                        <div className="relative z-10 scale-90">{item.icon}</div>
+                                    </div>
+
+                                    {/* CONTENT */}
+                                    <div className="relative z-10 w-full">
+                                        <h3 className="text-[11px] font-extrabold text-[#131313] uppercase tracking-wider font-sans">
+                                            {item.title}
+                                        </h3>
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                </div>
+
+                {/* DESKTOP VIEW (Grid) */}
+                <div className="hidden md:grid grid-cols-2 xl:grid-cols-4 gap-5">
                     {features.map((item, index) => (
                         <motion.div
                             key={index}
@@ -88,7 +125,7 @@ export default function WhyUs() {
                             transition={{ duration: 0.5, delay: index * 0.08 }}
                             viewport={{ once: true }}
                             whileHover={{ y: -8 }}
-                            className="group relative rounded-[22px] md:rounded-[28px] border border-slate-200/70 bg-white p-4 md:p-8 flex flex-row items-center gap-4 md:block overflow-hidden transition-all duration-400 hover:border-slate-300 hover:shadow-[0_16px_48px_rgba(15,23,42,0.06)] cursor-default"
+                            className="group relative rounded-[28px] border border-slate-200/70 bg-white p-8 flex flex-row items-center gap-4 md:block overflow-hidden transition-all duration-400 hover:border-slate-300 hover:shadow-[0_16px_48px_rgba(15,23,42,0.06)] cursor-default"
                         >
                             {/* CARD GLASSY TOP HIGHLIGHT */}
                             <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white to-transparent" />

@@ -1,3 +1,6 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Plus_Jakarta_Sans } from "next/font/google";
 
@@ -14,6 +17,15 @@ export default function AboutSection_New() {
     "Sleek aesthetics",
     "Modern designs",
   ];
+
+  const [isMd, setIsMd] = useState(false);
+
+  useEffect(() => {
+    setIsMd(window.innerWidth >= 768);
+    const handleResize = () => setIsMd(window.innerWidth >= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <section
@@ -45,7 +57,7 @@ export default function AboutSection_New() {
               and serious support.
             </p>
 
-            <p className={`mt-5 max-w-[540px] text-[16px] font-medium leading-8 text-[#333333] ${sans.className}`}>
+            <p className={`mt-5 max-w-[540px] text-[16px] font-medium leading-8 text-[#333333] ${sans.className} hidden md:block`}>
               Mesh backs, lumbar support, revolving bases, adjustable
               everything — built with innovation, durability, and a whole lot
               of style.
@@ -77,11 +89,10 @@ export default function AboutSection_New() {
           <div className="relative">
             {/* Frame */}
             <div
-              className="rotate-[2deg] bg-gradient-to-br from-[#A78BFA] to-[#EC4899] p-[18px]"
               style={{
-                clipPath:
-                  "polygon(0 6%,5% 0,95% 2%,100% 10%,98% 94%,92% 100%,6% 98%,0 90%)",
+                clipPath: isMd ? "polygon(0 6%, 5% 0, 95% 2%, 100% 10%, 98% 94%, 92% 100%, 6% 98%, 0 90%)" : "none"
               }}
+              className="about-img-frame md:rotate-[2deg] bg-gradient-to-br from-[#A78BFA] to-[#EC4899] p-[18px]"
             >
               <Image
                 src="https://astride-furniture.vercel.app/Product/AlphaBrown_8.webp"

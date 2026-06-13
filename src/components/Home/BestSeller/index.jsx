@@ -57,9 +57,9 @@ const BestSellerCard = ({ product }) => {
         className="cursor-pointer"
       >
         {/* Image Container - Reduced aspect ratio for shorter length */}
-        <div className="relative w-full aspect-[4/3.3] bg-[#F5F5F5] rounded-[24px] p-5 mb-4 overflow-hidden flex flex-col items-center justify-center transition-colors duration-300 group-hover:bg-[#EFEFEF]">
+        <div className="relative w-full aspect-[4/3.3] bg-[#F5F5F5] rounded-[16px] md:rounded-[24px] p-3 md:p-5 mb-3 md:mb-4 overflow-hidden flex flex-col items-center justify-center transition-colors duration-300 group-hover:bg-[#EFEFEF]">
           {/* Tag */}
-          <div className="absolute top-4 left-4 bg-white px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-widest text-[#8B5CF6] shadow-sm z-10 uppercase font-sans">
+          <div className="absolute top-2.5 left-2.5 md:top-4 md:left-4 bg-white px-2 py-0.5 md:px-2.5 rounded-full text-[8px] md:text-[9px] font-bold tracking-widest text-[#8B5CF6] shadow-sm z-10 uppercase font-sans">
             {product.category || 'Premium'}
           </div>
           
@@ -89,17 +89,17 @@ const BestSellerCard = ({ product }) => {
 
         {/* Product Info */}
         <div className="flex flex-col font-sans">
-          <h3 className="text-base font-semibold text-[#111111] mb-1 font-sans group-hover:text-[#8B5CF6] transition-colors">
+          <h3 className="text-sm md:text-base font-semibold text-[#111111] mb-1 font-sans group-hover:text-[#8B5CF6] transition-colors line-clamp-1">
             {product.name}
           </h3>
           {/* Clamped description for compact height */}
-          <p className="text-xs text-[#666666] leading-relaxed mb-2 line-clamp-2 font-sans">
+          <p className="text-[11px] md:text-xs text-[#666666] leading-relaxed mb-2 line-clamp-2 font-sans min-h-[32px] md:min-h-[36px]">
             {product.description}
           </p>
-          <div className="font-bold text-xs text-[#111111] tracking-wide mb-3 flex items-center gap-2 font-sans">
+          <div className="font-bold text-[11px] md:text-xs text-[#111111] tracking-wide mb-3 flex flex-wrap items-center gap-1.5 md:gap-2 font-sans">
             <span>₹{product.price.toLocaleString("en-IN")}</span>
-            <span className="text-gray-400 text-[10px] line-through font-normal">₹{product.originalPrice.toLocaleString("en-IN")}</span>
-            <span className="text-[#EC4899] text-[10px] font-extrabold">{product.discount} OFF</span>
+            <span className="text-gray-400 text-[9px] md:text-[10px] line-through font-normal">₹{product.originalPrice.toLocaleString("en-IN")}</span>
+            <span className="text-[#EC4899] text-[9px] md:text-[10px] font-extrabold">{product.discount} OFF</span>
           </div>
         </div>
       </div>
@@ -107,7 +107,7 @@ const BestSellerCard = ({ product }) => {
       {/* Add to Cart Button */}
       <button 
         onClick={handleAddToCart}
-        className="w-full bg-white border border-[#E5E5E5] text-[#111111] py-2.5 rounded-lg text-xs font-bold tracking-wide hover:bg-[#8B5CF6] hover:text-white hover:border-[#8B5CF6] transition-all duration-300 font-sans cursor-pointer"
+        className="w-full bg-white border border-[#E5E5E5] text-[#111111] py-2 md:py-2.5 rounded-lg text-[10px] md:text-xs font-bold tracking-wide hover:bg-[#8B5CF6] hover:text-white hover:border-[#8B5CF6] transition-all duration-300 font-sans cursor-pointer"
       >
         Add to Cart
       </button>
@@ -219,7 +219,7 @@ export default function BestSeller() {
             <div className="w-10 h-10 border-4 border-slate-200 border-t-[#111111] rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-8">
             {bestsellers.map((product) => (
               <BestSellerCard key={product.id} product={product} />
             ))}
