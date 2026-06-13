@@ -267,9 +267,8 @@ const CertificationsBento = () => {
 
       <motion.div
         variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        initial="visible"
+        animate="visible"
       >
         <motion.div variants={itemVariants} className="mb-6">
           <div>

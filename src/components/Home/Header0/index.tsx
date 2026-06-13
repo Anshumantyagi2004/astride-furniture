@@ -86,8 +86,13 @@ export default function Header0() {
     { src: "/Png1/Banner_2.png", alt: "Secondary Banner" }
   ];
 
+  const mobileSlides = [
+    { src: "/Png1/Mobile_banner.jpeg", alt: "Mobile Banner 1" },
+    { src: "/Png1/Mobile_banner2.jpeg", alt: "Mobile Banner 2" }
+  ];
+
   return (
-    <section id="circular-chairs" className="relative w-full h-[70vh] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
+    <section id="circular-chairs" className="relative w-full h-auto aspect-square md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
       {/* DESKTOP BANNER CAROUSEL (md and up) */}
       <div className="hidden md:block w-full h-full">
         <Swiper
@@ -119,22 +124,34 @@ export default function Header0() {
         </Swiper>
       </div>
 
-      {/* MOBILE BANNER (less than md) */}
-      <div className="block md:hidden w-full h-full relative">
-        <Link 
-          href="/products" 
-          onMouseEnter={prefetchProducts}
-          className="absolute inset-0 z-0 cursor-pointer block"
+      {/* MOBILE BANNER CAROUSEL (less than md) */}
+      <div className="block md:hidden w-full h-full">
+        <Swiper
+          modules={[Autoplay, Pagination, EffectFade]}
+          effect="fade"
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          pagination={{ clickable: true }}
+          loop={true}
+          className="w-full h-full"
         >
-          <Image
-            src="/Png1/Mobile_banner.jpeg"
-            alt="Mobile Banner"
-            fill
-            className="object-cover"
-            style={{ objectPosition: "9% center" }}
-            priority
-          />
-        </Link>
+          {mobileSlides.map((slide, idx) => (
+            <SwiperSlide key={idx} className="relative w-full h-full">
+              <Link 
+                href="/products" 
+                onMouseEnter={prefetchProducts}
+                className="absolute inset-0 z-0 cursor-pointer block"
+              >
+                <Image
+                  src={slide.src}
+                  alt={slide.alt}
+                  fill
+                  className="object-cover"
+                  priority={idx === 0}
+                />
+              </Link>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </section>
   );
