@@ -133,7 +133,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-1 leading-none">Location</h3>
                 <p className="text-base md:text-lg font-extrabold text-slate-800 leading-relaxed">
-                  I-237, Sec-3, Bawana Industrial Area, Delhi-110039
+                  J-113 & 114, DSIIDC Industrial Area, Sector 4, Bawana, New Delhi, Delhi-110039
                 </p>
               </div>
             </div>
@@ -285,10 +285,24 @@ export default function ContactPage() {
                 </button>
 
               </form>
-            </div>
+        </div>
+      </div>
+    </div>
 
+      {/* Map Section */}
+      <div className="mt-16 bg-white border border-slate-200/60 rounded-[32px] p-4 md:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+          <div className="w-full h-[350px] md:h-[480px] rounded-[24px] overflow-hidden relative border border-slate-100">
+            <iframe
+              src="https://maps.google.com/maps?q=Astride%20Furniture,%20J-113%20%26%20114,%20DSIIDC%20Industrial%20Area,%20Sector%204,%20Bawana,%20New%20Delhi,%20Delhi%20110039&t=&z=16&ie=UTF8&iwloc=&output=embed"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={true}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="absolute inset-0 grayscale contrast-[1.1] brightness-[0.95] opacity-90 hover:grayscale-0 transition-all duration-700"
+            />
           </div>
-
         </div>
 
       </div>

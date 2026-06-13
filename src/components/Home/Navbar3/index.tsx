@@ -249,7 +249,7 @@ export default function Navbar3() {
                     </div>
 
                     <nav className="hidden md:flex items-center gap-[22px]">
-                        <Link href="/#bulk" className="hover:text-lime-500 transition-colors">
+                        <Link href="/bulk-orders" className="hover:text-lime-500 transition-colors">
                             Bulk orders
                         </Link>
 

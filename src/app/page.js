@@ -53,8 +53,11 @@ export default function Home() {
     
        {/* <Header3 /> */}
        <Header5_New/>
+         <Header6_New/>  
+        <BestSeller/>
+       
       
-       <Header6_New/>  
+     
      
        
     
@@ -63,33 +66,45 @@ export default function Home() {
      
      
       <Marquee4_New/>
+       <FavouriteCategories />
+        <Marquee2Hover />
+      <Chair_split/>
+      <AstrideOffers/>
+      <Marquee5_New/>
+     
       <BentoCategories/>
-      <FavouriteCategories />
+      
+     
       <PreloadModelViewer/>
       {/* <BrandAboutSection /> */}
-      <AboutSection_New/>
-     <CertificationsBento/>
-      
-      <Marquee2Hover />
-      <Chair_split/>
+       <BestSellersSection_New/>
      
+     <CertificationsBento/>
       <ChairSection />
       <Header2 />
-       <Marquee5_New/>
-      <BestSeller/>
+     
+      <AboutSection_New/>
+      
+     
+     
+      
+     
+       
+      
      
       <WhyUs />
-      <Marquee6_New/>
-      <AstrideOffers/>
+      
+      
       <StatsSection_New/> 
       
       {/* <BrandTrustSection /> */}
       {/* <BestSellerSection/> */}
-       <BestSellersSection_New/>
+      
       {/* <ClientLogoSlider /> */}
       <Reviews_New/>
       {/* <Reviews /> */}
       <RealSetup_New/>
+      <Marquee6_New/>
       <CompeteTheVibe/>
       
       <VideoTestimonials />
