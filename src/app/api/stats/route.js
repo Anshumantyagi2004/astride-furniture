@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
-import Product from "@/models/product/Product"; // Adjust path if needed
+import Product from "@/models/Product"; // Adjust path if needed
 import Order from "@/models/order/Order"; // Adjust path if needed
 import User from "@/models/user/User"; // Adjust path if needed
 import Enquiry from "@/models/enquiry/Enquiry";
