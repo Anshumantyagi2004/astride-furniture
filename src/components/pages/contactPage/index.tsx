@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { 
   Mail, 
   Phone, 
@@ -42,27 +43,39 @@ export default function ContactPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitSuccess(false);
 
-    // Simulate network submission
-    setTimeout(() => {
-      // Print form content in console
-      console.log("=== Astride Contact Form Submission ===");
-      console.log("Full Name:   ", formData.fullName);
-      console.log("Email:       ", formData.email);
-      console.log("Company:     ", formData.companyName);
-      console.log("Phone:       ", formData.phoneNumber);
-      console.log("State:       ", formData.state);
-      console.log("City:        ", formData.city);
-      console.log("Message:     ", formData.message);
-      console.log("======================================");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          companyName: formData.companyName,
+          phone: formData.phoneNumber,
+          state: formData.state,
+          city: formData.city,
+          message: formData.message,
+        }),
+      });
 
+      const data = await res.json();
+      if (data.success) {
+        setSubmitSuccess(true);
+        setFormData(INITIAL_FORM_DATA);
+      } else {
+        toast.error(data.message || "Failed to submit form");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to submit message. Please try again.");
+    } finally {
       setIsSubmitting(false);
-      setSubmitSuccess(true);
-      setFormData(INITIAL_FORM_DATA);
-    }, 800);
+    }
   };
 
   return (

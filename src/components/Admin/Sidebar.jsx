@@ -9,6 +9,7 @@ import {
     Users,
     Settings,
     Headphones,
+    MessageSquare,
     LogOut,
 } from "lucide-react";
 import { useRouter } from 'next/navigation';
@@ -30,7 +31,7 @@ export default function Sidebar() {
 
             {/* MENU */}
             <nav className="flex-1 px-4 py-6 space-y-2">
-                <Link href="/admin"
+                <Link href="/admin/Dashboard"
                     className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#00badb] hover:text-white transition-all duration-300 text-gray-700 font-medium"
                 >
                     <LayoutDashboard size={20} />
@@ -77,6 +78,13 @@ export default function Sidebar() {
                 >
                     <Headphones size={20} />
                     Inquiries
+                </Link>
+
+                <Link href="/admin/contacts"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#00badb] hover:text-white transition-all duration-300 text-gray-700 font-medium"
+                >
+                    <MessageSquare size={20} />
+                    Contacts
                 </Link>
             </nav>
 
