@@ -11,10 +11,50 @@ const sans = Plus_Jakarta_Sans({
 
 export default function Enquiry_New() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e) => {
+  const [fullName, setFullName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const res = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName,
+          companyName,
+          quantity,
+          email,
+          phone,
+          location,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setErrorMsg(data.message || "Something went wrong. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -145,6 +185,12 @@ export default function Enquiry_New() {
                   Fields marked * are required.
                 </p>
 
+                {errorMsg && (
+                  <p className="mb-4 text-xs font-bold text-red-500 uppercase tracking-wide">
+                    ⚠️ {errorMsg}
+                  </p>
+                )}
+
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
                     <label className="mb-2 block text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#131313]">
@@ -153,6 +199,8 @@ export default function Enquiry_New() {
 
                     <input
                       required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
                       className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
                     />
                   </div>
@@ -164,6 +212,8 @@ export default function Enquiry_New() {
 
                     <input
                       required
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
                       className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
                     />
                   </div>
@@ -177,6 +227,8 @@ export default function Enquiry_New() {
                       type="number"
                       min="1"
                       required
+                      value={quantity}
+                      onChange={(e) => setQuantity(e.target.value)}
                       className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
                     />
                   </div>
@@ -189,6 +241,8 @@ export default function Enquiry_New() {
                     <input
                       type="email"
                       required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
                     />
                   </div>
@@ -200,6 +254,8 @@ export default function Enquiry_New() {
 
                     <input
                       type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
                     />
                   </div>
@@ -211,6 +267,8 @@ export default function Enquiry_New() {
 
                     <input
                       required
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
                       className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
                     />
                   </div>
@@ -218,9 +276,10 @@ export default function Enquiry_New() {
 
                 <button
                   type="submit"
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#131313] px-7 py-[15px] font-extrabold uppercase tracking-[0.1em] text-[13px] text-white transition duration-300 hover:-translate-y-1 hover:bg-[#1F1F1F] hover:shadow-xl cursor-pointer"
+                  disabled={loading}
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#131313] px-7 py-[15px] font-extrabold uppercase tracking-[0.1em] text-[13px] text-white transition duration-300 hover:-translate-y-1 hover:bg-[#1F1F1F] hover:shadow-xl cursor-pointer disabled:bg-neutral-500 disabled:cursor-not-allowed"
                 >
-                  Submit Enquiry
+                  {loading ? "Submitting..." : "Submit Enquiry"}
                   <span className="text-base">→</span>
                 </button>
               </form>

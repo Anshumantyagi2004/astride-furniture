@@ -22,6 +22,33 @@ const LOGO_CONFIG = {
   }
 };
 
+// ==========================================
+// GLOW & BACKDROP SPREAD/INTENSITY CONFIG
+// ==========================================
+// Change values here to control the background white glow.
+// - Spread values must be valid CSS blur values (e.g., "12px", "24px", "40px").
+// - Intensity values must be valid decimal opacities between 0 and 1 (e.g., 0.5, 0.75, 0.9).
+const GLOW_CONFIG = {
+  amazon: {
+    // Mobile Glow Adjustments
+    mobileSpread: "20px",       // Size/Blur of the glow on mobile
+    mobileIntensity: "0.27",    // Opacity brightness (0 to 1) on mobile
+
+    // Desktop Glow Adjustments
+    desktopSpread: "20px",      // Size/Blur of the glow on desktop
+    desktopIntensity: "0.27",   // Opacity brightness (0 to 1) on desktop
+  },
+  flipkart: {
+    // Mobile Glow Adjustments
+    mobileSpread: "24px",       // Size/Blur of the glow on mobile
+    mobileIntensity: "0.25",    // Opacity brightness (0 to 1) on mobile
+
+    // Desktop Glow Adjustments
+    desktopSpread: "36px",      // Size/Blur of the glow on desktop
+    desktopIntensity: "0.75",   // Opacity brightness (0 to 1) on desktop
+  }
+};
+
 export default function StatsSection_New() {
   const stats = [
     { num: "75,000", symbol: "+", label: "Orders delivered", symbolSize: "text-[32px] sm:text-[40px] md:text-[52px] lg:text-[62px]", translate: "translate-y-[-8px] sm:translate-y-[-10px]" },
@@ -31,16 +58,11 @@ export default function StatsSection_New() {
   ];
 
   return (
-    // Reduced padding even further: pt-3 and pb-4 for minimal spacing
-    <section className="bg-[#DCF351] border-y-[3px] border-[#131313] pt-3 pb-4 md:pt-[40px] md:pb-[45px] lg:pt-[50px] lg:pb-[50px]">
+    <section className="bg-[#0F172B] border-y-[3px] border-[#131313] pt-3 pb-4 md:pt-[40px] md:pb-[45px] lg:pt-[50px] lg:pb-[50px]">
       <div className="max-w-[1440px] mx-auto px-3 sm:px-5 md:px-8 lg:px-12">
         
-        {/* 
-          - Forced break after "leading" so "Ergonomic Chair brand" sits perfectly on line 2
-          - Sized to text-[18px] / min-[375px]:text-[20px] so the second line never overflows to a 3rd line
-          - Reduced mb-3 for minimal space below the text
-        */}
-        <h2 className="text-center font-black uppercase leading-[1.1] text-[#131313] text-[18px] min-[375px]:text-[20px] sm:text-[26px] md:text-[46px] lg:text-[58px] mb-3 md:mb-14">
+        {/* Heading */}
+        <h2 className="text-center font-black uppercase leading-[1.1] text-white text-[18px] min-[375px]:text-[20px] sm:text-[26px] md:text-[46px] lg:text-[58px] mb-3 md:mb-14">
           India&apos;s leading <br className="block sm:hidden" /> Ergonomic Chair brand
         </h2>
 
@@ -65,11 +87,12 @@ export default function StatsSection_New() {
 
         {/* Platforms */}
         <div className="mt-6 md:mt-8 flex flex-wrap items-center justify-center gap-4 md:gap-6">
-          <span className="text-[11px] md:text-[13px] font-bold uppercase tracking-[0.12em] text-[#131313]">
+          <span className="text-[11px] md:text-[13px] font-bold uppercase tracking-[0.12em] text-white">
             Available on
           </span>
 
           <div className="flex items-center gap-4">
+            {/* Amazon Logo Wrapper */}
             <div 
               style={{
                 "--h-mobile": LOGO_CONFIG.amazon.mobileHeight,
@@ -78,17 +101,27 @@ export default function StatsSection_New() {
                 "--w-desktop": LOGO_CONFIG.amazon.desktopWidth,
                 "--ty-mobile": LOGO_CONFIG.amazon.mobileTranslateY,
                 "--ty-desktop": LOGO_CONFIG.amazon.desktopTranslateY,
+                // Passing glow configuration tokens down into CSS variables:
+                "--glow-blur-mobile": GLOW_CONFIG.amazon.mobileSpread,
+                "--glow-opacity-mobile": GLOW_CONFIG.amazon.mobileIntensity,
+                "--glow-blur-desktop": GLOW_CONFIG.amazon.desktopSpread,
+                "--glow-opacity-desktop": GLOW_CONFIG.amazon.desktopIntensity,
               } as React.CSSProperties}
+              className="flex items-center relative px-2 py-1"
             >
+              {/* Soft White Backdrop Glow using variables from GLOW_CONFIG */}
+              <div className="absolute inset-0 bg-white pointer-events-none z-0 rounded-full [filter:blur(var(--glow-blur-mobile))] [opacity:var(--glow-opacity-mobile)] md:[filter:blur(var(--glow-blur-desktop))] md:[opacity:var(--glow-opacity-desktop)]" />
+              
               <Image
                 src="/Logo/amazon.webp"
                 alt="Amazon"
                 width={200}
                 height={94}
-                className="h-[var(--h-mobile)] w-[var(--w-mobile)] md:h-[var(--h-desktop)] md:w-[var(--w-desktop)] [transform:translateY(var(--ty-mobile))] md:[transform:translateY(var(--ty-desktop))] object-contain"
+                className="h-[var(--h-mobile)] w-[var(--w-mobile)] md:h-[var(--h-desktop)] md:w-[var(--w-desktop)] [transform:translateY(var(--ty-mobile))] md:[transform:translateY(var(--ty-desktop))] object-contain relative z-10"
               />
             </div>
 
+            {/* Flipkart Logo Wrapper */}
             <div
               style={{
                 "--h-mobile": LOGO_CONFIG.flipkart.mobileHeight,
@@ -97,14 +130,23 @@ export default function StatsSection_New() {
                 "--w-desktop": LOGO_CONFIG.flipkart.desktopWidth,
                 "--ty-mobile": LOGO_CONFIG.flipkart.mobileTranslateY,
                 "--ty-desktop": LOGO_CONFIG.flipkart.desktopTranslateY,
+                // Passing glow configuration tokens down into CSS variables:
+                "--glow-blur-mobile": GLOW_CONFIG.flipkart.mobileSpread,
+                "--glow-opacity-mobile": GLOW_CONFIG.flipkart.mobileIntensity,
+                "--glow-blur-desktop": GLOW_CONFIG.flipkart.desktopSpread,
+                "--glow-opacity-desktop": GLOW_CONFIG.flipkart.desktopIntensity,
               } as React.CSSProperties}
+              className="flex items-center relative px-2 py-1"
             >
+              {/* Soft White Backdrop Glow using variables from GLOW_CONFIG */}
+              <div className="absolute inset-0 bg-white pointer-events-none z-0 rounded-md [filter:blur(var(--glow-blur-mobile))] [opacity:var(--glow-opacity-mobile)] md:[filter:blur(var(--glow-blur-desktop))] md:[opacity:var(--glow-opacity-desktop)]" />
+              
               <Image
                 src="/Logo/FLIPKART_Webp.webp"
                 alt="Flipkart"
                 width={100}
                 height={24}
-                className="h-[var(--h-mobile)] w-[var(--w-mobile)] md:h-[var(--h-desktop)] md:w-[var(--w-desktop)] [transform:translateY(var(--ty-mobile))] md:[transform:translateY(var(--ty-desktop))] object-contain"
+                className="h-[var(--h-mobile)] w-[var(--w-mobile)] md:h-[var(--h-desktop)] md:w-[var(--w-desktop)] [transform:translateY(var(--ty-mobile))] md:[transform:translateY(var(--ty-desktop))] object-contain relative z-10"
               />
             </div>
           </div>
