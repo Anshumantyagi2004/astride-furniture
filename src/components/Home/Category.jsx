@@ -6,6 +6,10 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+
+import "swiper/css";
 
 const sans = Plus_Jakarta_Sans({
     subsets: ["latin"],
@@ -52,7 +56,7 @@ export default function Category() {
                     Browse Collection
                 </p>
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#131313] leading-[1.05] mt-2 tracking-tight">
-                    Trending <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold pr-2">Products</span>
+                    Trending <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold pr-2">Category</span>
                 </h2>
             </div>
 
@@ -65,8 +69,54 @@ export default function Category() {
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 md:gap-6 lg:gap-8 max-w-[1400px] mx-auto">
+                        {/* MOBILE SCROLL VIEW (Swiper) */}
+                        <div className="block sm:hidden w-full">
+                            <Swiper
+                                modules={[Autoplay]}
+                                spaceBetween={12}
+                                slidesPerView={2}
+                                loop={true}
+                                autoplay={{
+                                    delay: 1500,
+                                    disableOnInteraction: false,
+                                }}
+                                className="w-full pb-4"
+                            >
+                                {categories.map((category, index) => (
+                                    <SwiperSlide key={index}>
+                                        <Link 
+                                            href={`/products?category=${encodeURIComponent(category.name)}`} 
+                                            className="w-full block"
+                                        >
+                                            <div className="group relative overflow-hidden rounded-[14px] bg-white border-[2.5px] border-[#131313] shadow-[4px_4px_0_#131313] active:translate-y-[2px] active:shadow-[2px_2px_0_#131313] transition-all duration-200">
+                                                <div className="relative h-[150px] w-full overflow-hidden bg-white border-b-[2.5px] border-[#131313]">
+                                                    <img
+                                                        src={category.image}
+                                                        alt={category.name}
+                                                        className="w-full h-full object-contain p-2"
+                                                    />
+                                                </div>
+                                                <div className="w-full px-3 py-2.5 bg-white">
+                                                    <div className="flex items-center justify-between gap-1">
+                                                        <div className="min-w-0 flex-1">
+                                                            <h3 className="text-[#131313] font-black capitalize tracking-tight text-xs truncate">
+                                                                 {category.name}
+                                                            </h3>
+                                                        </div>
+                                                        <div className="w-6 h-6 rounded-full border-[1.5px] border-[#131313] bg-[#DCF351] flex items-center justify-center text-[#131313] shrink-0">
+                                                            <ArrowRight size={12} strokeWidth={3} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                        </div>
 
+                        {/* DESKTOP/TABLET GRID VIEW */}
+                        <div className="hidden sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 md:gap-6 lg:gap-8 max-w-[1400px] mx-auto">
                             {categories.map(
                                 (category, index) => (
                                     <Link key={index} href={`/products?category=${encodeURIComponent(category.name)}`} className="w-full block">

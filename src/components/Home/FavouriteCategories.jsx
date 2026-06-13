@@ -5,8 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart } from "lucide-react";
 import { BsCartPlus } from "react-icons/bs";
 import { useRouter } from "next/navigation";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Grid } from "swiper/modules";
 
 import { Plus_Jakarta_Sans } from "next/font/google";
+
+import "swiper/css";
+import "swiper/css/grid";
 
 const sans = Plus_Jakarta_Sans({
     subsets: ["latin"],
@@ -57,12 +62,12 @@ const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleW
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => router.push(`/products/${product.id}`)}
-            className="group relative rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 hover:border-slate-300/80 hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] min-w-[270px] sm:min-w-0 snap-start flex-shrink-0 cursor-pointer font-sans"
+            className="group relative rounded-[16px] sm:rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 hover:border-slate-300/80 hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] min-w-0 cursor-pointer font-sans"
         >
             {/* Action Buttons (Fade in on hover) */}
-            <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
                 <button 
-                    className={`w-[34px] h-[34px] rounded-full shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 ${
+                    className={`w-[30px] h-[30px] sm:w-[34px] sm:h-[34px] rounded-full shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 ${
                         isWishlisted ? "bg-[#161316] text-white" : "bg-white text-gray-500 hover:bg-[#161316] hover:text-white"
                     }`}
                     onClick={(e) => {
@@ -70,28 +75,28 @@ const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleW
                         onToggleWishlist(product.id);
                     }}
                 >
-                    <Heart size={15} className={isWishlisted ? "fill-current" : ""} />
+                    <Heart size={13} className={isWishlisted ? "fill-current" : ""} />
                 </button>
 
                 <button 
-                    className="w-[34px] h-[34px] rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#161316] hover:text-white hover:scale-105 active:scale-95 transition-all duration-200"
+                    className="w-[30px] h-[30px] sm:w-[34px] sm:h-[34px] rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#161316] hover:text-white hover:scale-105 active:scale-95 transition-all duration-200"
                     onClick={(e) => {
                         e.stopPropagation();
                         window.dispatchEvent(new CustomEvent('add-to-cart', { detail: { ...product, quantity: 1 } }));
                     }}
                 >
-                    <BsCartPlus size={16} />
+                    <BsCartPlus size={14} />
                 </button>
             </div>
 
             {/* Image Container with premium rounded margins & neutral background */}
-            <div className="m-3 rounded-2xl relative h-[220px] bg-[#F3F4F6] overflow-hidden flex flex-col items-center justify-center">
+            <div className="m-2 sm:m-3 rounded-xl sm:rounded-2xl relative h-[130px] sm:h-[220px] bg-[#F3F4F6] overflow-hidden flex flex-col items-center justify-center">
                 <Image
                     src={images[currentImageIndex] || product.image}
                     alt={product.name}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-contain p-6 transform scale-100 group-hover:scale-105 transition-all duration-500 ease-in-out"
+                    className="object-contain p-4 sm:p-6 transform scale-100 group-hover:scale-105 transition-all duration-500 ease-in-out"
                 />
 
                 {/* Pagination Dots */}
@@ -100,43 +105,43 @@ const FavouriteCard = ({ product, index, activeCategory, isWishlisted, onToggleW
                         {images.map((_, idx) => (
                             <div 
                                 key={idx} 
-                                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? 'w-3 bg-slate-800' : 'w-1.5 bg-slate-300'}`}
+                                className={`h-1 rounded-full transition-all duration-300 ${idx === currentImageIndex ? 'w-2.5 bg-slate-800' : 'w-1 bg-slate-300'}`}
                             />
                         ))}
                     </div>
                 )}
 
                 {/* Premium Rating Badge - Bottom-Left */}
-                <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-[6px] border border-gray-100 shadow-xs text-[10px] font-bold text-gray-700 flex items-center gap-1 font-sans">
+                <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 z-20 bg-white/95 backdrop-blur-xs px-1.5 py-0.5 rounded-[4px] sm:rounded-[6px] border border-gray-100 shadow-xs text-[8.5px] sm:text-[10px] font-bold text-gray-700 flex items-center gap-0.5 sm:gap-1 font-sans">
                     <span>{ratingValue}</span>
-                    <span className="text-[#8B5CF6] text-xs">★</span>
+                    <span className="text-[#8B5CF6] text-xs leading-none">★</span>
                     <span className="text-gray-400 font-normal">({ratingReviews})</span>
                 </div>
             </div>
 
             {/* Card Details Area */}
-            <div className="px-5 pb-5 pt-1 font-sans">
+            <div className="px-3 pb-3 sm:px-5 sm:pb-5 pt-1 font-sans">
                 {/* Brand/Subtitle */}
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-[#8B5CF6] mb-1 font-sans">
+                <div className="text-[9px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[#8B5CF6] mb-1 font-sans">
                     Astride Premium
                 </div>
 
                 {/* Product Title */}
-                <h3 className="text-[16px] font-semibold text-gray-800 line-clamp-1 group-hover:text-[#8B5CF6] transition-colors duration-300 font-sans">
+                <h3 className="text-xs sm:text-[16px] font-semibold text-gray-800 line-clamp-1 group-hover:text-[#8B5CF6] transition-colors duration-300 font-sans">
                     {product.name}
                 </h3>
 
                 {/* Pricing Row */}
-                <div className="flex items-baseline gap-2 mt-2 font-sans">
-                    <span className="text-base sm:text-[17px] font-bold text-gray-900 font-sans">
+                <div className="flex flex-wrap items-baseline gap-1 mt-1 sm:mt-2 font-sans">
+                    <span className="text-xs sm:text-[17px] font-bold text-gray-900 font-sans">
                         ₹{salePrice.toLocaleString("en-IN")}
                     </span>
 
-                    <span className="text-xs text-gray-400 line-through font-sans">
+                    <span className="text-[10px] sm:text-xs text-gray-400 line-through font-sans">
                         ₹{originalPrice.toLocaleString("en-IN")}
                     </span>
 
-                    <span className="text-[11px] font-bold text-[#EC4899] font-sans">
+                    <span className="text-[9px] sm:text-[11px] font-bold text-[#EC4899] font-sans">
                         {discountText} OFF
                     </span>
                 </div>
@@ -285,20 +290,19 @@ export default function FavouriteCategories() {
                 </div>
 
                 {/* Fluid active tab switcher */}
-                <div className="w-full max-w-3xl mx-auto mt-4 bg-gray-100 rounded-full border border-gray-200/50 px-4 sm:px-6">
+                <div className="w-full max-w-3xl mx-auto mt-4 bg-gray-100 rounded-[20px] sm:rounded-full border border-gray-200/50 px-2 sm:px-6 py-2 sm:py-0">
                     <div 
-                        className="flex flex-nowrap items-center gap-2 sm:gap-3 p-2 overflow-x-auto scrollbar-none whitespace-nowrap"
+                        className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-1.5 sm:gap-3 p-1 sm:p-2 overflow-x-visible sm:overflow-x-auto scrollbar-none whitespace-normal sm:whitespace-nowrap"
                         style={{ 
                             scrollbarWidth: 'none', 
                             msOverflowStyle: 'none',
-                            justifyContent: 'safe center'
                         }}
                     >
                         {TABS.map((category) => (
                             <button
                                 key={category}
                                 onClick={() => setActiveCategory(category)}
-                                className="relative flex-shrink-0 px-6 py-3 rounded-full text-sm sm:text-base font-bold transition-colors duration-300 focus:outline-none"
+                                className="relative flex-shrink-0 px-3 py-1.5 sm:px-6 sm:py-3 rounded-full text-xs sm:text-base font-bold transition-colors duration-300 focus:outline-none"
                             >
                             {activeCategory === category && (
                                 <motion.div
@@ -327,34 +331,81 @@ export default function FavouriteCategories() {
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeCategory}
-                            variants={{
-                                hidden: { opacity: 0 },
-                                show: {
-                                    opacity: 1,
-                                    transition: { staggerChildren: 0.04 }
-                                }
-                            }}
-                            initial="hidden"
-                            animate="show"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                            className="flex overflow-x-auto gap-4 pb-4 scrollbar-none snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 sm:pb-0 sm:overflow-visible mt-12"
+                            className="w-full"
                         >
-                            {activeProducts.length > 0 ? (
-                                activeProducts.map((product, index) => (
-                                    <FavouriteCard 
-                                        key={product.id} 
-                                        product={product} 
-                                        index={index} 
-                                        activeCategory={activeCategory} 
-                                        isWishlisted={wishlisted[product.id]}
-                                        onToggleWishlist={toggleWishlist}
-                                    />
-                                ))
-                            ) : (
-                                <div className="col-span-full py-12 text-center text-slate-400 font-medium">
-                                    No products found in this category.
-                                </div>
-                            )}
+                            {/* MOBILE 2x2 GRID SWIPER (md:hidden) */}
+                            <div className="block md:hidden w-full mt-12">
+                                <style jsx global>{`
+                                    .fave-swiper.swiper {
+                                        width: 100%;
+                                        height: auto;
+                                        padding-bottom: 24px;
+                                    }
+                                    .fave-swiper .swiper-slide {
+                                        height: auto !important;
+                                    }
+                                    .fave-swiper .swiper-wrapper {
+                                        flex-direction: row !important;
+                                    }
+                                `}</style>
+                                {activeProducts.length > 0 ? (
+                                    <Swiper
+                                        modules={[Autoplay, Grid]}
+                                        grid={{
+                                            rows: 2,
+                                            fill: "row"
+                                        }}
+                                        slidesPerView={2}
+                                        spaceBetween={12}
+                                        autoplay={{
+                                            delay: 2500,
+                                            disableOnInteraction: false,
+                                        }}
+                                        className="fave-swiper w-full"
+                                    >
+                                        {activeProducts.map((product, index) => (
+                                            <SwiperSlide key={product.id}>
+                                                <div className="pb-3">
+                                                    <FavouriteCard 
+                                                        product={product} 
+                                                        index={index} 
+                                                        activeCategory={activeCategory} 
+                                                        isWishlisted={wishlisted[product.id]}
+                                                        onToggleWishlist={toggleWishlist}
+                                                    />
+                                                </div>
+                                            </SwiperSlide>
+                                        ))}
+                                    </Swiper>
+                                ) : (
+                                    <div className="py-12 text-center text-slate-400 font-medium">
+                                        No products found in this category.
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* DESKTOP/TABLET GRID VIEW (hidden md:grid) */}
+                            <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
+                                {activeProducts.length > 0 ? (
+                                    activeProducts.map((product, index) => (
+                                        <FavouriteCard 
+                                            key={product.id} 
+                                            product={product} 
+                                            index={index} 
+                                            activeCategory={activeCategory} 
+                                            isWishlisted={wishlisted[product.id]}
+                                            onToggleWishlist={toggleWishlist}
+                                        />
+                                    ))
+                                ) : (
+                                    <div className="col-span-full py-12 text-center text-slate-400 font-medium">
+                                        No products found in this category.
+                                    </div>
+                                )}
+                            </div>
                         </motion.div>
                     </AnimatePresence>
                 )}

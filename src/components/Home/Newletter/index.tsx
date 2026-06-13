@@ -35,7 +35,8 @@ export default function Newletter() {
         
         {/* Image Section */}
         <motion.div 
-          className="w-[clamp(180px,35vw,350px)] h-[clamp(180px,35vh,300px)] relative"
+          // Added "hidden md:block" right here:
+          className="hidden md:block w-[clamp(180px,35vw,350px)] h-[clamp(180px,35vh,300px)] relative"
           initial={{ opacity: 0, scale: 0.96 }}
           whileInView={{ 
             opacity: 1,

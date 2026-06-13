@@ -1,4 +1,10 @@
+"use client";
+
 import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 
 const reviews = [
   {
@@ -51,13 +57,79 @@ export default function Reviews_New() {
           <h2 className="text-4xl md:text-6xl font-sans font-black tracking-tight mb-4 uppercase text-[#131313]">
             Loved by <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent">professionals.</span>
           </h2>
-          <p className="text-zinc-600 text-lg md:text-xl font-medium tracking-wide whitespace-nowrap">
+          {/* Replaced whitespace-nowrap with whitespace-normal on mobile, wrapped text */}
+          <p className="text-zinc-600 text-[15px] md:text-xl font-medium tracking-wide whitespace-normal md:whitespace-nowrap px-2 md:px-0 leading-relaxed">
             Gamers, devs, and creators who upgraded their setup with Astride comfort.
           </p>
         </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+        {/* MOBILE VIEW (Swiper) */}
+        <div className="block md:hidden w-full pb-2 px-1">
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            spaceBetween={0}
+            slidesPerView={1}
+            loop={true}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
+            }}
+            pagination={{ clickable: true }}
+            className="w-full pb-10" // Reduced bottom padding to just enough for the dots
+          >
+            {reviews.map((review, i) => (
+              <SwiperSlide key={i} className="w-full pb-4 px-1.5 pt-4">
+                <div
+                  className={`relative ${review.cardBg} border-[2.5px] border-[#131313] px-7 py-7 pb-8 rounded-lg`}
+                  style={{
+                    boxShadow: "6px 6px 0px #131313",
+                  }}
+                >
+                  {/* Tape deco */}
+                  <div
+                    className="absolute -top-[13px] left-1/2 -translate-x-1/2 w-24 h-6 rounded-[3px]"
+                    style={{
+                      backgroundColor: "rgba(220, 243, 81, 0.85)",
+                      boxShadow: "0 2px 4px rgba(19, 19, 19, 0.12)",
+                      transform: "translateX(-50%) rotate(-2deg)",
+                    }}
+                  />
+
+                  {/* Quote Mark */}
+                  <span className="font-serif text-5xl font-black text-[#EC4899] leading-none block mt-4 mb-1">
+                    &quot;
+                  </span>
+
+                  {/* Review Text */}
+                  <p className="text-[14.5px] text-[#333333] leading-relaxed mb-6 font-medium">
+                    {review.text}
+                  </p>
+
+                  {/* Reviewer Info */}
+                  <div className="flex items-center gap-3 pt-2 border-t border-[#131313]/10">
+                    {/* Avatar */}
+                    <div className="relative w-12 h-12 shrink-0 rounded-full border-[2.5px] border-[#131313] overflow-hidden">
+                      <Image
+                        src={review.avatar}
+                        alt={review.name}
+                        fill
+                        sizes="48px"
+                        className="object-cover"
+                      />
+                    </div>
+                    <div>
+                      <b className="block text-[14px] text-[#131313] font-black">{review.name}</b>
+                      <span className="block text-[12px] text-zinc-500 font-semibold">{review.role}</span>
+                    </div>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+
+        {/* DESKTOP VIEW (Grid) */}
+        <div className="hidden md:grid grid-cols-3 gap-10 items-start">
           {reviews.map((review, i) => (
             <div
               key={i}
@@ -78,7 +150,7 @@ export default function Reviews_New() {
 
               {/* Quote Mark */}
               <span className="font-serif text-5xl font-black text-[#EC4899] leading-none block mt-4 mb-1">
-                "
+                &quot;
               </span>
 
               {/* Review Text */}
@@ -107,8 +179,8 @@ export default function Reviews_New() {
           ))}
         </div>
 
-        {/* Proof bottom line */}
-        <p className="text-center mt-6 font-bold text-[#131313] text-lg">
+        {/* Proof bottom line - Hidden on Mobile */}
+        <p className="hidden md:block text-center mt-6 font-bold text-[#131313] text-lg">
           500+ verified reviews — <span className="bg-gradient-to-r from-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-serif italic text-2xl font-black ml-1">real people, real comfort ♥</span>
         </p>
 

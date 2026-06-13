@@ -2,6 +2,11 @@
 
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCoverflow, Autoplay } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/effect-coverflow";
 
 const categories = [
   {
@@ -153,8 +158,59 @@ export default function Header5_New() {
           </p>
         </motion.div>
 
-        {/* Right: Cards */}
-        <div className="flex gap-4 overflow-x-auto lg:grid lg:grid-cols-5 lg:overflow-visible pb-1 w-full lg:flex-1 scrollbar-hide">
+        {/* Mobile: 3D Coverflow Swiper */}
+        <div className="block lg:hidden w-full py-4 overflow-visible">
+          <Swiper
+            modules={[EffectCoverflow, Autoplay]}
+            effect="coverflow"
+            grabCursor={true}
+            centeredSlides={true}
+            slidesPerView="auto"
+            loop={true}
+            autoplay={{
+              delay: 2000,
+              disableOnInteraction: false,
+            }}
+            coverflowEffect={{
+              rotate: 20,
+              stretch: 0,
+              depth: 100,
+              modifier: 1.4,
+              slideShadows: false,
+            }}
+            className="w-full overflow-visible"
+          >
+            {categories.map((cat) => (
+              <SwiperSlide key={cat.label} style={{ width: '220px' }}>
+                <div className="w-full rounded-2xl border-2 border-transparent transition-all duration-300">
+                  <Link
+                    href={cat.link}
+                    className="group flex flex-col items-center text-center gap-5 rounded-2xl px-4 py-8 w-full h-full block shadow-lg"
+                    style={{ 
+                      backgroundColor: cat.bg,
+                      boxShadow: `0 10px 20px -5px ${cat.shadow}`
+                    }}
+                  >
+                    <div className="text-slate-700 group-hover:scale-110 transition-transform duration-300">
+                      <div style={{ color: cat.color }}>
+                        {cat.icon}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[14px] font-black tracking-widest text-slate-900 uppercase mb-1">
+                        {cat.label}
+                      </p>
+                      <p className="text-[12px] text-slate-500 leading-snug">{cat.desc}</p>
+                    </div>
+                  </Link>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+
+        {/* Desktop: Grid layout */}
+        <div className="hidden lg:grid lg:grid-cols-5 lg:overflow-visible pb-1 w-full lg:flex-1">
           {categories.map((cat) => (
             <motion.div
               key={cat.label}

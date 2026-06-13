@@ -5,6 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Grid } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/grid";
 
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -149,12 +154,12 @@ function BestsellerCard({ product }: { product: any }) {
       onClick={() => router.push(`/products/${product.id}`)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex flex-col overflow-visible rounded-[28px] border-[2.5px] border-[#131313] bg-white shadow-[6px_6px_0_#131313] transition-all duration-300 hover:-translate-y-2 hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)] cursor-pointer"
+      className="group relative flex flex-col overflow-visible rounded-[18px] sm:rounded-[28px] border-[2px] sm:border-[2.5px] border-[#131313] bg-white shadow-[4px_4px_0_#131313] sm:shadow-[6px_6px_0_#131313] transition-all duration-300 hover:-translate-y-2 hover:shadow-[6px_8px_0_rgba(19,19,19,0.9)] sm:hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)] cursor-pointer"
     >
       {/* Sticker */}
       {product.sticker && (
         <span
-          className={`absolute left-4 top-[-13px] z-10 rotate-[-3deg] px-[14px] py-[5px] text-[13px] font-semibold shadow-[3px_3px_0_#131313] ${sans.className} ${
+          className={`absolute left-2 sm:left-4 top-[-10px] sm:top-[-13px] z-10 rotate-[-3deg] px-2 py-1 sm:px-[14px] sm:py-[5px] text-[10px] sm:text-[13px] font-semibold shadow-[2px_2px_0_#131313] sm:shadow-[3px_3px_0_#131313] ${sans.className} ${
             product.hot
               ? "bg-[#EC4899] text-white"
               : "bg-[#DCF351] text-[#131313]"
@@ -165,13 +170,13 @@ function BestsellerCard({ product }: { product: any }) {
       )}
 
       {/* Product Image */}
-      <div className="rounded-t-[25px] bg-[radial-gradient(ellipse_at_50%_80%,#ece4d2,#fff_70%)] px-[18px] pb-2 pt-[26px] relative h-[250px] flex items-center justify-center overflow-hidden">
+      <div className="rounded-t-[16px] sm:rounded-t-[25px] bg-[radial-gradient(ellipse_at_50%_80%,#ece4d2,#fff_70%)] px-2 sm:px-[18px] pb-2 pt-4 sm:pt-[26px] relative h-[160px] sm:h-[250px] flex items-center justify-center overflow-hidden">
         <Image
           src={images[currentImageIndex] || product.image}
           alt={product.name}
           width={300}
           height={300}
-          className="mx-auto h-[230px] w-auto object-contain transition duration-300 group-hover:rotate-[-1.5deg] group-hover:scale-105"
+          className="mx-auto h-[140px] sm:h-[230px] w-auto object-contain transition duration-300 group-hover:rotate-[-1.5deg] group-hover:scale-105"
         />
 
         {/* Pagination Dots */}
@@ -188,21 +193,21 @@ function BestsellerCard({ product }: { product: any }) {
       </div>
 
       {/* Product Info */}
-      <div className={`flex flex-1 flex-col gap-2 px-5 pb-[22px] pt-[18px] ${sans.className}`}>
-        <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#EC4899]">
+      <div className={`flex flex-1 flex-col gap-1 sm:gap-2 px-3 sm:px-5 pb-3 sm:pb-[22px] pt-3 sm:pt-[18px] ${sans.className}`}>
+        <span className="text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.14em] text-[#EC4899]">
           {product.category}
         </span>
 
-        <h3 className={`text-[17px] font-semibold uppercase text-[#131313] group-hover:text-[#8B5CF6] transition-colors duration-300 line-clamp-1`}>
+        <h3 className={`text-[14px] sm:text-[17px] font-semibold uppercase text-[#131313] group-hover:text-[#8B5CF6] transition-colors duration-300 line-clamp-1`}>
           {product.name}
         </h3>
 
-        <div className="mt-auto flex items-center justify-between pt-2">
-          <span className="text-[19px] font-bold text-[#131313]">
-            <s className="mr-2 text-[14px] font-medium text-[#999]">
+        <div className="mt-auto flex items-center justify-between pt-1 sm:pt-2">
+          <span className="text-[14px] sm:text-[19px] font-bold text-[#131313] flex flex-col sm:flex-row sm:items-center">
+            <s className="mr-0 sm:mr-2 text-[11px] sm:text-[14px] font-medium text-[#999]">
               {product.oldPrice}
             </s>
-            {product.price}
+            <span>{product.price}</span>
           </span>
 
           <button
@@ -220,14 +225,14 @@ function BestsellerCard({ product }: { product: any }) {
                 } 
               }));
             }}
-            className="grid h-11 w-11 place-items-center rounded-full bg-[#131313] text-white transition duration-300 hover:rotate-90 hover:bg-[#8B5CF6] cursor-pointer"
+            className="grid h-8 w-8 sm:h-11 sm:w-11 place-items-center rounded-full bg-[#131313] text-white transition duration-300 hover:rotate-90 hover:bg-[#8B5CF6] cursor-pointer flex-shrink-0"
           >
             <svg
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="2.4"
-              className="h-[18px] w-[18px]"
+              className="h-4 w-4 sm:h-[18px] sm:w-[18px]"
             >
               <path d="M12 5v14M5 12h14" />
             </svg>
@@ -340,10 +345,11 @@ export default function BestSellersSection_New() {
   }, []);
 
   return (
-    <section id="shop" className="pt-2 pb-[10px] md:pt-3 md:pb-[15px] lg:pt-4 lg:pb-[20px]">
-      <div className="mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12">
+    <section id="shop" className="pt-2 pb-[10px] md:pt-3 md:pb-[15px] lg:pt-4 lg:pb-[20px] overflow-hidden">
+      {/* Slightly reduced outer padding on mobile to account for the larger inner gap */}
+      <div className="mx-auto max-w-[1440px] px-3 md:px-8 lg:px-12">
         {/* Section Header */}
-        <div className="mb-4 flex flex-wrap items-end justify-between gap-5">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-5 px-1 md:px-0">
           <div>
             <span className={`inline-block rounded-full border border-[#131313] bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-[#8B5CF6] ${sans.className}`}>
               Explore bestsellers
@@ -372,11 +378,53 @@ export default function BestSellersSection_New() {
             <div className="w-10 h-10 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-[30px] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {productsList.map((product) => (
-              <BestsellerCard key={product.id} product={product} />
-            ))}
-          </div>
+          <>
+            {/* MOBILE 2x2 GRID SWIPER (md:hidden) */}
+            <div className="block md:hidden w-full mt-6">
+              <style jsx global>{`
+                .best-swiper.swiper {
+                  width: 100%;
+                  height: auto;
+                  padding-bottom: 24px;
+                }
+                .best-swiper .swiper-slide {
+                  height: auto !important;
+                }
+                .best-swiper .swiper-wrapper {
+                  flex-direction: row !important;
+                }
+              `}</style>
+              <Swiper
+                modules={[Autoplay, Grid]}
+                grid={{
+                  rows: 2,
+                  fill: "row"
+                }}
+                slidesPerView={2}
+                spaceBetween={12}
+                autoplay={{
+                  delay: 2500,
+                  disableOnInteraction: false,
+                }}
+                className="best-swiper w-full"
+              >
+                {productsList.map((product) => (
+                  <SwiperSlide key={product.id}>
+                    <div className="pb-3">
+                      <BestsellerCard product={product} />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+
+            {/* DESKTOP/TABLET GRID VIEW (hidden md:grid) */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px] px-1 md:px-0 mt-6">
+              {productsList.map((product) => (
+                <BestsellerCard key={product.id} product={product} />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </section>
