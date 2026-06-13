@@ -247,7 +247,7 @@ export default function Enquiry_New() {
 
                   <div>
                     <label className="mb-2 block text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#131313]">
-                      Phone (optional)
+                      Phone
                     </label>
                     <input
                       type="tel"

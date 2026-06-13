@@ -8,27 +8,27 @@ import "swiper/css/navigation";
 
 const setups = [
   {
-    img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80",
+    img: "/Real_people_real_Setup/chill.webp",
     tag: "#GamingSetup",
   },
   {
-    img: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80",
+    img: "/Real_people_real_Setup/WhatsApp Image 2026-06-13 at 17.31.27.webp",
     tag: "#WorkFromHome",
   },
   {
-    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80",
+    img: "/Real_people_real_Setup/WhatsApp Image 2026-06-13 at 17.31.27 (1).webp",
     tag: "#StudyCorner",
   },
   {
-    img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=600&q=80",
+    img: "/Real_people_real_Setup/WhatsApp Image 2026-06-13 at 17.31.27 (2).webp",
     tag: "#MinimalDesk",
   },
   {
-    img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&q=80",
+    img: "/Real_people_real_Setup/chill.webp",
     tag: "#AstrideChair",
   },
   {
-    img: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=600&q=80",
+    img: "/Real_people_real_Setup/WhatsApp Image 2026-06-13 at 17.31.27.webp",
     tag: "#SetupGoals",
   },
 ];
@@ -129,14 +129,6 @@ export default function RealSetup_New() {
 
                 {/* Gradient overlay at bottom */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-
-                {/* Tag badge — fully inside card */}
-                <span
-                  className="absolute bottom-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white/95 text-[#131313] text-[10px] md:text-[11.5px] font-bold px-3 py-1 rounded-full border-[1.5px] border-[#131313]"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                >
-                  {setup.tag}
-                </span>
               </div>
             </SwiperSlide>
           ))}

@@ -298,7 +298,7 @@ export default function ContactPage() {
               height="100%"
               style={{ border: 0 }}
               allowFullScreen={true}
-              loading="lazy"
+              loading="eager"
               referrerPolicy="no-referrer-when-downgrade"
               className="absolute inset-0 grayscale contrast-[1.1] brightness-[0.95] opacity-90 hover:grayscale-0 transition-all duration-700"
             />

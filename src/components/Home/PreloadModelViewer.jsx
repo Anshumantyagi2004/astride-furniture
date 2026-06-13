@@ -19,6 +19,11 @@ export default function PreloadModelViewer() {
   const triggerRef = useRef(null);
 
   useEffect(() => {
+    // Prevent loading observer and model viewer on mobile screens
+    if (window.innerWidth < 768) {
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -41,7 +46,7 @@ export default function PreloadModelViewer() {
   }, []);
 
   return (
-    <div ref={triggerRef}>
+    <div ref={triggerRef} className="hidden md:block">
       {shouldLoad ? (
         <ModelViewer />
       ) : (
