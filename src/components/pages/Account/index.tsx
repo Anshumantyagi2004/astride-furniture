@@ -46,7 +46,7 @@ interface Order {
   id: string;
   date: string;
   total: number;
-  status: "Pending" | "Confirmed" | "Processing" | "Processing / Packing" | "Shipped" | "Out for Delivery" | "Delivered" | "Cancelled";
+  status: string;
   items: OrderItem[];
 }
 
@@ -569,42 +569,64 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                             {/* Status badge and actions */}
                             <div className="flex flex-col md:items-end gap-5 shrink-0 w-full xl:w-[220px] self-start mt-2 xl:mt-4 xl:mr-4">
                               <div className="flex items-center gap-2">
-                                {order.status === "Delivered" && (
-                                  <>
-                                    <CheckCircle size={16} className="text-emerald-500" />
-                                    <span className="text-[11px] font-black text-emerald-500 uppercase tracking-wider">Delivered</span>
-                                  </>
-                                )}
-                                {order.status === "Shipped" && (
-                                  <>
-                                    <Truck size={16} className="text-blue-500" />
-                                    <span className="text-[11px] font-black text-blue-500 uppercase tracking-wider">Shipped</span>
-                                  </>
-                                )}
-                                {order.status === "Out for Delivery" && (
-                                  <>
-                                    <Truck size={16} className="text-indigo-500" />
-                                    <span className="text-[11px] font-black text-indigo-500 uppercase tracking-wider">Out for Delivery</span>
-                                  </>
-                                )}
-                                {(order.status === "Processing" || order.status === "Processing / Packing") && (
-                                  <>
-                                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
-                                    <span className="text-[11px] font-black text-amber-500 uppercase tracking-wider">Processing / Packing</span>
-                                  </>
-                                )}
-                                {order.status === "Confirmed" && (
-                                  <>
-                                    <CheckCircle size={16} className="text-teal-500" />
-                                    <span className="text-[11px] font-black text-teal-500 uppercase tracking-wider">Confirmed</span>
-                                  </>
-                                )}
-                                {order.status === "Pending" && (
-                                  <>
-                                    <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
-                                    <span className="text-[11px] font-black text-rose-500 uppercase tracking-wider">Pending</span>
-                                  </>
-                                )}
+                                {(() => {
+                                  const statusStr = (order.status || "Pending").toLowerCase().trim();
+                                  if (statusStr === "delivered") {
+                                    return (
+                                      <>
+                                        <CheckCircle size={16} className="text-emerald-500" />
+                                        <span className="text-[11px] font-black text-emerald-500 uppercase tracking-wider">Delivered</span>
+                                      </>
+                                    );
+                                  }
+                                  if (statusStr === "shipped") {
+                                    return (
+                                      <>
+                                        <Truck size={16} className="text-blue-500" />
+                                        <span className="text-[11px] font-black text-blue-500 uppercase tracking-wider">Shipped</span>
+                                      </>
+                                    );
+                                  }
+                                  if (statusStr === "out for delivery") {
+                                    return (
+                                      <>
+                                        <Truck size={16} className="text-indigo-500" />
+                                        <span className="text-[11px] font-black text-indigo-500 uppercase tracking-wider">Out for Delivery</span>
+                                      </>
+                                    );
+                                  }
+                                  if (statusStr === "processing" || statusStr === "processing / packing" || statusStr.includes("processing")) {
+                                    return (
+                                      <>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+                                        <span className="text-[11px] font-black text-amber-500 uppercase tracking-wider">Processing / Packing</span>
+                                      </>
+                                    );
+                                  }
+                                  if (statusStr === "confirmed") {
+                                    return (
+                                      <>
+                                        <CheckCircle size={16} className="text-teal-500" />
+                                        <span className="text-[11px] font-black text-teal-500 uppercase tracking-wider">Confirmed</span>
+                                      </>
+                                    );
+                                  }
+                                  if (statusStr === "pending") {
+                                    return (
+                                      <>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+                                        <span className="text-[11px] font-black text-rose-500 uppercase tracking-wider">Pending</span>
+                                      </>
+                                    );
+                                  }
+                                  // Fallback for custom or unrecognized status
+                                  return (
+                                    <>
+                                      <div className="w-2.5 h-2.5 rounded-full bg-slate-500 animate-pulse" />
+                                      <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider">{order.status}</span>
+                                    </>
+                                  );
+                                })()}
                               </div>
 
                               <div className="flex flex-row md:flex-col items-stretch justify-end gap-3 w-full mt-2">
