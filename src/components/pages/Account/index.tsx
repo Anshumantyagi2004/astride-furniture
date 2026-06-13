@@ -178,17 +178,24 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      router.push("/login");
+      return;
+    }
     const storedProfile = localStorage.getItem("astride_profile");
     
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && parsedUser.id) {
-          fetchMyOrders(parsedUser.id);
-        }
-      } catch (e) {
-        console.error(e);
+    try {
+      const parsedUser = JSON.parse(storedUser);
+      if (parsedUser && parsedUser.id) {
+        fetchMyOrders(parsedUser.id);
+      } else {
+        router.push("/login");
+        return;
       }
+    } catch (e) {
+      console.error(e);
+      router.push("/login");
+      return;
     }
 
     if (storedProfile) {
