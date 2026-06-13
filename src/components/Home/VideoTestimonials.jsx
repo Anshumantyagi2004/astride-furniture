@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { FaYoutube, FaInstagram, FaPlay, FaStar, FaArrowRight } from "react-icons/fa6";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/pagination";
 
 const sans = Plus_Jakarta_Sans({
     subsets: ["latin"],
@@ -287,14 +292,14 @@ function SideCard({ video, onClick, index }) {
 // ------------------------------------------------------------------
 export default function VideoTestimonials() {
     const [selectedId, setSelectedId] = useState(videos[0].id);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [playingId, setPlayingId] = useState(null);
 
     const featured = videos.find(v => v.id === selectedId) || videos[0];
     const sideVideos = videos.filter(v => v.id !== selectedId);
 
     const handleSelectSideCard = (id) => {
         setSelectedId(id);
-        setIsPlaying(true);
+        setPlayingId(id);
     };
 
     return (
@@ -341,26 +346,83 @@ export default function VideoTestimonials() {
                                 { label: "Reviews", value: "4,200+" },
                                 { label: "Avg Rating", value: "4.9 ★" },
                              ].map((s) => (
-                                <div key={s.label} className="text-center">
-                                    <p className="text-2xl font-black text-white">{s.value}</p>
-                                    <p className="text-[10px] text-white/40 font-semibold uppercase tracking-widest mt-0.5">{s.label}</p>
-                                </div>
-                            ))}
+                                 <div key={s.label} className="text-center">
+                                     <p className="text-2xl font-black text-white">{s.value}</p>
+                                     <p className="text-[10px] text-white/40 font-semibold uppercase tracking-widest mt-0.5">{s.label}</p>
+                                 </div>
+                             ))}
                         </div>
                     </div>
                 </motion.div>
 
-                {/* ── MAIN LAYOUT ── */}
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.05fr] gap-4 items-stretch">
+                {/* CSS custom override for swiper pagination in this component */}
+                <style jsx global>{`
+                    .video-swiper .swiper-pagination-bullet {
+                        background: rgba(255, 255, 255, 0.3) !important;
+                        opacity: 1 !important;
+                    }
+                    .video-swiper .swiper-pagination-bullet-active {
+                        background: #8B5CF6 !important;
+                    }
+                `}</style>
 
+                {/* MOBILE LAYOUT (lg:hidden) */}
+                <div className="block lg:hidden w-full pb-8">
+                    <Swiper
+                        modules={[Pagination]}
+                        pagination={{ clickable: true }}
+                        spaceBetween={16}
+                        slidesPerView={1}
+                        className="video-swiper w-full"
+                        onSlideChange={() => setPlayingId(null)}
+                    >
+                        {videos.map((v) => (
+                            <SwiperSlide key={v.id}>
+                                <div className="h-[430px] w-full">
+                                    <FeaturedCard
+                                        video={v}
+                                        onPlay={() => setPlayingId(v.id)}
+                                        isPlaying={playingId === v.id}
+                                    />
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                    
+                    {/* Bottom CTA strip for mobile */}
+                    <div className="mt-4">
+                        <a
+                            href="https://www.youtube.com/results?search_query=astride"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between gap-3 px-5 py-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 group"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#8B5CF6] to-[#EC4899]">
+                                    <FaYoutube size={16} className="text-white" />
+                                </div>
+                                <div>
+                                    <p className="text-white font-bold text-xs">See 200+ more reviews</p>
+                                    <p className="text-white/40 text-[10px]">On YouTube</p>
+                                </div>
+                            </div>
+                            <div className="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#8B5CF6] group-hover:bg-[#8B5CF6]/20 transition-all duration-300">
+                                <FaArrowRight size={10} className="text-white/60 group-hover:text-white transition-colors" />
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                {/* DESKTOP LAYOUT (lg:grid) */}
+                <div className="hidden lg:grid grid-cols-[1fr_1.05fr] gap-4 items-stretch">
                     {/* LEFT: Featured card */}
                     <div className="relative w-full h-full min-h-[420px] lg:h-[510px]">
                         <AnimatePresence mode="wait">
                             <FeaturedCard
                                 key={featured.id}
                                 video={featured}
-                                onPlay={() => setIsPlaying(true)}
-                                isPlaying={isPlaying}
+                                onPlay={() => setPlayingId(featured.id)}
+                                isPlaying={playingId === featured.id}
                             />
                         </AnimatePresence>
                     </div>

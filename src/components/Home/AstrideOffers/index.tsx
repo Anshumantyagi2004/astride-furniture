@@ -117,21 +117,54 @@ export default function AstrideOffers() {
 
         <div className="w-full relative min-h-[460px]">
           {productsList.length === 0 ? (
-            <div className="h-[460px] mr-[calc(50%+12px)] md:mr-[calc(33.333%+8px)] lg:mr-[calc(25%+6px)] flex items-center justify-center bg-[#f4f4f5] rounded-[14px] border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313]">
+            <div className="h-[460px] w-[290px] md:w-auto md:mr-[calc(33.333%+8px)] lg:mr-[calc(25%+6px)] flex items-center justify-center bg-[#f4f4f5] rounded-[14px] border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313]">
               <Loader />
             </div>
           ) : (
             <div 
               ref={scrollContainerRef}
-              className="flex gap-6 overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory items-stretch pr-[calc(50%+12px)] md:pr-[calc(33.333%+8px)] lg:pr-[calc(25%+6px)] scroll-pl-6 scroll-pr-[calc(50%+12px)] md:scroll-pr-[calc(33.333%+8px)] lg:scroll-pr-[calc(25%+6px)]"
+              className="flex gap-6 overflow-x-auto pb-6 scrollbar-none snap-x snap-mandatory items-stretch pr-6 md:pr-[calc(33.333%+8px)] lg:pr-[calc(25%+6px)] scroll-pl-6 scroll-pr-6 md:scroll-pr-[calc(33.333%+8px)] lg:scroll-pr-[calc(25%+6px)]"
             >
               {productsList.map((deal) => (
                 <DealCard key={deal.id} deal={deal} />
               ))}
+
+              {/* Mobile Inline Blue Card */}
+              <div className="flex md:hidden w-[290px] h-[460px] shrink-0 bg-[#0058A3] rounded-[14px] overflow-hidden flex-col justify-between text-white border-[2.5px] border-[#131313] shadow-[6px_6px_0_#131313] snap-start">
+                <div className="relative w-full h-[180px] shrink-0 bg-[#004e92] border-b-[2.5px] border-[#131313] flex items-center justify-center p-4">
+                  <div className="relative w-[70%] h-[70%] flex items-center justify-center">
+                    <img 
+                      src={bannerSrc} 
+                      alt="Astride Family offers" 
+                      className="w-full h-full object-contain drop-shadow-2xl"
+                    />
+                  </div>
+                </div>
+                <div className="p-5 pb-5 flex flex-col justify-between flex-grow gap-4">
+                  <div className="flex flex-col gap-2">
+                    <h4 className="text-white text-[22px] font-extrabold tracking-tight underline decoration-white decoration-[3px] underline-offset-[6px]">
+                      Astride Family offers
+                    </h4>
+                    <p className="text-neutral-100 text-[13px] leading-relaxed font-semibold mt-2">
+                      Every saving helps. Get more for less with Astride Family member discounts on premium ergonomic products across the entire range.
+                    </p>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      const el = document.getElementById('newsletter');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="w-full mt-auto bg-[#DCF351] hover:bg-[#c9e13b] text-[#131313] font-black text-sm tracking-wider py-3.5 rounded-full transition-all duration-300 uppercase border-[2.5px] border-[#131313] shadow-[4px_4px_0_#131313] active:translate-y-[2px] active:shadow-[2px_2px_0_#131313] cursor-pointer"
+                  >
+                    JOIN FAMILY CLUB
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
-          <div className="absolute right-0 top-0 h-[460px] w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] bg-[#0058A3] rounded-[14px] overflow-hidden flex flex-col justify-between z-20 text-white border-[2.5px] border-[#131313] shadow-[6px_6px_0_#131313]">
+          {/* Desktop Absolute Blue Card */}
+          <div className="hidden md:flex absolute right-0 top-0 h-[460px] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] bg-[#0058A3] rounded-[14px] overflow-hidden flex-col justify-between z-20 text-white border-[2.5px] border-[#131313] shadow-[6px_6px_0_#131313]">
             <div className="relative w-full h-[180px] shrink-0 bg-[#004e92] border-b-[2.5px] border-[#131313] flex items-center justify-center p-4">
               <div className="relative w-[70%] h-[70%] flex items-center justify-center">
                 <img 
@@ -202,7 +235,7 @@ function DealCard({ deal }: { deal: any }) {
       href={`/products/${deal.id}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] h-[460px] shrink-0 flex flex-col justify-between bg-white rounded-[14px] p-4 snap-start group relative border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313] hover:-translate-y-1 hover:shadow-[8px_8px_0_#131313] transition-all duration-300"
+      className="w-[290px] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] h-[460px] shrink-0 flex flex-col justify-between bg-white rounded-[14px] p-4 snap-start group relative border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313] hover:-translate-y-1 hover:shadow-[8px_8px_0_#131313] transition-all duration-300"
     >
       <div>
         {/* Top Image Container */}

@@ -5,6 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
 import ChairFinder from "../ChairFinder";
 
 const containerVariants: Variants = {
@@ -54,14 +59,6 @@ export default function Header0() {
     };
   }, []);
 
-  if (showFinder) {
-    return (
-      <section id="circular-chairs" className="relative w-full h-[70vh] min-h-[520px] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
-        <ChairFinder onBack={() => setShowFinder(false)} />
-      </section>
-    );
-  }
-
   const prefetchProducts = async () => {
     try {
       if (typeof window !== "undefined" && !sessionStorage.getItem("astride_nav_products_cache")) {
@@ -76,45 +73,69 @@ export default function Header0() {
     }
   };
 
+  if (showFinder) {
+    return (
+      <section id="circular-chairs" className="relative w-full h-[70vh] min-h-[520px] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
+        <ChairFinder onBack={() => setShowFinder(false)} />
+      </section>
+    );
+  }
+
+  const slides = [
+    { src: "/Png1/main_banner.jpg", alt: "Main Banner" },
+    { src: "/Png1/Banner_2.png", alt: "Secondary Banner" }
+  ];
+
   return (
-    <section id="circular-chairs" className="relative w-full h-[70vh] min-h-[520px] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/Png1/main_banner.jpg"
-          alt="Main Banner"
-          fill
-          className="object-cover object-center md:object-center object-[70%_center]"
-          priority
-        />
+    <section id="circular-chairs" className="relative w-full h-[70vh] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
+      {/* DESKTOP BANNER CAROUSEL (md and up) */}
+      <div className="hidden md:block w-full h-full">
+        <Swiper
+          modules={[Autoplay, Pagination, EffectFade]}
+          effect="fade"
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          pagination={{ clickable: true }}
+          loop={true}
+          className="w-full h-full"
+        >
+          {slides.map((slide, idx) => (
+            <SwiperSlide key={idx} className="relative w-full h-full">
+              {/* Background Image (Entirely Clickable Link to Products) */}
+              <Link 
+                href="/products" 
+                onMouseEnter={prefetchProducts}
+                className="absolute inset-0 z-0 cursor-pointer block"
+              >
+                <Image
+                  src={slide.src}
+                  alt={slide.alt}
+                  fill
+                  className="object-cover object-center"
+                  priority={idx === 0}
+                />
+              </Link>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
 
-      {/* Content Overlay */}
-      {/* Content Overlay */}
-      <div
-        className="absolute left-6 sm:left-10 md:left-16 lg:left-24 bottom-[150px] sm:bottom-[165px] md:bottom-[195px] lg:bottom-[235px] z-10 flex flex-wrap gap-4"
-        style={{ transform: "translateY(54.5px)" }}
-      >
-        <Link
-          href="/products"
+      {/* MOBILE BANNER (less than md) */}
+      <div className="block md:hidden w-full h-full relative">
+        <Link 
+          href="/products" 
           onMouseEnter={prefetchProducts}
-          style={{ transform: "translateY(32px) translateX(-80px) " }} // Move up by 20px
-          className="inline-flex items-center justify-center bg-[#131313] hover:bg-[#8B5CF6] text-white font-black px-8 py-3.5 rounded-full shadow-[4px_4px_0_#000] border-[2.5px] border-black hover:shadow-[1px_1px_0_#000] hover:translate-y-[3px] hover:translate-x-[3px] transition-all duration-150 text-xs sm:text-sm tracking-wider uppercase"
+          className="absolute inset-0 z-0 cursor-pointer block"
         >
-          Shop All
-          <span className="ml-2 text-base">→</span>
+          <Image
+            src="/Png1/Mobile_banner.jpeg"
+            alt="Mobile Banner"
+            fill
+            className="object-cover"
+            style={{ objectPosition: "9% center" }}
+            priority
+          />
         </Link>
-
-        <button
-          onClick={() => setShowFinder(true)}
-          style={{ transform: "translateY(34px) translateX(-83px)" }} // Move down by 15px
-          className="inline-flex items-center justify-center bg-white hover:bg-zinc-100 text-[#131313] font-black px-8 py-3.5 rounded-full shadow-[4px_4px_0_#000] border-[2.5px] border-black hover:shadow-[1px_1px_0_#000] hover:translate-y-[3px] hover:translate-x-[3px] transition-all duration-150 text-xs sm:text-sm tracking-wider uppercase cursor-pointer animate-none"
-        >
-          Find Your Chair
-          <span className="ml-2 text-base">→</span>
-        </button>
       </div>
-
     </section>
   );
 }
