@@ -84,6 +84,7 @@ export default function Home() {
       <Header2 />
      
       <AboutSection_New/>
+      <CompeteTheVibe/>
       
      
      
@@ -105,7 +106,7 @@ export default function Home() {
       {/* <Reviews /> */}
       <RealSetup_New/>
       <Marquee6_New/>
-      <CompeteTheVibe/>
+      
       
       <VideoTestimonials />
       <Enquiry_New/>
