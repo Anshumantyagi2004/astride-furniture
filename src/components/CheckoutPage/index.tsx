@@ -16,6 +16,8 @@ interface CartItem {
 export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [orderId, setOrderId] = useState("");
 
   // Grouped Form State: Reduces React state allocation memory overhead
   const [formData, setFormData] = useState({
@@ -117,7 +119,9 @@ export default function CheckoutPage() {
       const data = await response.json();
 
       if (data.success) {
-        alert("Order placed successfully");
+        setOrderId(data.order?._id || data.orderId || "");
+        setShowSuccess(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
         localStorage.removeItem("astride_cart");
         setCartItems([]);
       }
@@ -351,6 +355,40 @@ export default function CheckoutPage() {
 
         </div>
       </div>
+
+      {/* SUCCESS CONFIRMATION MODAL */}
+      {showSuccess && (
+        <div className="fixed inset-0 bg-black/65 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-[24px] max-w-md w-full p-8 text-center shadow-2xl border border-neutral-100 flex flex-col items-center gap-5 transform scale-100 transition-all">
+            <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl font-bold shadow-sm">
+              ✓
+            </div>
+            <div>
+              <h3 className="text-2xl font-black text-neutral-900 uppercase tracking-tight">Order Confirmed!</h3>
+              {orderId && (
+                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest mt-1">ID: {orderId}</p>
+              )}
+            </div>
+            <p className="text-sm text-neutral-500 leading-relaxed font-medium">
+              Thank you for shopping with <span className="font-extrabold text-neutral-900">Astride</span>. Your order has been placed successfully and is now being processed.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
+              <Link 
+                href="/account/orders"
+                className="flex-1 py-3.5 bg-neutral-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all text-center shadow-md active:scale-95"
+              >
+                View Orders
+              </Link>
+              <Link 
+                href="/products"
+                className="flex-1 py-3.5 bg-white border border-neutral-200 text-neutral-700 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-50 transition-all text-center shadow-sm active:scale-95"
+              >
+                Shop More
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
