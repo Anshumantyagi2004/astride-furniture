@@ -18,7 +18,7 @@ Investing in a high-quality ergonomic chair is not only beneficial for physical 
     `,
 
     image:
-      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200",
     category: "Ergonomics",
     author: "Astride Team",
     readTime: "5 min read",
@@ -44,7 +44,7 @@ Ultimately, the best choice depends on your personal preferences, work habits, a
     `,
 
     image:
-      "https://images.unsplash.com/photo-1497366412874-3415097a27e7?w=1200",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200",
     category: "Workspace",
     author: "Astride Team",
     readTime: "4 min read",
@@ -70,7 +70,7 @@ A thoughtfully designed office can improve employee satisfaction, encourage crea
     `,
 
     image:
-      "https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1200",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200",
     category: "Design",
     author: "Astride Team",
     readTime: "6 min read",
@@ -96,7 +96,7 @@ Whether working from home or in a professional environment, choosing a chair wit
     `,
 
     image:
-      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200",
     category: "Health",
     author: "Astride Team",
     readTime: "7 min read",
@@ -148,7 +148,7 @@ By dedicating a small amount of time to regular maintenance, users can maximize 
     `,
 
     image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1200",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200",
     category: "Care Guide",
     author: "Astride Team",
     readTime: "3 min read",

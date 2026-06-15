@@ -82,13 +82,13 @@ export default function Header0() {
   }
 
   const slides = [
-    { src: "/Png1/main_banner.jpg", alt: "Main Banner" },
-    { src: "/Png1/Banner_2.png", alt: "Secondary Banner" }
+    { src: "/Png1/main_banner.webp", alt: "Main Banner" },
+    { src: "/Png1/main_Banner_2.webp", alt: "Secondary Banner" }
   ];
 
   const mobileSlides = [
-    { src: "/Png1/Mobile_banner.jpeg", alt: "Mobile Banner 1" },
-    { src: "/Png1/Mobile_banner2.jpeg", alt: "Mobile Banner 2" }
+    { src: "/Png1/Mobile_banner.webp", alt: "Mobile Banner 1" },
+    { src: "/Png1/Mobile_banner2.webp", alt: "Mobile Banner 2" }
   ];
 
   return (

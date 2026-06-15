@@ -1,3 +1,6 @@
+"use client";
+
+import React from 'react';
 import Image from "next/image";
 
 // ==========================================
@@ -25,27 +28,20 @@ const LOGO_CONFIG = {
 // ==========================================
 // GLOW & BACKDROP SPREAD/INTENSITY CONFIG
 // ==========================================
-// Change values here to control the background white glow.
-// - Spread values must be valid CSS blur values (e.g., "12px", "24px", "40px").
-// - Intensity values must be valid decimal opacities between 0 and 1 (e.g., 0.5, 0.75, 0.9).
 const GLOW_CONFIG = {
   amazon: {
-    // Mobile Glow Adjustments
-    mobileSpread: "20px",       // Size/Blur of the glow on mobile
-    mobileIntensity: "0.27",    // Opacity brightness (0 to 1) on mobile
+    mobileSpread: "20px",       
+    mobileIntensity: "0.27",    
 
-    // Desktop Glow Adjustments
-    desktopSpread: "20px",      // Size/Blur of the glow on desktop
-    desktopIntensity: "0.27",   // Opacity brightness (0 to 1) on desktop
+    desktopSpread: "20px",      
+    desktopIntensity: "0.27",   
   },
   flipkart: {
-    // Mobile Glow Adjustments
-    mobileSpread: "24px",       // Size/Blur of the glow on mobile
-    mobileIntensity: "0.25",    // Opacity brightness (0 to 1) on mobile
+    mobileSpread: "24px",       
+    mobileIntensity: "0.25",    
 
-    // Desktop Glow Adjustments
-    desktopSpread: "36px",      // Size/Blur of the glow on desktop
-    desktopIntensity: "0.75",   // Opacity brightness (0 to 1) on desktop
+    desktopSpread: "36px",      
+    desktopIntensity: "0.75",   
   }
 };
 
@@ -101,7 +97,6 @@ export default function StatsSection_New() {
                 "--w-desktop": LOGO_CONFIG.amazon.desktopWidth,
                 "--ty-mobile": LOGO_CONFIG.amazon.mobileTranslateY,
                 "--ty-desktop": LOGO_CONFIG.amazon.desktopTranslateY,
-                // Passing glow configuration tokens down into CSS variables:
                 "--glow-blur-mobile": GLOW_CONFIG.amazon.mobileSpread,
                 "--glow-opacity-mobile": GLOW_CONFIG.amazon.mobileIntensity,
                 "--glow-blur-desktop": GLOW_CONFIG.amazon.desktopSpread,
@@ -109,8 +104,10 @@ export default function StatsSection_New() {
               } as React.CSSProperties}
               className="flex items-center relative px-2 py-1"
             >
-              {/* Soft White Backdrop Glow using variables from GLOW_CONFIG */}
-              <div className="absolute inset-0 bg-white pointer-events-none z-0 rounded-full [filter:blur(var(--glow-blur-mobile))] [opacity:var(--glow-opacity-mobile)] md:[filter:blur(var(--glow-blur-desktop))] md:[opacity:var(--glow-opacity-desktop)]" />
+              {/* Added will-change-filter and translate-Z composite overrides to completely eliminate mobile flickering anomalies */}
+              <div 
+                className="absolute inset-0 bg-white pointer-events-none z-0 rounded-full [filter:blur(var(--glow-blur-mobile))] [opacity:var(--glow-opacity-mobile)] md:[filter:blur(var(--glow-blur-desktop))] md:[opacity:var(--glow-opacity-desktop)] [will-change:filter] [transform:translateZ(0)]" 
+              />
               
               <Image
                 src="/Logo/amazon.webp"
@@ -130,7 +127,6 @@ export default function StatsSection_New() {
                 "--w-desktop": LOGO_CONFIG.flipkart.desktopWidth,
                 "--ty-mobile": LOGO_CONFIG.flipkart.mobileTranslateY,
                 "--ty-desktop": LOGO_CONFIG.flipkart.desktopTranslateY,
-                // Passing glow configuration tokens down into CSS variables:
                 "--glow-blur-mobile": GLOW_CONFIG.flipkart.mobileSpread,
                 "--glow-opacity-mobile": GLOW_CONFIG.flipkart.mobileIntensity,
                 "--glow-blur-desktop": GLOW_CONFIG.flipkart.desktopSpread,
@@ -138,8 +134,10 @@ export default function StatsSection_New() {
               } as React.CSSProperties}
               className="flex items-center relative px-2 py-1"
             >
-              {/* Soft White Backdrop Glow using variables from GLOW_CONFIG */}
-              <div className="absolute inset-0 bg-white pointer-events-none z-0 rounded-md [filter:blur(var(--glow-blur-mobile))] [opacity:var(--glow-opacity-mobile)] md:[filter:blur(var(--glow-blur-desktop))] md:[opacity:var(--glow-opacity-desktop)]" />
+              {/* Added identical hardware-acceleration prompts on the neighboring backdrop for frame consistency */}
+              <div 
+                className="absolute inset-0 bg-white pointer-events-none z-0 rounded-md [filter:blur(var(--glow-blur-mobile))] [opacity:var(--glow-opacity-mobile)] md:[filter:blur(var(--glow-blur-desktop))] md:[opacity:var(--glow-opacity-desktop)] [will-change:filter] [transform:translateZ(0)]" 
+              />
               
               <Image
                 src="/Logo/FLIPKART_Webp.webp"

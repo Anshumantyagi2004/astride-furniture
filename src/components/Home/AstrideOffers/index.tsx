@@ -13,6 +13,7 @@ import 'swiper/css';
 export default function AstrideOffers() {
   const [productsList, setProductsList] = useState<any[]>([]);
   const [bannerSrc, setBannerSrc] = useState('/Png1/chair12_ErgoFit.webp');
+  const [swiperRef, setSwiperRef] = useState<any>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,13 +77,17 @@ export default function AstrideOffers() {
   }, []);
 
   const scrollRight = () => {
-    if (scrollContainerRef.current) {
+    if (swiperRef && window.innerWidth < 768) {
+      swiperRef.slideNext();
+    } else if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({ left: 320, behavior: 'smooth' });
     }
   };
 
   const scrollLeft = () => {
-    if (scrollContainerRef.current) {
+    if (swiperRef && window.innerWidth < 768) {
+      swiperRef.slidePrev();
+    } else if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({ left: -320, behavior: 'smooth' });
     }
   };
@@ -129,6 +134,7 @@ export default function AstrideOffers() {
               {/* MOBILE SWIPER VIEW (md:hidden) */}
               <div className="block md:hidden w-full pb-6">
                 <Swiper
+                  onSwiper={setSwiperRef}
                   modules={[Autoplay]}
                   spaceBetween={0}
                   slidesPerView={1}

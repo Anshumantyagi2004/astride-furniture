@@ -383,7 +383,7 @@ export default function FavouriteCategories() {
                             initial="hidden"
                             animate="show"
                             exit={exitTransitionConfig}
-                            className="w-full mt-12"
+                            className="w-full mt-6 md:mt-12"
                         >
                             {/* MOBILE 2-CARD AUTOPLAY CAROUSEL */}
                             <div className="block md:hidden w-full">

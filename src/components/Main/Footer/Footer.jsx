@@ -96,7 +96,7 @@ export default function Footer() {
                             { name: "Blog", link: "/blogs" },
                             { name: "Contact Us", link: "/contact" },
                             { name: "FAQs", link: "/#faq" },
-                            { name: "Track Order", link: "/account" },
+                            { name: "Track Order", link: "/account/orders" },
                         ].map((item, index) => (
                             <Link
                                 key={index}

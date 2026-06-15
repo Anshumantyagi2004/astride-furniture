@@ -656,12 +656,6 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                 >
                                   Reorder
                                 </button>
-                                <button
-                                  onClick={() => alert(`Tracking updates for ${order.id} will be sent to your device.`)}
-                                  className="flex-1 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-slate-50 transition-all shadow-sm active:scale-95"
-                                >
-                                  Track
-                                </button>
                               </div>
                             </div>
 
