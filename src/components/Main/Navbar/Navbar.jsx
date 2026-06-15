@@ -27,23 +27,84 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-// --- FUZZY SEARCH ALGORITHM ---
-// This ensures close matches and related words show up in the dropdown
+// --- STATIC CHAIR DATA (Moved up so the search can use it as a fallback) ---
+const CHAIR_CATEGORIES = {
+  'Gaming Chair': {
+    label: 'Gaming Chair',
+    chairs: [
+      { name: 'ACE Pro Gaming', image: '/Png1/chair4_ACE.webp', tag: 'Bestseller', buyUrl: '#buy' },
+      { name: 'Apex Gaming', image: '/Png1/chair9_FitWell.webp', tag: 'Pro', buyUrl: '#buy' },
+      { name: 'RGB Gaming Chair', image: '/Product/InfographicDesign-1.webp', tag: 'Premium', buyUrl: '#buy' }
+    ]
+  },
+  'Office Chair': {
+    label: 'Office Chair',
+    chairs: [
+      { name: 'AlphaGrey', image: '/Png1/chair6_AlphaGrey.webp', tag: 'Premium Mesh', buyUrl: '#buy' },
+      { name: 'ErgoFit Executive', image: '/Png1/chair12_ErgoFit.webp', tag: 'High Back', buyUrl: '#buy' },
+      { name: 'Executive Mesh Chair', image: '/Product/AlphaBrown_8.webp', tag: 'Bestseller', buyUrl: '#buy' }
+    ]
+  },
+  'Staff Chair': {
+    label: 'Staff Chair',
+    chairs: [
+      { name: 'Delton Staff', image: '/Png1/Chair7_Delton.webp', tag: 'Comfort', buyUrl: '#buy' },
+      { name: 'AIRSENSE Task', image: '/Png1/chair5_AIRSENSE.webp', tag: 'Aero Mesh', buyUrl: '#buy' },
+      { name: 'Amica Black', image: '/Png1/Chair6a_Amica Black .webp', tag: 'Classic', buyUrl: '#buy' }
+    ]
+  },
+  'Study Chair': {
+    label: 'Study Chair',
+    chairs: [
+      { name: 'ErgoFit Pro', image: '/Product/1.webp', tag: 'Students', buyUrl: '#buy' },
+      { name: 'Comfort Office', image: '/Product/Infographic-6.webp', tag: 'Comfort', buyUrl: '#buy' },
+      { name: 'Modern Workspace', image: '/Product/InfographicDesign-1.webp', tag: 'Compact', buyUrl: '#buy' }
+    ]
+  },
+  'Bar Stools & Cafe Chair': {
+    label: 'Bar Stools & Cafe Chair',
+    chairs: [
+      { name: 'Zenith Stool', image: '/Png1/chair10_FitWell.webp', tag: 'Counter Stool', buyUrl: '#buy' },
+      { name: 'Apex Stool', image: '/Png1/chair9_FitWell.webp', tag: 'Bestseller', buyUrl: '#buy' },
+      { name: 'Luxury Bar Stool', image: '/Product/AlphaBrown_8.webp', tag: 'Premium', buyUrl: '#buy' }
+    ]
+  }
+};
+
+// --- HELPER TO EXTRACT PRODUCT IMAGE ---
+const getProductImage = (p) => {
+  if (p.colorVariants?.[0]?.images?.[0]?.url) return p.colorVariants[0].images[0].url;
+  if (p.images?.[0]) {
+    const firstImg = p.images[0];
+    return typeof firstImg === 'string' ? firstImg : (firstImg.url || firstImg);
+  }
+  return '/placeholder.png';
+};
+
+// --- ENHANCED FUZZY SEARCH ALGORITHM ---
 const getSuggestions = (query, allProducts) => {
   if (!query.trim()) return [];
   const q = query.toLowerCase().trim();
   const queryWords = q.split(/\s+/).filter(Boolean);
   
-  return allProducts.map(p => {
-    const name = (p.productName || "").toLowerCase();
+  let itemsToSearch = allProducts;
+  if (!allProducts || allProducts.length === 0) {
+    itemsToSearch = Object.values(CHAIR_CATEGORIES).flatMap(cat => cat.chairs).map(chair => ({
+      _id: chair.name, 
+      productName: chair.name,
+      realPrice: "See price in cart",
+      images: [{ url: chair.image }],
+      category: { name: chair.tag }
+    }));
+  }
+  
+  const results = itemsToSearch.map(p => {
+    if (!p) return null;
+    const name = (p.productName || p.name || p.title || "").toLowerCase();
     let score = 0;
     
-    // 1. Exact substring match (Highest priority)
-    if (name.includes(q)) {
-      score += 100;
-    }
+    if (name.includes(q)) score += 100;
     
-    // 2. Individual word matches
     let wordMatchCount = 0;
     queryWords.forEach(word => {
       if (name.includes(word)) {
@@ -51,44 +112,45 @@ const getSuggestions = (query, allProducts) => {
         wordMatchCount++;
       }
     });
-    // If multiple words are typed and all are present (even if jumbled)
-    if (wordMatchCount === queryWords.length && queryWords.length > 1) {
-      score += 50;
-    }
+    if (wordMatchCount === queryWords.length && queryWords.length > 1) score += 50;
 
-    // 3. Subsequence match for typos (e.g., "gming chr" matches "Gaming Chair")
     let qIdx = 0;
-    let nq = q.replace(/\s+/g, ''); // query without spaces
+    let nq = q.replace(/\s+/g, '');
     for (let i = 0; i < name.length && qIdx < nq.length; i++) {
       if (name[i] === nq[qIdx]) qIdx++;
     }
-    if (qIdx === nq.length) {
-      score += 20; 
-    }
+    if (qIdx === nq.length) score += 20; 
 
-    // 4. Category / Tag matching
     const cat = typeof p.category === 'object' ? (p.category?.name || "").toLowerCase() : (p.category || "").toLowerCase();
     if (cat.includes(q)) score += 15;
 
     return { ...p, _matchScore: score };
   })
-  .filter(p => p._matchScore > 0) // Only keep items that had some level of match
-  .sort((a, b) => b._matchScore - a._matchScore) // Sort by best match
-  .slice(0, 6); // Keep max 6
+  .filter(p => p && p._matchScore > 0)
+  .sort((a, b) => b._matchScore - a._matchScore)
+  .slice(0, 6);
+
+  console.log("getSuggestions query:", query, "allProducts size:", allProducts?.length, "matches found:", results.map(r => r.productName));
+  return results;
 };
 
 export default function Navbar() {
   const [hideTopBar, setHideTopBar] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  // Ensure client‑only rendering for suggestion dropdowns to avoid SSR hydration mismatches
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Dynamic Data Fetching
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
 
-  // Calculate dynamic suggestions using the fuzzy search
+  // Calculate dynamic suggestions
   const suggestions = getSuggestions(searchQuery, products);
 
   const handleFindYourChair = () => {
@@ -198,49 +260,6 @@ export default function Navbar() {
 
   const [activeMenu, setActiveMenu] = useState(null);
 
-  const CHAIR_CATEGORIES = {
-    'Gaming Chair': {
-      label: 'Gaming Chair',
-      chairs: [
-        { name: 'ACE Pro Gaming', image: '/Png1/chair4_ACE.webp', tag: 'Bestseller', buyUrl: '#buy' },
-        { name: 'Apex Gaming', image: '/Png1/chair9_FitWell.webp', tag: 'Pro', buyUrl: '#buy' },
-        { name: 'RGB Gaming Chair', image: '/Product/InfographicDesign-1.webp', tag: 'Premium', buyUrl: '#buy' }
-      ]
-    },
-    'Office Chair': {
-      label: 'Office Chair',
-      chairs: [
-        { name: 'AlphaGrey', image: '/Png1/chair6_AlphaGrey.webp', tag: 'Premium Mesh', buyUrl: '#buy' },
-        { name: 'ErgoFit Executive', image: '/Png1/chair12_ErgoFit.webp', tag: 'High Back', buyUrl: '#buy' },
-        { name: 'Executive Mesh Chair', image: '/Product/AlphaBrown_8.webp', tag: 'Bestseller', buyUrl: '#buy' }
-      ]
-    },
-    'Staff Chair': {
-      label: 'Staff Chair',
-      chairs: [
-        { name: 'Delton Staff', image: '/Png1/Chair7_Delton.webp', tag: 'Comfort', buyUrl: '#buy' },
-        { name: 'AIRSENSE Task', image: '/Png1/chair5_AIRSENSE.webp', tag: 'Aero Mesh', buyUrl: '#buy' },
-        { name: 'Amica Black', image: '/Png1/Chair6a_Amica Black .webp', tag: 'Classic', buyUrl: '#buy' }
-      ]
-    },
-    'Study Chair': {
-      label: 'Study Chair',
-      chairs: [
-        { name: 'ErgoFit Pro', image: '/Product/1.webp', tag: 'Students', buyUrl: '#buy' },
-        { name: 'Comfort Office', image: '/Product/Infographic-6.webp', tag: 'Comfort', buyUrl: '#buy' },
-        { name: 'Modern Workspace', image: '/Product/InfographicDesign-1.webp', tag: 'Compact', buyUrl: '#buy' }
-      ]
-    },
-    'Bar Stools & Cafe Chair': {
-      label: 'Bar Stools & Cafe Chair',
-      chairs: [
-        { name: 'Zenith Stool', image: '/Png1/chair10_FitWell.webp', tag: 'Counter Stool', buyUrl: '#buy' },
-        { name: 'Apex Stool', image: '/Png1/chair9_FitWell.webp', tag: 'Bestseller', buyUrl: '#buy' },
-        { name: 'Luxury Bar Stool', image: '/Product/AlphaBrown_8.webp', tag: 'Premium', buyUrl: '#buy' }
-      ]
-    }
-  };
-
   const fallbackCategories = [
     { _id: 'gaming-chair', name: 'Gaming Chair' },
     { _id: 'executive-chair', name: 'Office Chair' },
@@ -254,24 +273,12 @@ export default function Navbar() {
   const getNormalizedCategoryName = (p) => {
     if (!p.category) return "";
     const dbCategory = typeof p.category === 'object' && p.category.name ? p.category.name.toUpperCase() : "";
-    if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
-      return "Gaming Chair";
-    }
-    if (dbCategory.includes("EXECUTIVE")) {
-      return "Office Chair";
-    }
-    if (dbCategory.includes("STAFF")) {
-      return "Staff Chair";
-    }
-    if (dbCategory.includes("STUDY")) {
-      return "Study Chair";
-    }
-    if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) {
-      return "Bar Stools & Cafe Chair";
-    }
-    if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
-      return "Office Chair";
-    }
+    if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) return "Gaming Chair";
+    if (dbCategory.includes("EXECUTIVE")) return "Office Chair";
+    if (dbCategory.includes("STAFF")) return "Staff Chair";
+    if (dbCategory.includes("STUDY")) return "Study Chair";
+    if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) return "Bar Stools & Cafe Chair";
+    if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) return "Office Chair";
     return "";
   };
 
@@ -285,14 +292,13 @@ export default function Navbar() {
           return normalizedCat === activeMenu;
         })
         .map(p => ({
-          name: p.productName,
+          name: p.productName || p.name || p.title,
           image: p.colorVariants?.[0]?.images?.[0]?.url || '/placeholder.png',
-          buyUrl: `/products/${p.slug}`,
+          buyUrl: `/products/${p.slug || p._id}`,
           tag: p.whychoose || '',
         }));
     }
     
-    // If no products found via database filter, check if static CHAIR_CATEGORIES has predefined items
     if (displayChairs.length === 0) {
       displayChairs = CHAIR_CATEGORIES[activeMenu]?.chairs || [];
     }
@@ -360,7 +366,7 @@ export default function Navbar() {
           </button>
 
           {/* LEFT: DESKTOP SEARCH BAR (Pill Shaped) */}
-          <div className="hidden md:flex relative items-center bg-[#F1F5F9] rounded-full px-4 py-2 w-[220px] lg:w-[280px] border border-transparent focus-within:border-slate-300 transition-all duration-300 z-10">
+          <div className="hidden md:flex relative items-center bg-[#F1F5F9] rounded-full px-4 py-2 w-[220px] lg:w-[280px] border border-transparent focus-within:border-slate-300 transition-all duration-300 z-[60]">
             <input
               type="text"
               placeholder="Search chairs..."
@@ -374,38 +380,42 @@ export default function Navbar() {
               className="bg-transparent outline-none w-full text-slate-800 placeholder:text-slate-500 font-medium text-[15px] pr-6"
             />
             {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors bg-white rounded-full p-0.5 shadow-sm"
-              >
+              <button onClick={() => setSearchQuery("")} className="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors bg-white rounded-full p-0.5 shadow-sm">
                 <X size={14} strokeWidth={2.5} />
               </button>
             )}
+            {isMounted && (
+              <pre style={{position:"absolute",background:"rgba(0,0,0,0.8)",color:"white",padding:"4px",zIndex:60}}>{JSON.stringify(suggestions.slice(0,5),null,2)}</pre>
+            )}
             
             {/* Desktop Suggestions Dropdown */}
-            {suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] max-h-[300px] overflow-y-auto z-[9999] py-1">
+            {isMounted && suggestions.length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] max-h-[300px] overflow-y-auto py-1 block z-50">
                 {suggestions.map((p) => (
                   <button
                     key={p._id}
                     onClick={() => {
                       setSearchQuery("");
-                      router.push(`/products/${p._id}`);
+                      router.push(String(p._id).includes(' ') ? `/products` : `/products/${p._id}`);
                     }}
                     className="w-full px-3 py-2.5 flex items-center gap-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 text-left transition-colors cursor-pointer group"
                   >
                     <div className="relative w-10 h-10 bg-[#F1F5F9] rounded-lg flex items-center justify-center shrink-0 border border-slate-200/60 group-hover:border-slate-300 transition-colors">
                       <Image
-                        src={p.colorVariants?.[0]?.images?.[0]?.url || p.images?.[0]?.url || '/placeholder.png'}
-                        alt={p.productName}
+                        src={getProductImage(p)}
+                        alt={p.productName || p.name || 'Chair'}
                         fill
                         className="object-contain p-1 drop-shadow-sm mix-blend-multiply"
                         unoptimized
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-bold text-slate-800 truncate leading-tight group-hover:text-[#FF6D29] transition-colors">{p.productName}</p>
-                      <p className="text-[11px] text-slate-500 font-semibold mt-0.5">₹{p.realPrice?.toLocaleString()}</p>
+                      <p className="text-[13px] font-bold text-slate-800 truncate leading-tight group-hover:text-[#FF6D29] transition-colors">
+                        {p.productName || p.name || p.title}
+                      </p>
+                      <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                        {typeof p.realPrice === 'number' ? `₹${p.realPrice.toLocaleString()}` : p.realPrice}
+                      </p>
                     </div>
                   </button>
                 ))}
@@ -426,8 +436,7 @@ export default function Navbar() {
           </Link>
 
           {/* RIGHT: ACTION ICONS */}
-          <div className="flex items-center justify-end gap-5 lg:gap-6 text-[#BABABA] z-10">
-            {/* Search Icon (Mobile Only - since desktop has the input bar) */}
+          <div className="flex items-center justify-end gap-5 lg:gap-6 text-[#BABABA] z-[60]">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
               className="md:hidden hover:text-[#FF6D29] transition-all duration-300 hover:scale-110"
@@ -435,7 +444,6 @@ export default function Navbar() {
               <Search size={22} strokeWidth={2} />
             </button>
             
-            {/* Additional Search Icon for Desktop (to match your image design, optional) */}
             <button
               onClick={() => {
                 if(searchQuery) router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
@@ -471,7 +479,7 @@ export default function Navbar() {
 
               {/* Cart Popover */}
               {isCartOpen && (
-                <div className="absolute right-0 top-full pt-4 w-[320px] z-[1100] animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute right-0 top-full pt-4 w-[320px] animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="bg-white border border-neutral-200 rounded-xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] p-6 text-center text-neutral-800">
                     {cartItems.length === 0 ? (
                       <>
@@ -704,30 +712,32 @@ export default function Navbar() {
                 </div>
                 
                 {/* Mobile Suggestions */}
-                {suggestions.length > 0 && (
-                  <div className="absolute left-0 right-0 top-full mt-2 bg-[#1a1a1a] border border-zinc-700/50 rounded-xl shadow-2xl max-h-[250px] overflow-y-auto">
+                {isMounted && suggestions.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full mt-2 bg-[#1a1a1a] border border-zinc-700/50 rounded-xl shadow-2xl max-h-[250px] overflow-y-auto z-50">
                     {suggestions.map((p) => (
                       <button
                         key={p._id}
                         onClick={() => {
                           setSearchQuery("");
                           setIsMobileMenuOpen(false);
-                          router.push(`/products/${p._id}`);
+                          router.push(String(p._id).includes(' ') ? `/products` : `/products/${p._id}`);
                         }}
                         className="w-full px-4 py-3 flex items-center gap-3 hover:bg-white/5 border-b border-zinc-800/50 last:border-b-0 text-left transition-colors cursor-pointer"
                       >
                         <div className="relative w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center shrink-0">
                           <Image
-                            src={p.colorVariants?.[0]?.images?.[0]?.url || p.images?.[0]?.url || '/placeholder.png'}
-                            alt={p.productName}
+                            src={getProductImage(p)}
+                            alt={p.productName || p.name || 'Chair'}
                             fill
                             className="object-contain p-1"
                             unoptimized
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[13px] font-bold text-white truncate">{p.productName}</p>
-                          <p className="text-[11px] text-zinc-400 font-semibold mt-0.5">₹{p.realPrice?.toLocaleString()}</p>
+                          <p className="text-[13px] font-bold text-white truncate">{p.productName || p.name || p.title}</p>
+                          <p className="text-[11px] text-zinc-400 font-semibold mt-0.5">
+                            {typeof p.realPrice === 'number' ? `₹${p.realPrice.toLocaleString()}` : p.realPrice}
+                          </p>
                         </div>
                       </button>
                     ))}
