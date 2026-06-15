@@ -107,7 +107,7 @@ const BestSellerCard = ({ product }) => {
       {/* Add to Cart Button */}
       <button 
         onClick={handleAddToCart}
-        className="w-full bg-white border border-[#E5E5E5] text-[#111111] py-2 md:py-2.5 rounded-lg text-[10px] md:text-xs font-bold tracking-wide hover:bg-[#8B5CF6] hover:text-white hover:border-[#8B5CF6] transition-all duration-300 font-sans cursor-pointer"
+        className="w-full bg-white border border-[#E5E5E5] text-[#111111] py-2 md:py-2.5 rounded-lg text-[10.5px] md:text-[12.6px] font-bold tracking-wide hover:bg-[#8B5CF6] hover:text-white hover:border-[#8B5CF6] transition-all duration-300 font-sans cursor-pointer"
       >
         Add to Cart
       </button>
