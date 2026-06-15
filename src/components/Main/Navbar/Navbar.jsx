@@ -34,6 +34,10 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const suggestions = searchQuery.trim()
+    ? products.filter(p => p.productName?.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 6)
+    : [];
+
   const handleFindYourChair = () => {
     if (pathname === "/") {
       const el = document.getElementById("circular-chairs");
@@ -306,22 +310,53 @@ export default function Navbar() {
             <Menu size={24} />
           </button>
 
-          <div className="hidden md:flex items-center bg-white/5 border-b border-[#453027] overflow-hidden hover:border-[#FF6D29] focus-within:border-[#FF6D29] transition-all duration-300 shadow-lg backdrop-blur-xl">
-            <div className="px-2 text-[#FF6D29]">
-              <Search size={20} />
+          <div className="hidden md:flex items-center bg-white/5 border-b border-[#453027] hover:border-[#FF6D29] focus-within:border-[#FF6D29] transition-all duration-300 shadow-lg backdrop-blur-xl relative">
+            <div className="flex items-center w-full">
+              <div className="px-2 text-[#FF6D29]">
+                <Search size={20} />
+              </div>
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+                  }
+                }}
+                className="bg-transparent w-full py-2 outline-none text-[16px] placeholder:text-[#BABABA] text-white"
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
-                }
-              }}
-              className="bg-transparent w-full py-2 outline-none text-[16px] placeholder:text-[#BABABA] text-white"
-            />
+            {/* Desktop Suggestions Dropdown */}
+            {suggestions.length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-1 bg-[#1a171a] border border-[#453027] rounded-xl shadow-2xl max-h-64 overflow-y-auto z-[9999]">
+                {suggestions.map((p) => (
+                  <button
+                    key={p._id}
+                    onClick={() => {
+                      setSearchQuery("");
+                      router.push(`/products/${p._id}`);
+                    }}
+                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-white/5 border-b border-white/5 last:border-b-0 text-left transition-colors cursor-pointer"
+                  >
+                    <div className="relative w-8 h-8 bg-white/5 rounded flex items-center justify-center shrink-0">
+                      <Image
+                        src={p.colorVariants?.[0]?.images?.[0]?.url || p.images?.[0]?.url || '/placeholder.png'}
+                        alt={p.productName}
+                        fill
+                        className="object-contain p-0.5"
+                        unoptimized
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-white truncate font-sans">{p.productName}</p>
+                      <p className="text-[10px] text-[#BABABA] font-semibold font-sans">₹{p.realPrice?.toLocaleString()}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <Link href="/" className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 shrink-0 md:pr-25 flex items-center">
@@ -574,23 +609,55 @@ export default function Navbar() {
               </div>
 
               {/* Search Box */}
-              <div className="mt-6 flex items-center bg-white/5 border border-zinc-800 rounded-lg overflow-hidden hover:border-zinc-600 focus-within:border-zinc-555 transition-all duration-300">
-                <div className="px-3 text-zinc-400">
-                  <Search size={18} />
+              <div className="mt-6 flex items-center bg-white/5 border border-zinc-800 rounded-lg hover:border-zinc-600 focus-within:border-zinc-555 transition-all duration-300 relative">
+                <div className="flex items-center w-full">
+                  <div className="px-3 text-zinc-400">
+                    <Search size={18} />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setIsMobileMenuOpen(false);
+                        router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+                      }
+                    }}
+                    className="bg-transparent w-full py-2.5 outline-none text-sm placeholder:text-zinc-500 text-white"
+                  />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      setIsMobileMenuOpen(false);
-                      router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
-                    }
-                  }}
-                  className="bg-transparent w-full py-2.5 outline-none text-sm placeholder:text-zinc-500 text-white"
-                />
+                {/* Mobile Suggestions Dropdown */}
+                {suggestions.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full mt-1 bg-[#121212] border border-zinc-800 rounded-lg shadow-2xl max-h-48 overflow-y-auto z-[9999]">
+                    {suggestions.map((p) => (
+                      <button
+                        key={p._id}
+                        onClick={() => {
+                          setSearchQuery("");
+                          setIsMobileMenuOpen(false);
+                          router.push(`/products/${p._id}`);
+                        }}
+                        className="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-white/5 border-b border-zinc-800 last:border-b-0 text-left transition-colors cursor-pointer"
+                      >
+                        <div className="relative w-7 h-7 bg-white/5 rounded flex items-center justify-center shrink-0">
+                          <Image
+                            src={p.colorVariants?.[0]?.images?.[0]?.url || p.images?.[0]?.url || '/placeholder.png'}
+                            alt={p.productName}
+                            fill
+                            className="object-contain p-0.5"
+                            unoptimized
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-white truncate font-sans">{p.productName}</p>
+                          <p className="text-[10px] text-zinc-400 font-semibold font-sans">₹{p.realPrice?.toLocaleString()}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Home & Wishlist Links inside Mobile Menu */}
