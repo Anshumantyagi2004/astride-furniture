@@ -248,12 +248,12 @@ export default function Navbar3() {
                         GST: <span className="font-bold text-white">07AALCM4232E1ZN</span>
                     </div>
 
-                    <nav className="hidden md:flex items-center gap-[22px]">
-                        <Link href="/bulk-orders" className="hover:text-lime-500 transition-colors">
+                    <nav className="flex items-center gap-[16px] md:gap-[22px]">
+                        <Link href="/bulk-orders" className="hidden sm:inline hover:text-lime-500 transition-colors">
                             Bulk orders
                         </Link>
 
-                        <Link href="/contact" className="hover:text-lime-500 transition-colors">
+                        <Link href="/contact" className="hidden sm:inline hover:text-lime-500 transition-colors">
                             Support
                         </Link>
 

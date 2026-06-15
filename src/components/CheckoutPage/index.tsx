@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -15,16 +15,18 @@ interface CartItem {
 
 export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [subtotal, setSubtotal] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
 
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [stateName, setStateName] = useState("");
-  const [pinCode, setPinCode] = useState("");
+  // Grouped Form State: Reduces React state allocation memory overhead
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    stateName: "",
+    pinCode: "",
+  });
 
   const shippingCost = 49;
 
@@ -34,27 +36,29 @@ export default function CheckoutPage() {
     const savedCart = localStorage.getItem('astride_cart');
     if (savedCart) {
       try {
-        const items = JSON.parse(savedCart);
-        setCartItems(items);
-        const total = items.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity), 0);
-        setSubtotal(total);
+        setCartItems(JSON.parse(savedCart));
       } catch (e) {
         console.error(e);
       }
     }
   }, []);
 
-  const placeOrder = async () => {
+  // Derived State: Eliminates a redundant useState hook and render cycle
+  const subtotal = useMemo(() => {
+    return cartItems.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity), 0);
+  }, [cartItems]);
+
+  // Centralized Handler: Prevents inline function garbage collection churn
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  }, []);
+
+  const placeOrder = useCallback(async () => {
     try {
-      if (
-        !fullName ||
-        !email ||
-        !phone ||
-        !address ||
-        !city ||
-        !stateName ||
-        !pinCode
-      ) {
+      const { fullName, email, phone, address, city, stateName, pinCode } = formData;
+
+      if (!fullName || !email || !phone || !address || !city || !stateName || !pinCode) {
         alert("Please fill all fields");
         return;
       }
@@ -116,12 +120,11 @@ export default function CheckoutPage() {
         alert("Order placed successfully");
         localStorage.removeItem("astride_cart");
         setCartItems([]);
-        setSubtotal(0);
       }
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [formData, cartItems, subtotal]);
 
   if (!isMounted) return null;
 
@@ -170,9 +173,10 @@ export default function CheckoutPage() {
                     <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Full Name</label>
                     <input 
                       type="text" 
-                      placeholder="John Doe"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
+                      name="fullName"
+                      placeholder="Full Name"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                       required
                     />
@@ -181,9 +185,10 @@ export default function CheckoutPage() {
                     <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Email</label>
                     <input 
                       type="email" 
-                      placeholder="john@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      name="email"
+                      placeholder="Email Address"
+                      value={formData.email}
+                      onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                       required
                     />
@@ -194,9 +199,10 @@ export default function CheckoutPage() {
                   <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Phone Number</label>
                   <input 
                     type="tel" 
-                    placeholder="+91 98765 43210"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    name="phone"
+                    placeholder="Phone Number"
+                    value={formData.phone}
+                    onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                     required
                   />
@@ -205,9 +211,10 @@ export default function CheckoutPage() {
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Address</label>
                   <textarea 
-                    placeholder="123 Main St, Apt 4B"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    name="address"
+                    placeholder="Street Address"
+                    value={formData.address}
+                    onChange={handleInputChange}
                     rows={3}
                     className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium resize-none"
                     required
@@ -218,9 +225,10 @@ export default function CheckoutPage() {
                   <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">City</label>
                   <input 
                     type="text" 
-                    placeholder="Mumbai"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
+                    name="city"
+                    placeholder="City"
+                    value={formData.city}
+                    onChange={handleInputChange}
                     className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                     required
                   />
@@ -231,9 +239,10 @@ export default function CheckoutPage() {
                     <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">State</label>
                     <input 
                       type="text" 
-                      placeholder="Maharashtra"
-                      value={stateName}
-                      onChange={(e) => setStateName(e.target.value)}
+                      name="stateName"
+                      placeholder="State"
+                      value={formData.stateName}
+                      onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                       required
                     />
@@ -242,9 +251,10 @@ export default function CheckoutPage() {
                     <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">PIN Code</label>
                     <input 
                       type="text" 
-                      placeholder="400001"
-                      value={pinCode}
-                      onChange={(e) => setPinCode(e.target.value)}
+                      name="pinCode"
+                      placeholder="PIN Code"
+                      value={formData.pinCode}
+                      onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                       required
                     />

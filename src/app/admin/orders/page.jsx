@@ -253,7 +253,7 @@ export default function Page() {
                                                             />
                                                         </div>
                                                         <div className="flex-1 min-w-0 space-y-1">
-                                                            <h4 className="text-3xl lg:text-4xl font-extrabold text-neutral-950 leading-snug break-words">{product.productName}</h4>
+                                                            <h4 className="text-lg font-extrabold text-neutral-950 leading-snug break-words">{product.productName}</h4>
                                                             <p className="text-xs text-neutral-400 font-mono">
                                                                 ID: <span className="select-all font-semibold text-neutral-600">{product.productId || product._id}</span>
                                                             </p>
