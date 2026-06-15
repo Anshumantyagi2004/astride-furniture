@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, MouseEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -66,6 +66,27 @@ const CHAIR_CATEGORIES: Record<string, ChairCategory> = {
   }
 };
 
+const NAV_ITEMS = [
+    "Staff Chair",
+    "Office Chair",
+    "Gaming Chair",
+    "Study Chair",
+    "Bar Stools & Cafe Chair",
+];
+
+// Helper outside component scope to prevent re-allocating memory during renders
+const getNormalizedCategoryName = (p: any) => {
+    if (!p?.category) return "";
+    const dbCategory = typeof p.category === "object" && p.category.name ? p.category.name.toUpperCase() : "";
+    if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) return "Gaming Chair";
+    if (dbCategory.includes("EXECUTIVE")) return "Office Chair";
+    if (dbCategory.includes("STAFF")) return "Staff Chair";
+    if (dbCategory.includes("STUDY")) return "Study Chair";
+    if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) return "Bar Stools & Cafe Chair";
+    if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) return "Office Chair";
+    return "";
+};
+
 export default function Navbar3() {
     const pathname = usePathname();
     const router = useRouter();
@@ -86,32 +107,34 @@ export default function Navbar3() {
         });
     };
 
-    const handleFindYourChair = (e: React.MouseEvent) => {
+    const handleFindYourChair = (e: MouseEvent) => {
         e.preventDefault();
         if (pathname === "/") {
             const el = document.getElementById("circular-chairs");
-            if (el) {
-                el.scrollIntoView({ behavior: "smooth" });
-            }
+            if (el) el.scrollIntoView({ behavior: "smooth" });
             window.dispatchEvent(new Event("open-chair-finder"));
         } else {
             router.push("/?finder=true");
         }
     };
 
+    // 1. Optimized Cart Syncer
     useEffect(() => {
         const updateCartCount = () => {
             const savedCart = localStorage.getItem('astride_cart');
-            if (savedCart) {
-                try {
-                    const items = JSON.parse(savedCart);
-                    const count = items.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0);
-                    setCartCount(count);
-                } catch (e) {
-                    console.error('Error parsing cart items in Navbar:', e);
-                }
-            } else {
+            if (!savedCart) {
                 setCartCount(0);
+                return;
+            }
+            try {
+                const items = JSON.parse(savedCart);
+                let count = 0;
+                for (let i = 0; i < items.length; i++) {
+                    count += items[i].quantity || 1;
+                }
+                setCartCount(count);
+            } catch (e) {
+                console.error('Error parsing cart items in Navbar:', e);
             }
         };
         updateCartCount();
@@ -119,21 +142,18 @@ export default function Navbar3() {
         return () => window.removeEventListener('astride_cart_updated', updateCartCount);
     }, []);
 
+    // 2. Fetch Data with Session Storage Instantly
     useEffect(() => {
-        // 1. Try loading categories and products from cache instantly
         try {
             const cachedCats = sessionStorage.getItem("astride_nav_categories_cache");
             const cachedProds = sessionStorage.getItem("astride_nav_products_cache");
-            if (cachedCats) {
-                setCategories(JSON.parse(cachedCats));
-            }
-            if (cachedProds) {
-                setProducts(JSON.parse(cachedProds));
-            }
+            if (cachedCats) setCategories(JSON.parse(cachedCats));
+            if (cachedProds) setProducts(JSON.parse(cachedProds));
         } catch (e) {
             console.error("Error loading navbar cache:", e);
         }
 
+        let isMounted = true;
         const fetchData = async () => {
             try {
                 const [catRes, prodRes] = await Promise.all([
@@ -145,14 +165,12 @@ export default function Navbar3() {
                     prodRes.json()
                 ]);
 
+                if (!isMounted) return;
+
                 if (catData?.success) {
                     const mappedCats = catData.categories.map((cat: any) => {
-                        if (cat.name === "Executive Chair") {
-                            return { ...cat, name: "Office Chair" };
-                        }
-                        if (cat.name === "Bar Stool" || cat.name === "Bar Stools") {
-                            return { ...cat, name: "Bar Stools & Cafe Chair" };
-                        }
+                        if (cat.name === "Executive Chair") return { ...cat, name: "Office Chair" };
+                        if (cat.name === "Bar Stool" || cat.name === "Bar Stools") return { ...cat, name: "Bar Stools & Cafe Chair" };
                         return cat;
                     });
                     setCategories(mappedCats);
@@ -168,68 +186,70 @@ export default function Navbar3() {
             }
         };
         fetchData();
+        return () => { isMounted = false; };
     }, []);
 
-    const navItems = [
-        "Staff Chair",
-        "Office Chair",
-        "Gaming Chair",
-        "Study Chair",
-        "Bar Stools & Cafe Chair",
-    ];
+    // 3. Memoized Dynamic Mega Dropdown Chairs (Reduces heavy computations on hover)
+    const displayChairs = useMemo<SeriesChair[]>(() => {
+        if (!activeMenu) return [];
 
-    const getNormalizedCategoryName = (p: any) => {
-        if (!p.category) return "";
-        const dbCategory = typeof p.category === "object" && p.category.name ? p.category.name.toUpperCase() : "";
-        if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
-            return "Gaming Chair";
-        }
-        if (dbCategory.includes("EXECUTIVE")) {
-            return "Office Chair";
-        }
-        if (dbCategory.includes("STAFF")) {
-            return "Staff Chair";
-        }
-        if (dbCategory.includes("STUDY")) {
-            return "Study Chair";
-        }
-        if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) {
-            return "Bar Stools & Cafe Chair";
-        }
-        if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
-            return "Office Chair";
-        }
-        return "";
-    };
-
-    // Resolve which chairs to show: try dynamic API products first, fallback to static CHAIR_CATEGORIES
-    let displayChairs: SeriesChair[] = [];
-    if (activeMenu) {
         if (products.length > 0) {
-            displayChairs = products
-                .filter((p) => {
-                    const normalizedCat = getNormalizedCategoryName(p);
-                    return normalizedCat === activeMenu;
-                })
+            const filtered = products
+                .filter((p) => getNormalizedCategoryName(p) === activeMenu)
                 .map((p) => ({
                     name: p.productName,
                     image: p.colorVariants?.[0]?.images?.[0]?.url || "/placeholder.png",
                     buyUrl: `/products/${p.slug}`,
                     tag: p.whychoose || "",
                 }));
+            if (filtered.length > 0) return filtered;
         }
 
-        // Fallback to static lists if no matches are found in the dynamic list
-        if (displayChairs.length === 0) {
-            // Check for match (normalizing "Bar Stools" and "Bar Stool")
-            const staticKey = Object.keys(CHAIR_CATEGORIES).find(
-                (k) => k.toLowerCase().replace("s", "") === activeMenu.toLowerCase().replace("s", "")
-            );
-            if (staticKey) {
-                displayChairs = CHAIR_CATEGORIES[staticKey].chairs;
+        const staticKey = Object.keys(CHAIR_CATEGORIES).find(
+            (k) => k.toLowerCase().replace("s", "") === activeMenu.toLowerCase().replace("s", "")
+        );
+        return staticKey ? CHAIR_CATEGORIES[staticKey].chairs : [];
+    }, [activeMenu, products]);
+
+    // 4. Highly Optimized Memoized Suggestion Filter (No execution lag when typing)
+    const suggestions = useMemo(() => {
+        const query = searchQuery.trim().toLowerCase();
+        if (!query) return [];
+
+        let itemsToSearch = products;
+        if (!products || products.length === 0) {
+            itemsToSearch = Object.values(CHAIR_CATEGORIES).flatMap(cat => cat.chairs).map(chair => ({
+                _id: chair.name, 
+                productName: chair.name,
+                realPrice: "See price in cart",
+                image: chair.image,
+                slug: chair.buyUrl.replace("/products/", "")
+            }));
+        }
+
+        const result: any[] = [];
+        for (let i = 0; i < itemsToSearch.length; i++) {
+            const p = itemsToSearch[i];
+            if (!p) continue;
+            const name = (p.productName || p.name || "").toLowerCase();
+            if (name.includes(query)) {
+                result.push(p);
+                if (result.length >= 6) break; // Early termination out of loop if maximum items matched
             }
         }
-    }
+        return result;
+    }, [searchQuery, products]);
+
+    const handleSuggestionClick = (p: any) => {
+        setSearchQuery("");
+        setIsSearchExpanded(false);
+        const targetSlug = p.slug || p._id;
+        if (targetSlug) {
+            router.push(`/products/${targetSlug}`);
+        } else {
+            router.push(`/products`);
+        }
+    };
 
     return (
         <>
@@ -237,11 +257,7 @@ export default function Navbar3() {
             <div className={`bg-slate-900 text-white text-[13px] font-medium py-[9px] ${sans.className}`}>
                 <div className="max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex items-center justify-between gap-4">
                     <div>
-                        Tollfree{" "}
-                        <span className="text-lime-500 font-bold">
-                            7311164111
-                        </span>{" "}
-                        — Call now!
+                        Tollfree <span className="text-lime-500 font-bold">7311164111</span> — Call now!
                     </div>
 
                     <div className="hidden md:block text-slate-300 text-[12px] tracking-wider uppercase font-semibold">
@@ -252,11 +268,9 @@ export default function Navbar3() {
                         <Link href="/bulk-orders" className="hidden sm:inline hover:text-lime-500 transition-colors">
                             Bulk orders
                         </Link>
-
                         <Link href="/contact" className="hidden sm:inline hover:text-lime-500 transition-colors">
                             Support
                         </Link>
-
                         <Link href="/account" className="hover:text-lime-500 transition-colors">
                             Profile
                         </Link>
@@ -272,11 +286,7 @@ export default function Navbar3() {
                 <div className="max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-[14px] flex items-center justify-between gap-6 relative">
 
                     {/* Logo */}
-                    <Link
-                        href="/"
-                        aria-label="Astride home"
-                        className="flex items-center shrink-0"
-                    >
+                    <Link href="/" aria-label="Astride home" className="flex items-center shrink-0">
                         <Image
                             src="/logo.webp"
                             alt="Astride"
@@ -289,21 +299,12 @@ export default function Navbar3() {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
-                        {navItems.map((item) => (
+                        {NAV_ITEMS.map((item) => (
                             <Link
                                 key={item}
                                 href={`/products?category=${encodeURIComponent(item)}`}
                                 onMouseEnter={() => setActiveMenu(item)}
-                                className={`
-                                    relative py-[6px] text-[15.5px] font-semibold tracking-[0.04em] text-slate-800 hover:text-slate-950 transition-colors
-                                    after:absolute after:left-0 after:bottom-0
-                                    after:h-[3px] after:rounded-full
-                                    after:bg-gradient-to-r
-                                    after:from-[#8B5CF6]
-                                    after:to-[#FF7A1A]
-                                    after:transition-all after:duration-300
-                                    after:w-0 hover:after:w-full
-                                `}
+                                className="relative py-[6px] text-[15.5px] font-semibold tracking-[0.04em] text-slate-800 hover:text-slate-950 transition-colors after:absolute after:left-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-gradient-to-r after:from-[#8B5CF6] after:to-[#FF7A1A] after:transition-all after:duration-300 after:w-0 hover:after:w-full"
                             >
                                 {item}
                             </Link>
@@ -318,9 +319,7 @@ export default function Navbar3() {
                             className="relative flex items-center bg-transparent transition-all duration-300 rounded-full"
                             onMouseEnter={() => setIsSearchExpanded(true)}
                             onMouseLeave={() => {
-                                if (searchQuery === "") {
-                                    setIsSearchExpanded(false);
-                                }
+                                if (searchQuery === "") setIsSearchExpanded(false);
                             }}
                         >
                             <div className={`relative overflow-hidden transition-all duration-350 flex items-center ease-in-out ${isSearchExpanded ? 'w-36 md:w-44 pl-1.5 pr-0.5 opacity-100' : 'w-0 opacity-0 pointer-events-none'}`}>
@@ -362,32 +361,53 @@ export default function Navbar3() {
                                 className="relative grid place-items-center text-slate-900 hover:text-slate-700 transition-colors shrink-0 cursor-pointer"
                                 aria-label="Search"
                             >
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth={2.2}
-                                    className="w-[22px] h-[22px]"
-                                >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="w-[22px] h-[22px]">
                                     <circle cx="11" cy="11" r="7" />
                                     <path d="m20 20-3.5-3.5" />
                                 </svg>
                             </button>
+
+                            {/* Suggestions Dropdown */}
+                            {searchQuery.trim() !== "" && isSearchExpanded && (
+                                <div className="absolute top-full right-0 mt-2 w-64 md:w-72 bg-white border border-slate-200 rounded-xl shadow-xl max-h-[300px] overflow-y-auto py-1 z-50">
+                                    {suggestions.length > 0 ? (
+                                        suggestions.map((p: any) => (
+                                            <button
+                                                key={p.slug || p._id || p.productName}
+                                                onClick={() => handleSuggestionClick(p)}
+                                                className="w-full px-3 py-2 flex items-center gap-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 text-left transition-colors cursor-pointer group"
+                                            >
+                                                <div className="relative w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center shrink-0 border border-slate-200/60 overflow-hidden">
+                                                    <Image
+                                                        src={p.image || p.colorVariants?.[0]?.images?.[0]?.url || "/placeholder.png"}
+                                                        alt={p.productName}
+                                                        fill
+                                                        className="object-contain p-0.5"
+                                                        unoptimized
+                                                    />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-[12px] font-bold text-slate-800 truncate leading-tight group-hover:text-orange-500 transition-colors">
+                                                        {p.productName}
+                                                    </p>
+                                                    <p className="text-[10px] text-slate-500 font-semibold mt-0.5">
+                                                        {typeof p.realPrice === 'number' ? `₹${p.realPrice.toLocaleString()}` : p.realPrice}
+                                                    </p>
+                                                </div>
+                                            </button>
+                                        ))
+                                    ) : (
+                                        <div className="px-4 py-3 text-xs text-slate-500 text-center font-medium">
+                                            No products found
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Wishlist */}
-                        <Link
-                            href="/wishlist"
-                            className="relative grid place-items-center text-slate-900 hover:text-slate-700 transition-colors"
-                            aria-label="Wishlist"
-                        >
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2.2}
-                                className="w-[22px] h-[22px]"
-                            >
+                        <Link href="/wishlist" className="relative grid place-items-center text-slate-900 hover:text-slate-700 transition-colors" aria-label="Wishlist">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="w-[22px] h-[22px]">
                                 <path d="M12 21s-7.5-4.8-9.5-9C1 8.5 3 5 6.5 5c2 0 3.5 1 4.5 2.5C12 6 13.5 5 15.5 5 19 5 21 8.5 20.5 12c-2 4.2-8.5 9-8.5 9z" />
                             </svg>
                         </Link>
@@ -398,38 +418,21 @@ export default function Navbar3() {
                             className="relative grid place-items-center text-slate-900 hover:text-slate-700 transition-colors cursor-pointer"
                             aria-label={`Cart, ${cartCount} items`}
                         >
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2.2}
-                                className="w-[22px] h-[22px]"
-                            >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="w-[22px] h-[22px]">
                                 <circle cx="9" cy="20" r="1.6" />
                                 <circle cx="17" cy="20" r="1.6" />
                                 <path d="M3 4h2l2.4 11h10.2L20 7H6" />
                             </svg>
-
                             {cartCount > 0 && (
-                                <span className="absolute -top-1.5 -right-2 flex h-[17px] w-[17px] items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white animate-pulse">
+                                <span className="absolute -top-1.5 -right-2 flex h-[17px] w-[17px] items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white">
                                     {cartCount}
                                 </span>
                             )}
                         </button>
 
                         {/* Mobile Menu Button */}
-                        <button
-                            className="lg:hidden"
-                            aria-label="Menu"
-                            onClick={() => setIsOpen(!isOpen)}
-                        >
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2.4}
-                                className="w-[26px] h-[26px]"
-                            >
+                        <button className="lg:hidden" aria-label="Menu" onClick={() => setIsOpen(!isOpen)}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} className="w-[26px] h-[26px]">
                                 <path d="M4 7h16M4 12h16M4 17h16" />
                             </svg>
                         </button>
@@ -438,7 +441,7 @@ export default function Navbar3() {
                     {/* Mobile Navigation */}
                     {isOpen && (
                         <nav className="absolute left-0 right-0 top-full flex flex-col gap-4 border-b-2 border-slate-900 bg-white px-5 py-5 lg:hidden">
-                            {navItems.map((item) => (
+                            {NAV_ITEMS.map((item) => (
                                 <Link
                                     key={item}
                                     href={`/products?category=${encodeURIComponent(item)}`}
@@ -452,16 +455,14 @@ export default function Navbar3() {
                     )}
                 </div>
 
-                {/* Dropdown Mega Menus (similar to Navbar2 but styled for Navbar3 and dynamic) */}
-                {/* Dropdown Mega Menus (similar to Navbar2 but styled for Navbar3 and dynamic) */}
+                {/* Dropdown Mega Menus */}
                 {activeMenu && displayChairs.length > 0 && (
                   <div 
-                    className="absolute left-0 top-full w-full bg-white border-b border-neutral-200 text-neutral-800 py-6 px-12 z-[900] shadow-xl animate-in fade-in slide-in-from-top-4 duration-300"
+                    className="absolute left-0 top-full w-full bg-white border-b border-neutral-200 text-neutral-800 py-6 px-12 z-[900] shadow-xl"
                     onMouseEnter={() => setActiveMenu(activeMenu)}
                     onMouseLeave={() => setActiveMenu(null)}
                   >
                     <div className="max-w-5xl mx-auto relative px-12">
-                      {/* Left Arrow Button */}
                       {displayChairs.length > 4 && (
                         <button
                           onClick={() => scrollDropdown("left")}
@@ -486,7 +487,6 @@ export default function Navbar3() {
                             onClick={() => setActiveMenu(null)}
                             className="w-[210px] flex-shrink-0 flex flex-col items-center group relative cursor-pointer snap-start"
                           >
-                            {/* Visual Container */}
                             <div className="relative w-full aspect-[4/3.2] bg-neutral-50 border border-neutral-200 rounded-2xl flex items-center justify-center p-4 group-hover:bg-neutral-100 group-hover:border-neutral-300 transition-all duration-300">
                               <div className="relative w-[90%] h-[90%] transform group-hover:scale-105 transition-transform duration-500 ease-out flex items-center justify-center">
                                 <Image
@@ -499,12 +499,8 @@ export default function Navbar3() {
                               </div>
                             </div>
 
-                            {/* Metadata */}
                             <div className="mt-3 flex flex-col items-center gap-1 w-full">
-                              <span 
-                                className="font-extrabold text-[#131313] text-sm tracking-tight text-center group-hover:underline underline-offset-2 transition-all"
-                                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                              >
+                              <span className="font-extrabold text-[#131313] text-sm tracking-tight text-center group-hover:underline underline-offset-2 transition-all">
                                 {chair.name}
                               </span>
                             </div>
@@ -512,7 +508,6 @@ export default function Navbar3() {
                         ))}
                       </div>
 
-                      {/* Right Arrow Button */}
                       {displayChairs.length > 4 && (
                         <button
                           onClick={() => scrollDropdown("right")}
