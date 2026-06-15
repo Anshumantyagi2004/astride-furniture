@@ -27,6 +27,56 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
+// --- FUZZY SEARCH ALGORITHM ---
+// This ensures close matches and related words show up in the dropdown
+const getSuggestions = (query, allProducts) => {
+  if (!query.trim()) return [];
+  const q = query.toLowerCase().trim();
+  const queryWords = q.split(/\s+/).filter(Boolean);
+  
+  return allProducts.map(p => {
+    const name = (p.productName || "").toLowerCase();
+    let score = 0;
+    
+    // 1. Exact substring match (Highest priority)
+    if (name.includes(q)) {
+      score += 100;
+    }
+    
+    // 2. Individual word matches
+    let wordMatchCount = 0;
+    queryWords.forEach(word => {
+      if (name.includes(word)) {
+        score += 10;
+        wordMatchCount++;
+      }
+    });
+    // If multiple words are typed and all are present (even if jumbled)
+    if (wordMatchCount === queryWords.length && queryWords.length > 1) {
+      score += 50;
+    }
+
+    // 3. Subsequence match for typos (e.g., "gming chr" matches "Gaming Chair")
+    let qIdx = 0;
+    let nq = q.replace(/\s+/g, ''); // query without spaces
+    for (let i = 0; i < name.length && qIdx < nq.length; i++) {
+      if (name[i] === nq[qIdx]) qIdx++;
+    }
+    if (qIdx === nq.length) {
+      score += 20; 
+    }
+
+    // 4. Category / Tag matching
+    const cat = typeof p.category === 'object' ? (p.category?.name || "").toLowerCase() : (p.category || "").toLowerCase();
+    if (cat.includes(q)) score += 15;
+
+    return { ...p, _matchScore: score };
+  })
+  .filter(p => p._matchScore > 0) // Only keep items that had some level of match
+  .sort((a, b) => b._matchScore - a._matchScore) // Sort by best match
+  .slice(0, 6); // Keep max 6
+};
+
 export default function Navbar() {
   const [hideTopBar, setHideTopBar] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,9 +84,12 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const suggestions = searchQuery.trim()
-    ? products.filter(p => p.productName?.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 6)
-    : [];
+  // Dynamic Data Fetching
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  // Calculate dynamic suggestions using the fuzzy search
+  const suggestions = getSuggestions(searchQuery, products);
 
   const handleFindYourChair = () => {
     if (pathname === "/") {
@@ -83,10 +136,6 @@ export default function Navbar() {
   };
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Dynamic Data Fetching
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     loadCart();
@@ -253,6 +302,7 @@ export default function Navbar() {
 
   return (
     <header className="w-full font-[Barlow] sticky -top-1 z-[1000] relative select-none" onMouseLeave={() => setActiveMenu(null)}>
+      {/* TOP CONTACT BAR */}
       <motion.div
         animate={{
           height: hideTopBar ? 0 : 44,
@@ -266,7 +316,6 @@ export default function Navbar() {
         className="bg-[#161316]/95 backdrop-blur-xl text-white overflow-hidden border-b border-[#453027]"
       >
         <div className="lg:px-15 px-4 h-11 flex items-center justify-between">
-          {/* SOCIAL ICONS */}
           <div className="flex items-center gap-3">
             <button className="w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:bg-[#FF6D29] transition-all duration-300 flex items-center justify-center hover:scale-110">
               <FaFacebookF size={14} />
@@ -279,7 +328,6 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* CENTER TEXT */}
           <p className="hidden lg:block text-sm font-medium tracking-wide text-[#BABABA]">
             Tollfree Number 7311164111{" "}
             <span className="underline cursor-pointer ml-1 hover:text-[#FF6D29] transition-all duration-300">
@@ -287,7 +335,6 @@ export default function Navbar() {
             </span>
           </p>
 
-          {/* RIGHT SIDE */}
           <div className="flex items-center gap-6 text-sm font-medium text-[#BABABA]">
             <Link href="/contact" className="flex items-center gap-2 hover:text-[#FF6D29] transition-all duration-300">
               <Phone size={16} />
@@ -300,37 +347,44 @@ export default function Navbar() {
         </div>
       </motion.div>
 
+      {/* MAIN NAVBAR ROW */}
       <div className="relative z-20 bg-[#161316]/90 backdrop-blur-xl border-b border-[#453027] shadow-[0_0_40px_rgba(255,109,41,0.08)]">
-        <div className="lg:px-15 px-4 flex items-center justify-between gap-4 py-2 md:py-0 relative">
+        <div className="max-w-[1920px] mx-auto lg:px-15 px-4 flex items-center h-[72px] relative justify-between">
+          
           {/* Hamburger Menu for Mobile */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="md:hidden text-[#BABABA] hover:text-white p-1 transition-colors"
+            className="md:hidden text-[#BABABA] hover:text-white p-1 transition-colors z-10"
           >
             <Menu size={24} />
           </button>
 
-          <div className="hidden md:flex items-center bg-white/5 border-b border-[#453027] hover:border-[#FF6D29] focus-within:border-[#FF6D29] transition-all duration-300 shadow-lg backdrop-blur-xl relative">
-            <div className="flex items-center w-full">
-              <div className="px-2 text-[#FF6D29]">
-                <Search size={20} />
-              </div>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
-                  }
-                }}
-                className="bg-transparent w-full py-2 outline-none text-[16px] placeholder:text-[#BABABA] text-white"
-              />
-            </div>
+          {/* LEFT: DESKTOP SEARCH BAR (Pill Shaped) */}
+          <div className="hidden md:flex relative items-center bg-[#F1F5F9] rounded-full px-4 py-2 w-[220px] lg:w-[280px] border border-transparent focus-within:border-slate-300 transition-all duration-300 z-10">
+            <input
+              type="text"
+              placeholder="Search chairs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+                }
+              }}
+              className="bg-transparent outline-none w-full text-slate-800 placeholder:text-slate-500 font-medium text-[15px] pr-6"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors bg-white rounded-full p-0.5 shadow-sm"
+              >
+                <X size={14} strokeWidth={2.5} />
+              </button>
+            )}
+            
             {/* Desktop Suggestions Dropdown */}
             {suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-1 bg-[#1a171a] border border-[#453027] rounded-xl shadow-2xl max-h-64 overflow-y-auto z-[9999]">
+              <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] max-h-[300px] overflow-y-auto z-[9999] py-1">
                 {suggestions.map((p) => (
                   <button
                     key={p._id}
@@ -338,20 +392,20 @@ export default function Navbar() {
                       setSearchQuery("");
                       router.push(`/products/${p._id}`);
                     }}
-                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-white/5 border-b border-white/5 last:border-b-0 text-left transition-colors cursor-pointer"
+                    className="w-full px-3 py-2.5 flex items-center gap-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 text-left transition-colors cursor-pointer group"
                   >
-                    <div className="relative w-8 h-8 bg-white/5 rounded flex items-center justify-center shrink-0">
+                    <div className="relative w-10 h-10 bg-[#F1F5F9] rounded-lg flex items-center justify-center shrink-0 border border-slate-200/60 group-hover:border-slate-300 transition-colors">
                       <Image
                         src={p.colorVariants?.[0]?.images?.[0]?.url || p.images?.[0]?.url || '/placeholder.png'}
                         alt={p.productName}
                         fill
-                        className="object-contain p-0.5"
+                        className="object-contain p-1 drop-shadow-sm mix-blend-multiply"
                         unoptimized
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-white truncate font-sans">{p.productName}</p>
-                      <p className="text-[10px] text-[#BABABA] font-semibold font-sans">₹{p.realPrice?.toLocaleString()}</p>
+                      <p className="text-[13px] font-bold text-slate-800 truncate leading-tight group-hover:text-[#FF6D29] transition-colors">{p.productName}</p>
+                      <p className="text-[11px] text-slate-500 font-semibold mt-0.5">₹{p.realPrice?.toLocaleString()}</p>
                     </div>
                   </button>
                 ))}
@@ -359,19 +413,40 @@ export default function Navbar() {
             )}
           </div>
 
-          <Link href="/" className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 shrink-0 md:pr-25 flex items-center">
+          {/* CENTER: LOGO */}
+          <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center z-0">
             <Image
               src="/logo.webp"
               alt="logo"
-              width={170}
-              height={80}
-              className="h-10 md:h-16 w-auto object-contain brightness-0 invert opacity-95"
+              width={160}
+              height={70}
+              className="h-10 md:h-[60px] w-auto object-contain brightness-0 invert opacity-95"
+              priority
             />
           </Link>
 
-          <div className="flex items-center gap-4 md:gap-5 text-white">
-            <Link href="/wishlist" className="hidden md:block text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110">
-              <Heart size={24} strokeWidth={1.8} />
+          {/* RIGHT: ACTION ICONS */}
+          <div className="flex items-center justify-end gap-5 lg:gap-6 text-[#BABABA] z-10">
+            {/* Search Icon (Mobile Only - since desktop has the input bar) */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="md:hidden hover:text-[#FF6D29] transition-all duration-300 hover:scale-110"
+            >
+              <Search size={22} strokeWidth={2} />
+            </button>
+            
+            {/* Additional Search Icon for Desktop (to match your image design, optional) */}
+            <button
+              onClick={() => {
+                if(searchQuery) router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+              }}
+              className="hidden md:block hover:text-[#FF6D29] transition-all duration-300 hover:scale-110"
+            >
+              <Search size={22} strokeWidth={2.2} />
+            </button>
+
+            <Link href="/wishlist" className="hidden md:block hover:text-[#FF6D29] transition-all duration-300 hover:scale-110">
+              <Heart size={22} strokeWidth={2.2} />
             </Link>
 
             <div
@@ -384,11 +459,11 @@ export default function Navbar() {
                   e.preventDefault();
                   window.dispatchEvent(new CustomEvent('open-cart-sidebar'));
                 }}
-                className="relative text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110 flex items-center justify-center cursor-pointer"
+                className="relative hover:text-[#FF6D29] transition-all duration-300 hover:scale-110 flex items-center justify-center cursor-pointer"
               >
-                <ShoppingCart size={26} strokeWidth={1.8} />
+                <ShoppingCart size={22} strokeWidth={2.2} />
                 {cartItems.reduce((acc, item) => acc + item.quantity, 0) > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-gradient-to-r from-[#FF6D29] to-[#ff8b55] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg">
+                  <span className="absolute -top-2.5 -right-2.5 bg-[#FF6D29] text-white text-[10px] w-[18px] h-[18px] rounded-full flex items-center justify-center font-extrabold shadow-sm border-2 border-[#161316]">
                     {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
                   </span>
                 )}
@@ -396,32 +471,35 @@ export default function Navbar() {
 
               {/* Cart Popover */}
               {isCartOpen && (
-                <div className="absolute right-0 top-full pt-3.5 w-80 z-[1100] animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="bg-white border border-neutral-200 rounded-xl shadow-xl p-6 text-center text-neutral-800">
+                <div className="absolute right-0 top-full pt-4 w-[320px] z-[1100] animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="bg-white border border-neutral-200 rounded-xl shadow-[0_15px_40px_rgba(0,0,0,0.15)] p-6 text-center text-neutral-800">
                     {cartItems.length === 0 ? (
                       <>
                         <p className="text-neutral-500 text-sm font-bold mb-4">Cart is empty.</p>
                         <Link 
                           href="/products" 
-                          className="block w-full py-3 text-xs font-extrabold text-white bg-black hover:bg-neutral-850 rounded-lg transition-colors shadow-sm uppercase tracking-wider"
+                          className="block w-full py-3 text-xs font-extrabold text-white bg-[#161316] hover:bg-[#FF6D29] rounded-lg transition-colors shadow-sm uppercase tracking-wider"
                         >
                           Shop Now
                         </Link>
                       </>
                     ) : (
                       <>
-                        <p className="text-neutral-800 text-xs font-black uppercase tracking-wider mb-3">
-                          You have {cartItems.reduce((acc, item) => acc + item.quantity, 0)} items
-                        </p>
-                        <div className="max-h-48 overflow-y-auto mb-4 space-y-3 pr-1 text-left">
+                        <div className="flex items-center justify-between mb-4 border-b border-neutral-100 pb-2">
+                          <p className="text-neutral-800 text-[11px] font-black uppercase tracking-wider">
+                            {cartItems.reduce((acc, item) => acc + item.quantity, 0)} Items
+                          </p>
+                          <Link href="/cart" className="text-[10px] font-bold text-[#FF6D29] hover:underline uppercase">View Full Cart</Link>
+                        </div>
+                        <div className="max-h-48 overflow-y-auto mb-4 space-y-3 pr-1 text-left custom-scrollbar">
                           {cartItems.map((item, idx) => (
-                            <div key={idx} className="flex gap-3 items-center border-b border-neutral-100 pb-2 relative group/item">
-                              <div className="relative w-10 h-10 bg-neutral-50 rounded border border-neutral-200/50 flex items-center justify-center shrink-0">
+                            <div key={idx} className="flex gap-3 items-center border-b border-neutral-50 pb-3 relative group/item">
+                              <div className="relative w-12 h-12 bg-[#F1F5F9] rounded-lg flex items-center justify-center shrink-0 border border-neutral-200/50">
                                 <Image src={item.image} alt={item.name} fill className="object-contain p-1 mix-blend-multiply" />
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-[11px] font-bold text-neutral-800 truncate">{item.name}</p>
-                                <p className="text-[10px] text-neutral-500 font-semibold">{item.quantity} x ₹{item.price.toLocaleString()}</p>
+                              <div className="flex-1 min-w-0 pt-1">
+                                <p className="text-[12px] font-bold text-neutral-800 truncate leading-tight mb-1">{item.name}</p>
+                                <p className="text-[11px] text-neutral-500 font-semibold">{item.quantity} x ₹{item.price.toLocaleString()}</p>
                               </div>
                               <button
                                 onClick={(e) => {
@@ -430,25 +508,25 @@ export default function Navbar() {
                                   localStorage.setItem('astride_cart', JSON.stringify(updated));
                                   window.dispatchEvent(new Event('astride_cart_updated'));
                                 }}
-                                className="w-5 h-5 rounded-md hover:bg-neutral-100 flex items-center justify-center text-neutral-500 hover:text-red-500 transition-colors shrink-0"
+                                className="w-6 h-6 rounded-md hover:bg-neutral-100 flex items-center justify-center text-neutral-400 hover:text-red-500 transition-colors shrink-0"
                               >
-                                <X size={10} strokeWidth={2.5} />
+                                <X size={12} strokeWidth={2.5} />
                               </button>
                             </div>
                           ))}
                         </div>
-                        <div className="flex justify-between items-baseline mb-4">
-                          <span className="text-[11px] font-bold text-neutral-400">Subtotal</span>
-                          <span className="text-[15px] font-black text-neutral-900">₹{cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0).toLocaleString()}</span>
+                        <div className="flex justify-between items-baseline mb-5 pt-2 border-t border-neutral-100">
+                          <span className="text-[12px] font-bold text-neutral-500">Subtotal</span>
+                          <span className="text-[16px] font-black text-neutral-900">₹{cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0).toLocaleString()}</span>
                         </div>
                         <button 
                           onClick={() => {
                             setIsCartOpen(false);
                             router.push('/checkout');
                           }}
-                          className="block w-full py-3 text-xs font-extrabold text-white bg-black hover:bg-neutral-850 rounded-lg transition-colors shadow-sm uppercase tracking-wider"
+                          className="block w-full py-3.5 text-[12px] font-extrabold text-white bg-[#161316] hover:bg-[#FF6D29] rounded-lg transition-colors shadow-md uppercase tracking-wider"
                         >
-                          View Bag / Checkout
+                          Checkout Now
                         </button>
                       </>
                     )}
@@ -459,22 +537,23 @@ export default function Navbar() {
 
             <Link
               href={isLoggedIn ? "/account" : "/login"}
-              className="text-[#BABABA] hover:text-[#FF6D29] transition-all duration-300 hover:scale-110"
+              className="hover:text-[#FF6D29] transition-all duration-300 hover:scale-110 hidden sm:block"
             >
-              <User size={24} strokeWidth={1.8} />
+              <User size={22} strokeWidth={2.2} />
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="bg-[#161316] border-b border-[#453027] shadow-sm hidden md:block">
+      {/* CATEGORY NAV BAR */}
+      <div className="bg-[#161316] border-b border-[#453027] shadow-sm hidden md:block relative z-10">
         <div className="lg:px-15 px-4 relative flex items-center justify-center">
-          {/* NAVIGATION */}
           <nav className="hidden md:flex items-center justify-center gap-10 pt-3 pb-4 overflow-x-auto whitespace-nowrap text-[17px] font-bold text-[#BABABA] scrollbar-hide">
             {categoryList.map((category) => (
               <button
                 key={category._id || category.name}
                 onMouseEnter={() => setActiveMenu(category.name)}
+                onClick={() => router.push(`/products?category=${encodeURIComponent(category.name)}`)}
                 className={`relative group transition-all duration-300 px-3 py-1 uppercase tracking-wider text-sm font-black ${
                   activeMenu === category.name ? 'text-white' : 'text-[#BABABA] hover:text-white'
                 }`}
@@ -487,11 +566,10 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* FIND YOUR CHAIR BUTTON */}
           <div className="absolute right-4 lg:right-15 top-1/2 -translate-y-1/2 flex items-center">
             <button
               onClick={handleFindYourChair}
-              className="bg-[#F4F5F7] border border-slate-300 text-[#0F172A] hover:bg-white hover:border-slate-400 rounded-full px-6 py-2.5 text-sm font-black uppercase tracking-widest transition-all duration-300 shadow-sm"
+              className="bg-[#F4F5F7] border border-slate-300 text-[#0F172A] hover:bg-white hover:border-slate-400 rounded-full px-6 py-2.5 text-sm font-black uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-md"
             >
               FIND YOUR CHAIR
             </button>
@@ -502,7 +580,7 @@ export default function Navbar() {
       {/* MEGA MENU DROPDOWN */}
       {activeMenu && displayChairs.length > 0 && (
         <div 
-          className="absolute left-0 top-full w-full bg-[#f3f4f6] border-b border-gray-300 text-gray-900 py-8 px-12 z-[90] shadow-lg animate-in fade-in slide-in-from-top-2 duration-200"
+          className="absolute left-0 top-full w-full bg-[#f8fafc] border-b border-gray-200 text-gray-900 py-10 px-12 z-[90] shadow-xl animate-in fade-in slide-in-from-top-2 duration-200"
           onMouseEnter={() => setActiveMenu(activeMenu)}
           onMouseLeave={() => setActiveMenu(null)}
         >
@@ -522,7 +600,7 @@ export default function Navbar() {
                 1024: { slidesPerView: 4, spaceBetween: 28 },
                 1280: { slidesPerView: 5, spaceBetween: 32 },
               }}
-              className="w-full"
+              className="w-full pb-4"
             >
               {displayChairs.map((chair, index) => (
                 <SwiperSlide key={index}>
@@ -531,31 +609,26 @@ export default function Navbar() {
                     onClick={() => setActiveMenu(null)}
                     className="flex flex-col items-center group relative cursor-pointer w-full"
                   >
-                    {/* Visual Container */}
-                    <div className="relative w-full aspect-square bg-white border border-gray-100 rounded-[28px] flex flex-col items-center justify-center p-2 hover:bg-gray-50 group-hover:border-gray-300 group-hover:shadow-xl transition-all duration-500 shadow-sm overflow-hidden">
+                    <div className="relative w-full aspect-square bg-white border border-gray-100 rounded-[28px] flex flex-col items-center justify-center p-2 hover:bg-slate-50 group-hover:border-slate-300 group-hover:shadow-[0_15px_30px_rgba(0,0,0,0.08)] transition-all duration-500 shadow-sm overflow-hidden">
                       <div className="relative w-full h-full transform group-hover:scale-105 transition-transform duration-700 ease-out flex items-center justify-center">
                         {chair.image && chair.image !== '/placeholder.png' ? (
                           <Image
                             src={chair.image}
                             alt={chair.name}
                             fill
-                            className="object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.12)] p-2"
+                            className="object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.12)] p-3 mix-blend-multiply"
                             sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                           />
                         ) : (
                           <div className="flex flex-col items-center justify-center gap-2 opacity-50">
-                            <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
-                            <span className="text-[9px] uppercase tracking-wider text-gray-500 font-bold">Loading...</span>
+                            <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin"></div>
+                            <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Loading...</span>
                           </div>
                         )}
                       </div>
                       
-                      {/* Name Overlay on Hover */}
-                      <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 px-2 pb-2 z-10">
-                        <span
-                          className="bg-white/95 backdrop-blur-md text-gray-800 px-2.5 py-1.5 rounded-xl shadow-sm block border border-gray-100 uppercase tracking-wide text-center"
-                          style={{ fontSize: '9px', fontWeight: 800, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.35' }}
-                        >
+                      <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 px-3 pb-3 z-10 flex justify-center">
+                        <span className="bg-white/95 backdrop-blur-md text-slate-800 px-3 py-2 rounded-xl shadow-md border border-slate-100 text-[10px] font-black uppercase tracking-wide text-center w-[90%] truncate">
                           {chair.name}
                         </span>
                       </div>
@@ -565,14 +638,13 @@ export default function Navbar() {
               ))}
             </Swiper>
 
-            {/* Custom Navigation Arrows */}
             {displayChairs.length > 4 && (
               <>
-                <button className="swiper-button-prev-custom absolute -left-2 top-1/2 -translate-y-1/2 z-50 w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-md hover:bg-gray-50 hover:border-gray-400 transition-all text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed">
-                  <ChevronLeft size={20} />
+                <button className="swiper-button-prev-custom absolute -left-2 top-1/2 -translate-y-1/2 z-50 w-11 h-11 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-md hover:bg-slate-50 hover:border-slate-400 transition-all text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">
+                  <ChevronLeft size={22} />
                 </button>
-                <button className="swiper-button-next-custom absolute -right-2 top-1/2 -translate-y-1/2 z-50 w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-md hover:bg-gray-50 hover:border-gray-400 transition-all text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed">
-                  <ChevronRight size={20} />
+                <button className="swiper-button-next-custom absolute -right-2 top-1/2 -translate-y-1/2 z-50 w-11 h-11 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-md hover:bg-slate-50 hover:border-slate-400 transition-all text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">
+                  <ChevronRight size={22} />
                 </button>
               </>
             )}
@@ -580,18 +652,15 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Mobile Menu Drawer */}
+      {/* MOBILE MENU DRAWER */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[2000] md:hidden">
-          {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          {/* Drawer Panel */}
           <div className="fixed inset-y-0 left-0 w-[80%] max-w-[340px] bg-[#121212] border-r border-zinc-800/80 p-6 flex flex-col justify-between shadow-2xl overflow-y-auto animate-in slide-in-from-left duration-300">
             <div>
-              {/* Header */}
               <div className="flex items-center justify-between pb-6 border-b border-zinc-800">
                 <Image
                   src="/logo.webp"
@@ -602,16 +671,16 @@ export default function Navbar() {
                 />
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-zinc-400 hover:text-white transition-colors"
+                  className="text-zinc-400 hover:text-white transition-colors bg-white/5 p-1.5 rounded-full"
                 >
-                  <X size={24} />
+                  <X size={20} />
                 </button>
               </div>
 
-              {/* Search Box */}
-              <div className="mt-6 flex items-center bg-white/5 border border-zinc-800 rounded-lg hover:border-zinc-600 focus-within:border-zinc-555 transition-all duration-300 relative">
-                <div className="flex items-center w-full">
-                  <div className="px-3 text-zinc-400">
+              {/* Mobile Search Box */}
+              <div className="mt-6 relative z-[9999]">
+                <div className="flex items-center bg-[#1a1a1a] border border-zinc-700/50 rounded-xl hover:border-zinc-500 focus-within:border-zinc-400 transition-all duration-300 px-3">
+                  <div className="text-zinc-400 py-3">
                     <Search size={18} />
                   </div>
                   <input
@@ -625,12 +694,18 @@ export default function Navbar() {
                         router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
                       }
                     }}
-                    className="bg-transparent w-full py-2.5 outline-none text-sm placeholder:text-zinc-500 text-white"
+                    className="bg-transparent w-full py-3 px-2 outline-none text-sm placeholder:text-zinc-500 text-white"
                   />
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery("")} className="text-zinc-500 py-3">
+                      <X size={16} />
+                    </button>
+                  )}
                 </div>
-                {/* Mobile Suggestions Dropdown */}
+                
+                {/* Mobile Suggestions */}
                 {suggestions.length > 0 && (
-                  <div className="absolute left-0 right-0 top-full mt-1 bg-[#121212] border border-zinc-800 rounded-lg shadow-2xl max-h-48 overflow-y-auto z-[9999]">
+                  <div className="absolute left-0 right-0 top-full mt-2 bg-[#1a1a1a] border border-zinc-700/50 rounded-xl shadow-2xl max-h-[250px] overflow-y-auto">
                     {suggestions.map((p) => (
                       <button
                         key={p._id}
@@ -639,20 +714,20 @@ export default function Navbar() {
                           setIsMobileMenuOpen(false);
                           router.push(`/products/${p._id}`);
                         }}
-                        className="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-white/5 border-b border-zinc-800 last:border-b-0 text-left transition-colors cursor-pointer"
+                        className="w-full px-4 py-3 flex items-center gap-3 hover:bg-white/5 border-b border-zinc-800/50 last:border-b-0 text-left transition-colors cursor-pointer"
                       >
-                        <div className="relative w-7 h-7 bg-white/5 rounded flex items-center justify-center shrink-0">
+                        <div className="relative w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center shrink-0">
                           <Image
                             src={p.colorVariants?.[0]?.images?.[0]?.url || p.images?.[0]?.url || '/placeholder.png'}
                             alt={p.productName}
                             fill
-                            className="object-contain p-0.5"
+                            className="object-contain p-1"
                             unoptimized
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold text-white truncate font-sans">{p.productName}</p>
-                          <p className="text-[10px] text-zinc-400 font-semibold font-sans">₹{p.realPrice?.toLocaleString()}</p>
+                          <p className="text-[13px] font-bold text-white truncate">{p.productName}</p>
+                          <p className="text-[11px] text-zinc-400 font-semibold mt-0.5">₹{p.realPrice?.toLocaleString()}</p>
                         </div>
                       </button>
                     ))}
@@ -660,7 +735,6 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Home & Wishlist Links inside Mobile Menu */}
               <div className="mt-6 flex flex-col gap-3">
                 <Link
                   href="/"
@@ -682,10 +756,18 @@ export default function Navbar() {
                   <Heart size={18} className="text-zinc-300" />
                   <span>My Wishlist</span>
                 </Link>
+                
+                <Link
+                  href={isLoggedIn ? "/account" : "/login"}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 text-sm font-bold text-zinc-300 hover:text-white uppercase tracking-wider py-3 px-4 bg-zinc-900/40 hover:bg-zinc-900 border border-zinc-800/80 rounded-xl transition-all duration-300 mb-6 shadow-sm"
+                >
+                  <User size={18} className="text-zinc-300" />
+                  <span>{isLoggedIn ? "My Account" : "Login"}</span>
+                </Link>
               </div>
 
-              {/* Navigation Links */}
-              <div className="mt-4">
+              <div className="mt-2">
                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-3 px-4">
                   Categories
                 </h3>
@@ -705,22 +787,14 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Bottom Footer Info */}
             <div className="mt-auto pt-6 border-t border-zinc-800 flex flex-col gap-4">
               <div className="flex flex-col gap-3 text-xs font-semibold tracking-wider text-zinc-400">
-                <a
-                  href="tel:7311164111"
-                  className="hover:text-white transition-colors flex items-center gap-2"
-                >
+                <a href="tel:7311164111" className="hover:text-white transition-colors flex items-center gap-2 px-2">
                   <Phone size={14} className="text-zinc-500" />
                   <span>Support: 7311164111</span>
                 </a>
-                <Link
-                  href="/about"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="hover:text-white transition-colors py-1 flex items-center gap-2"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-650"></span>
+                <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-white transition-colors py-1 flex items-center gap-2 px-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-600"></span>
                   <span>About Astrides</span>
                 </Link>
               </div>
