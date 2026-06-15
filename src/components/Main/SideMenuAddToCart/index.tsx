@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { X, Minus, Plus } from 'lucide-react';
@@ -21,6 +21,16 @@ export default function SideMenuAddToCart() {
   const [isOpen, setIsOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
+  // Refs for GSAP
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Helper to sync to local storage & dispatch event
+  const syncCartState = useCallback((items: CartItem[]) => {
+    localStorage.setItem('astride_cart', JSON.stringify(items));
+    window.dispatchEvent(new Event('astride_cart_updated'));
+  }, []);
+
   // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('astride_cart');
@@ -33,42 +43,33 @@ export default function SideMenuAddToCart() {
     }
   }, []);
 
-  // Save cart to localStorage
-  const saveCart = (items: CartItem[]) => {
-    setCartItems(items);
-    localStorage.setItem('astride_cart', JSON.stringify(items));
-    window.dispatchEvent(new Event('astride_cart_updated'));
-  };
-
   // Listen to add-to-cart global events
   useEffect(() => {
     const handleAddToCart = (e: Event) => {
       const customEvent = e as CustomEvent<CartItem>;
       const newItem = customEvent.detail;
 
-      const savedCart = localStorage.getItem('astride_cart');
-      let currentItems: CartItem[] = [];
-      if (savedCart) {
-        try {
-          currentItems = JSON.parse(savedCart);
-        } catch (e) {
-          console.error(e);
+      // Use functional state update to avoid reading localStorage here
+      setCartItems((prevItems) => {
+        const existingItemIndex = prevItems.findIndex(
+          (item) => item.id.toString() === newItem.id.toString()
+        );
+        
+        let updatedItems: CartItem[];
+        
+        if (existingItemIndex > -1) {
+          updatedItems = [...prevItems];
+          updatedItems[existingItemIndex] = {
+            ...updatedItems[existingItemIndex],
+            quantity: updatedItems[existingItemIndex].quantity + (newItem.quantity || 1)
+          };
+        } else {
+          updatedItems = [...prevItems, { ...newItem, quantity: newItem.quantity || 1 }];
         }
-      }
 
-      const existingItemIndex = currentItems.findIndex((item) => item.id.toString() === newItem.id.toString());
-      let updatedItems: CartItem[];
-      if (existingItemIndex > -1) {
-        updatedItems = [...currentItems];
-        updatedItems[existingItemIndex] = {
-          ...updatedItems[existingItemIndex],
-          quantity: updatedItems[existingItemIndex].quantity + (newItem.quantity || 1)
-        };
-      } else {
-        updatedItems = [...currentItems, { ...newItem, quantity: newItem.quantity || 1 }];
-      }
-
-      saveCart(updatedItems);
+        syncCartState(updatedItems);
+        return updatedItems;
+      });
 
       // Open side menu with slight delay to ensure state updates
       setTimeout(() => {
@@ -87,62 +88,85 @@ export default function SideMenuAddToCart() {
       window.removeEventListener('add-to-cart', handleAddToCart);
       window.removeEventListener('open-cart-sidebar', handleOpenCartOnly);
     };
-  }, []);
+  }, [syncCartState]);
 
-  // GSAP animation on open/close
+  // GSAP animation on open/close using Refs
   useEffect(() => {
+    const backdrop = backdropRef.current;
+    const panel = panelRef.current;
+
+    if (!backdrop || !panel) return;
+
     if (isOpen) {
-      // Disable body scroll when cart is open
       document.body.style.overflow = 'hidden';
       
-      gsap.to('.cart-backdrop', { opacity: 1, duration: 0.3, pointerEvents: 'auto', ease: 'power2.out' });
-      gsap.fromTo('.cart-sidebar-panel', 
+      gsap.to(backdrop, { opacity: 1, duration: 0.3, pointerEvents: 'auto', ease: 'power2.out' });
+      gsap.fromTo(panel, 
         { x: '105%', opacity: 0.9 }, 
         { x: '0%', opacity: 1, duration: 0.5, ease: 'power4.out' }
       );
     } else {
       document.body.style.overflow = '';
       
-      gsap.to('.cart-backdrop', { opacity: 0, duration: 0.3, pointerEvents: 'none', ease: 'power2.in' });
-      gsap.to('.cart-sidebar-panel', { x: '105%', duration: 0.4, ease: 'power3.in' });
+      gsap.to(backdrop, { opacity: 0, duration: 0.3, pointerEvents: 'none', ease: 'power2.in' });
+      gsap.to(panel, { x: '105%', duration: 0.4, ease: 'power3.in' });
     }
   }, [isOpen]);
 
-  const handleUpdateQuantity = (id: string | number, delta: number) => {
-    const existingItem = cartItems.find((item) => item.id === id);
-    if (existingItem && existingItem.quantity === 1 && delta === -1) {
-      handleRemoveItem(id);
-      return;
-    }
-    const updated = cartItems.map((item) => {
-      if (item.id === id) {
-        const newQty = Math.max(1, item.quantity + delta);
-        return { ...item, quantity: newQty };
+  const handleUpdateQuantity = useCallback((id: string | number, delta: number) => {
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find((item) => item.id === id);
+      
+      if (existingItem && existingItem.quantity === 1 && delta === -1) {
+        const updated = prevItems.filter((item) => item.id !== id);
+        syncCartState(updated);
+        return updated;
       }
-      return item;
+      
+      const updatedItems = prevItems.map((item) => {
+        if (item.id === id) {
+          return { ...item, quantity: Math.max(1, item.quantity + delta) };
+        }
+        return item;
+      });
+      
+      syncCartState(updatedItems);
+      return updatedItems;
     });
-    saveCart(updated);
-  };
+  }, [syncCartState]);
 
-  const handleRemoveItem = (id: string | number) => {
-    const updated = cartItems.filter((item) => item.id !== id);
-    saveCart(updated);
-  };
+  const handleRemoveItem = useCallback((id: string | number) => {
+    setCartItems((prevItems) => {
+      const updated = prevItems.filter((item) => item.id !== id);
+      syncCartState(updated);
+      return updated;
+    });
+  }, [syncCartState]);
 
-  const totalItemsCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  // Memoize calculations to prevent running on every render (like when toggling `isOpen`)
+  const { totalItemsCount, subtotal } = useMemo(() => {
+    return cartItems.reduce(
+      (acc, item) => ({
+        totalItemsCount: acc.totalItemsCount + item.quantity,
+        subtotal: acc.subtotal + (item.price * item.quantity)
+      }),
+      { totalItemsCount: 0, subtotal: 0 }
+    );
+  }, [cartItems]);
 
   return (
     <>
       {/* Backdrop */}
       <div 
+        ref={backdropRef}
         onClick={() => setIsOpen(false)}
-        className="cart-backdrop fixed inset-0 bg-black/45 z-[9999] opacity-0 pointer-events-none transition-opacity duration-300"
+        className="fixed inset-0 bg-black/45 z-[9999] opacity-0 pointer-events-none transition-opacity duration-300"
       />
 
       {/* Floating Cart Sidebar Panel */}
       <div 
-        className="cart-sidebar-panel fixed top-0 right-0 bottom-0 md:top-4 md:right-4 md:bottom-4 w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transform translate-x-[105%]"
+        ref={panelRef}
+        className="fixed top-0 right-0 bottom-0 md:top-4 md:right-4 md:bottom-4 w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transform translate-x-[105%]"
         style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
       >
         {/* Header section */}
