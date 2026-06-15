@@ -144,6 +144,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [wishlist, setWishlist] = useState<WishlistItem[]>(MOCK_WISHLIST);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchMyOrders = async (userId: string) => {
     try {
@@ -230,6 +231,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
         console.error(e);
       }
     }
+    setLoading(false);
   }, []);
 
   const handleEditToggle = () => {
@@ -292,6 +294,14 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
     { id: "orders", label: "My Orders", icon: ShoppingBag, path: "/account/orders" },
     { id: "wishlist", label: "My Wishlist", icon: Heart, path: "/account/wishlist" },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f1f3f5] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f1f3f5] text-slate-800 pt-6 pb-16 md:pt-10 md:pb-24 px-4 md:px-8 select-none relative overflow-hidden" style={{ fontFamily: '"Inter", sans-serif' }}>
