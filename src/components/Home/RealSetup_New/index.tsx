@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
@@ -23,17 +24,20 @@ const setups = [
     img: "/Real_people_real_Setup/WhatsApp Image 2026-06-13 at 17.31.27 (2).webp",
     tag: "#MinimalDesk",
   },
-  {
-    img: "/Real_people_real_Setup/chill.webp",
-    tag: "#AstrideChair",
-  },
-  {
-    img: "/Real_people_real_Setup/WhatsApp Image 2026-06-13 at 17.31.27.webp",
-    tag: "#SetupGoals",
-  },
 ];
 
 export default function RealSetup_New() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <section
       className="w-full pt-2 pb-6 md:pt-4 md:pb-8 px-5 md:px-8 lg:px-16 overflow-hidden"
@@ -92,26 +96,35 @@ export default function RealSetup_New() {
           </svg>
         </button>
 
+        {/* Style to center the Swiper slides when they do not fill the desktop width */}
+        <style dangerouslySetInnerHTML={{__html: `
+          @media (min-width: 1024px) {
+            .setup-swiper .swiper-wrapper {
+              justify-content: center;
+            }
+          }
+        `}} />
+
         {/* Swiper Auto-Scrolling Strip */}
         <Swiper
+          key={isMobile ? "mobile" : "desktop"}
           modules={[Autoplay, Navigation]}
-          loop={true}
-          autoplay={{
+          loop={isMobile}
+          autoplay={isMobile ? {
             delay: 2500,
             disableOnInteraction: false,
-          }}
+          } : false}
           navigation={{
             prevEl: ".setup-prev",
             nextEl: ".setup-next",
           }}
           breakpoints={{
-            // Strictly 2 cards with a slightly smaller gap on mobile so they fit perfectly
             0: { slidesPerView: 2, spaceBetween: 10 },
             640: { slidesPerView: 3, spaceBetween: 16 },
-            1024: { slidesPerView: 4, spaceBetween: 20 },
-            1280: { slidesPerView: 5, spaceBetween: 24 },
+            1024: { slidesPerView: 4, spaceBetween: 32 },
+            1280: { slidesPerView: 5, spaceBetween: 40 },
           }}
-          className="w-full py-1"
+          className="w-full py-1 setup-swiper"
         >
           {setups.map((setup, idx) => (
             <SwiperSlide key={idx}>
