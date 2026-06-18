@@ -62,7 +62,7 @@ const CATEGORIES: BentoCategory[] = [
     id: 4,
     title: 'Bar Stools & Cafe Chair',
     subtitle: 'Elevate your counter experience with premium luxury bar stools and ergonomic counter-height seating.',
-    image: '/Png1/chair6c_Rapid Black .webp',
+    image: '/Png1/chair6c_Rapid Black.webp',
     colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
     imageClass: 'absolute right-2 bottom-0 w-[48%] md:w-[40%] h-[85%] md:h-[95%] transform group-hover:scale-105 transition-transform duration-500 ease-out',
     href: '/products?category=Bar%20Stools%20%26%20Cafe%20Chair',
