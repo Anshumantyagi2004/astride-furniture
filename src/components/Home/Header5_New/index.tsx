@@ -3,10 +3,6 @@
 import { memo } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
-
-import "swiper/css";
 
 // Move static configurations out of the runtime loop to optimize memory footprints
 const CATEGORIES = [
@@ -128,10 +124,6 @@ const cardVariants: Variants = {
   },
 };
 
-// Autoplay module instance cached configuration
-const SWIPER_MODULES = [Autoplay];
-const SWIPER_AUTOPLAY_CONFIG = { delay: 2200, disableOnInteraction: false };
-
 // Memoized Grid Card to isolate layout render threads
 const GridCard = memo(({ cat }: { cat: typeof CATEGORIES[0] }) => (
   <motion.div
@@ -143,7 +135,7 @@ const GridCard = memo(({ cat }: { cat: typeof CATEGORIES[0] }) => (
       borderColor: cat.color
     }}
     whileTap={{ scale: 0.97 }}
-    className="flex-shrink-0 lg:flex-shrink-1 w-[180px] md:w-[200px] lg:w-auto rounded-2xl border-2 border-transparent transition-all duration-300"
+    className="shrink-0 lg:shrink w-[180px] md:w-[200px] lg:w-auto rounded-2xl border-2 border-transparent transition-all duration-300"
   >
     <Link
       href={cat.link}
@@ -187,7 +179,7 @@ export default function Header5_New() {
         <motion.div className="shrink-0 lg:w-[230px]" variants={headingVariants}>
           <h2 className="text-[30px] md:text-[36px] lg:text-[34px] font-black tracking-tight leading-tight text-slate-900 uppercase mb-1 lg:mb-3">
             Shop by{" "}
-            <span className="bg-gradient-to-r from-[#D946EF] to-[#F97316] bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-[#D946EF] to-[#F97316] bg-clip-text text-transparent">
               Vibe
             </span>
           </h2>
@@ -196,43 +188,34 @@ export default function Header5_New() {
           </p>
         </motion.div>
 
-        {/* Mobile View Slider */}
-        <div className="block lg:hidden w-full py-1 overflow-visible">
-          <Swiper
-            modules={SWIPER_MODULES}
-            grabCursor={true}
-            centeredSlides={true}
-            slidesPerView="auto"
-            spaceBetween={16}
-            loop={true}
-            autoplay={SWIPER_AUTOPLAY_CONFIG}
-            className="w-full overflow-visible"
-          >
-            {CATEGORIES.map((cat) => (
-              <SwiperSlide key={cat.label} style={{ width: '220px' }}>
-                <div className="w-full rounded-2xl border-2 border-transparent">
-                  <Link
-                    href={cat.link}
-                    className="group flex flex-col items-center text-center gap-5 rounded-2xl px-4 py-8 w-full h-full block"
-                    style={{
-                      backgroundColor: cat.bg,
-                      boxShadow: `0 10px 20px -5px ${cat.shadow}`
-                    }}
-                  >
-                    <div style={{ color: cat.color }}>
-                      {cat.icon}
-                    </div>
-                    <div>
-                      <p className="text-[14px] font-black tracking-widest text-slate-900 uppercase mb-1">
-                        {cat.label}
-                      </p>
-                      <p className="text-[12px] text-slate-500 leading-snug">{cat.desc}</p>
-                    </div>
-                  </Link>
+        {/* Mobile View Native Slider */}
+        <div className="block lg:hidden w-full py-1 overflow-x-auto scrollbar-none snap-x snap-mandatory flex gap-4 scroll-smooth">
+          {CATEGORIES.map((cat) => (
+            <div 
+              key={cat.label} 
+              className="shrink-0 snap-center rounded-2xl border-2 border-transparent"
+              style={{ width: '220px' }}
+            >
+              <Link
+                href={cat.link}
+                className="group flex flex-col items-center text-center gap-5 rounded-2xl px-4 py-8 w-full h-full block"
+                style={{
+                  backgroundColor: cat.bg,
+                  boxShadow: `0 10px 20px -5px ${cat.shadow}`
+                }}
+              >
+                <div style={{ color: cat.color }}>
+                  {cat.icon}
                 </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                <div>
+                  <p className="text-[14px] font-black tracking-widest text-slate-900 uppercase mb-1">
+                    {cat.label}
+                  </p>
+                  <p className="text-[12px] text-slate-500 leading-snug">{cat.desc}</p>
+                </div>
+              </Link>
+            </div>
+          ))}
         </div>
 
         {/* Desktop View Grid */}
