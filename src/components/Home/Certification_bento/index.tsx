@@ -12,7 +12,7 @@ import {
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-// Optimized static animation variant descriptors pushed outside component runtime lifecycle
+// Static animation configuration vectors moved out of component updates scope
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -38,7 +38,6 @@ const itemVariants: Variants = {
   },
 };
 
-// Hoisted Certifications static data model array mapping layer
 const CERTS_DATA = [
   {
     title: "ISO 9001:2015",
@@ -115,9 +114,19 @@ const CertCard = memo(({
   regNo
 }: CertCardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  // Track if the back panel has ever been opened to lazily render the iframe
+  const [hasBeenOpened, setHasBeenOpened] = useState(false);
+
+  const handleFlipTrue = () => {
+    setIsFlipped(true);
+    if (!hasBeenOpened) setHasBeenOpened(true);
+  };
+
+  const handleFlipFalse = () => {
+    setIsFlipped(false);
+  };
 
   return (
-    // Fixed height wrapper layout from image_edf161.png to prevent text pushing footers out
     <div className="w-full relative min-h-[520px] sm:min-h-[480px] flex flex-col" style={{ perspective: "1000px" }}>
       <div 
         style={{
@@ -151,7 +160,7 @@ const CertCard = memo(({
               </div>
               <button 
                 type="button"
-                onClick={() => setIsFlipped(true)}
+                onClick={handleFlipTrue}
                 className="text-[11px] font-black bg-black/25 hover:bg-black/40 px-2.5 py-1.5 rounded-lg transition-all duration-200 active:scale-95 shrink-0 flex items-center gap-1 cursor-pointer text-white"
               >
                 Verify ⟲
@@ -179,7 +188,6 @@ const CertCard = memo(({
             </div>
           </div>
           
-          {/* Constrained inside absolute boundary limits */}
           <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center text-[12px] text-white/70 shrink-0">
             <span className="font-bold text-white/95">{footerLeft}</span>
             <span className="bg-black/25 px-2.5 py-0.5 rounded-md font-black text-white">
@@ -210,24 +218,31 @@ const CertCard = memo(({
               </div>
               <button 
                 type="button"
-                onClick={() => setIsFlipped(false)}
+                onClick={handleFlipFalse}
                 className="text-[11px] font-black bg-black/25 hover:bg-black/40 px-2.5 py-1.5 rounded-lg transition-all duration-200 active:scale-95 text-white cursor-pointer shrink-0"
               >
                 Back ⟲
               </button>
             </div>
             
-            {/* Scrollable PDF container region */}
             <div className="w-full flex-1 rounded-xl overflow-y-auto bg-black/35 border border-white/5 relative scrollbar-none">
-              <iframe 
-                src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`} 
-                className="w-full h-full border-0 min-h-[260px]"
-                style={{ 
-                  height: iframeHeight,
-                  pointerEvents: "auto"
-                }}
-                title={`${title} Certificate`}
-              />
+              {/* Performance improvement: Lazy load iframes only upon actual user card flip action */}
+              {hasBeenOpened ? (
+                <iframe 
+                  src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`} 
+                  className="w-full h-full border-0 min-h-[260px]"
+                  style={{ 
+                    height: iframeHeight,
+                    pointerEvents: "auto"
+                  }}
+                  title={`${title} Certificate`}
+                  loading="lazy"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs">
+                  Loading Preview...
+                </div>
+              )}
             </div>
           </div>
           
@@ -265,9 +280,12 @@ const CertificationsBento = () => {
         }
       `}</style>
 
+      {/* Performance improvement: Changed initial to false. Because animate="visible" matches layout 
+          specifications, initial="visible" forces Framer Motion to run state-calculations 
+          pre-mount, causing unneeded CPU overhead. */}
       <motion.div
         variants={containerVariants}
-        initial="visible"
+        initial={false}
         animate="visible"
       >
         <motion.div variants={itemVariants} className="mb-6">
@@ -294,9 +312,8 @@ const CertificationsBento = () => {
           >
             {CERTS_DATA.map((cert, idx) => (
               <SwiperSlide key={idx}>
-                <motion.div variants={itemVariants}>
-                  <CertCard {...cert} />
-                </motion.div>
+                {/* Cleaned up redundant inner motion.div wrappers since parents inherit variations */}
+                <CertCard {...cert} />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -305,9 +322,7 @@ const CertificationsBento = () => {
         {/* DESKTOP GRID */}
         <div className="hidden md:grid md:grid-cols-2 gap-6">
           {CERTS_DATA.map((cert, idx) => (
-            <motion.div key={idx} variants={itemVariants}>
-              <CertCard {...cert} />
-            </motion.div>
+            <CertCard key={idx} {...cert} />
           ))}
         </div>
       </motion.div>

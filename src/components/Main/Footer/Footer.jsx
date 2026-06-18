@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 import {
     FaInstagram,
@@ -33,14 +34,14 @@ export default function Footer() {
                     
                     {/* Brand Section */}
                     <div className="col-span-2 md:col-span-1">
-                        <Link href="/" className="inline-flex items-center gap-[10px] text-white hover:opacity-90 transition-opacity">
-                            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth={2.6} strokeLinejoin="round" className="w-[34px] h-[34px]">
-                                <path d="M20 4 5 13v14l15 9 15-9V13L20 4z"/>
-                                <path d="M20 13l-7 4v7l7 4 7-4v-7l-7-4z"/>
-                            </svg>
-                            <span className="font-bold text-2xl tracking-wide">
-                                ASTRIDE<sup className="text-xs">®</sup>
-                            </span>
+                        <Link href="/" aria-label="Astride home" className="inline-flex items-center hover:opacity-90 transition-opacity">
+                            <Image
+                                src="/logo.webp"
+                                alt="Astride"
+                                width={170}
+                                height={80}
+                                className="h-10 md:h-14 w-auto object-contain brightness-0 invert"
+                            />
                         </Link>
                         <p className="text-[#9c9c9c] text-[14px] mt-[16px] max-w-[300px] leading-relaxed font-sans">
                             Premium ergonomic furniture for comfort, productivity, and modern living. Your space, your vibe.
