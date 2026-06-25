@@ -1,33 +1,32 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useCallback, useEffect } from "react";
+import Link from "next/link";
+import { useState, useEffect, useMemo, memo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { motion, AnimatePresence } from "framer-motion";
 import "swiper/css";
 
 const ALL_CHAIRS = [
-  { src: "/Png1/chair12_ErgoFit.webp", name: "ErgoFit Premium", price: 1299 },
-  { src: "/Png1/Chair7_Delton.webp", name: "Delton Pro", price: 1099 },
-  { src: "/Png1/img1 (1).webp", name: "Classic Comfort", price: 899 },
-  { src: "/Png1/chair4_ACE.webp", name: "ACE Task", price: 799 },
-  { src: "/Png1/chair5_AIRSENSE.webp", name: "AirSense", price: 749 },
-  { src: "/Png1/chair6_AlphaGrey.webp", name: "Alpha Grey", price: 699 },
-  { src: "/Png1/Chair6a_Amica Black .webp", name: "Amica Black", price: 649 },
-  { src: "/Png1/Chair6b_Gladus Grey.webp", name: "Gladus Grey", price: 599 },
-  { src: "/Png1/chair6c_Rapid Black .webp", name: "Rapid Black", price: 549 },
-  { src: "/Png1/chair8_ERIZO.webp", name: "Erizo Mesh", price: 499 },
-  { src: "/Png1/chair9_FitWell.webp", name: "FitWell Basic", price: 399 },
-  { src: "/Png1/chair10_FitWell.webp", name: "FitWell Pro", price: 449 },
-  { src: "/Png1/chair11_octave.webp", name: "Octave Studio", price: 299 },
+  { src: "/Png1/chair12_ErgoFit.webp", name: "ErgoFit Premium", price: 1299, slug: "chair12-ergofit" },
+  { src: "/Png1/Chair7_Delton.webp", name: "Delton Pro", price: 1099, slug: "chair7-delton" },
+  { src: "/Png1/img1 (1).webp", name: "Classic Comfort", price: 899, slug: "chair6a-amica-black" },
+  { src: "/Png1/chair4_ACE.webp", name: "ACE Task", price: 799, slug: "chair4-ace" },
+  { src: "/Png1/chair5_AIRSENSE.webp", name: "AirSense", price: 749, slug: "chair5-airsense" },
+  { src: "/Png1/chair6_AlphaGrey.webp", name: "Alpha Grey", price: 699, slug: "chair6-alphagrey" },
+  { src: "/Png1/Chair6a_Amica Black .webp", name: "Amica Black", price: 649, slug: "chair6a-amica-black" },
+  { src: "/Png1/Chair6b_Gladus Grey.webp", name: "Gladus Grey", price: 599, slug: "chair6b-gladus-grey" },
+  { src: "/Png1/chair6c_Rapid Black .webp", name: "Rapid Black", price: 549, slug: "chair6c-rapid-black" },
+  { src: "/Png1/chair8_ERIZO.webp", name: "Erizo Mesh", price: 499, slug: "chair8-erizo" },
+  { src: "/Png1/chair9_FitWell.webp", name: "FitWell Basic", price: 399, slug: "chair9-fitwell" },
+  { src: "/Png1/chair10_FitWell.webp", name: "FitWell Pro", price: 449, slug: "chair10-fitwell" },
+  { src: "/Png1/chair11_octave.webp", name: "Octave Studio", price: 299, slug: "chair11-octave" },
 ].sort((a, b) => b.price - a.price);
 
 function getPosition(index: number, total: number, isMobile: boolean) {
-  // Single chair centered layout
   if (total === 1) return { left: "50%", top: "45%", scale: isMobile ? 0.9 : 1.1, zIndex: 100 };
 
-  // Two chairs side-by-side
   if (total === 2) {
     return {
       left: index === 0 ? (isMobile ? "30%" : "35%") : (isMobile ? "70%" : "65%"),
@@ -37,7 +36,6 @@ function getPosition(index: number, total: number, isMobile: boolean) {
     };
   }
 
-  // Three chairs layout
   if (total === 3) {
     if (isMobile) {
       if (index === 0) return { left: "20%", top: "45%", scale: 0.65, zIndex: 90 };
@@ -50,36 +48,86 @@ function getPosition(index: number, total: number, isMobile: boolean) {
     }
   }
 
-  // Centered multi-row cluster grid for total > 3
-  const columns = isMobile ? 3 : 5;
+  const columns = isMobile ? 4 : 5;
   const row = Math.floor(index / columns);
   const col = index % columns;
   const itemsInRow = Math.min(columns, total - row * columns);
   const colOffset = (columns - itemsInRow) / 2;
 
   const left = isMobile
-    ? `${20 + (col + colOffset) * 30}%` // centered 3-column slots: 20%, 50%, 80%
-    : `${15 + (col + colOffset) * 17.5}%`; // centered 5-column slots
+    ? `${12.5 + (col + colOffset) * 25}%` 
+    : `${15 + (col + colOffset) * 17.5}%`; 
 
   const top = isMobile
-    ? `${18 + row * 22}%`  // row 0: 18%, row 1: 40%, row 2: 62%, row 3: 84%
+    ? `${20 + row * 20}%` 
     : `${20 + row * 30}%`;
 
-  const scale = isMobile ? 0.75 : 0.475;
+  const scale = isMobile ? 0.55 : 0.475;
 
-  return {
-    left,
-    top,
-    scale,
-    zIndex: 100 - index,
-  };
+  return { left, top, scale, zIndex: 100 - index };
 }
+
+// ============================================================================
+// MAGIC FIX: We wrap the heavy grid in React.memo so dragging the slider 
+// doesn't force the chairs to recalculate 60 times a second.
+// ============================================================================
+const ChairGrid = memo(({ chairs, visibleCount, isMobile }: { chairs: any[], visibleCount: number, isMobile: boolean }) => {
+  return (
+    <motion.div
+      key="still-grid"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="relative w-full h-full mx-auto"
+    >
+      {chairs.map((chair, index) => {
+        const isVisible = index < visibleCount;
+        const pos = getPosition(index, Math.max(1, visibleCount), isMobile);
+        const detailUrl = chair.slug ? `/products/${chair.slug}` : `/products`;
+
+        return (
+          <div
+            key={chair.name}
+            className="absolute w-[150px] h-[150px] md:w-[250px] md:h-[250px]"
+            style={{
+              left: pos.left,
+              top: pos.top,
+              // Hardware accelerated transforms
+              transform: `translate(-50%, -50%) scale(${isVisible ? pos.scale : 0.1})`,
+              opacity: isVisible ? 1 : 0,
+              zIndex: pos.zIndex,
+              pointerEvents: isVisible ? "auto" : "none",
+              // Snappy, premium easing curve instead of standard linear transitions
+              transition: "left 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out",
+              willChange: "transform, opacity, left, top", // Instructs mobile GPU to prepare these layers
+            }}
+          >
+            <Link href={detailUrl} className="relative block w-full h-full cursor-pointer hover:scale-105 transition-transform duration-300">
+              <Image
+                src={chair.src}
+                alt={chair.name}
+                fill
+                sizes="(max-width: 768px) 150px, 250px"
+                priority={index < 8} // Preloads the main chairs to prevent pop-in lag
+                className="object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.05)]"
+              />
+            </Link>
+          </div>
+        );
+      })}
+    </motion.div>
+  );
+});
+ChairGrid.displayName = "ChairGrid";
+
 
 interface ChairFinderProps {
   onBack: () => void;
 }
 
 export default function ChairFinder({ onBack }: ChairFinderProps) {
+  const [chairs, setChairs] = useState<any[]>(ALL_CHAIRS);
   const [sliderValue, setSliderValue] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
@@ -91,16 +139,49 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const visibleCount = Math.max(1, Math.ceil(ALL_CHAIRS.length * (1 - sliderValue / 100)));
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const cached = sessionStorage.getItem("astride_nav_products_cache");
+        let productsData;
+        if (cached) {
+          productsData = JSON.parse(cached);
+        } else {
+          const res = await fetch("/api/product");
+          const json = await res.json();
+          if (json.success) {
+            productsData = json.products;
+            sessionStorage.setItem("astride_nav_products_cache", JSON.stringify(productsData));
+          }
+        }
 
-  // Prepare Swiper rows data
-  const row1 = [...ALL_CHAIRS.slice(0, 5), ...ALL_CHAIRS.slice(0, 5)];
-  const row2 = [...ALL_CHAIRS.slice(5, 10), ...ALL_CHAIRS.slice(5, 10)];
-  const row3 = [...ALL_CHAIRS.slice(10), ...ALL_CHAIRS.slice(10), ...ALL_CHAIRS.slice(10)];
+        if (productsData && productsData.length > 0) {
+          const mapped = productsData.map((p: any) => {
+            const firstImg = p.images?.[0];
+            const src = (typeof firstImg === 'string' ? firstImg : firstImg?.url) || p.colorVariants?.[0]?.images?.[0]?.url || "/placeholder.png";
+            return {
+              src,
+              name: p.productName,
+              price: p.realPrice || 0,
+              slug: p.slug || p._id,
+            };
+          }).sort((a: any, b: any) => b.price - a.price);
+          setChairs(mapped);
+        }
+      } catch (err) {
+        console.error("Error loading products for ChairFinder:", err);
+      }
+    };
+    fetchProducts();
+  }, []);
 
-  const handleTouch = () => {
-    setIsTouched(true);
-  };
+  const visibleCount = useMemo(() => 
+    Math.max(1, Math.ceil(chairs.length * (1 - sliderValue / 100))), 
+  [chairs.length, sliderValue]);
+
+  const row1 = chairs.length >= 5 ? [...chairs.slice(0, 5), ...chairs.slice(0, 5)] : [...chairs, ...chairs];
+  const row2 = chairs.length >= 10 ? [...chairs.slice(5, 10), ...chairs.slice(5, 10)] : [...chairs, ...chairs];
+  const row3 = chairs.length >= 10 ? [...chairs.slice(10), ...chairs.slice(10)] : [...chairs, ...chairs];
 
   return (
     <div className="absolute inset-0 z-[999] w-full h-full bg-[#f5f5f5] flex flex-col overflow-hidden pt-[10px] px-[10px]">
@@ -121,13 +202,12 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
       <div className="flex-1 relative overflow-hidden flex items-center justify-center">
         <AnimatePresence mode="wait">
           {!isTouched ? (
-            /* Auto-scrolling Swiper Rows before touching slider */
             <motion.div
               key="moving-swiper"
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
               className="w-full h-full flex flex-col justify-center gap-4 md:gap-8 mx-auto py-8"
             >
               <div className="text-center mb-2 px-4">
@@ -136,135 +216,44 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
               </div>
               
               <div className="w-full overflow-hidden">
-                <Swiper
-                  modules={[Autoplay]}
-                  slidesPerView={isMobile ? 3 : 5}
-                  spaceBetween={20}
-                  loop={true}
-                  speed={5000}
-                  autoplay={{
-                    delay: 0,
-                    disableOnInteraction: false,
-                  }}
-                  allowTouchMove={false}
-                  className="pointer-events-none [&_.swiper-wrapper]:!ease-linear"
-                >
+                <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 5} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                   {row1.map((chair, idx) => (
                     <SwiperSlide key={`r1-${idx}`} className="flex justify-center items-center">
-                      <Image
-                        src={chair.src}
-                        alt={chair.name}
-                        width={180}
-                        height={180}
-                        className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
-                      />
+                      <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]" />
                     </SwiperSlide>
                   ))}
                 </Swiper>
               </div>
 
               <div className="w-full overflow-hidden">
-                <Swiper
-                  modules={[Autoplay]}
-                  slidesPerView={isMobile ? 3 : 5}
-                  spaceBetween={20}
-                  loop={true}
-                  speed={5000}
-                  autoplay={{
-                    delay: 0,
-                    disableOnInteraction: false,
-                    reverseDirection: true,
-                  }}
-                  allowTouchMove={false}
-                  className="pointer-events-none [&_.swiper-wrapper]:!ease-linear"
-                >
+                <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 5} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false, reverseDirection: true }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                   {row2.map((chair, idx) => (
                     <SwiperSlide key={`r2-${idx}`} className="flex justify-center items-center">
-                      <Image
-                        src={chair.src}
-                        alt={chair.name}
-                        width={180}
-                        height={180}
-                        className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
-                      />
+                      <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]" />
                     </SwiperSlide>
                   ))}
                 </Swiper>
               </div>
 
               <div className="w-full overflow-hidden">
-                <Swiper
-                  modules={[Autoplay]}
-                  slidesPerView={isMobile ? 3 : 5}
-                  spaceBetween={20}
-                  loop={true}
-                  speed={5000}
-                  autoplay={{
-                    delay: 0,
-                    disableOnInteraction: false,
-                  }}
-                  allowTouchMove={false}
-                  className="pointer-events-none [&_.swiper-wrapper]:!ease-linear"
-                >
+                <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 5} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                   {row3.map((chair, idx) => (
                     <SwiperSlide key={`r3-${idx}`} className="flex justify-center items-center">
-                      <Image
-                        src={chair.src}
-                        alt={chair.name}
-                        width={180}
-                        height={180}
-                        className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
-                      />
+                      <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]" />
                     </SwiperSlide>
                   ))}
                 </Swiper>
               </div>
             </motion.div>
           ) : (
-            /* Normal grid layout when slider is active */
-            <motion.div
-              key="still-grid"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full h-full mx-auto"
-            >
-              {ALL_CHAIRS.map((chair, index) => {
-                const isVisible = index < visibleCount;
-                const pos = getPosition(index, Math.max(1, visibleCount), isMobile);
-
-                return (
-                  <div
-                    key={chair.name}
-                    className="absolute transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]"
-                    style={{
-                      left: pos.left,
-                      top: pos.top,
-                      transform: `translate(-50%, -50%) scale(${isVisible ? pos.scale : 0.1})`,
-                      opacity: isVisible ? 1 : 0,
-                      zIndex: pos.zIndex,
-                      pointerEvents: isVisible ? "auto" : "none",
-                    }}
-                  >
-                    <Image
-                      src={chair.src}
-                      alt={chair.name}
-                      width={320}
-                      height={320}
-                      className="w-[150px] h-[150px] md:w-[250px] md:h-[250px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:scale-110 transition-transform duration-300"
-                    />
-                  </div>
-                );
-              })}
-            </motion.div>
+            <ChairGrid chairs={chairs} visibleCount={visibleCount} isMobile={isMobile} />
           )}
         </AnimatePresence>
       </div>
 
       {/* ── Bottom slider card ── */}
-      <div className="w-full flex justify-center pb-6 sm:pb-4 px-2 sm:px-4 relative z-50">
-        <div className="w-full max-w-[440px] bg-white/95 backdrop-blur-xl rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-gray-200/40 px-5 py-2.5 flex items-center gap-4">
+      <div className="w-full flex justify-center pb-8 sm:pb-4 px-4 relative z-50">
+        <div className="w-full max-w-[440px] bg-white/95 backdrop-blur-xl rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-gray-200/40 px-5 py-3 flex items-center gap-4">
           <button
             onClick={onBack}
             className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-all duration-200 text-gray-400 hover:text-gray-600 flex-shrink-0 active:scale-95"
@@ -279,33 +268,34 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
             Sitting time
           </span>
 
-          <div className="relative flex-1 h-8 flex items-center">
-            <div className="absolute left-0 right-0 h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div className="relative flex-1 h-10 flex items-center">
+            <div className="absolute left-0 right-0 h-1.5 bg-gray-100 rounded-full overflow-hidden">
               <div
-                className="h-full rounded-full transition-[width] duration-150 ease-out"
+                className="h-full rounded-full"
                 style={{
                   width: `${sliderValue}%`,
                   background: "#9ca3af",
                 }}
               />
             </div>
+            
             <input
               type="range"
               min={0}
               max={100}
               value={sliderValue}
               onChange={(e) => {
+                if (!isTouched) setIsTouched(true);
                 setSliderValue(Number(e.target.value));
-                handleTouch();
               }}
-              onTouchStart={handleTouch}
-              onMouseDown={handleTouch}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 touch-none"
+              // Added touch-none to prevent mobile browsers from hijacking the swipe for scrolling
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 m-0 touch-none"
               aria-label="Sitting time"
             />
+            
             <div
-              className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.18)] pointer-events-none transition-[left] duration-150 ease-out border-2 border-[#9ca3af]"
-              style={{ left: `calc(${sliderValue}% - 8px)` }}
+              className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.2)] pointer-events-none border-[2.5px] border-[#9ca3af]"
+              style={{ left: `calc(${sliderValue}% - 10px)` }}
             />
           </div>
         </div>

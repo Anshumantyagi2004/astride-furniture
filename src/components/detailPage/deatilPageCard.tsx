@@ -153,15 +153,26 @@ export default function DetailPageCard({ product }: { product: any }) {
     );
   }
 
-  const allVariantImages = product?.colorVariants?.reduce(
-    (acc: any[], variant: any) => {
-      if (variant.images) {
-        return [...acc, ...variant.images];
+  const allVariantImages = React.useMemo(() => {
+    if (!product?.colorVariants) return [];
+    
+    const selectedVariant = product.colorVariants.find(
+      (v: any) => v.colorName?.toLowerCase() === selectedColor?.toLowerCase()
+    );
+    const otherVariants = product.colorVariants.filter(
+      (v: any) => v.colorName?.toLowerCase() !== selectedColor?.toLowerCase()
+    );
+
+    const selectedImages = selectedVariant?.images || [];
+    const otherImages = otherVariants.reduce((acc: any[], v: any) => {
+      if (v.images) {
+        return [...acc, ...v.images];
       }
       return acc;
-    },
-    []
-  ) || [];
+    }, []);
+
+    return [...selectedImages, ...otherImages];
+  }, [product, selectedColor]);
 
   const isBarStool = product.category?.toLowerCase().includes("bar");
 
@@ -307,6 +318,7 @@ export default function DetailPageCard({ product }: { product: any }) {
 
           {/* Main Image */}
           <div 
+            id="main-product-image"
             className="order-1 w-full aspect-square relative group rounded-[28px] border-[2.5px] border-[#131313] bg-white shadow-[6px_6px_0_#131313] overflow-hidden flex items-center justify-center"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -412,7 +424,7 @@ export default function DetailPageCard({ product }: { product: any }) {
             <span className="text-[11px] font-bold tracking-[0.12em] uppercase flex gap-2 items-center">
               Colour — <span className="text-[#EC4899] normal-case tracking-normal font-bold">{selectedColor}</span>
             </span>
-            <div className="flex gap-2.5 mt-2">
+            <div className="flex items-center gap-2.5 mt-2 pr-1">
               {(product.colors || []).map((colorName: string) => {
                 const colorHex = COLOR_MAP[colorName.toLowerCase()] || colorName.toLowerCase();
                 const isSelected = selectedColor?.toLowerCase() === colorName?.toLowerCase();
@@ -423,6 +435,11 @@ export default function DetailPageCard({ product }: { product: any }) {
                     type="button"
                     onClick={() => {
                       setSelectedColor(colorName);
+                      // Smoothly scroll up to the main product image on variant click
+                      const el = document.getElementById("main-product-image");
+                      if (el) {
+                        el.scrollIntoView({ behavior: "smooth", block: "center" });
+                      }
                     }}
                     style={{ backgroundColor: colorHex }}
                     className={`w-[32px] h-[32px] rounded-full border-[2.5px] border-[#131313] relative transition-transform duration-150 hover:scale-[1.12] focus:outline-none ${
@@ -435,6 +452,11 @@ export default function DetailPageCard({ product }: { product: any }) {
                   />
                 );
               })}
+              {/* Heart icon - mobile only, right-aligned in swatches row */}
+              <button onClick={handleToggleWishlist} className={`lg:hidden ml-auto flex items-center gap-1.5 px-3 h-[36px] border-[2.5px] border-[#131313] rounded-full shadow-[3px_3px_0_#131313] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-[1px_1px_0_#131313] shrink-0 ${isWishlisted ? 'bg-[#fdf0f6]' : 'bg-white'}`} aria-label="Add to wishlist">
+                <Heart size={14} className={`transition-all duration-200 ${isWishlisted ? 'fill-[#EC4899] stroke-[#EC4899] scale-110' : 'stroke-[#131313]'}`} />
+                <span className={`text-[11px] font-extrabold tracking-[0.05em] uppercase transition-colors duration-200 ${isWishlisted ? 'text-[#EC4899]' : 'text-[#131313]'}`}>{isWishlisted ? 'Saved ✓' : 'Wishlist'}</span>
+              </button>
             </div>
           </div>
 
@@ -453,8 +475,8 @@ export default function DetailPageCard({ product }: { product: any }) {
               Add to cart <span className="ml-1.5 font-normal">→</span>
             </button>
             
-            {/* Wishlist */}
-            <button onClick={handleToggleWishlist} className={`w-[48px] min-h-[46px] border-[2.5px] border-[#131313] rounded-[14px] bg-white grid place-items-center shadow-[3px_3px_0_#131313] transition-transform duration-200 hover:-translate-y-1 ${isWishlisted ? 'group on' : 'group'}`} aria-label="Add to wishlist">
+            {/* Wishlist - desktop only, hidden on mobile since it's in the color row */}
+            <button onClick={handleToggleWishlist} className={`hidden lg:grid w-[48px] min-h-[46px] border-[2.5px] border-[#131313] rounded-[14px] bg-white place-items-center shadow-[3px_3px_0_#131313] transition-transform duration-200 hover:-translate-y-1 ${isWishlisted ? 'group on' : 'group'}`} aria-label="Add to wishlist">
               <Heart size={20} className={`transition-colors duration-200 ${isWishlisted ? 'fill-[#EC4899] stroke-[#EC4899]' : 'stroke-[#131313] group-hover:stroke-[#EC4899]'}`} />
             </button>
           </div>
@@ -465,21 +487,51 @@ export default function DetailPageCard({ product }: { product: any }) {
             </button>
           </div>
 
-          {/* Value Props - Single strip */}
-          <div className="inline-flex items-stretch border-[2.5px] border-[#131313] rounded-[14px] bg-white shadow-[3px_3px_0_#131313] overflow-hidden">
-            <div className="flex-1 flex flex-row items-center justify-center gap-2.5 px-3 py-3">
-              <span className="text-[20px] shrink-0">🚚</span>
-              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#131313] leading-tight">Free<br/>Shipping</span>
+          {/* Value Props - Premium Strip */}
+          <div className="w-full flex items-stretch border-[2.5px] border-[#131313] rounded-[16px] bg-white shadow-[3px_3px_0_#131313] overflow-hidden mt-1">
+            {/* Free Shipping */}
+            <div className="flex-1 min-w-0 flex flex-col lg:flex-row items-center justify-center gap-1.5 px-1.5 py-2.5">
+              <div className="w-[34px] h-[34px] rounded-[9px] bg-[#f0fdf4] border-[1.5px] border-[#131313] flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 24 24" fill="none" className="w-[18px] h-[18px]" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 3h15v13H1z" stroke="#16a34a" strokeWidth="1.8"/>
+                  <path d="M16 8h4l3 4v4h-7V8z" stroke="#16a34a" strokeWidth="1.8"/>
+                  <circle cx="5.5" cy="18.5" r="2" stroke="#16a34a" strokeWidth="1.8"/>
+                  <circle cx="18.5" cy="18.5" r="2" stroke="#16a34a" strokeWidth="1.8"/>
+                </svg>
+              </div>
+              <div className="min-w-0 text-center lg:text-left">
+                <p className="text-[9px] font-extrabold uppercase tracking-[0.04em] text-[#131313] leading-tight">Free Shipping</p>
+                <p className="text-[8px] text-[#888] font-medium leading-none mt-0.5">Pan India</p>
+              </div>
             </div>
-            <div className="w-[2px] bg-[#131313] shrink-0" />
-            <div className="flex-1 flex flex-row items-center justify-center gap-2.5 px-3 py-3">
-              <span className="text-[20px] shrink-0">↩️</span>
-              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#131313] leading-tight">30 Day<br/>Returns</span>
+            <div className="w-[1.5px] bg-[#e5e5e5] shrink-0 my-2" />
+            {/* 30 Day Returns */}
+            <div className="flex-1 min-w-0 flex flex-col lg:flex-row items-center justify-center gap-1.5 px-1.5 py-2.5">
+              <div className="w-[34px] h-[34px] rounded-[9px] bg-[#fdf4ff] border-[1.5px] border-[#131313] flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 24 24" fill="none" className="w-[18px] h-[18px]" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" stroke="#9333ea" strokeWidth="1.8"/>
+                  <path d="M3 3v5h5" stroke="#9333ea" strokeWidth="1.8"/>
+                  <path d="M12 7v5l4 2" stroke="#9333ea" strokeWidth="1.8"/>
+                </svg>
+              </div>
+              <div className="min-w-0 text-center lg:text-left">
+                <p className="text-[9px] font-extrabold uppercase tracking-[0.04em] text-[#131313] leading-tight">30 Day Returns</p>
+                <p className="text-[8px] text-[#888] font-medium leading-none mt-0.5">No questions</p>
+              </div>
             </div>
-            <div className="w-[2px] bg-[#131313] shrink-0" />
-            <div className="flex-1 flex flex-row items-center justify-center gap-2.5 px-3 py-3">
-              <span className="text-[20px] shrink-0">🛡️</span>
-              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#131313] leading-tight">2 Year<br/>Warranty</span>
+            <div className="w-[1.5px] bg-[#e5e5e5] shrink-0 my-2" />
+            {/* 2 Year Warranty */}
+            <div className="flex-1 min-w-0 flex flex-col lg:flex-row items-center justify-center gap-1.5 px-1.5 py-2.5">
+              <div className="w-[34px] h-[34px] rounded-[9px] bg-[#fff7ed] border-[1.5px] border-[#131313] flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 24 24" fill="none" className="w-[18px] h-[18px]" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#ea580c" strokeWidth="1.8"/>
+                  <path d="m9 12 2 2 4-4" stroke="#ea580c" strokeWidth="1.8"/>
+                </svg>
+              </div>
+              <div className="min-w-0 text-center lg:text-left">
+                <p className="text-[9px] font-extrabold uppercase tracking-[0.04em] text-[#131313] leading-tight">2 Yr Warranty</p>
+                <p className="text-[8px] text-[#888] font-medium leading-none mt-0.5">Full coverage</p>
+              </div>
             </div>
           </div>
 
@@ -722,7 +774,7 @@ export default function DetailPageCard({ product }: { product: any }) {
               </div>
 
               {/* Dials Card */}
-              <div className="bg-[#131313] text-white rounded-[28px] p-[clamp(26px,3vw,40px)] rotate-[0.8deg] shadow-[10px_10px_0_#8B5CF6] relative">
+              <div className="bg-[#131313] text-white rounded-[28px] p-[clamp(26px,3vw,40px)] rotate-0 lg:rotate-[0.8deg] shadow-[10px_10px_0_#8B5CF6] relative">
                 <span className="absolute -top-4 right-5 bg-[#DCF351] text-[#131313] font-bold text-[14px] px-3.5 py-1.5 rotate-[3deg] shadow-[3px_3px_0_rgba(0,0,0,0.6)] border-2 border-[#131313] whitespace-nowrap">
                   fits everybody ✦
                 </span>

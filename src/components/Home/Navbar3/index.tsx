@@ -271,6 +271,12 @@ export default function Navbar3() {
                         <Link href="/contact" className="hidden sm:inline hover:text-lime-500 transition-colors">
                             Support
                         </Link>
+                        <button 
+                            onClick={handleFindYourChair} 
+                            className="hover:text-lime-500 transition-colors cursor-pointer bg-transparent border-0 text-[13px] font-medium text-white p-0"
+                        >
+                            Find chair
+                        </button>
                         <Link href="/account" className="hover:text-lime-500 transition-colors">
                             Profile
                         </Link>
