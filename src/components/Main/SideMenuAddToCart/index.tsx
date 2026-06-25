@@ -28,7 +28,9 @@ export default function SideMenuAddToCart() {
   // Helper to sync to local storage & dispatch event
   const syncCartState = useCallback((items: CartItem[]) => {
     localStorage.setItem('astride_cart', JSON.stringify(items));
-    window.dispatchEvent(new Event('astride_cart_updated'));
+    setTimeout(() => {
+      window.dispatchEvent(new Event('astride_cart_updated'));
+    }, 0);
   }, []);
 
   // Load cart from localStorage on mount

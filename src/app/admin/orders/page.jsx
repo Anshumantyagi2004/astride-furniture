@@ -240,7 +240,7 @@ export default function Page() {
                                             </h3>
 
                                             <div className="space-y-4 max-h-[350px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-neutral-200">
-                                                {order.products?.map((product) => (
+                                                {order.products?.map((product, index) => (
                                                     <div 
                                                         key={product._id || product.productId} 
                                                         className="flex items-start gap-4 bg-neutral-50 p-4 rounded-2xl border border-neutral-100"
@@ -253,8 +253,10 @@ export default function Page() {
                                                             />
                                                         </div>
                                                         <div className="flex-1 min-w-0 space-y-1">
-                                                            <h4 className="text-lg font-extrabold text-neutral-950 leading-snug break-words">{product.productName}</h4>
-                                                            <p className="text-xs text-neutral-400 font-mono">
+                                                            <h4 className="text-lg font-extrabold text-neutral-950 leading-snug break-words">
+                                                                <span className="text-blue-900 mr-1.5">{index + 1}.</span>{product.productName}
+                                                            </h4>
+                                                            <p className="text-xs text-neutral-400 font-mono break-all">
                                                                 ID: <span className="select-all font-semibold text-neutral-600">{product.productId || product._id}</span>
                                                             </p>
                                                             {product.color && (

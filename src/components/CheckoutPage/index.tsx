@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Script from 'next/script';
 
 interface CartItem {
   id: string | number;
@@ -18,6 +19,7 @@ export default function CheckoutPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "Razorpay">("COD");
 
   // Grouped Form State: Reduces React state allocation memory overhead
   const [formData, setFormData] = useState({
@@ -56,23 +58,20 @@ export default function CheckoutPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   }, []);
 
-  const placeOrder = useCallback(async () => {
+const placeOrder = useCallback(async () => {
     try {
       const { fullName, email, phone, address, city, stateName, pinCode } = formData;
-
       if (!fullName || !email || !phone || !address || !city || !stateName || !pinCode) {
         alert("Please fill all fields");
         return;
       }
-
       const savedUser = localStorage.getItem("user");
       const user = savedUser ? JSON.parse(savedUser) : null;
-
       if (!user || !user.id) {
         alert("Please log in first to place an order");
         return;
       }
-
+      const totalAmount = subtotal + shippingCost;
       const orderData = {
         userId: user.id,
         shippingInfo: {
@@ -84,7 +83,6 @@ export default function CheckoutPage() {
           state: stateName,
           pinCode,
         },
-
         products: cartItems.map((item) => {
           const cleanProductId = typeof item.id === 'string' && item.id.includes('-') 
             ? item.id.split('-')[0] 
@@ -98,42 +96,126 @@ export default function CheckoutPage() {
             price: item.price,
           };
         }),
-
         pricing: {
           subtotal,
           shippingCharge: shippingCost,
-          total: subtotal + shippingCost,
+          total: totalAmount,
         },
-
-        paymentMethod: "COD",
       };
-
-      const response = await fetch("/api/order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setOrderId(data.order?._id || data.orderId || "");
-        setShowSuccess(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        localStorage.removeItem("astride_cart");
-        setCartItems([]);
+      if (paymentMethod === "COD") {
+        // --- 1. CASH ON DELIVERY FLOW ---
+        const response = await fetch("/api/order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...orderData, paymentMethod: "COD" }),
+        });
+        const data = await response.json();
+        if (data.success) {
+          setOrderId(data.order?._id || data.orderId || "");
+          setShowSuccess(true);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          localStorage.removeItem("astride_cart");
+          setCartItems([]);
+        }
+      } else {
+        // --- 2. RAZORPAY ONLINE PAYMENT FLOW ---
+        // Create the Razorpay Order
+        const res = await fetch("/api/create-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ amount: totalAmount * 100 }), // Amount in paise
+        });
+        const razorpayOrder = await res.json();
+        
+        if (!razorpayOrder.success) {
+          alert("Failed to initiate payment. Please try again.");
+          return;
+        }
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+          amount: razorpayOrder.amount,
+          currency: razorpayOrder.currency,
+          name: "Astride Furniture",
+          description: "Order Payment",
+          order_id: razorpayOrder.order_id,
+          handler: async function (response: any) {
+            try {
+              // Verify payment and save the order in MongoDB
+              const verifyRes = await fetch("/api/verify-payment", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  orderData,
+                }),
+              });
+              const verifyData = await verifyRes.json();
+              if (verifyData.success) {
+                setOrderId(verifyData.order?._id || "");
+                setShowSuccess(true);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                localStorage.removeItem("astride_cart");
+                setCartItems([]);
+              } else {
+                alert("Payment verification failed: " + verifyData.message);
+              }
+            } catch (err: any) {
+              alert("Verification error: " + (err?.message || "Please contact support."));
+            }
+          },
+          // Handle payment failures gracefully (card declined, bank error, etc.)
+          modal: {
+            ondismiss: function () {
+              console.log("Razorpay modal closed by user");
+            },
+          },
+          prefill: {
+            name: fullName,
+            email: email,
+            contact: phone,
+          },
+          theme: {
+            color: "#000000",
+          },
+        };
+        // Guard: ensure Razorpay script is loaded
+        if (!(window as any).Razorpay) {
+          alert("Payment system is still loading. Please try again in a moment.");
+          return;
+        }
+        // Open the Razorpay Modal
+        const paymentObject = new (window as any).Razorpay(options);
+        // Handle payment failures (card declined, international card blocked, etc.)
+        paymentObject.on("payment.failed", function (response: any) {
+          const reason = response?.error?.description || response?.error?.reason || "Payment was declined";
+          alert("Payment failed: " + reason + "\n\nPlease try a different payment method or card.");
+        });
+        paymentObject.open();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.error(error);
+      alert("Error: " + (error?.message || "Something went wrong. Please try again."));
     }
-  }, [formData, cartItems, subtotal]);
+  }, [formData, cartItems, subtotal, paymentMethod]);
 
   if (!isMounted) return null;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    {/* Load Razorpay script asynchronously */}
+    <Script
+      src="https://checkout.razorpay.com/v1/checkout.js"
+      strategy="afterInteractive"
+      onLoad={() => console.log("Razorpay script loaded successfully")}
+    />
       <div className="max-w-7xl mx-auto">
         {/* Back navigation header */}
         <div className="flex items-center justify-between mb-8">
@@ -262,6 +344,35 @@ export default function CheckoutPage() {
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
                       required
                     />
+                  </div>
+                </div>
+
+                {/* PAYMENT METHOD SELECTOR */}
+                <div className="space-y-3 pt-2 pb-4">
+                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Payment Method</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("COD")}
+                      className={`py-3 px-4 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${
+                        paymentMethod === "COD"
+                          ? "border-black bg-black text-white"
+                          : "border-neutral-200 bg-neutral-50 text-neutral-600 hover:border-neutral-300"
+                      }`}
+                    >
+                      Cash on Delivery
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("Razorpay")}
+                      className={`py-3 px-4 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${
+                        paymentMethod === "Razorpay"
+                          ? "border-black bg-black text-white"
+                          : "border-neutral-200 bg-neutral-50 text-neutral-600 hover:border-neutral-300"
+                      }`}
+                    >
+                      Pay Online
+                    </button>
                   </div>
                 </div>
 

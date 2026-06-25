@@ -47,6 +47,7 @@ interface Order {
   date: string;
   total: number;
   status: string;
+  paymentMethod?: string;
   items: OrderItem[];
 }
 
@@ -160,6 +161,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
           date: new Date(o.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }),
           total: o.pricing?.total || 0,
           status: o.status || o.orderStatus || "Pending",
+          paymentMethod: o.paymentMethod || "COD",
           items: (o.products || []).map((p: any) => ({
             id: p._id || p.productId,
             name: p.productName,
@@ -520,6 +522,16 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                 <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Total</p>
                                 <p className="text-sm md:text-base font-black text-slate-800 font-extrabold">₹{order.total.toLocaleString()}</p>
                               </div>
+                              <div className="flex-1 md:flex-none">
+                                <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Method</p>
+                                <span className={`inline-flex px-3.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider ${
+                                  (order.paymentMethod || "COD") === "COD" 
+                                    ? "bg-amber-50 text-amber-600 border border-amber-200/50" 
+                                    : "bg-blue-50 text-blue-600 border border-blue-200/50"
+                                }`}>
+                                  {order.paymentMethod === "Razorpay" ? "Online" : (order.paymentMethod || "COD")}
+                                </span>
+                              </div>
                             </div>
                             <div className="w-full md:w-auto text-left md:text-right mt-2 md:mt-0">
                               <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1 md:text-right">Order ID</p>
@@ -542,8 +554,8 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                     className="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden bg-white border border-slate-200 shrink-0 group"
                                   >
                                     <Image
-                                      src={item.image}
-                                      alt={item.name}
+                                      src={item.image || "/logo.webp"}
+                                      alt={item.name || "Product Image"}
                                       fill
                                       className="object-contain p-2 mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
                                     />
@@ -567,7 +579,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                     <div className="mt-3 grid grid-cols-3 gap-2">
                                       <div>
                                         <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Price</p>
-                                        <p className="text-[13px] font-bold text-slate-900">₹{item.price.toLocaleString()}</p>
+                                        <p className="text-[13px] font-bold text-slate-900">₹{(item.price ?? 0).toLocaleString()}</p>
                                       </div>
                                       <div>
                                         <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Qty</p>
@@ -575,7 +587,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                       </div>
                                       <div>
                                         <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Total</p>
-                                        <p className="text-[13px] font-bold text-slate-500">₹{(item.price * item.quantity).toLocaleString()}</p>
+                                        <p className="text-[13px] font-bold text-slate-500">₹{((item.price ?? 0) * (item.quantity ?? 0)).toLocaleString()}</p>
                                       </div>
                                     </div>
                                   </div>

@@ -25,6 +25,7 @@ const orderSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
         },
+
         productName: String,
         image: String,
         color: String,
@@ -41,16 +42,36 @@ const orderSchema = new mongoose.Schema(
       },
       total: Number,
     },
-
     paymentMethod: {
       type: String,
+      enum: ["COD", "Razorpay"],
       default: "COD",
+    },
+
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid", "Failed"],
+      default: "Pending",
+    },
+
+    razorpayOrderId: {
+      type: String,
+    },
+
+    razorpayPaymentId: {
+      type: String,
+    },
+
+    razorpaySignature: {
+      type: String,
     },
 
     status: {
       type: String,
-      default: "Pending",
+      enum: ["Pending", "Confirmed", "Processing", "Processing / Packing", "Shipped", "Out for Delivery", "Delivered", "Cancelled"],
+      default: "Confirmed",
     },
+
   },
   {
     timestamps: true,

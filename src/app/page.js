@@ -52,7 +52,7 @@ export default function Home() {
       <Header0/>
     
        {/* <Header3 /> */}
-       <Header5_New/>
+       
          <Header6_New/>  
         <BestSeller/>
        
