@@ -7,8 +7,7 @@ export async function POST(req) {
     await connectDB();
 
     const body = await req.json();
-
-    const order = await Order.create(body);
+    const order = await Order.create({ ...body, status: "Confirmed" });
 
     return NextResponse.json({
       success: true,

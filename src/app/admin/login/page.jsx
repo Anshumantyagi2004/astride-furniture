@@ -13,7 +13,7 @@ export default function page() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        if (password === "astride@1234" && email === "admin@astride.com") {
+        if (password === "astride@1234" && email === "admin@astride.in") {
             document.cookie = "admin-token=secret123; path=/";
             router.push("/admin");
         } else {
