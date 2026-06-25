@@ -9,19 +9,19 @@ import "swiper/css/navigation";
 
 const setups = [
   {
-    img: "/Real_people_real_Setup/chill.webp",
+    img: "/Real_people_real_Setup/15.webp",
     tag: "#GamingSetup",
   },
   {
-    img: "/Real_people_real_Setup/WhatsApp Image 2026-06-13 at 17.31.27.webp",
+    img: "/Real_people_real_Setup/16.webp",
     tag: "#WorkFromHome",
   },
   {
-    img: "/Real_people_real_Setup/WhatsApp Image 2026-06-13 at 17.31.27 (1).webp",
+    img: "/Real_people_real_Setup/17.webp",
     tag: "#StudyCorner",
   },
   {
-    img: "/Real_people_real_Setup/WhatsApp Image 2026-06-13 at 17.31.27 (2).webp",
+    img: "/Real_people_real_Setup/18.webp",
     tag: "#MinimalDesk",
   },
 ];

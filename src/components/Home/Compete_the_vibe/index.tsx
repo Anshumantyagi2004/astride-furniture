@@ -261,7 +261,7 @@ export default function CompeteTheVibe() {
   }, []);
 
   return (
-    <section className={`pt-2 pb-4 md:pt-3 md:pb-6 bg-white ${sans.className}`}>
+    <section className={`pt-2 pb-0 md:pt-3 md:pb-6 bg-white ${sans.className}`}>
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
         
         {/* Header section - Flex Row to keep button on the right */}
@@ -286,7 +286,7 @@ export default function CompeteTheVibe() {
         </div>
 
         {/* MOBILE VIEW (Auto-swiping 2 items per view) */}
-        <div className="block md:hidden w-full pb-4 px-1">
+        <div className="block md:hidden w-full pb-0 px-1">
           <Swiper
             modules={[Autoplay]}
             spaceBetween={12}
@@ -299,7 +299,7 @@ export default function CompeteTheVibe() {
             className="w-full !overflow-visible"
           >
             {products.map((product) => (
-              <SwiperSlide key={product.id} className="pb-4 pt-3 h-auto">
+              <SwiperSlide key={product.id} className="pb-0 pt-3 h-auto">
                 <VibeProductCard product={product} />
               </SwiperSlide>
             ))}

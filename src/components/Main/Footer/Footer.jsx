@@ -195,7 +195,7 @@ export default function Footer() {
 
                 {/* Bottom Bar */}
                 <div className="border-t-[1.5px] border-[#2c2c2c] py-[12px] flex flex-wrap justify-between items-center gap-[14px] text-[13px] text-[#8b8b8b]">
-                    <span>© {new Date().getFullYear()} Astrides Pvt Ltd. All rights reserved.</span>
+                    <span>ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] © {new Date().getFullYear()} </span>
                     <span className="text-[#DCF351] font-medium tracking-wide">Good Chair. Good Mood. Good Day.</span>
                 </div>
             </div>
