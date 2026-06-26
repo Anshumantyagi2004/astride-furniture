@@ -32,7 +32,7 @@ export default function CheckoutPage() {
     pinCode: "",
   });
 
-  const shippingCost = 49;
+  const shippingCost = 1;
 
   useEffect(() => {
     setIsMounted(true);
@@ -56,6 +56,15 @@ export default function CheckoutPage() {
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  }, []);
+
+  // Remove a single item from cart and sync to localStorage
+  const removeItem = useCallback((id: string | number) => {
+    setCartItems(prev => {
+      const updated = prev.filter(item => item.id !== id);
+      localStorage.setItem('astride_cart', JSON.stringify(updated));
+      return updated;
+    });
   }, []);
 
 const placeOrder = useCallback(async () => {
@@ -406,7 +415,15 @@ const placeOrder = useCallback(async () => {
                   {/* Item List */}
                   <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-neutral-200">
                     {cartItems.map((item) => (
-                      <div key={item.id} className="flex gap-4 items-center bg-neutral-50 p-3 rounded-2xl border border-neutral-100">
+                      <div key={item.id} className="relative flex gap-4 items-center bg-neutral-50 p-3 rounded-2xl border border-neutral-100">
+                        {/* Remove button */}
+                        <button
+                          onClick={() => removeItem(item.id)}
+                          aria-label="Remove item"
+                          className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full bg-neutral-200 hover:bg-red-100 hover:text-red-500 text-neutral-500 transition-all duration-200 text-[10px] font-black leading-none"
+                        >
+                          ✕
+                        </button>
                         <div className="relative w-20 h-20 bg-white rounded-xl flex items-center justify-center shrink-0 border border-neutral-100 shadow-sm">
                           <Image 
                             src={item.image} 
@@ -415,7 +432,7 @@ const placeOrder = useCallback(async () => {
                             className="object-contain p-2 mix-blend-multiply"
                           />
                         </div>
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 pr-4">
                           <h4 className="font-bold text-neutral-900 text-sm truncate">{item.name}</h4>
                           <div className="flex flex-col gap-0.5 mt-0.5">
                             <p className="text-xs text-neutral-500 font-medium">Quantity: {item.quantity}</p>

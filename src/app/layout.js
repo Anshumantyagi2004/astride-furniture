@@ -24,6 +24,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${forum.variable} ${sans.variable} ${sans.className}`}>
+      <head>
+        <link rel="preload" href="/3D_asset_glb/a3.glb" as="fetch" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://img.youtube.com" />
+        <link rel="dns-prefetch" href="https://img.youtube.com" />
+        <link rel="preconnect" href="https://www.youtube.com" />
+      </head>
       <body className="min-h-screen overflow-x-clip max-w-[100vw]">
         <LayoutWrapper>
           {children}

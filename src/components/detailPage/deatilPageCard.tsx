@@ -30,6 +30,8 @@ export default function DetailPageCard({ product }: { product: any }) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  // When true, the selectedColor useEffect skips resetting activeImage (used by arrow navigation)
+  const skipImageResetRef = useRef(false);
 
   useEffect(() => {
     if (product) {
@@ -94,6 +96,11 @@ export default function DetailPageCard({ product }: { product: any }) {
 
   useEffect(() => {
     if (product && selectedColor) {
+      // If flagged by arrow navigation, just clear the flag and skip the image reset
+      if (skipImageResetRef.current) {
+        skipImageResetRef.current = false;
+        return;
+      }
       const variant = product.colorVariants?.find(
         (v: any) => v.colorName?.toLowerCase() === selectedColor?.toLowerCase()
       );
@@ -155,24 +162,15 @@ export default function DetailPageCard({ product }: { product: any }) {
 
   const allVariantImages = React.useMemo(() => {
     if (!product?.colorVariants) return [];
-    
-    const selectedVariant = product.colorVariants.find(
-      (v: any) => v.colorName?.toLowerCase() === selectedColor?.toLowerCase()
-    );
-    const otherVariants = product.colorVariants.filter(
-      (v: any) => v.colorName?.toLowerCase() !== selectedColor?.toLowerCase()
-    );
-
-    const selectedImages = selectedVariant?.images || [];
-    const otherImages = otherVariants.reduce((acc: any[], v: any) => {
-      if (v.images) {
+    // Always use a fixed order (same as colorVariants array) so arrow navigation
+    // is stable and never reorders when selectedColor changes
+    return product.colorVariants.reduce((acc: any[], v: any) => {
+      if (v.images && v.images.length > 0) {
         return [...acc, ...v.images];
       }
       return acc;
     }, []);
-
-    return [...selectedImages, ...otherImages];
-  }, [product, selectedColor]);
+  }, [product]);
 
   const isBarStool = product.category?.toLowerCase().includes("bar");
 
@@ -195,11 +193,12 @@ export default function DetailPageCard({ product }: { product: any }) {
         nextImage = allVariantImages[0].url;
       }
       setActiveImage(nextImage);
-      // Synchronize color selection indicator with the active image's variant
-      const variant = product?.colorVariants?.find((v: any) => 
+      // Update the highlighted colour swatch without resetting the image
+      const variant = product?.colorVariants?.find((v: any) =>
         v.images?.some((img: any) => img.url === nextImage)
       );
       if (variant && variant.colorName) {
+        skipImageResetRef.current = true;
         setSelectedColor(variant.colorName);
       }
     }
@@ -216,11 +215,12 @@ export default function DetailPageCard({ product }: { product: any }) {
         prevImage = allVariantImages[allVariantImages.length - 1].url;
       }
       setActiveImage(prevImage);
-      // Synchronize color selection indicator with the active image's variant
-      const variant = product?.colorVariants?.find((v: any) => 
+      // Update the highlighted colour swatch without resetting the image
+      const variant = product?.colorVariants?.find((v: any) =>
         v.images?.some((img: any) => img.url === prevImage)
       );
       if (variant && variant.colorName) {
+        skipImageResetRef.current = true;
         setSelectedColor(variant.colorName);
       }
     }

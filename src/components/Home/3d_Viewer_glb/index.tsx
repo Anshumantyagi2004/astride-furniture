@@ -51,35 +51,6 @@ const targetPosVec = new THREE.Vector3(0, 0, 5);
 const targetLookVec = new THREE.Vector3(0, 0, 0);
 const currentLookVec = new THREE.Vector3(0, 0, 0);
 
-function LoadingScreen() {
-    const { progress } = useProgress();
-    const [visible, setVisible] = useState(true);
-    const [hasLoaded, setHasLoaded] = useState(false);
-
-    useEffect(() => {
-        if (progress === 100 && !hasLoaded) {
-            setHasLoaded(true);
-            const timeout = setTimeout(() => setVisible(false), 600);
-            return () => clearTimeout(timeout);
-        }
-    }, [progress, hasLoaded]);
-
-    if (!visible) return null;
-
-    return (
-        <div 
-            className={`absolute inset-0 flex flex-col items-center justify-center bg-[#090807] z-50 transition-opacity duration-500 ${
-                hasLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
-            }`}
-        >
-            <div className="w-12 h-12 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4" />
-            <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.25em]">
-                Loading 3D Experience {Math.round(hasLoaded ? 100 : progress)}%
-            </p>
-        </div>
-    );
-}
-
 class EnvErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
     constructor(props: { children: React.ReactNode }) {
         super(props);
@@ -281,9 +252,8 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                 <div className="sticky top-4 relative w-full h-[400px] rounded-2xl overflow-hidden border border-zinc-700 bg-zinc-900/30 shadow-2xl backdrop-blur-md z-30">
                     {/* Subtle glow effect behind model */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-gradient-to-tr from-[#8B5CF6]/10 via-[#EC4899]/5 to-[#F97316]/10 rounded-full blur-[80px] pointer-events-none z-0" />
-                    <LoadingScreen />
                     <div className="w-full h-full">
-                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop={isInView ? "always" : "demand"}>
+                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop="always">
                             <color attach="background" args={['#090807']} />
                             
                             <ambientLight intensity={0.5} />
@@ -355,12 +325,11 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
     return (
         <div ref={containerRef} className="relative w-full h-[500vh] md:h-[400vh] bg-[#090807] overflow-visible">
             <div className="sticky top-0 w-full h-screen overflow-hidden">
-                <LoadingScreen />
                 <>
                     <div className="absolute inset-0 w-full h-full z-0">
                         {/* Subtle glow effect behind model */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[65%] bg-gradient-to-tr from-[#8B5CF6]/15 via-[#EC4899]/5 to-[#F97316]/10 rounded-full blur-[120px] pointer-events-none z-0" />
-                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop={isInView ? "always" : "demand"}>
+                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop="always">
                             <color attach="background" args={['#090807']} />
                             
                             <ambientLight intensity={0.5} />
@@ -442,3 +411,6 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
         </div>
     );
 }
+
+// Preload the GLB model in module scope so it starts loading instantly when the bundle is resolved
+useGLTF.preload('/3D_asset_glb/a3.glb');

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
 import Order from "@/models/order/Order";
+import { sendTelegramOrderNotification } from "@/lib/sendTelegramNotification";
 
 export async function POST(req) {
   try {
@@ -8,6 +9,9 @@ export async function POST(req) {
 
     const body = await req.json();
     const order = await Order.create({ ...body, status: "Confirmed" });
+
+    // Fire-and-forget Telegram notification — does NOT block the response
+    sendTelegramOrderNotification(order, body.paymentMethod || "COD");
 
     return NextResponse.json({
       success: true,

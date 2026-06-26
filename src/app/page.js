@@ -37,13 +37,12 @@ import Navbar from '@/components/Main/Navbar/Navbar';
 import CertificationsBento from '@/components/Home/Certification_bento';
 import Marquee5_New from '@/components/Home/Marquee5_New';
 import Marquee6_New from '@/components/Home/Marquee6_New/Index';
-// Lazy loaded — only the 3 heaviest components
+// Lazy loaded — only the heaviest animation-heavy component
 // Reviews: uses GSAP + ScrollTrigger (large bundle)
 const Reviews = dynamic(() => import('@/components/Home/Reviews'));
-// VideoTestimonials: loads 4 external thumbnails + embeds
-const VideoTestimonials = dynamic(() => import('@/components/Home/VideoTestimonials'));
-// ModelViewer: Three.js WebGL — preloads while user is on VideoTestimonials
-const PreloadModelViewer = dynamic(() => import('@/components/Home/PreloadModelViewer'));
+
+import VideoTestimonials from '@/components/Home/VideoTestimonials';
+import PreloadModelViewer from '@/components/Home/PreloadModelViewer';
 
 export default function Home() {
   return (
