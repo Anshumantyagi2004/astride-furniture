@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     User, Building2, Mail, Phone, Armchair, MapPin,
@@ -189,25 +190,43 @@ export default function BulkQueryForm() {
                                 <span className="text-slate-400 font-light">at every scale.</span>
                             </h3>
 
-                            <div className="mt-8 flex flex-col gap-5">
-                                {PERKS.map((perk, i) => (
-                                    <motion.div
-                                        key={i}
-                                        initial={{ opacity: 0, x: 16 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-                                        className="flex items-start gap-4"
-                                    >
-                                        <div className="w-10 h-10 rounded-xl bg-white/[0.07] border border-white/[0.08] flex items-center justify-center flex-shrink-0">
-                                            <perk.icon size={18} strokeWidth={1.5} className="text-slate-300" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-bold text-white">{perk.title}</p>
-                                            <p className="text-[12px] text-slate-400 mt-0.5">{perk.desc}</p>
-                                        </div>
-                                    </motion.div>
-                                ))}
+                            <div className="mt-8 flex flex-row lg:flex-row gap-4 items-center justify-between">
+                                <div className="flex flex-col gap-5 flex-1">
+                                    {PERKS.map((perk, i) => (
+                                        <motion.div
+                                            key={i}
+                                            initial={{ opacity: 0, x: 16 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+                                            className="flex items-start gap-3"
+                                        >
+                                            <div className="w-8 h-8 rounded-lg bg-white/[0.07] border border-white/[0.08] flex items-center justify-center flex-shrink-0">
+                                                <perk.icon size={15} strokeWidth={1.5} className="text-slate-300" />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-white leading-tight">{perk.title}</p>
+                                                <p className="text-[10px] text-slate-400 mt-0.5 leading-snug">{perk.desc}</p>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.6 }}
+                                    className="flex-shrink-0 w-24 bg-white/5 rounded-xl p-2 border border-white/10 flex items-center justify-center"
+                                >
+                                    <Image 
+                                        src="/Png1/Gemologo3.webp" 
+                                        alt="Partner Logo" 
+                                        width={80} 
+                                        height={80} 
+                                        className="object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-sm filter brightness-0 invert"
+                                    />
+                                </motion.div>
                             </div>
                         </div>
 

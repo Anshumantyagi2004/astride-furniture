@@ -4,6 +4,8 @@ import { useState, memo, useCallback } from "react";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { motion, Variants } from "framer-motion";
 
+import Image from "next/image";
+
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
@@ -106,7 +108,6 @@ export default function Enquiry_New() {
   });
 
   const validateField = (name: string, value: string) => {
-    // Phone is optional based on the label lacking an asterisk
     if (name !== "phone" && !value.trim()) return "Required field";
 
     if (name === "email") {
@@ -128,23 +129,17 @@ export default function Enquiry_New() {
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // 1. STRICT TEXT: Prevent numbers and special characters in Name and Location
     if ((name === 'fullName' || name === 'location') && !/^[a-zA-Z\s]*$/.test(value)) {
       return; 
     }
-
-    // 2. STRICT NUMBERS: Prevent letters in Phone and Quantity
     if ((name === 'phone' || name === 'quantity') && !/^\d*$/.test(value)) {
       return;
     }
-    
-    // 3. MAX LENGTHS
     if (name === 'phone' && value.length > 10) return;
-    if (name === 'quantity' && value.length > 5) return; // Prevent absurdly high quantities
+    if (name === 'quantity' && value.length > 5) return;
 
     setFormData(prev => ({ ...prev, [name]: value }));
 
-    // Instant error clearing as user types
     setErrors(prev => {
       const fieldName = name as keyof typeof errors;
       if (prev[fieldName]) {
@@ -163,7 +158,6 @@ export default function Enquiry_New() {
     e.preventDefault();
     setErrorMsg("");
 
-    // Force validate all fields on submit
     const newErrors = {
       fullName: validateField("fullName", formData.fullName),
       companyName: validateField("companyName", formData.companyName),
@@ -175,7 +169,6 @@ export default function Enquiry_New() {
 
     setErrors(newErrors);
 
-    // Stop submission if ANY error exists
     if (Object.values(newErrors).some(err => err !== "")) {
       return;
     }
@@ -203,14 +196,12 @@ export default function Enquiry_New() {
     }
   };
 
-  // Dynamic input styling that respects your brutalist design
   const getInputClass = (error: string) => `w-full rounded-[10px] border-2 px-4 py-[11px] md:py-[13px] text-sm font-semibold outline-none transition duration-300 ${
     error 
       ? 'border-red-500 bg-red-50/50 text-red-900 focus:border-red-500 focus:shadow-[3px_3px_0_#ef4444]' 
       : 'border-[#131313] focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]'
   }`;
 
-  // Mini Error Message UI
   const ErrorMessage = ({ error }: { error: string }) => {
     if (!error) return null;
     return (
@@ -231,7 +222,8 @@ export default function Enquiry_New() {
       className="overflow-hidden bg-[#131313] py-[32px] md:py-[40px] lg:py-[48px] text-white"
     >
       <div className="mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-10 xl:gap-14 items-start">
+          
           {/* LEFT COLUMN */}
           <motion.div
             initial="hidden"
@@ -259,15 +251,33 @@ export default function Enquiry_New() {
               500+ companies across India already rep the seat.
             </p>
 
-            <ul className={`mt-8 md:mt-10 grid grid-cols-3 md:grid-cols-1 gap-2 md:gap-0 md:space-y-5 ${sans.className}`}>
-              {FEATURES.map((item) => (
-                <FeatureItem key={item.title} item={item} />
-              ))}
-            </ul>
+            <div className="mt-8 md:mt-10 flex flex-col md:flex-row items-stretch gap-4 max-w-[460px]">
+              
+              {/* Features List: order-2 on mobile (moves bottom), md:order-1 on desktop (moves left) */}
+              <div className="order-2 md:order-1 flex-[1.3] bg-white/[0.02] border border-white/5 rounded-[20px] p-4 md:p-5 flex flex-col justify-center">
+                <ul className={`grid grid-cols-3 md:grid-cols-1 gap-2 md:gap-0 md:space-y-5 ${sans.className}`}>
+                  {FEATURES.map((item) => (
+                    <FeatureItem key={item.title} item={item} />
+                  ))}
+                </ul>
+              </div>
+              
+              {/* GeM Logo Container: order-1 on mobile (moves top), md:order-2 on desktop (moves right) */}
+              <div className="order-1 md:order-2 flex-1 flex items-center justify-center bg-white rounded-[20px] p-3 md:p-4 shadow-[4px_4px_0_#F97316] border border-white">
+                <Image 
+                  src="/Png1/Gemologo3.webp" 
+                  alt="GeM Logo" 
+                  width={180}
+                  height={100}
+                  className="object-contain w-full max-w-[130px] md:max-w-[150px] h-auto"
+                />
+              </div>
+
+            </div>
           </motion.div>
 
           {/* RIGHT COLUMN */}
-          <div className={sans.className}>
+          <div className={`${sans.className} lg:mt-12`}>
             {!submitted ? (
               <form
                 onSubmit={handleSubmit}
