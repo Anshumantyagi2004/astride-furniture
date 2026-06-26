@@ -62,9 +62,9 @@ interface WishlistItem {
 }
 
 const DEFAULT_PROFILE: UserProfile = {
-  name: "Arnav",
-  email: "arnav@gmail.com",
-  phone: "+90-123456789",
+  name: "",
+  email: "",
+  phone: "",
   avatar: "avatar_placeholder",
 };
 
