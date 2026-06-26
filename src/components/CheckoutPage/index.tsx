@@ -7,6 +7,7 @@ import Script from 'next/script';
 
 interface CartItem {
   id: string | number;
+  _id?: string | number;
   name: string;
   price: number;
   image: string;
@@ -159,14 +160,28 @@ export default function CheckoutPage() {
         userId: user.id,
         shippingInfo: { ...formData, state: formData.stateName },
         products: cartItems.map((item) => {
-          const cleanProductId = typeof item.id === 'string' && item.id.includes('-') 
-            ? item.id.split('-')[0] 
-            : item.id;
+          // Robustly extract the raw MongoDB ObjectId from any cart item format:
+          // - detail page: "6a27b01257ac440ad71b9b93-Red"  → split on first "-"
+          // - product card: "6a27b01257ac440ad71b9b93"       → use as-is
+          // - FavouriteCategories spreads full product obj   → item._id exists
+          const rawId = item.id ?? item._id ?? "";
+          const rawIdStr = String(rawId);
+          // An ObjectId is exactly 24 hex chars. If the rawId looks like one, use it.
+          // Otherwise, try taking the first segment before "-" (handles "objectId-color").
+          let productId: string;
+          if (/^[a-f0-9]{24}$/i.test(rawIdStr)) {
+            productId = rawIdStr;
+          } else if (rawIdStr.includes("-")) {
+            const candidate = rawIdStr.split("-")[0];
+            productId = /^[a-f0-9]{24}$/i.test(candidate) ? candidate : rawIdStr;
+          } else {
+            productId = rawIdStr;
+          }
           return {
-            productId: cleanProductId,
+            productId,
             productName: item.name,
             image: item.image,
-            color: item.color || (typeof item.id === 'string' && item.id.includes('-') ? item.id.split('-')[1] : undefined),
+            color: item.color ?? (rawIdStr.includes("-") ? rawIdStr.split("-").slice(1).join("-") : undefined),
             quantity: item.quantity,
             price: item.price,
           };

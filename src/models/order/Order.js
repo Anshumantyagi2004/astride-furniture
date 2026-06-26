@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema(
     products: [
       {
         productId: {
-          type: mongoose.Schema.Types.ObjectId,
+          type: mongoose.Schema.Types.Mixed, // accepts ObjectId string or any format — prevents CastError
           ref: "Product",
         },
 
