@@ -196,6 +196,10 @@ export async function PUT(req, { params }) {
 
         await product.save();
 
+        // Invalidate global product cache
+        global.productCache = null;
+        global.productCacheTime = 0;
+
         return NextResponse.json(
             {
                 success: true,
@@ -211,7 +215,7 @@ export async function PUT(req, { params }) {
             {
                 success: false,
                 message: error.message || "Internal server error",
-            },
+                },
             { status: 500 }
         );
     }
@@ -246,6 +250,10 @@ export async function DELETE(req, { params }) {
         }
 
         await Product.findByIdAndDelete(slug);
+
+        // Invalidate global product cache
+        global.productCache = null;
+        global.productCacheTime = 0;
 
         return NextResponse.json(
             {

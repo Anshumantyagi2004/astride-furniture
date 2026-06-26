@@ -130,6 +130,10 @@ export async function POST(req) {
             metaDescription,
         });
 
+        // Invalidate cache
+        global.productCache = null;
+        global.productCacheTime = 0;
+
         return NextResponse.json(
             { success: true, message: "Product created successfully", product, },
             { status: 201 }
@@ -145,15 +149,15 @@ export async function POST(req) {
 }
 
 // Global in-memory cache for product GET requests (development & production)
-let productCache = null;
-let productCacheTime = 0;
+global.productCache = global.productCache || null;
+global.productCacheTime = global.productCacheTime || 0;
 const CACHE_TTL = 300000; // 5 minutes
 
 export async function GET() {
     try {
         const now = Date.now();
-        if (productCache && (now - productCacheTime < CACHE_TTL)) {
-            return NextResponse.json(productCache, { status: 200 });
+        if (global.productCache && (now - global.productCacheTime < CACHE_TTL)) {
+            return NextResponse.json(global.productCache, { status: 200 });
         }
 
         let data;
@@ -176,8 +180,8 @@ export async function GET() {
             };
         }
 
-        productCache = data;
-        productCacheTime = now;
+        global.productCache = data;
+        global.productCacheTime = now;
         return NextResponse.json(data, { status: 200 });
     } catch (error) {
         console.log(error);
