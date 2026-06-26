@@ -21,8 +21,19 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"COD" | "Razorpay">("COD");
 
-  // Grouped Form State: Reduces React state allocation memory overhead
+  // Form State
   const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    stateName: "",
+    pinCode: "",
+  });
+
+  // Validation Error State
+  const [errors, setErrors] = useState({
     fullName: "",
     email: "",
     phone: "",
@@ -47,18 +58,65 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  // Derived State: Eliminates a redundant useState hook and render cycle
   const subtotal = useMemo(() => {
     return cartItems.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity), 0);
   }, [cartItems]);
 
-  // Centralized Handler: Prevents inline function garbage collection churn
+  // Smoother, stricter validation rules
+  const validateField = (name: string, value: string) => {
+    if (!value.trim()) return "Required field";
+
+    if (name === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) return "Invalid email format";
+    }
+    if (name === "phone" && value.length !== 10) {
+      return "Requires exactly 10 digits";
+    }
+    if (name === "pinCode" && value.length !== 6) {
+      return "Requires exactly 6 digits";
+    }
+    if ((name === "fullName" || name === "city" || name === "stateName") && value.trim().length < 2) {
+      return "Too short";
+    }
+    return "";
+  };
+
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+
+    // 1. STRICT TEXT: Prevent numbers and special characters in Name, City, and State
+    if ((name === 'fullName' || name === 'city' || name === 'stateName') && !/^[a-zA-Z\s]*$/.test(value)) {
+      return; 
+    }
+
+    // 2. STRICT NUMBERS: Prevent letters in Phone and PIN Code
+    if ((name === 'phone' || name === 'pinCode') && !/^\d*$/.test(value)) {
+      return;
+    }
+    
+    // 3. MAX LENGTHS: Restrict phone to 10 digits and PIN to 6 digits
+    if (name === 'phone' && value.length > 10) return;
+    if (name === 'pinCode' && value.length > 6) return;
+
     setFormData(prev => ({ ...prev, [name]: value }));
+
+    // Instant error clearing as user types
+    setErrors(prev => {
+      const fieldName = name as keyof typeof errors;
+      if (prev[fieldName]) {
+        return { ...prev, [fieldName]: validateField(name, value) };
+      }
+      return prev;
+    });
   }, []);
 
-  // Remove a single item from cart and sync to localStorage
+  // Validate on blur (when user clicks away from the field)
+  const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
+  }, []);
+
   const removeItem = useCallback((id: string | number) => {
     setCartItems(prev => {
       const updated = prev.filter(item => item.id !== id);
@@ -67,31 +125,39 @@ export default function CheckoutPage() {
     });
   }, []);
 
-const placeOrder = useCallback(async () => {
+  const placeOrder = useCallback(async () => {
     try {
-      const { fullName, email, phone, address, city, stateName, pinCode } = formData;
-      if (!fullName || !email || !phone || !address || !city || !stateName || !pinCode) {
-        alert("Please fill all fields");
+      // Force validate all fields on submit
+      const newErrors = {
+        fullName: validateField("fullName", formData.fullName),
+        email: validateField("email", formData.email),
+        phone: validateField("phone", formData.phone),
+        address: validateField("address", formData.address),
+        city: validateField("city", formData.city),
+        stateName: validateField("stateName", formData.stateName),
+        pinCode: validateField("pinCode", formData.pinCode),
+      };
+
+      setErrors(newErrors);
+
+      // Stop submission if ANY error exists
+      if (Object.values(newErrors).some(err => err !== "")) {
+        // Scroll to top so user sees the errors
+        window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
+
       const savedUser = localStorage.getItem("user");
       const user = savedUser ? JSON.parse(savedUser) : null;
       if (!user || !user.id) {
         alert("Please log in first to place an order");
         return;
       }
+      
       const totalAmount = subtotal + shippingCost;
       const orderData = {
         userId: user.id,
-        shippingInfo: {
-          fullName,
-          email,
-          phone,
-          address,
-          city,
-          state: stateName,
-          pinCode,
-        },
+        shippingInfo: { ...formData, state: formData.stateName },
         products: cartItems.map((item) => {
           const cleanProductId = typeof item.id === 'string' && item.id.includes('-') 
             ? item.id.split('-')[0] 
@@ -105,19 +171,13 @@ const placeOrder = useCallback(async () => {
             price: item.price,
           };
         }),
-        pricing: {
-          subtotal,
-          shippingCharge: shippingCost,
-          total: totalAmount,
-        },
+        pricing: { subtotal, shippingCharge: shippingCost, total: totalAmount },
       };
+
       if (paymentMethod === "COD") {
-        // --- 1. CASH ON DELIVERY FLOW ---
         const response = await fetch("/api/order", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...orderData, paymentMethod: "COD" }),
         });
         const data = await response.json();
@@ -129,14 +189,10 @@ const placeOrder = useCallback(async () => {
           setCartItems([]);
         }
       } else {
-        // --- 2. RAZORPAY ONLINE PAYMENT FLOW ---
-        // Create the Razorpay Order
         const res = await fetch("/api/create-order", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ amount: totalAmount * 100 }), // Amount in paise
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: totalAmount * 100 }), 
         });
         const razorpayOrder = await res.json();
         
@@ -153,12 +209,9 @@ const placeOrder = useCallback(async () => {
           order_id: razorpayOrder.order_id,
           handler: async function (response: any) {
             try {
-              // Verify payment and save the order in MongoDB
               const verifyRes = await fetch("/api/verify-payment", {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
@@ -180,29 +233,15 @@ const placeOrder = useCallback(async () => {
               alert("Verification error: " + (err?.message || "Please contact support."));
             }
           },
-          // Handle payment failures gracefully (card declined, bank error, etc.)
-          modal: {
-            ondismiss: function () {
-              console.log("Razorpay modal closed by user");
-            },
-          },
-          prefill: {
-            name: fullName,
-            email: email,
-            contact: phone,
-          },
-          theme: {
-            color: "#000000",
-          },
+          modal: { ondismiss: function () { console.log("Razorpay modal closed by user"); } },
+          prefill: { name: formData.fullName, email: formData.email, contact: formData.phone },
+          theme: { color: "#000000" },
         };
-        // Guard: ensure Razorpay script is loaded
         if (!(window as any).Razorpay) {
           alert("Payment system is still loading. Please try again in a moment.");
           return;
         }
-        // Open the Razorpay Modal
         const paymentObject = new (window as any).Razorpay(options);
-        // Handle payment failures (card declined, international card blocked, etc.)
         paymentObject.on("payment.failed", function (response: any) {
           const reason = response?.error?.description || response?.error?.reason || "Payment was declined";
           alert("Payment failed: " + reason + "\n\nPlease try a different payment method or card.");
@@ -215,33 +254,44 @@ const placeOrder = useCallback(async () => {
     }
   }, [formData, cartItems, subtotal, paymentMethod]);
 
+  // Sleek error styling
+  const getInputClass = (error: string) => `w-full px-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-300 text-sm font-medium ${
+    error 
+      ? 'border-red-300 focus:ring-red-500/20 text-red-900 bg-red-50/40 shadow-[inset_0_0_0_1px_rgba(248,113,113,0.2)]' 
+      : 'border-neutral-200 focus:ring-black focus:border-transparent'
+  }`;
+
+  // Mini Error Message UI
+  const ErrorMessage = ({ error }: { error: string }) => {
+    if (!error) return null;
+    return (
+      <div className="flex items-center gap-1.5 mt-1.5 pl-1 animate-in fade-in slide-in-from-top-1 duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-red-500 shrink-0">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+        </svg>
+        <span className="text-[9px] font-black text-red-500 uppercase tracking-widest leading-none">
+          {error}
+        </span>
+      </div>
+    );
+  };
+
   if (!isMounted) return null;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] py-12 px-4 sm:px-6 lg:px-8 font-sans">
-    {/* Load Razorpay script asynchronously */}
-    <Script
-      src="https://checkout.razorpay.com/v1/checkout.js"
-      strategy="afterInteractive"
-      onLoad={() => console.log("Razorpay script loaded successfully")}
-    />
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="afterInteractive"
+        onLoad={() => console.log("Razorpay script loaded successfully")}
+      />
       <div className="max-w-7xl mx-auto">
-        {/* Back navigation header */}
         <div className="flex items-center justify-between mb-8">
           <Link
             href="/products"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-200/80 bg-white text-neutral-600 hover:text-black hover:border-neutral-400 text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all duration-300 active:scale-95 shadow-xs"
           >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"></line>
               <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
@@ -262,110 +312,116 @@ const placeOrder = useCallback(async () => {
             <div className="bg-white rounded-3xl p-8 md:p-10 shadow-[0_20px_40px_rgba(0,0,0,0.04),_0_5px_15px_rgba(0,0,0,0.01)] border border-neutral-100">
               <h2 className="text-xl font-bold text-neutral-900 mb-6">Shipping Information</h2>
               
-              <form className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Full Name</label>
+              <form className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Full Name</label>
                     <input 
                       type="text" 
                       name="fullName"
                       placeholder="Full Name"
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
-                      required
+                      onBlur={handleBlur}
+                      className={getInputClass(errors.fullName)}
                     />
+                    <ErrorMessage error={errors.fullName} />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Email</label>
+                  <div className="flex flex-col">
+                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Email</label>
                     <input 
                       type="email" 
                       name="email"
                       placeholder="Email Address"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
-                      required
+                      onBlur={handleBlur}
+                      className={getInputClass(errors.email)}
                     />
+                    <ErrorMessage error={errors.email} />
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Phone Number</label>
+                <div className="flex flex-col">
+                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Phone Number</label>
                   <input 
-                    type="tel" 
+                    type="text" 
                     name="phone"
-                    placeholder="Phone Number"
+                    placeholder="10-digit Phone Number"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
-                    required
+                    onBlur={handleBlur}
+                    className={getInputClass(errors.phone)}
                   />
+                  <ErrorMessage error={errors.phone} />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Address</label>
+                <div className="flex flex-col">
+                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Address</label>
                   <textarea 
                     name="address"
                     placeholder="Street Address"
                     value={formData.address}
                     onChange={handleInputChange}
+                    onBlur={handleBlur}
                     rows={3}
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium resize-none"
-                    required
+                    className={`${getInputClass(errors.address)} resize-none`}
                   />
+                  <ErrorMessage error={errors.address} />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">City</label>
+                <div className="flex flex-col">
+                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">City</label>
                   <input 
                     type="text" 
                     name="city"
                     placeholder="City"
                     value={formData.city}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
-                    required
+                    onBlur={handleBlur}
+                    className={getInputClass(errors.city)}
                   />
+                  <ErrorMessage error={errors.city} />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">State</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">State</label>
                     <input 
                       type="text" 
                       name="stateName"
                       placeholder="State"
                       value={formData.stateName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
-                      required
+                      onBlur={handleBlur}
+                      className={getInputClass(errors.stateName)}
                     />
+                    <ErrorMessage error={errors.stateName} />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">PIN Code</label>
+                  <div className="flex flex-col">
+                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">PIN Code</label>
                     <input 
                       type="text" 
                       name="pinCode"
-                      placeholder="PIN Code"
+                      placeholder="6-digit PIN"
                       value={formData.pinCode}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-sm font-medium"
-                      required
+                      onBlur={handleBlur}
+                      className={getInputClass(errors.pinCode)}
                     />
+                    <ErrorMessage error={errors.pinCode} />
                   </div>
                 </div>
 
-                {/* PAYMENT METHOD SELECTOR */}
-                <div className="space-y-3 pt-2 pb-4">
+                <div className="space-y-3 pt-3 pb-4">
                   <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Payment Method</label>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("COD")}
-                      className={`py-3 px-4 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${
+                      className={`py-3 px-4 rounded-xl border text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${
                         paymentMethod === "COD"
-                          ? "border-black bg-black text-white"
+                          ? "border-black bg-black text-white shadow-md"
                           : "border-neutral-200 bg-neutral-50 text-neutral-600 hover:border-neutral-300"
                       }`}
                     >
@@ -374,9 +430,9 @@ const placeOrder = useCallback(async () => {
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("Razorpay")}
-                      className={`py-3 px-4 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${
+                      className={`py-3 px-4 rounded-xl border text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${
                         paymentMethod === "Razorpay"
-                          ? "border-black bg-black text-white"
+                          ? "border-black bg-black text-white shadow-md"
                           : "border-neutral-200 bg-neutral-50 text-neutral-600 hover:border-neutral-300"
                       }`}
                     >
@@ -385,7 +441,7 @@ const placeOrder = useCallback(async () => {
                   </div>
                 </div>
 
-                <div className="pt-4 hidden md:block">
+                <div className="pt-2 hidden md:block">
                   <button 
                     type="button"
                     onClick={placeOrder}
@@ -412,11 +468,9 @@ const placeOrder = useCallback(async () => {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {/* Item List */}
                   <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-neutral-200">
                     {cartItems.map((item) => (
                       <div key={item.id} className="relative flex gap-4 items-center bg-neutral-50 p-3 rounded-2xl border border-neutral-100">
-                        {/* Remove button */}
                         <button
                           onClick={() => removeItem(item.id)}
                           aria-label="Remove item"
@@ -466,7 +520,6 @@ const placeOrder = useCallback(async () => {
                     </div>
                   </div>
 
-                  {/* Place Order Button - mobile only */}
                   <div className="pt-2 md:hidden">
                     <button 
                       type="button"
@@ -480,7 +533,6 @@ const placeOrder = useCallback(async () => {
               )}
             </div>
           </div>
-
         </div>
       </div>
 
