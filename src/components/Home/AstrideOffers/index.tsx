@@ -56,6 +56,7 @@ export default function AstrideOffers() {
 
             return {
               id: prod._id || idx.toString(),
+              slug: prod.slug,
               name: prod.productName,
               description: prod.description || "Ergonomic workspace seating solution with dynamic support.",
               originalPrice,
@@ -268,7 +269,7 @@ function DealCard({ deal }: { deal: any }) {
 
   return (
     <Link 
-      href={`/products/${deal.id}`}
+      href={`/products/${deal.slug || deal.id}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="w-full md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] h-[460px] shrink-0 flex flex-col justify-between bg-white rounded-[14px] p-4 snap-start group relative border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313] hover:-translate-y-1 hover:shadow-[8px_8px_0_#131313] transition-all duration-300"

@@ -30,7 +30,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
   
   return (
     <div 
-      onClick={() => router.push(`/products/${product.id}`)}
+      onClick={() => router.push(`/products/${product.slug || product.id}`)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group relative w-full max-w-[280px] h-[340px] bg-white rounded-[28px] p-4 pb-5 pt-3.5 border border-slate-100 shadow-sm flex flex-col justify-between overflow-hidden cursor-pointer hover:scale-[1.02] hover:shadow-md transition-all duration-300"

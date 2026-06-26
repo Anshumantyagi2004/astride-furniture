@@ -58,21 +58,27 @@ function ChairCard({ chair, index, products }) {
     const [isHovered, setIsHovered] = useState(false);
 
     let targetUrl = "/products";
-    if (chair.subtitle === "ErgoFit" || chair.subtitle === "Ergonomic White") {
-        targetUrl = "/products/6a27a9016149f2acd03556be";
-    } else if (chair.subtitle === "FlexPro") {
-        targetUrl = "/products/6a22688542af57599805060e";
-    } else if (chair.subtitle === "FitWell Ergonomic") {
-        targetUrl = "/products/6a2269068d4f1a8c812a9e92";
-    } else if (chair.subtitle === "Octave") {
-        targetUrl = "/products/6a225caabb685c5865ef3f59";
+    const match = products.find(p => 
+        p.productName.toLowerCase() === chair.subtitle.toLowerCase() ||
+        p.productName.toLowerCase().includes(chair.subtitle.toLowerCase()) ||
+        (chair.subtitle === "ErgoFit" && p.slug === "chair12-ergofit") ||
+        (chair.subtitle === "Ergonomic White" && p.slug === "chair12-ergofit") ||
+        (chair.subtitle === "FlexPro" && p.slug === "chair10-fitwell") ||
+        (chair.subtitle === "FitWell Ergonomic" && p.slug === "chair9-fitwell") ||
+        (chair.subtitle === "Octave" && p.slug === "chair11-octave")
+    );
+    
+    if (match) {
+        targetUrl = `/products/${match.slug || match._id}`;
     } else {
-        const match = products.find(p => 
-            p.productName.toLowerCase() === chair.subtitle.toLowerCase() ||
-            p.productName.toLowerCase().includes(chair.subtitle.toLowerCase())
-        );
-        if (match) {
-            targetUrl = `/products/${match._id}`;
+        if (chair.subtitle === "ErgoFit" || chair.subtitle === "Ergonomic White") {
+            targetUrl = "/products/chair12-ergofit";
+        } else if (chair.subtitle === "FlexPro") {
+            targetUrl = "/products/chair10-fitwell";
+        } else if (chair.subtitle === "FitWell Ergonomic") {
+            targetUrl = "/products/chair9-fitwell";
+        } else if (chair.subtitle === "Octave") {
+            targetUrl = "/products/chair11-octave";
         }
     }
 

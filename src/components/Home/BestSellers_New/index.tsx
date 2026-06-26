@@ -151,7 +151,7 @@ function BestsellerCard({ product }: { product: any }) {
 
   return (
     <article
-      onClick={() => router.push(`/products/${product.id}`)}
+      onClick={() => router.push(`/products/${product.slug || product.id}`)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group relative flex flex-col overflow-visible rounded-[18px] sm:rounded-[28px] border-[2px] sm:border-[2.5px] border-[#131313] bg-white shadow-[4px_4px_0_#131313] sm:shadow-[6px_6px_0_#131313] transition-all duration-300 hover:-translate-y-2 hover:shadow-[6px_8px_0_rgba(19,19,19,0.9)] sm:hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)] cursor-pointer"
@@ -308,6 +308,7 @@ export default function BestSellersSection_New() {
 
             return {
               id: prod._id,
+              slug: prod.slug,
               sticker,
               hot,
               category: normalizedCategory,

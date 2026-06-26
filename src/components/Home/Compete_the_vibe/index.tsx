@@ -90,7 +90,7 @@ function VibeProductCard({ product }: { product: any }) {
 
   return (
     <Link
-      href={`/products/${product.id}`}
+      href={`/products/${product.slug || product.id}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group relative flex flex-col overflow-visible rounded-[18px] md:rounded-[28px] border-[2px] md:border-[2.5px] border-[#131313] bg-white shadow-[4px_4px_0_#131313] md:shadow-[6px_6px_0_#131313] transition-all duration-[250ms] hover:-translate-y-[5px] md:hover:-translate-y-[7px] hover:shadow-[6px_8px_0_rgba(19,19,19,0.9)] md:hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)] cursor-pointer h-full"
@@ -232,7 +232,8 @@ export default function CompeteTheVibe() {
               const stickerChoice = stickers[idx % stickers.length];
 
               return {
-                id: prod._id || prod.slug,
+                id: prod._id,
+                slug: prod.slug,
                 name: prod.productName,
                 category: normalizedCategory,
                 image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",

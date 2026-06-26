@@ -220,6 +220,7 @@ export default function ProductPageHome() {
 
                 return {
                   id: prod._id,
+                  slug: prod.slug,
                   name: prod.productName,
                   price: prod.realPrice,
                   originalPrice: prod.oldPrice,
@@ -290,6 +291,7 @@ export default function ProductPageHome() {
 
             return {
               id: prod._id,
+              slug: prod.slug,
               name: prod.productName,
               price: prod.realPrice,
               originalPrice: prod.oldPrice,
