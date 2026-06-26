@@ -260,12 +260,7 @@ export default function Navbar3() {
                         href="tel:+917311164111"
                         className="block cursor-pointer hover:opacity-80 transition-opacity"
                     >
-
-                        Tollfree{" "}
-                        <span className="text-lime-500 font-bold">
-                            7311164111
-                        </span>{" "}
-                        — Call now!
+                        {"Tollfree "}<span className="text-lime-500 font-bold">7311164111</span>{" — Call now!"}
                     </a>
 
                     <div className="hidden md:block text-slate-300 text-[12px] tracking-wider uppercase font-semibold">

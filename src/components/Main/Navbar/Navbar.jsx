@@ -396,7 +396,7 @@ export default function Navbar() {
                     key={p._id}
                     onClick={() => {
                       setSearchQuery("");
-                      router.push(String(p._id).includes(' ') ? `/products` : `/products/${p._id}`);
+                      router.push(String(p._id).includes(' ') ? `/products` : `/products/${p.slug || p._id}`);
                     }}
                     className="w-full px-3 py-2.5 flex items-center gap-3 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 text-left transition-colors cursor-pointer group"
                   >
@@ -720,7 +720,7 @@ export default function Navbar() {
                         onClick={() => {
                           setSearchQuery("");
                           setIsMobileMenuOpen(false);
-                          router.push(String(p._id).includes(' ') ? `/products` : `/products/${p._id}`);
+                          router.push(String(p._id).includes(' ') ? `/products` : `/products/${p.slug || p._id}`);
                         }}
                         className="w-full px-4 py-3 flex items-center gap-3 hover:bg-white/5 border-b border-zinc-800/50 last:border-b-0 text-left transition-colors cursor-pointer"
                       >

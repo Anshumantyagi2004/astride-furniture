@@ -53,7 +53,7 @@ const BestSellerCard = ({ product }) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div 
-        onClick={() => router.push(`/products/${product.id}`)}
+        onClick={() => router.push(`/products/${product.slug || product.id}`)}
         className="cursor-pointer"
       >
         {/* Image Container - Reduced aspect ratio for shorter length */}
@@ -153,6 +153,7 @@ export default function BestSeller() {
 
             return {
                 id: prod._id,
+                slug: prod.slug,
                 name: prod.productName,
                 price: prod.realPrice,
                 originalPrice: prod.oldPrice,

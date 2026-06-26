@@ -79,7 +79,7 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
             whileHover={{ y: -6 }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => router.push(`/products/${product.id}`)}
+            onClick={() => router.push(`/products/${product.slug || product.id}`)}
             className="group relative rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 hover:border-slate-300/80 hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] min-w-0 w-full cursor-pointer font-sans"
         >
             {/* Action Buttons */}
@@ -254,6 +254,7 @@ export default function FavouriteCategories() {
 
                         return {
                             id: prod._id,
+                            slug: prod.slug,
                             name: prod.productName,
                             price: prod.realPrice,
                             originalPrice: prod.oldPrice,

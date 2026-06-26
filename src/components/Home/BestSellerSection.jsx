@@ -71,7 +71,7 @@ const BestSellerSectionCard = ({ product }) => {
         <div
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => router.push(`/products/${product.id}`)}
+            onClick={() => router.push(`/products/${product.slug || product.id}`)}
             className="group relative rounded-2xl md:rounded-3xl border border-zinc-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-pointer"
         >
             {/* SALE / DISCOUNT BADGE */}
@@ -98,7 +98,7 @@ const BestSellerSectionCard = ({ product }) => {
                 <button 
                     onClick={(e) => {
                         e.stopPropagation();
-                        router.push(`/products/${product.id}`);
+                        router.push(`/products/${product.slug || product.id}`);
                     }}
                     className="w-10 h-10 rounded-full border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-900 hover:text-white flex items-center justify-center transition-colors duration-300 shadow-md"
                 >
@@ -225,6 +225,7 @@ export default function BestSellerSection() {
 
                         return {
                             id: prod._id,
+                            slug: prod.slug,
                             name: prod.productName,
                             price: prod.realPrice,
                             originalPrice: prod.oldPrice,
