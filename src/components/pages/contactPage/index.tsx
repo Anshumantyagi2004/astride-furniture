@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import { 
   Mail, 
@@ -38,15 +38,93 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  // Validation Error State
+  const [errors, setErrors] = useState({
+    fullName: "",
+    email: "",
+    companyName: "",
+    phoneNumber: "",
+    state: "",
+    city: "",
+    message: "",
+  });
+
+  // Validation Rules
+  const validateField = (name: string, value: string) => {
+    if (name !== "companyName" && !value.trim()) return "Required field";
+
+    if (name === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) return "Invalid email format";
+    }
+    if (name === "phoneNumber" && value.trim().length > 0 && value.length !== 10) {
+      return "Requires exactly 10 digits";
+    }
+    if ((name === "fullName" || name === "state" || name === "city") && value.trim().length > 0 && value.trim().length < 2) {
+      return "Too short";
+    }
+    if (name === "message" && value.trim().length > 0 && value.trim().length < 0) {
+      return "Message required";
+    }
+    return "";
   };
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+
+    // 1. STRICT TEXT: Prevent numbers and special characters
+    if ((name === 'fullName' || name === 'state' || name === 'city' || name === 'companyName') && !/^[a-zA-Z\s]*$/.test(value)) {
+      return; 
+    }
+
+    // 2. STRICT NUMBERS: Prevent letters in Phone
+    if (name === 'phoneNumber' && !/^\d*$/.test(value)) {
+      return;
+    }
+    
+    // 3. MAX LENGTH: Restrict phone to 10 digits
+    if (name === 'phoneNumber' && value.length > 10) return;
+
+    setFormData(prev => ({ ...prev, [name]: value }));
+
+    // Instant error clearing as user types
+    setErrors(prev => {
+      const fieldName = name as keyof typeof errors;
+      if (prev[fieldName]) {
+        return { ...prev, [fieldName]: validateField(name, value) };
+      }
+      return prev;
+    });
+  }, []);
+
+  const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setSubmitSuccess(false);
+
+    // Force validate all fields on submit
+    const newErrors = {
+      fullName: validateField("fullName", formData.fullName),
+      email: validateField("email", formData.email),
+      companyName: validateField("companyName", formData.companyName),
+      phoneNumber: validateField("phoneNumber", formData.phoneNumber),
+      state: validateField("state", formData.state),
+      city: validateField("city", formData.city),
+      message: validateField("message", formData.message),
+    };
+
+    setErrors(newErrors);
+
+    // Stop submission if ANY error exists
+    if (Object.values(newErrors).some(err => err !== "")) {
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const res = await fetch("/api/contact", {
@@ -76,6 +154,30 @@ export default function ContactPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Dynamic sleek input styling based on error state
+  const getInputClass = (error: string, baseClass: string = "w-full pl-4 pr-10 rounded-xl outline-none transition-all placeholder:text-sm placeholder:font-normal") => `
+    ${baseClass} text-base font-semibold border
+    ${error 
+      ? 'border-red-300 bg-red-50/40 text-red-900 focus:border-red-500 shadow-[inset_0_0_0_1px_rgba(248,113,113,0.2)] placeholder-red-300' 
+      : 'border-slate-200 bg-slate-50/50 text-slate-800 focus:border-slate-900 focus:bg-white placeholder-slate-350'
+    }
+  `;
+
+  // Mini Error Message UI
+  const ErrorMessage = ({ error }: { error: string }) => {
+    if (!error) return null;
+    return (
+      <div className="flex items-center gap-1.5 mt-1.5 pl-1 animate-in fade-in slide-in-from-top-1 duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-red-500 shrink-0">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+        </svg>
+        <span className="text-[10px] font-black text-red-500 uppercase tracking-widest leading-none mt-[1px]">
+          {error}
+        </span>
+      </div>
+    );
   };
 
   return (
@@ -109,8 +211,8 @@ export default function ContactPage() {
               </div>
               <div className="min-w-0">
                 <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-1 leading-none">Email</h3>
-                <p className="text-base md:text-lg font-extrabold text-slate-800">support@astride.in</p>
-                <p className="text-base md:text-lg font-extrabold text-slate-800 mt-1">sales@astride.in</p>
+                <a href="mailto:support@astride.in" className="block text-base md:text-lg font-extrabold text-slate-800 hover:text-slate-600 transition-colors">support@astride.in</a>
+                <a href="mailto:sales@astride.in" className="block text-base md:text-lg font-extrabold text-slate-800 mt-1 hover:text-slate-600 transition-colors">sales@astride.in</a>
               </div>
             </div>
 
@@ -121,7 +223,10 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-1 leading-none">Phone</h3>
-                <p className="text-base md:text-lg font-extrabold text-slate-800">+91-7311164111</p>
+                {/* Clickable Phone Number */}
+                <a href="tel:+917311164111" className="text-base md:text-lg font-extrabold text-slate-800 hover:text-slate-600 transition-colors">
+                  +91-7311164111
+                </a>
               </div>
             </div>
 
@@ -160,41 +265,43 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                   
                   {/* Full Name */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1.5">
                     <label className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-slate-400">Full Name</label>
                     <div className="relative">
                       <input
                         type="text"
                         name="fullName"
-                        required
                         value={formData.fullName}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         placeholder="Name"
-                        className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
+                        className={`h-12 ${getInputClass(errors.fullName, "w-full pl-4 pr-10 rounded-xl outline-none transition-all placeholder:text-sm placeholder:font-normal")}`}
                       />
                       <User className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
                     </div>
+                    <ErrorMessage error={errors.fullName} />
                   </div>
 
                   {/* Email Address */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1.5">
                     <label className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-slate-400">Email Address</label>
                     <div className="relative">
                       <input
                         type="email"
                         name="email"
-                        required
                         value={formData.email}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         placeholder="Email"
-                        className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
+                        className={`h-12 ${getInputClass(errors.email, "w-full pl-4 pr-10 rounded-xl outline-none transition-all placeholder:text-sm placeholder:font-normal")}`}
                       />
                       <Mail className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
                     </div>
+                    <ErrorMessage error={errors.email} />
                   </div>
 
                   {/* Company Name */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1.5">
                     <label className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-slate-400">Company Name</label>
                     <div className="relative">
                       <input
@@ -202,75 +309,81 @@ export default function ContactPage() {
                         name="companyName"
                         value={formData.companyName}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         placeholder="Company (optional)"
-                        className="w-full h-12 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
+                        className={`h-12 ${getInputClass(errors.companyName, "w-full pl-4 pr-10 rounded-xl outline-none transition-all placeholder:text-sm placeholder:font-normal")}`}
                       />
                       <Briefcase className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
                     </div>
+                    <ErrorMessage error={errors.companyName} />
                   </div>
 
                   {/* Phone Number */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1.5">
                     <label className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-slate-400">Phone Number</label>
                     <div className="relative flex">
-                      <span className="h-12 px-3 border border-r-0 border-slate-200 bg-slate-50 flex items-center justify-center text-sm rounded-l-xl text-slate-500">
+                      <span className={`h-12 px-3 border border-r-0 flex items-center justify-center text-sm rounded-l-xl text-slate-500 transition-colors ${errors.phoneNumber ? 'border-red-300 bg-red-50/40' : 'border-slate-200 bg-slate-50'}`}>
                         🇮🇳
                       </span>
                       <input
                         type="tel"
                         name="phoneNumber"
-                        required
                         value={formData.phoneNumber}
                         onChange={handleInputChange}
-                        placeholder="Phone Number"
-                        className="w-full h-12 px-4 rounded-r-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
+                        onBlur={handleBlur}
+                        placeholder="10-digit Number"
+                        className={`h-12 ${getInputClass(errors.phoneNumber, "w-full px-4 rounded-r-xl outline-none transition-all placeholder:text-sm placeholder:font-normal")}`}
                       />
                     </div>
+                    <ErrorMessage error={errors.phoneNumber} />
                   </div>
 
                   {/* State */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1.5">
                     <label className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-slate-400">State</label>
                     <input
                       type="text"
                       name="state"
-                      required
                       value={formData.state}
                       onChange={handleInputChange}
+                      onBlur={handleBlur}
                       placeholder="State"
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
+                      className={`h-12 ${getInputClass(errors.state, "w-full px-4 rounded-xl outline-none transition-all placeholder:text-sm placeholder:font-normal")}`}
                     />
+                    <ErrorMessage error={errors.state} />
                   </div>
  
                   {/* City */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1.5">
                     <label className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-slate-400">City</label>
                     <input
                       type="text"
                       name="city"
-                      required
                       value={formData.city}
                       onChange={handleInputChange}
+                      onBlur={handleBlur}
                       placeholder="City"
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 placeholder:text-sm placeholder:font-normal"
+                      className={`h-12 ${getInputClass(errors.city, "w-full px-4 rounded-xl outline-none transition-all placeholder:text-sm placeholder:font-normal")}`}
                     />
+                    <ErrorMessage error={errors.city} />
                   </div>
 
                   {/* Your Message */}
-                  <div className="flex flex-col gap-2 md:col-span-2">
+                  <div className="flex flex-col gap-1.5 md:col-span-2">
                     <label className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-slate-400">Your Message</label>
                     <div className="relative">
                       <textarea
                         name="message"
-                        required
                         rows={4}
                         value={formData.message}
                         onChange={handleInputChange}
-                        placeholder="Message"
-                        className="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 text-base font-semibold outline-none focus:border-slate-900 focus:bg-white transition-all placeholder-slate-350 resize-none placeholder:text-sm placeholder:font-normal"
+                        onBlur={handleBlur}
+                        placeholder="How can we help you?"
+                        className={`py-3 resize-none ${getInputClass(errors.message, "w-full pl-4 pr-10 rounded-xl outline-none transition-all placeholder:text-sm placeholder:font-normal")}`}
                       />
                       <MessageSquare className="absolute right-4 top-4 text-slate-400 pointer-events-none" size={16} />
                     </div>
+                    <ErrorMessage error={errors.message} />
                   </div>
 
                 </div>
@@ -285,12 +398,12 @@ export default function ContactPage() {
                 </button>
 
               </form>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
 
-      {/* Map Section */}
-      <div className="mt-16 bg-white border border-slate-200/60 rounded-[32px] p-4 md:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
+        {/* Map Section */}
+        <div className="mt-16 bg-white border border-slate-200/60 rounded-[32px] p-4 md:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
           <div className="w-full h-[350px] md:h-[480px] rounded-[24px] overflow-hidden relative border border-slate-100">
             <iframe
               src="https://maps.google.com/maps?q=Astride%20Furniture,%20J-113%20%26%20114,%20DSIIDC%20Industrial%20Area,%20Sector%204,%20Bawana,%20New%20Delhi,%20Delhi%20110039&t=&z=16&ie=UTF8&iwloc=&output=embed"

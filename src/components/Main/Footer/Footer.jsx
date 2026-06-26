@@ -7,9 +7,8 @@ import Image from "next/image";
 
 import {
     FaInstagram,
-    FaYoutube,
+    FaFacebookF,
     FaLinkedinIn,
-    FaXTwitter,
     FaPhone,
     FaEnvelope,
     FaRegClock,
@@ -48,19 +47,32 @@ export default function Footer() {
                         </p>
                         <div className="flex gap-[12px] mt-[22px]">
                             {[
-                                { Icon: FaInstagram, label: "Instagram" },
-                                { Icon: FaYoutube, label: "YouTube" },
-                                { Icon: FaXTwitter, label: "X" },
-                                { Icon: FaLinkedinIn, label: "LinkedIn" },
-                            ].map(({ Icon, label }, index) => (
-                                <Link
+                                { 
+                                    Icon: FaInstagram, 
+                                    label: "Instagram", 
+                                    href: "https://www.instagram.com/astride.furniture" 
+                                },
+                                { 
+                                    Icon: FaFacebookF, 
+                                    label: "Facebook", 
+                                    href: "https://www.facebook.com/Astride.furniture" 
+                                },
+                                { 
+                                    Icon: FaLinkedinIn, 
+                                    label: "LinkedIn", 
+                                    href: "https://www.linkedin.com/company/mbtcintrafurnish/" 
+                                },
+                            ].map(({ Icon, label, href }, index) => (
+                                <a
                                     key={index}
-                                    href="#"
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     aria-label={label}
                                     className="w-[40px] h-[40px] rounded-full border-[1.5px] border-[#3c3c3c] flex items-center justify-center transition-all duration-200 hover:bg-[#8B5CF6] hover:border-[#8B5CF6] hover:-translate-y-1"
                                 >
                                     <Icon size={18} />
-                                </Link>
+                                </a>
                             ))}
                         </div>
                     </div>
@@ -141,7 +153,7 @@ export default function Footer() {
                             <div className="flex items-center gap-[10px]">
                                 <FaPhone className="text-white shrink-0" size={14} />
                                 <a href="tel:+917311164111" className="hover:text-white transition-colors font-sans">
-                                    +91 73111 64111
+                                    +91-7311164111
                                 </a>
                             </div>
                             <div className="flex items-start gap-[10px]">

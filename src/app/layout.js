@@ -25,10 +25,17 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${forum.variable} ${sans.variable} ${sans.className}`}>
       <head>
-        <link rel="preload" href="/3D_asset_glb/a3.glb" as="fetch" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://img.youtube.com" />
-        <link rel="dns-prefetch" href="https://img.youtube.com" />
-        <link rel="preconnect" href="https://www.youtube.com" />
+        <meta
+          name="google-site-verification"
+          content="oo7Se9amQ-_Nfvln61Rt4HRmrRKaSecpc_wTTyBFTfk"
+        />
+
+        <link
+          rel="preload"
+          href="/3D_asset_glb/a3.glb"
+          as="fetch"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className="min-h-screen overflow-x-clip max-w-[100vw]">
         <LayoutWrapper>
