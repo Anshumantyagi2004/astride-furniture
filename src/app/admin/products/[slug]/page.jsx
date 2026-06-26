@@ -340,6 +340,12 @@ export default function Page() {
             const { data } = await axios.put(`/api/product/${params.slug}`, formData);
             if (data.success) {
                 toast.success("Product updated successfully");
+                if (typeof window !== "undefined") {
+                    sessionStorage.removeItem("astride_products_cache");
+                    sessionStorage.removeItem("astride_nav_products_cache");
+                    sessionStorage.removeItem("astride_bestsellers_cache");
+                    sessionStorage.removeItem("astride_nav_categories_cache");
+                }
                 router.push("/admin/products");
             }
         } catch (error) {

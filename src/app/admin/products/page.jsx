@@ -49,6 +49,12 @@ export default function Page() {
 
             if (data.success) {
                 toast.success("Product deleted successfully");
+                if (typeof window !== "undefined") {
+                    sessionStorage.removeItem("astride_products_cache");
+                    sessionStorage.removeItem("astride_nav_products_cache");
+                    sessionStorage.removeItem("astride_bestsellers_cache");
+                    sessionStorage.removeItem("astride_nav_categories_cache");
+                }
                 getProducts();
             }
         } catch (error) {

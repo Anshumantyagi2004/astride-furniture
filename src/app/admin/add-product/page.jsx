@@ -289,6 +289,12 @@ const handleImageChange = async (index, e) => {
             const { data } = await axios.post("/api/product", formData);
             if (data.success) {
                 toast.success("Product Added Successfully");
+                if (typeof window !== "undefined") {
+                    sessionStorage.removeItem("astride_products_cache");
+                    sessionStorage.removeItem("astride_nav_products_cache");
+                    sessionStorage.removeItem("astride_bestsellers_cache");
+                    sessionStorage.removeItem("astride_nav_categories_cache");
+                }
                 console.log(data);
                 setProductName("");
                 setShortDescription("");

@@ -2,6 +2,8 @@
 
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
+
+export const dynamic = "force-dynamic";
 import Product from "@/models/Product";
 import { uploadToR2 } from "@/utils/uploadToR2";
 import { deleteFromR2 } from "@/utils/deleteFromR2";
