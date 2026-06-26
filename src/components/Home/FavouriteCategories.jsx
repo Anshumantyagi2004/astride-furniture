@@ -55,6 +55,9 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
 
     useEffect(() => {
         if (isHovered && images.length > 1) {
+            // Instantly switch to the 2nd image on hover
+            setCurrentImageIndex(1);
+            
             timerRef.current = setInterval(() => {
                 setCurrentImageIndex((prev) => (prev + 1) % images.length);
             }, 1000);
@@ -241,16 +244,12 @@ export default function FavouriteCategories() {
 
                         const blackVariant = prod.colorVariants?.find((v) => v.colorName?.toLowerCase() === "black");
                         const blackImage = blackVariant?.images?.[0]?.url;
-                        const fallbackImage = prod.colorVariants?.find((v) => v.images && v.images.length > 0)?.images?.[0]?.url;
 
-                        const colorImages = prod.colorVariants?.reduce((acc, variant) => {
-                            if (variant.images) {
-                                return [...acc, ...variant.images.map((img) => img.url)];
-                            }
-                            return acc;
-                        }, []) || [];
-                        const rootImages = prod.images ? prod.images.map((img) => img.url || img) : [];
-                        const allImages = [...rootImages, ...colorImages];
+                        const fallbackVariant = prod.colorVariants?.find((v) => v.images && v.images.length > 0);
+                        const fallbackImage = fallbackVariant?.images?.[0]?.url;
+
+                        const defaultVariant = blackVariant || fallbackVariant;
+                        const allImages = defaultVariant?.images?.map((img) => img.url) || [];
 
                         return {
                             id: prod._id,
@@ -372,6 +371,7 @@ export default function FavouriteCategories() {
                     </div>
                 </div>
 
+                {/* Main Content Grid */}
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
                         <div className="w-10 h-10 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin"></div>

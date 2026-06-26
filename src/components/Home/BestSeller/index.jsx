@@ -23,6 +23,9 @@ const BestSellerCard = ({ product }) => {
 
   useEffect(() => {
     if (isHovered && images.length > 1) {
+      // Instantly switch to the 2nd image on hover
+      setCurrentImageIndex(1);
+      
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
       }, 1000);
@@ -140,16 +143,12 @@ export default function BestSeller() {
 
             const blackVariant = prod.colorVariants?.find((v) => v.colorName?.toLowerCase() === "black");
             const blackImage = blackVariant?.images?.[0]?.url;
-            const fallbackImage = prod.colorVariants?.find((v) => v.images && v.images.length > 0)?.images?.[0]?.url;
 
-            const colorImages = prod.colorVariants?.reduce((acc, variant) => {
-                if (variant.images) {
-                    return [...acc, ...variant.images.map((img) => img.url)];
-                }
-                return acc;
-            }, []) || [];
-            const rootImages = prod.images ? prod.images.map(img => img.url || img) : [];
-            const allImages = [...rootImages, ...colorImages];
+            const fallbackVariant = prod.colorVariants?.find((v) => v.images && v.images.length > 0);
+            const fallbackImage = fallbackVariant?.images?.[0]?.url;
+
+            const defaultVariant = blackVariant || fallbackVariant;
+            const allImages = defaultVariant?.images?.map((img) => img.url) || [];
 
             return {
                 id: prod._id,

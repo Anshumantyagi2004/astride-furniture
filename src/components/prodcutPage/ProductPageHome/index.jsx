@@ -207,16 +207,14 @@ export default function ProductPageHome() {
                   (v) => v.colorName?.toLowerCase() === "black"
                 );
                 const blackImage = blackVariant?.images?.[0]?.url;
-                const fallbackImage = prod.colorVariants?.find(
-                  (v) => v.images && v.images.length > 0
-                )?.images?.[0]?.url;
 
-                const allImages = prod.colorVariants?.reduce((acc, variant) => {
-                  if (variant.images) {
-                    return [...acc, ...variant.images.map((img) => img.url)];
-                  }
-                  return acc;
-                }, []) || [];
+                const fallbackVariant = prod.colorVariants?.find(
+                  (v) => v.images && v.images.length > 0
+                );
+                const fallbackImage = fallbackVariant?.images?.[0]?.url;
+
+                const defaultVariant = blackVariant || fallbackVariant;
+                const allImages = defaultVariant?.images?.map((img) => img.url) || [];
 
                 return {
                   id: prod._id,
@@ -277,17 +275,15 @@ export default function ProductPageHome() {
               (v) => v.colorName?.toLowerCase() === "black"
             );
             const blackImage = blackVariant?.images?.[0]?.url;
-            const fallbackImage = prod.colorVariants?.find(
-              (v) => v.images && v.images.length > 0
-            )?.images?.[0]?.url;
 
-            // Extract all image URLs across all color variants
-            const allImages = prod.colorVariants?.reduce((acc, variant) => {
-              if (variant.images) {
-                return [...acc, ...variant.images.map((img) => img.url)];
-              }
-              return acc;
-            }, []) || [];
+            const fallbackVariant = prod.colorVariants?.find(
+              (v) => v.images && v.images.length > 0
+            );
+            const fallbackImage = fallbackVariant?.images?.[0]?.url;
+
+            // Extract image URLs from the default active variant only
+            const defaultVariant = blackVariant || fallbackVariant;
+            const allImages = defaultVariant?.images?.map((img) => img.url) || [];
 
             return {
               id: prod._id,
