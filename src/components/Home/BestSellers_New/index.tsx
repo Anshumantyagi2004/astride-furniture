@@ -137,6 +137,9 @@ function BestsellerCard({ product }: { product: any }) {
 
   useEffect(() => {
     if (isHovered && images.length > 1) {
+      // Instantly switch to the 2nd image on hover
+      setCurrentImageIndex(1);
+      
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
       }, 1000);
@@ -256,7 +259,7 @@ export default function BestSellersSection_New() {
           const parsed = JSON.parse(cached);
           if (parsed && parsed.length > 0) {
             setProductsList(parsed);
-            setLoading(false); // Disable spinner immediately
+            setLoading(false);
           }
         }
       } catch (e) {
@@ -291,16 +294,13 @@ export default function BestSellersSection_New() {
 
             const blackVariant = prod.colorVariants?.find((v: any) => v.colorName?.toLowerCase() === "black");
             const blackImage = blackVariant?.images?.[0]?.url;
-            const fallbackImage = prod.colorVariants?.find((v: any) => v.images && v.images.length > 0)?.images?.[0]?.url;
 
-            const colorImages = prod.colorVariants?.reduce((acc: string[], variant: any) => {
-              if (variant.images) {
-                return [...acc, ...variant.images.map((img: any) => img.url)];
-              }
-              return acc;
-            }, []) || [];
-            const rootImages = prod.images ? prod.images.map((img: any) => img.url || img) : [];
-            const allImages = [...rootImages, ...colorImages];
+            const fallbackVariant = prod.colorVariants?.find((v: any) => v.images && v.images.length > 0);
+            const fallbackImage = fallbackVariant?.images?.[0]?.url;
+
+            // Extract image URLs from the default active variant only
+            const defaultVariant = blackVariant || fallbackVariant;
+            const allImages = defaultVariant?.images?.map((img: any) => img.url) || [];
 
             const stickers = ["hot rn 🔥", "staff fave", "", "new drop", "", "boss mode", "limited", "selling fast"];
             const sticker = stickers[idx % stickers.length] || "";

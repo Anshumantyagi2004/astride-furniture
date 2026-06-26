@@ -16,6 +16,9 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
 
   useEffect(() => {
     if (isHovered && images.length > 1) {
+      // Instantly switch to the 2nd image on hover
+      setCurrentImageIndex(1);
+      
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
       }, 1000);
@@ -64,7 +67,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
         </button>
       </div>
 
-      {/* Image Area with simpler rendering */}
+      {/* Image Area */}
       <div className="relative w-full h-[52%] flex flex-col items-center justify-center z-[5] my-0.5">
         <Image
           src={images[currentImageIndex] || product.image}
