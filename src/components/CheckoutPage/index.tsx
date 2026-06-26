@@ -7,6 +7,7 @@ import Script from 'next/script';
 
 interface CartItem {
   id: string | number;
+  _id?: string | number;
   name: string;
   price: number;
   image: string;
