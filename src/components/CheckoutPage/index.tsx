@@ -21,6 +21,7 @@ export default function CheckoutPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"COD" | "Razorpay">("COD");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -127,6 +128,7 @@ export default function CheckoutPage() {
   }, []);
 
   const placeOrder = useCallback(async () => {
+    if (isProcessing) return;
     try {
       // Force validate all fields on submit
       const newErrors = {
@@ -154,6 +156,8 @@ export default function CheckoutPage() {
         alert("Please log in first to place an order");
         return;
       }
+      
+      setIsProcessing(true);
       
       const totalAmount = subtotal + shippingCost;
       const orderData = {
@@ -202,7 +206,10 @@ export default function CheckoutPage() {
           window.scrollTo({ top: 0, behavior: "smooth" });
           localStorage.removeItem("astride_cart");
           setCartItems([]);
+        } else {
+          alert(data.message || "Failed to place order.");
         }
+        setIsProcessing(false);
       } else {
         const res = await fetch("/api/create-order", {
           method: "POST",
@@ -213,6 +220,7 @@ export default function CheckoutPage() {
         
         if (!razorpayOrder.success) {
           alert("Failed to initiate payment. Please try again.");
+          setIsProcessing(false);
           return;
         }
         const options = {
@@ -246,31 +254,41 @@ export default function CheckoutPage() {
               }
             } catch (err: any) {
               alert("Verification error: " + (err?.message || "Please contact support."));
+            } finally {
+              setIsProcessing(false);
             }
           },
-          modal: { ondismiss: function () { console.log("Razorpay modal closed by user"); } },
+          modal: { 
+            ondismiss: function () { 
+              console.log("Razorpay modal closed by user"); 
+              setIsProcessing(false);
+            } 
+          },
           prefill: { name: formData.fullName, email: formData.email, contact: formData.phone },
           theme: { color: "#000000" },
         };
         if (!(window as any).Razorpay) {
           alert("Payment system is still loading. Please try again in a moment.");
+          setIsProcessing(false);
           return;
         }
         const paymentObject = new (window as any).Razorpay(options);
         paymentObject.on("payment.failed", function (response: any) {
           const reason = response?.error?.description || response?.error?.reason || "Payment was declined";
           alert("Payment failed: " + reason + "\n\nPlease try a different payment method or card.");
+          setIsProcessing(false);
         });
         paymentObject.open();
       }
     } catch (error: any) {
       console.error(error);
       alert("Error: " + (error?.message || "Something went wrong. Please try again."));
+      setIsProcessing(false);
     }
-  }, [formData, cartItems, subtotal, paymentMethod]);
+  }, [formData, cartItems, subtotal, paymentMethod, isProcessing]);
 
   // Sleek error styling
-  const getInputClass = (error: string) => `w-full px-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-300 text-sm font-medium ${
+  const getInputClass = (error: string) => `w-full px-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-300 text-base md:text-sm font-medium ${
     error 
       ? 'border-red-300 focus:ring-red-500/20 text-red-900 bg-red-50/40 shadow-[inset_0_0_0_1px_rgba(248,113,113,0.2)]' 
       : 'border-neutral-200 focus:ring-black focus:border-transparent'
@@ -460,9 +478,22 @@ export default function CheckoutPage() {
                   <button 
                     type="button"
                     onClick={placeOrder}
-                    className="w-full bg-black text-white py-4 rounded-xl font-bold text-base hover:bg-neutral-800 transition-colors active:scale-[0.99] shadow-lg shadow-black/20"
+                    disabled={isProcessing}
+                    className={`w-full bg-black text-white py-4 rounded-xl font-bold text-base hover:bg-neutral-800 transition-all active:scale-[0.99] shadow-lg shadow-black/20 flex items-center justify-center gap-2 ${
+                      isProcessing ? "opacity-75 cursor-not-allowed" : ""
+                    }`}
                   >
-                    Place Order
+                    {isProcessing ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing...
+                      </>
+                    ) : (
+                      "Place Order"
+                    )}
                   </button>
                 </div>
               </form>
@@ -539,9 +570,22 @@ export default function CheckoutPage() {
                     <button 
                       type="button"
                       onClick={placeOrder}
-                      className="w-full bg-black text-white py-4 rounded-xl font-bold text-base hover:bg-[#111111] transition-colors active:scale-[0.99] shadow-lg shadow-black/20"
+                      disabled={isProcessing}
+                      className={`w-full bg-black text-white py-4 rounded-xl font-bold text-base hover:bg-[#111111] transition-all active:scale-[0.99] shadow-lg shadow-black/20 flex items-center justify-center gap-2 ${
+                        isProcessing ? "opacity-75 cursor-not-allowed" : ""
+                      }`}
                     >
-                      Place Order
+                      {isProcessing ? (
+                        <>
+                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                        </>
+                      ) : (
+                        "Place Order"
+                      )}
                     </button>
                   </div>
                 </div>

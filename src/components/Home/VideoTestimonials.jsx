@@ -45,7 +45,20 @@ const videos = [
         accentFrom: "#EC4899",
         accentTo: "#F97316",
     },
-
+    {
+        id: 3,
+        platform: "youtube",
+        tag: "Setup Upgrade",
+        author: "Vikram Singh",
+        quote: "The ultimate chair for long work sessions and intense gaming.",
+        rating: 5,
+        thumbnail: "https://img.youtube.com/vi/--rKEoktpGw/maxresdefault.jpg",
+        embed: "https://www.youtube.com/embed/--rKEoktpGw?autoplay=1&mute=0",
+        link: "https://www.youtube.com/watch?v=--rKEoktpGw",
+        duration: "0:55",
+        accentFrom: "#3B82F6",
+        accentTo: "#10B981",
+    },
     {
         id: 4,
         platform: "youtube",
@@ -122,23 +135,30 @@ function FeaturedCard({ video, onPlay, isPlaying }) {
                         allowFullScreen
                     />
                 ) : (
-                    <>
+                    <div className="w-full h-full relative flex items-center justify-center bg-black">
+                        {/* Blurred background image */}
+                        <img
+                            src={video.thumbnail}
+                            alt=""
+                            className="absolute inset-0 w-full h-full object-cover filter blur-[15px] opacity-40 scale-110 pointer-events-none"
+                        />
+                        {/* Sharp centered image */}
                         <img
                             src={video.thumbnail}
                             alt={video.author}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            className="relative h-full w-auto object-contain transition-transform duration-700 group-hover:scale-102 z-10"
                             loading="eager"
                             fetchPriority="high"
                         />
                         {/* Overlays */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 z-10 pointer-events-none" />
                         <div
-                            className="absolute inset-0 opacity-20"
+                            className="absolute inset-0 opacity-20 z-10 pointer-events-none"
                             style={{
                                 background: `linear-gradient(135deg, ${video.accentFrom}30 0%, transparent 60%)`,
                             }}
                         />
-                    </>
+                    </div>
                 )}
             </div>
 

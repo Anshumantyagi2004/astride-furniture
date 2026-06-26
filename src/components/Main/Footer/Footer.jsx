@@ -12,6 +12,7 @@ import {
     FaPhone,
     FaEnvelope,
     FaRegClock,
+    FaYoutube,
 } from "react-icons/fa6";
 
 export default function Footer() {
@@ -60,7 +61,12 @@ export default function Footer() {
                                 { 
                                     Icon: FaLinkedinIn, 
                                     label: "LinkedIn", 
-                                    href: "https://www.linkedin.com/company/mbtcintrafurnish/" 
+                                    href: "https://www.linkedin.com/company/astride-furniture"
+                                },
+                                { 
+                                    Icon: FaYoutube, 
+                                    label: "YouTube", 
+                                    href: "https://www.youtube.com/channel/UC1_lDDANHKxaPZgz8aLp5IA" 
                                 },
                             ].map(({ Icon, label, href }, index) => (
                                 <a
