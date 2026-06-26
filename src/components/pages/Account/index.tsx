@@ -216,6 +216,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
           ...DEFAULT_PROFILE,
           name: parsedUser.name || DEFAULT_PROFILE.name,
           email: parsedUser.email || DEFAULT_PROFILE.email,
+          phone: parsedUser.phone || DEFAULT_PROFILE.phone,
         };
         setProfile(newProfile);
         setEditForm(newProfile);
