@@ -45,20 +45,7 @@ const videos = [
         accentFrom: "#EC4899",
         accentTo: "#F97316",
     },
-    {
-        id: 3,
-        platform: "youtube",
-        tag: "Aesthetic Setup",
-        author: "Sneha Patel",
-        quote: "My desk setup finally looks Pinterest-worthy. This chair is art.",
-        rating: 5,
-        thumbnail: "https://img.youtube.com/vi/MWfyq3y2C-s/maxresdefault.jpg",
-        embed: "https://www.youtube.com/shorts/RhNnVQqhDws?si=CrenEZbWTMcTbkvm",
-        link: "https://youtube.com/shorts/RhNnVQqhDws?si=CrenEZbWTMcTbkvm",
-        duration: "0:30",
-        accentFrom: "#F97316",
-        accentTo: "#8B5CF6",
-    },
+
     {
         id: 4,
         platform: "youtube",
@@ -133,7 +120,6 @@ function FeaturedCard({ video, onPlay, isPlaying }) {
                         className="w-full h-full border-0"
                         allow="autoplay; encrypted-media"
                         allowFullScreen
-                        loading="lazy"
                     />
                 ) : (
                     <>
@@ -141,7 +127,8 @@ function FeaturedCard({ video, onPlay, isPlaying }) {
                             src={video.thumbnail}
                             alt={video.author}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            loading="lazy"
+                            loading="eager"
+                            fetchPriority="high"
                         />
                         {/* Overlays */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10" />
@@ -299,7 +286,7 @@ export default function VideoTestimonials() {
 
     const handleSelectSideCard = (id) => {
         setSelectedId(id);
-        setPlayingId(id);
+        setPlayingId(null); // Don't auto-play — let the user press Play on the featured card
     };
 
     return (

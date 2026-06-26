@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import connectDB from "@/config/connectDB";
 import Order from "@/models/order/Order";
+import { sendTelegramOrderNotification } from "@/lib/sendTelegramNotification";
 
 // Force Node.js runtime — crypto and mongoose are incompatible with Edge runtime
 export const runtime = "nodejs";
@@ -47,6 +48,9 @@ export async function POST(req) {
       razorpayPaymentId: razorpay_payment_id,
       status: "Confirmed",
     });
+
+    // Fire-and-forget Telegram notification — does NOT block the response
+    sendTelegramOrderNotification(finalOrder, "Razorpay");
 
     return NextResponse.json({
       success: true,
