@@ -455,19 +455,21 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                         </div>
                       </div>
 
-                      {/* Email */}
+                      {/* Email — always locked, cannot be changed */}
                       <div className="flex flex-col gap-3">
-                        <label className="text-xs font-bold uppercase tracking-widest text-slate-800">EMAIL ADDRESS</label>
-                        <div className="relative shadow-[0_2px_10px_rgba(0,0,0,0.02)] rounded-2xl">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-bold uppercase tracking-widest text-slate-800">EMAIL ADDRESS</label>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Cannot be changed</span>
+                        </div>
+                        <div className={`relative rounded-2xl transition-all duration-200 ${isEditing ? 'shadow-[0_0_0_2px_rgba(15,23,42,0.15)]' : 'shadow-[0_2px_10px_rgba(0,0,0,0.02)]'}`}>
                           <input
                             type="email"
                             name="email"
-                            disabled={!isEditing}
-                            value={isEditing ? editForm.email : profile.email}
-                            onChange={handleInputChange}
-                            className="w-full h-14 pl-5 pr-14 rounded-2xl border border-slate-200 bg-white disabled:bg-white disabled:text-slate-500 disabled:cursor-not-allowed text-slate-700 text-[15px] font-semibold outline-none focus:border-slate-800 transition-all"
+                            disabled={true}
+                            value={profile.email}
+                            className="w-full h-14 pl-5 pr-14 rounded-2xl border border-slate-200 bg-slate-50 text-slate-400 text-[15px] font-semibold outline-none cursor-not-allowed"
                           />
-                          <Mail className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={20} />
+                          <Mail className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300" size={20} />
                         </div>
                       </div>
 

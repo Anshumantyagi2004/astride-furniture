@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, memo } from "react";
+import { useState, memo, useCallback } from "react";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { motion, Variants } from "framer-motion";
 
@@ -10,7 +10,6 @@ const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
 });
 
-// Move animation static configurations outside the component lifecycle to optimize memory
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -27,7 +26,6 @@ const headingVariants: Variants = {
   },
 };
 
-// Static features array moved out of component to prevent re-renders
 const FEATURES = [
   {
     title: "Bulk pricing",
@@ -64,7 +62,6 @@ const FEATURES = [
   }
 ];
 
-// Memoized feature item child template to prevent unneeded re-rendering during form updates
 const FeatureItem = memo(({ item }: { item: typeof FEATURES[0] }) => (
   <li className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4">
     <div 
@@ -90,7 +87,6 @@ export default function Enquiry_New() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Consolidated structure limits active memory allocation paths
   const [formData, setFormData] = useState({
     fullName: "",
     companyName: "",
@@ -100,15 +96,91 @@ export default function Enquiry_New() {
     location: "",
   });
 
-  const handleInputChange = (field: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, [field]: e.target.value }));
+  const [errors, setErrors] = useState({
+    fullName: "",
+    companyName: "",
+    quantity: "",
+    email: "",
+    phone: "",
+    location: "",
+  });
+
+  const validateField = (name: string, value: string) => {
+    // Phone is optional based on the label lacking an asterisk
+    if (name !== "phone" && !value.trim()) return "Required field";
+
+    if (name === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) return "Invalid email format";
+    }
+    if (name === "phone" && value.trim().length > 0 && value.length !== 10) {
+      return "Requires exactly 10 digits";
+    }
+    if ((name === "fullName" || name === "location" || name === "companyName") && value.trim().length > 0 && value.trim().length < 2) {
+      return "Too short";
+    }
+    if (name === "quantity" && (isNaN(Number(value)) || Number(value) < 1)) {
+      return "Must be at least 1";
+    }
+    return "";
   };
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // 1. STRICT TEXT: Prevent numbers and special characters in Name and Location
+    if ((name === 'fullName' || name === 'location') && !/^[a-zA-Z\s]*$/.test(value)) {
+      return; 
+    }
+
+    // 2. STRICT NUMBERS: Prevent letters in Phone and Quantity
+    if ((name === 'phone' || name === 'quantity') && !/^\d*$/.test(value)) {
+      return;
+    }
+    
+    // 3. MAX LENGTHS
+    if (name === 'phone' && value.length > 10) return;
+    if (name === 'quantity' && value.length > 5) return; // Prevent absurdly high quantities
+
+    setFormData(prev => ({ ...prev, [name]: value }));
+
+    // Instant error clearing as user types
+    setErrors(prev => {
+      const fieldName = name as keyof typeof errors;
+      if (prev[fieldName]) {
+        return { ...prev, [fieldName]: validateField(name, value) };
+      }
+      return prev;
+    });
+  }, []);
+
+  const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setErrorMsg("");
 
+    // Force validate all fields on submit
+    const newErrors = {
+      fullName: validateField("fullName", formData.fullName),
+      companyName: validateField("companyName", formData.companyName),
+      quantity: validateField("quantity", formData.quantity),
+      email: validateField("email", formData.email),
+      phone: validateField("phone", formData.phone),
+      location: validateField("location", formData.location),
+    };
+
+    setErrors(newErrors);
+
+    // Stop submission if ANY error exists
+    if (Object.values(newErrors).some(err => err !== "")) {
+      return;
+    }
+
+    setLoading(true);
     try {
       const res = await fetch("/api/enquiry", {
         method: "POST",
@@ -129,6 +201,28 @@ export default function Enquiry_New() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Dynamic input styling that respects your brutalist design
+  const getInputClass = (error: string) => `w-full rounded-[10px] border-2 px-4 py-[11px] md:py-[13px] text-sm font-semibold outline-none transition duration-300 ${
+    error 
+      ? 'border-red-500 bg-red-50/50 text-red-900 focus:border-red-500 focus:shadow-[3px_3px_0_#ef4444]' 
+      : 'border-[#131313] focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]'
+  }`;
+
+  // Mini Error Message UI
+  const ErrorMessage = ({ error }: { error: string }) => {
+    if (!error) return null;
+    return (
+      <div className="flex items-center gap-1.5 mt-1.5 pl-1 animate-in fade-in slide-in-from-top-1 duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5 text-red-500 shrink-0">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+        </svg>
+        <span className="text-[10px] font-black text-red-500 uppercase tracking-widest leading-none mt-[1px]">
+          {error}
+        </span>
+      </div>
+    );
   };
 
   return (
@@ -194,79 +288,94 @@ export default function Enquiry_New() {
                 )}
 
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div>
+                  <div className="flex flex-col">
                     <label className="mb-2 block text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#131313]">
                       Full name*
                     </label>
                     <input
-                      required
+                      name="fullName"
                       value={formData.fullName}
-                      onChange={handleInputChange("fullName")}
-                      className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[11px] md:py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      className={getInputClass(errors.fullName)}
                     />
+                    <ErrorMessage error={errors.fullName} />
                   </div>
 
-                  <div>
+                  <div className="flex flex-col">
                     <label className="mb-2 block text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#131313]">
                       Company*
                     </label>
                     <input
-                      required
+                      name="companyName"
                       value={formData.companyName}
-                      onChange={handleInputChange("companyName")}
-                      className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[11px] md:py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      className={getInputClass(errors.companyName)}
                     />
+                    <ErrorMessage error={errors.companyName} />
                   </div>
 
-                  <div>
+                  <div className="flex flex-col">
                     <label className="mb-2 block text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#131313]">
                       No. of chairs*
                     </label>
                     <input
-                      type="number"
-                      min="1"
-                      required
+                      type="text" 
+                      name="quantity"
+                      placeholder="e.g. 5"
                       value={formData.quantity}
-                      onChange={handleInputChange("quantity")}
-                      className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[11px] md:py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      className={getInputClass(errors.quantity)}
                     />
+                    <ErrorMessage error={errors.quantity} />
                   </div>
 
-                  <div>
+                  <div className="flex flex-col">
                     <label className="mb-2 block text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#131313]">
                       Official email*
                     </label>
                     <input
                       type="email"
-                      required
+                      name="email"
                       value={formData.email}
-                      onChange={handleInputChange("email")}
-                      className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[11px] md:py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      className={getInputClass(errors.email)}
                     />
+                    <ErrorMessage error={errors.email} />
                   </div>
 
-                  <div>
+                  <div className="flex flex-col">
                     <label className="mb-2 block text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#131313]">
                       Phone
                     </label>
                     <input
-                      type="tel"
+                      type="text"
+                      name="phone"
+                      placeholder="10-digit number"
                       value={formData.phone}
-                      onChange={handleInputChange("phone")}
-                      className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[11px] md:py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      className={getInputClass(errors.phone)}
                     />
+                    <ErrorMessage error={errors.phone} />
                   </div>
 
-                  <div>
+                  <div className="flex flex-col">
                     <label className="mb-2 block text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#131313]">
                       Your location*
                     </label>
                     <input
-                      required
+                      name="location"
+                      placeholder="City or State"
                       value={formData.location}
-                      onChange={handleInputChange("location")}
-                      className="w-full rounded-[10px] border-2 border-[#131313] px-4 py-[11px] md:py-[13px] text-sm font-semibold outline-none transition focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]"
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      className={getInputClass(errors.location)}
                     />
+                    <ErrorMessage error={errors.location} />
                   </div>
                 </div>
 

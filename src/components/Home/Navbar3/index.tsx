@@ -7,63 +7,63 @@ import { usePathname, useRouter } from "next/navigation";
 import { Plus_Jakarta_Sans } from "next/font/google";
 
 const sans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-sans",
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700", "800"],
+    variable: "--font-sans",
 });
 
 interface SeriesChair {
-  name: string;
-  image: string;
-  tag?: string;
-  buyUrl: string;
+    name: string;
+    image: string;
+    tag?: string;
+    buyUrl: string;
 }
 
 interface ChairCategory {
-  label: string;
-  chairs: SeriesChair[];
+    label: string;
+    chairs: SeriesChair[];
 }
 
 const CHAIR_CATEGORIES: Record<string, ChairCategory> = {
-  "Staff Chair": {
-    label: "Staff Chair",
-    chairs: [
-      { name: "Delton Staff", image: "/Png1/Chair7_Delton.webp", tag: "Comfort", buyUrl: "/products/chair7-delton" },
-      { name: "AIRSENSE Task", image: "/Png1/chair5_AIRSENSE.webp", tag: "Aero Mesh", buyUrl: "/products/chair5-airsense" },
-      { name: "Amica Black", image: "/Png1/Chair6a_Amica Black .webp", tag: "Classic", buyUrl: "/products/chair6a-amica-black" }
-    ]
-  },
-  "Office Chair": {
-    label: "Office Chair",
-    chairs: [
-      { name: "AlphaGrey", image: "/Png1/chair6_AlphaGrey.webp", tag: "Premium Mesh", buyUrl: "/products/chair6-alphagrey" },
-      { name: "ErgoFit Executive", image: "/Png1/chair12_ErgoFit.webp", tag: "High Back", buyUrl: "/products/chair12-ergofit" },
-      { name: "ACE Pro", image: "/Png1/chair4_ACE.webp", tag: "Bestseller", buyUrl: "/products/chair4-ace" }
-    ]
-  },
-  "Gaming Chair": {
-    label: "Gaming Chair",
-    chairs: [
-      { name: "ACE Pro Gaming", image: "/Png1/chair4_ACE.webp", tag: "Bestseller", buyUrl: "/products/chair4-ace" },
-      { name: "Apex Gaming", image: "/Png1/chair9_FitWell.webp", tag: "Pro", buyUrl: "/products/chair9-fitwell" },
-      { name: "Zenith Stool", image: "/Png1/chair10_FitWell.webp", tag: "Premium", buyUrl: "/products/chair10-fitwell" }
-    ]
-  },
-  "Study Chair": {
-    label: "Study Chair",
-    chairs: [
-      { name: "AIRSENSE Task", image: "/Png1/chair5_AIRSENSE.webp", tag: "Aero Mesh", buyUrl: "/products/chair5-airsense" },
-      { name: "Delton Staff", image: "/Png1/Chair7_Delton.webp", tag: "Comfort", buyUrl: "/products/chair7-delton" },
-      { name: "ErgoFit Executive", image: "/Png1/chair12_ErgoFit.webp", tag: "Premium", buyUrl: "/products/chair12-ergofit" }
-    ]
-  },
-  "Bar Stools & Cafe Chair": {
-    label: "Bar Stools & Cafe Chair",
-    chairs: [
-      { name: "Zenith Stool", image: "/Png1/chair10_FitWell.webp", tag: "Counter Stool", buyUrl: "/products/chair10-fitwell" },
-      { name: "Apex Stool", image: "/Png1/chair9_FitWell.webp", tag: "Bestseller", buyUrl: "/products/chair9-fitwell" }
-    ]
-  }
+    "Staff Chair": {
+        label: "Staff Chair",
+        chairs: [
+            { name: "Delton Staff", image: "/Png1/Chair7_Delton.webp", tag: "Comfort", buyUrl: "/products/chair7-delton" },
+            { name: "AIRSENSE Task", image: "/Png1/chair5_AIRSENSE.webp", tag: "Aero Mesh", buyUrl: "/products/chair5-airsense" },
+            { name: "Amica Black", image: "/Png1/Chair6a_Amica Black .webp", tag: "Classic", buyUrl: "/products/chair6a-amica-black" }
+        ]
+    },
+    "Office Chair": {
+        label: "Office Chair",
+        chairs: [
+            { name: "AlphaGrey", image: "/Png1/chair6_AlphaGrey.webp", tag: "Premium Mesh", buyUrl: "/products/chair6-alphagrey" },
+            { name: "ErgoFit Executive", image: "/Png1/chair12_ErgoFit.webp", tag: "High Back", buyUrl: "/products/chair12-ergofit" },
+            { name: "ACE Pro", image: "/Png1/chair4_ACE.webp", tag: "Bestseller", buyUrl: "/products/chair4-ace" }
+        ]
+    },
+    "Gaming Chair": {
+        label: "Gaming Chair",
+        chairs: [
+            { name: "ACE Pro Gaming", image: "/Png1/chair4_ACE.webp", tag: "Bestseller", buyUrl: "/products/chair4-ace" },
+            { name: "Apex Gaming", image: "/Png1/chair9_FitWell.webp", tag: "Pro", buyUrl: "/products/chair9-fitwell" },
+            { name: "Zenith Stool", image: "/Png1/chair10_FitWell.webp", tag: "Premium", buyUrl: "/products/chair10-fitwell" }
+        ]
+    },
+    "Study Chair": {
+        label: "Study Chair",
+        chairs: [
+            { name: "AIRSENSE Task", image: "/Png1/chair5_AIRSENSE.webp", tag: "Aero Mesh", buyUrl: "/products/chair5-airsense" },
+            { name: "Delton Staff", image: "/Png1/Chair7_Delton.webp", tag: "Comfort", buyUrl: "/products/chair7-delton" },
+            { name: "ErgoFit Executive", image: "/Png1/chair12_ErgoFit.webp", tag: "Premium", buyUrl: "/products/chair12-ergofit" }
+        ]
+    },
+    "Bar Stools & Cafe Chair": {
+        label: "Bar Stools & Cafe Chair",
+        chairs: [
+            { name: "Zenith Stool", image: "/Png1/chair10_FitWell.webp", tag: "Counter Stool", buyUrl: "/products/chair10-fitwell" },
+            { name: "Apex Stool", image: "/Png1/chair9_FitWell.webp", tag: "Bestseller", buyUrl: "/products/chair9-fitwell" }
+        ]
+    }
 };
 
 const NAV_ITEMS = [
@@ -176,7 +176,7 @@ export default function Navbar3() {
                     setCategories(mappedCats);
                     sessionStorage.setItem("astride_nav_categories_cache", JSON.stringify(mappedCats));
                 }
-                
+
                 if (prodData?.success) {
                     setProducts(prodData.products);
                     sessionStorage.setItem("astride_nav_products_cache", JSON.stringify(prodData.products));
@@ -219,7 +219,7 @@ export default function Navbar3() {
         let itemsToSearch = products;
         if (!products || products.length === 0) {
             itemsToSearch = Object.values(CHAIR_CATEGORIES).flatMap(cat => cat.chairs).map(chair => ({
-                _id: chair.name, 
+                _id: chair.name,
                 productName: chair.name,
                 realPrice: "See price in cart",
                 image: chair.image,
@@ -256,9 +256,17 @@ export default function Navbar3() {
             {/* Top Bar */}
             <div className={`bg-slate-900 text-white text-[13px] font-medium py-[9px] ${sans.className}`}>
                 <div className="max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex items-center justify-between gap-4">
-                    <div>
-                        Tollfree <span className="text-lime-500 font-bold">7311164111</span> — Call now!
-                    </div>
+                    <a
+                        href="tel:+917311164111"
+                        className="block cursor-pointer hover:opacity-80 transition-opacity"
+                    >
+
+                        Tollfree{" "}
+                        <span className="text-lime-500 font-bold">
+                            7311164111
+                        </span>{" "}
+                        — Call now!
+                    </a>
 
                     <div className="hidden md:block text-slate-300 text-[12px] tracking-wider uppercase font-semibold">
                         GST: <span className="font-bold text-white">07AALCM4232E1ZN</span>
@@ -271,8 +279,8 @@ export default function Navbar3() {
                         <Link href="/contact" className="hidden sm:inline hover:text-lime-500 transition-colors">
                             Support
                         </Link>
-                        <button 
-                            onClick={handleFindYourChair} 
+                        <button
+                            onClick={handleFindYourChair}
                             className="hover:text-lime-500 transition-colors cursor-pointer bg-transparent border-0 text-[13px] font-medium text-white p-0"
                         >
                             Find chair
@@ -285,7 +293,7 @@ export default function Navbar3() {
             </div>
 
             {/* Header */}
-            <header 
+            <header
                 className={`sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b-2 border-slate-900 ${sans.className}`}
                 onMouseLeave={() => setActiveMenu(null)}
             >
@@ -321,7 +329,7 @@ export default function Navbar3() {
                     <div className="flex items-center gap-[18px]">
 
                         {/* Search */}
-                        <div 
+                        <div
                             className="relative flex items-center bg-transparent transition-all duration-300 rounded-full"
                             onMouseEnter={() => setIsSearchExpanded(true)}
                             onMouseLeave={() => {
@@ -463,70 +471,70 @@ export default function Navbar3() {
 
                 {/* Dropdown Mega Menus */}
                 {activeMenu && displayChairs.length > 0 && (
-                  <div 
-                    className="absolute left-0 top-full w-full bg-white border-b border-neutral-200 text-neutral-800 py-6 px-12 z-[900] shadow-xl"
-                    onMouseEnter={() => setActiveMenu(activeMenu)}
-                    onMouseLeave={() => setActiveMenu(null)}
-                  >
-                    <div className="max-w-5xl mx-auto relative px-12">
-                      {displayChairs.length > 4 && (
-                        <button
-                          onClick={() => scrollDropdown("left")}
-                          className="absolute -left-1 top-[108px] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border-[2px] border-[#131313] shadow-[2px_2px_0_#131313] flex items-center justify-center hover:bg-[#f0f0f0] transition-colors"
-                          aria-label="Scroll left"
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2.5" className="w-4 h-4">
-                            <path d="M15 18l-6-6 6-6" />
-                          </svg>
-                        </button>
-                      )}
+                    <div
+                        className="absolute left-0 top-full w-full bg-white border-b border-neutral-200 text-neutral-800 py-6 px-12 z-[900] shadow-xl"
+                        onMouseEnter={() => setActiveMenu(activeMenu)}
+                        onMouseLeave={() => setActiveMenu(null)}
+                    >
+                        <div className="max-w-5xl mx-auto relative px-12">
+                            {displayChairs.length > 4 && (
+                                <button
+                                    onClick={() => scrollDropdown("left")}
+                                    className="absolute -left-1 top-[108px] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border-[2px] border-[#131313] shadow-[2px_2px_0_#131313] flex items-center justify-center hover:bg-[#f0f0f0] transition-colors"
+                                    aria-label="Scroll left"
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2.5" className="w-4 h-4">
+                                        <path d="M15 18l-6-6 6-6" />
+                                    </svg>
+                                </button>
+                            )}
 
-                      <div 
-                        ref={dropdownScrollRef}
-                        className={`flex gap-6 overflow-x-auto scrollbar-none py-2 snap-x snap-mandatory ${displayChairs.length <= 4 ? 'justify-center' : 'justify-start'}`}
-                        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                      >
-                        {displayChairs.map((chair, index) => (
-                          <Link 
-                            key={index}
-                            href={chair.buyUrl}
-                            onClick={() => setActiveMenu(null)}
-                            className="w-[210px] flex-shrink-0 flex flex-col items-center group relative cursor-pointer snap-start"
-                          >
-                            <div className="relative w-full aspect-[4/3.2] bg-neutral-50 border border-neutral-200 rounded-2xl flex items-center justify-center p-4 group-hover:bg-neutral-100 group-hover:border-neutral-300 transition-all duration-300">
-                              <div className="relative w-[90%] h-[90%] transform group-hover:scale-105 transition-transform duration-500 ease-out flex items-center justify-center">
-                                <Image
-                                  src={chair.image}
-                                  alt={chair.name}
-                                  fill
-                                  className="object-contain drop-shadow-md"
-                                  sizes="18vw"
-                                />
-                              </div>
+                            <div
+                                ref={dropdownScrollRef}
+                                className={`flex gap-6 overflow-x-auto scrollbar-none py-2 snap-x snap-mandatory ${displayChairs.length <= 4 ? 'justify-center' : 'justify-start'}`}
+                                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                            >
+                                {displayChairs.map((chair, index) => (
+                                    <Link
+                                        key={index}
+                                        href={chair.buyUrl}
+                                        onClick={() => setActiveMenu(null)}
+                                        className="w-[210px] flex-shrink-0 flex flex-col items-center group relative cursor-pointer snap-start"
+                                    >
+                                        <div className="relative w-full aspect-[4/3.2] bg-neutral-50 border border-neutral-200 rounded-2xl flex items-center justify-center p-4 group-hover:bg-neutral-100 group-hover:border-neutral-300 transition-all duration-300">
+                                            <div className="relative w-[90%] h-[90%] transform group-hover:scale-105 transition-transform duration-500 ease-out flex items-center justify-center">
+                                                <Image
+                                                    src={chair.image}
+                                                    alt={chair.name}
+                                                    fill
+                                                    className="object-contain drop-shadow-md"
+                                                    sizes="18vw"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-3 flex flex-col items-center gap-1 w-full">
+                                            <span className="font-extrabold text-[#131313] text-sm tracking-tight text-center group-hover:underline underline-offset-2 transition-all">
+                                                {chair.name}
+                                            </span>
+                                        </div>
+                                    </Link>
+                                ))}
                             </div>
 
-                            <div className="mt-3 flex flex-col items-center gap-1 w-full">
-                              <span className="font-extrabold text-[#131313] text-sm tracking-tight text-center group-hover:underline underline-offset-2 transition-all">
-                                {chair.name}
-                              </span>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-
-                      {displayChairs.length > 4 && (
-                        <button
-                          onClick={() => scrollDropdown("right")}
-                          className="absolute -right-1 top-[108px] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border-[2px] border-[#131313] shadow-[2px_2px_0_#131313] flex items-center justify-center hover:bg-[#f0f0f0] transition-colors"
-                          aria-label="Scroll right"
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2.5" className="w-4 h-4">
-                            <path d="M9 18l6-6-6-6" />
-                          </svg>
-                        </button>
-                      )}
+                            {displayChairs.length > 4 && (
+                                <button
+                                    onClick={() => scrollDropdown("right")}
+                                    className="absolute -right-1 top-[108px] -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border-[2px] border-[#131313] shadow-[2px_2px_0_#131313] flex items-center justify-center hover:bg-[#f0f0f0] transition-colors"
+                                    aria-label="Scroll right"
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#131313" strokeWidth="2.5" className="w-4 h-4">
+                                        <path d="M9 18l6-6-6-6" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
                     </div>
-                  </div>
                 )}
             </header>
         </>
