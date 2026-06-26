@@ -3,6 +3,9 @@ import connectDB from "@/config/connectDB";
 import Order from "@/models/order/Order";
 import { sendTelegramOrderNotification } from "@/lib/sendTelegramNotification";
 
+// Force Node.js runtime — mongoose and env vars (TELEGRAM_BOT_TOKEN) require Node runtime
+export const runtime = "nodejs";
+
 export async function POST(req) {
   try {
     await connectDB();
@@ -11,7 +14,7 @@ export async function POST(req) {
     const order = await Order.create({ ...body, status: "Confirmed" });
 
     // Fire-and-forget Telegram notification — does NOT block the response
-    sendTelegramOrderNotification(order, body.paymentMethod || "COD");
+    sendTelegramOrderNotification(order.toObject ? order.toObject() : order, body.paymentMethod || "COD");
 
     return NextResponse.json({
       success: true,

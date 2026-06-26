@@ -50,7 +50,7 @@ export async function POST(req) {
     });
 
     // Fire-and-forget Telegram notification — does NOT block the response
-    sendTelegramOrderNotification(finalOrder, "Razorpay");
+    sendTelegramOrderNotification(finalOrder.toObject ? finalOrder.toObject() : finalOrder, "Razorpay");
 
     return NextResponse.json({
       success: true,
