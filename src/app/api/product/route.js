@@ -7,6 +7,8 @@ import Category from "@/models/Category";
 import { uploadToR2 } from "@/utils/uploadToR2";
 import { generateSlug } from "@/utils/generateSlug";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req) {
     try {
         await connectDB();
