@@ -4,8 +4,10 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 export async function POST(req) {
+  console.log("🟡 /api/create-order HIT —", new Date().toISOString());
   try {
     const { amount, currency = "INR" } = await req.json();
+    console.log("📦 Amount received (paise):", amount);
 
     if (!amount || amount < 100) {
       return NextResponse.json(
