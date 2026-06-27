@@ -174,7 +174,7 @@ export async function GET() {
         await connectDB();
         const products = await Product.find(
             {}, 
-            "productName slug category oldPrice realPrice backSupport height hours colors rating capacity colorVariants metaTitle metaDescription"
+            "productName slug category oldPrice realPrice backSupport height hours colors rating capacity colorVariants metaTitle metaDescription shortDescription"
         ).populate("category").sort({ createdAt: -1 });
 
         data = {

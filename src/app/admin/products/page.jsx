@@ -23,7 +23,8 @@ export default function Page() {
     const getProducts = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get("/api/product");
+            // Add cache busting with timestamp
+            const { data } = await axios.get(`/api/product?t=${Date.now()}`);
 
             if (data.success) {
                 setProducts(data.products);
@@ -38,6 +39,11 @@ export default function Page() {
 
     useEffect(() => {
         getProducts();
+        
+        // Auto-refresh every 10 seconds to catch new products/categories
+        const interval = setInterval(getProducts, 10000);
+        
+        return () => clearInterval(interval);
     }, []);
 
     const deleteProduct = async (id) => {
