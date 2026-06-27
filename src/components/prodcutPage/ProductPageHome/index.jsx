@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
 import ProductPageCard from '../ProductPageCard';
@@ -101,6 +101,7 @@ const PRODUCTS = [
 ];
 
 export default function ProductPageHome() {
+  const router = useRouter();
   const [productsList, setProductsList] = useState([]);
   const [tabs, setTabs] = useState(["All Products"]); // Start with just "All Products"
   const [loading, setLoading] = useState(true);
@@ -134,7 +135,7 @@ export default function ProductPageHome() {
     } else {
       setSearchQuery("");
     }
-  }, [catParam, searchParam, tabs]);
+  }, [catParam, searchParam]);
 
   // Reset specific filters when category changes to avoid empty result sets
   useEffect(() => {
@@ -412,7 +413,16 @@ export default function ProductPageHome() {
               return (
                 <button
                   key={tab}
-                  onClick={() => setSelectedCategory(tab)}
+                  onClick={() => {
+                    setSelectedCategory(tab);
+                    // Update URL when category is selected
+                    if (tab === "All Products") {
+                      router.push("/products");
+                    } else {
+                      const encoded = encodeURIComponent(tab);
+                      router.push(`/products?category=${encoded}`);
+                    }
+                  }}
                   className={`shrink-0 px-4 md:px-6 py-2.5 md:py-3 rounded-full font-bold uppercase text-[10px] md:text-xs tracking-widest focus:outline-none transition-all duration-300 ${
                     isActive 
                       ? "bg-black text-white shadow-lg scale-105" 
