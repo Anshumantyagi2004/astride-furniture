@@ -210,21 +210,8 @@ export default function ProductPageHome() {
                   ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
                   : 60;
                 
-                let normalizedCategory = "Gaming Chair";
-                const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
-                if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
-                  normalizedCategory = "Gaming Chair";
-                } else if (dbCategory.includes("EXECUTIVE")) {
-                  normalizedCategory = "Office Chair";
-                } else if (dbCategory.includes("STAFF")) {
-                  normalizedCategory = "Staff Chair";
-                } else if (dbCategory.includes("STUDY")) {
-                  normalizedCategory = "Study Chair";
-                } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) {
-                  normalizedCategory = "Bar Stools & Cafe Chair";
-                } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
-                  normalizedCategory = "Office Chair";
-                }
+                // Use actual category name from database instead of normalizing
+                const category = prod.category && prod.category.name ? prod.category.name : "Gaming Chair";
 
                 const blackVariant = prod.colorVariants?.find(
                   (v) => v.colorName?.toLowerCase() === "black"
@@ -248,7 +235,7 @@ export default function ProductPageHome() {
                   discount: `-${discPercent}%`,
                   image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
                   allImages: Array.from(new Set(allImages)),
-                  category: normalizedCategory,
+                  category: category,
                   backSupport: prod.backSupport || "High Back",
                   height: prod.height || "5'7\" - 6'6\"",
                   hours: prod.hours || "8+ Hours",
@@ -278,22 +265,8 @@ export default function ProductPageHome() {
               ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
               : 60;
             
-            // Normalize Category string to match frontend TABS
-            let normalizedCategory = "Gaming Chair";
-            const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
-            if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
-              normalizedCategory = "Gaming Chair";
-            } else if (dbCategory.includes("EXECUTIVE")) {
-              normalizedCategory = "Office Chair";
-            } else if (dbCategory.includes("STAFF")) {
-              normalizedCategory = "Staff Chair";
-            } else if (dbCategory.includes("STUDY")) {
-              normalizedCategory = "Study Chair";
-            } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) {
-              normalizedCategory = "Bar Stools & Cafe Chair";
-            } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
-              normalizedCategory = "Office Chair";
-            }
+            // Use actual category name from database instead of normalizing
+            const category = prod.category && prod.category.name ? prod.category.name : "Gaming Chair";
 
             const blackVariant = prod.colorVariants?.find(
               (v) => v.colorName?.toLowerCase() === "black"
@@ -318,7 +291,7 @@ export default function ProductPageHome() {
               discount: `-${discPercent}%`,
               image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
               allImages: Array.from(new Set(allImages)),
-              category: normalizedCategory,
+              category: category,
               backSupport: prod.backSupport || "High Back",
               height: prod.height || "5'7\" - 6'6\"",
               hours: prod.hours || "8+ Hours",
