@@ -49,13 +49,8 @@ export default function DetailPage({ productId }: { productId?: string }) {
                   ? Math.round((1 - (foundDb.realPrice / foundDb.oldPrice)) * 100)
                   : 60;
                 
-                let normalizedCategory = "Ergonomic Chairs";
-                const dbCategory = foundDb.category && foundDb.category.name ? foundDb.category.name.toUpperCase() : "";
-                if (dbCategory.includes("BAR")) {
-                  normalizedCategory = "Bar Stools";
-                } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK")) {
-                  normalizedCategory = "Office Task Chair";
-                }
+                // Use actual category name from database instead of normalizing
+                const category = foundDb.category && foundDb.category.name ? foundDb.category.name : "Ergonomic Chairs";
 
                 const blackVariant = foundDb.colorVariants?.find(
                   (v: any) => v.colorName?.toLowerCase() === "black"
@@ -73,7 +68,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
                   originalPrice: foundDb.oldPrice,
                   discount: `-${discPercent}%`,
                   image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
-                  category: normalizedCategory,
+                  category: category,
                   backSupport: foundDb.backSupport || "High Back",
                   height: foundDb.height || "5'7\" - 6'6\"",
                   hours: foundDb.hours || "8+ Hours",
@@ -112,13 +107,8 @@ export default function DetailPage({ productId }: { productId?: string }) {
             ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
             : 60;
           
-          let normalizedCategory = "Ergonomic Chairs";
-          const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
-          if (dbCategory.includes("BAR")) {
-            normalizedCategory = "Bar Stools";
-          } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK")) {
-            normalizedCategory = "Office Task Chair";
-          }
+          // Use actual category name from database instead of normalizing
+          const category = prod.category && prod.category.name ? prod.category.name : "Ergonomic Chairs";
 
           const blackVariant = prod.colorVariants?.find(
             (v: any) => v.colorName?.toLowerCase() === "black"
@@ -136,7 +126,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
             originalPrice: prod.oldPrice,
             discount: `-${discPercent}%`,
             image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
-            category: normalizedCategory,
+            category: category,
             backSupport: prod.backSupport || "High Back",
             height: prod.height || "5'7\" - 6'6\"",
             hours: prod.hours || "8+ Hours",
