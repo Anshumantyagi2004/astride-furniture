@@ -79,9 +79,6 @@ const BestSellerSectionCard = ({ product }) => {
                 <div className="px-2 py-1 md:px-3.5 md:py-1.5 rounded-full bg-zinc-900 text-white text-[8px] md:text-[11px] font-bold tracking-wider shadow-sm uppercase">
                     {product.discount}
                 </div>
-                <div className="hidden md:block px-2.5 py-1 rounded-full bg-white/90 border border-zinc-200 text-zinc-700 text-[10px] font-semibold tracking-wide shadow-sm">
-                    {product.tag}
-                </div>
             </div>
 
             {/* QUICK ACTION BUTTONS */}
