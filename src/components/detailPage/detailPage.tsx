@@ -15,6 +15,13 @@ export default function DetailPage({ productId }: { productId?: string }) {
   useEffect(() => {
     async function loadProduct() {
       if (!productId) return;
+      
+      // Clear stale product caches to ensure fresh data
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("astride_products_cache");
+        sessionStorage.removeItem("astride_nav_products_cache");
+      }
+      
       let initialProduct: any = null;
 
       // 1. Check local cache (sessionStorage) for instant rendering
