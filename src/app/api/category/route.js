@@ -84,7 +84,7 @@ export async function POST(req) {
 // Global in-memory cache for category GET requests (development & production)
 let categoryCache = null;
 let categoryCacheTime = 0;
-const CATEGORY_CACHE_TTL = 30000; // 30 seconds
+const CATEGORY_CACHE_TTL = 5000; // 5 seconds (reduced from 30 for faster updates)
 
 export async function GET() {
     try {

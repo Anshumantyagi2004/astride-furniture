@@ -25,7 +25,14 @@ export default function Category() {
         try {
             setLoading(true);
 
-            const { data } = await axios.get("/api/category");
+            // Add cache busting with timestamp to force fresh data
+            const { data } = await axios.get(`/api/category?t=${Date.now()}`, {
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            });
 
             if (data.success) {
                 const mappedCats = data.categories.map((cat) => {
@@ -45,6 +52,21 @@ export default function Category() {
 
     useEffect(() => {
         getCategories();
+        
+        // Refetch categories every 10 seconds to catch new additions
+        const interval = setInterval(getCategories, 10000);
+        
+        // Also listen for storage changes (in case user opened admin in another tab)
+        const handleStorageChange = () => {
+            getCategories();
+        };
+        
+        window.addEventListener('storage', handleStorageChange);
+        
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('storage', handleStorageChange);
+        };
     }, []);
 
     return (

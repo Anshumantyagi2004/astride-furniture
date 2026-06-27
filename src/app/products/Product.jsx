@@ -23,7 +23,8 @@ export default function Product() {
     const getProducts = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get("/api/product");
+            // Add cache busting with timestamp
+            const { data } = await axios.get(`/api/product?t=${Date.now()}`);
 
             if (data.success) {
                 setProducts(data.products);

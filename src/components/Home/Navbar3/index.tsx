@@ -156,9 +156,10 @@ export default function Navbar3() {
         let isMounted = true;
         const fetchData = async () => {
             try {
+                const timestamp = Date.now();
                 const [catRes, prodRes] = await Promise.all([
-                    fetch("/api/category"),
-                    fetch("/api/product")
+                    fetch(`/api/category?t=${timestamp}`),
+                    fetch(`/api/product?t=${timestamp}`)
                 ]);
                 const [catData, prodData] = await Promise.all([
                     catRes.json(),
