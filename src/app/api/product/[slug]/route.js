@@ -2,6 +2,7 @@
 
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
+import { verifyAdmin } from "@/lib/verifyAdmin";
 
 export const dynamic = "force-dynamic";
 import Product from "@/models/Product";
@@ -62,6 +63,13 @@ export async function GET(req, { params }) {
 // UPDATE PRODUCT
 export async function PUT(req, { params }) {
     try {
+        if (!verifyAdmin(req)) {
+            return NextResponse.json(
+                { success: false, message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
         await connectDB();
 
         const { slug } = await params;
@@ -171,18 +179,21 @@ export async function PUT(req, { params }) {
 
         product.colorVariants = uploadedColorVariants;
 
-        product.productName = productName;
-        product.slug = generateSlug(productName);
-        product.category = category;
-        product.oldPrice = oldPrice;
-        product.realPrice = realPrice;
-        product.shortDescription = shortDescription;
-        product.longDescription = longDescription;
-        product.keyfeatures = keyfeatures;
-        product.application = application;
-        product.whychoose = whychoose;
-        product.videoLinks = videoLinks;
-        product.specifications = specifications;
+if (productName) {
+  product.productName = productName;
+  product.slug = generateSlug(productName);
+}
+
+product.category = category ?? product.category;
+product.oldPrice = oldPrice ?? product.oldPrice;
+product.realPrice = realPrice ?? product.realPrice;
+product.shortDescription = shortDescription ?? product.shortDescription;
+product.longDescription = longDescription ?? product.longDescription;
+product.keyfeatures = keyfeatures ?? product.keyfeatures;
+product.application = application ?? product.application;
+product.whychoose = whychoose ?? product.whychoose;
+product.videoLinks = (videoLinks && videoLinks.length) ? videoLinks : product.videoLinks;
+product.specifications = (specifications && specifications.length) ? specifications : product.specifications;
 
         // UPDATE METADATA VALUES:
         if (metaTitleInput !== null && metaTitleInput !== undefined) {
@@ -217,7 +228,7 @@ export async function PUT(req, { params }) {
             {
                 success: false,
                 message: error.message || "Internal server error",
-                },
+            },
             { status: 500 }
         );
     }
@@ -226,6 +237,13 @@ export async function PUT(req, { params }) {
 // DELETE PRODUCT
 export async function DELETE(req, { params }) {
     try {
+        if (!verifyAdmin(req)) {
+            return NextResponse.json(
+                { success: false, message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
         await connectDB();
 
         const { slug } = await params;

@@ -13,9 +13,11 @@ import {
     ArrowUpRight,
     Loader2,
     Calendar,
-    User as UserIcon
+    User as UserIcon,
+    TrendingUp
 } from "lucide-react";
 import Link from "next/link";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -55,10 +57,12 @@ export default function Page() {
         );
     }
 
-    const { stats, recentInquiries, recentContacts } = data || {
+    const { stats, recentInquiries, recentContacts, chartData, recentOrders } = data || {
         stats: { products: 0, orders: 0, users: 0, inquiries: 0, contacts: 0 },
         recentInquiries: [],
-        recentContacts: []
+        recentContacts: [],
+        chartData: [],
+        recentOrders: []
     };
 
     return (
@@ -133,6 +137,100 @@ export default function Page() {
                                 <span className="text-2xl font-black leading-none">{stats.orders}</span>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Sales Chart Section */}
+                    <div className="mb-8 bg-white border-[3px] border-[#131313] rounded-[28px] shadow-[6px_6px_0_#131313] p-6">
+                        <div className="flex items-center justify-between border-b-[2px] border-neutral-100 pb-4 mb-6">
+                            <h2 className="text-lg font-black uppercase tracking-tight flex items-center gap-2">
+                                <TrendingUp size={18} className="text-[#8B5CF6]" />
+                                Sales Trend - Last 7 Days
+                            </h2>
+                        </div>
+                        {chartData && chartData.length > 0 ? (
+                            <div className="w-full h-80">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                                        <XAxis 
+                                            dataKey="date" 
+                                            stroke="#9ca3af"
+                                            style={{ fontSize: '12px', fontWeight: 600 }}
+                                        />
+                                        <YAxis 
+                                            stroke="#9ca3af"
+                                            style={{ fontSize: '12px', fontWeight: 600 }}
+                                            label={{ value: 'Sales (₹)', angle: -90, position: 'insideLeft' }}
+                                        />
+                                        <Tooltip 
+                                            contentStyle={{
+                                                backgroundColor: '#fff',
+                                                border: '2px solid #131313',
+                                                borderRadius: '8px',
+                                                boxShadow: '4px 4px 0 #131313'
+                                            }}
+                                            labelStyle={{ color: '#131313', fontWeight: 700 }}
+                                            formatter={(value) => [`₹${value.toLocaleString()}`, 'Sales']}
+                                        />
+                                        <Line 
+                                            type="monotone" 
+                                            dataKey="sales" 
+                                            stroke="#8B5CF6" 
+                                            strokeWidth={3}
+                                            dot={{ fill: '#8B5CF6', r: 5, strokeWidth: 2, stroke: '#fff' }}
+                                            activeDot={{ r: 7 }}
+                                        />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                        ) : (
+                            <p className="text-sm text-neutral-400 py-12 text-center">No sales data available.</p>
+                        )}
+                    </div>
+
+                    {/* Recent Orders Section */}
+                    <div className="mb-8 bg-white border-[3px] border-[#131313] rounded-[28px] shadow-[6px_6px_0_#131313] p-6">
+                        <div className="flex items-center justify-between border-b-[2px] border-neutral-100 pb-4 mb-4">
+                            <h2 className="text-lg font-black uppercase tracking-tight flex items-center gap-2">
+                                <ShoppingBag size={18} className="text-[#8B5CF6]" />
+                                Recent Orders
+                            </h2>
+                            <Link href="/admin/orders" className="text-xs font-bold text-[#8B5CF6] hover:underline flex items-center gap-0.5">
+                                View All <ArrowUpRight size={14} />
+                            </Link>
+                        </div>
+                        
+                        {recentOrders.length === 0 ? (
+                            <p className="text-sm text-neutral-400 py-6 text-center">No recent orders.</p>
+                        ) : (
+                            <div className="space-y-3">
+                                {recentOrders.map((order) => (
+                                    <Link key={order._id} href="/admin/orders" className="flex items-center justify-between border-b border-neutral-50 pb-3 last:border-b-0 last:pb-0 hover:bg-neutral-50 p-2 rounded-lg transition-colors -mx-2 px-2">
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-sm font-bold text-[#131313]">
+                                                    {order.userId?.name || "Unknown User"}
+                                                </p>
+                                                <span className="text-xs text-neutral-400">
+                                                    Order ID: {order._id.toString().slice(-6).toUpperCase()}
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-neutral-500 mt-1">
+                                                {order.products?.length || 0} item(s) • {new Date(order.createdAt).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-sm font-black text-[#131313]">₹{(order.pricing?.total || 0).toLocaleString()}</p>
+                                            <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full border-2 border-[#131313] shadow-[1px_1px_0_#131313] mt-1 inline-block ${
+                                                order.paymentStatus === "Paid" ? "bg-[#ECFDF5] text-emerald-600" : "bg-[#FFFBEB] text-amber-600"
+                                            }`}>
+                                                {order.paymentStatus || "Pending"}
+                                            </span>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Dual Columns for Recent Feeds */}

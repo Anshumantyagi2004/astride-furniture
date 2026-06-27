@@ -150,10 +150,44 @@ export default function CheckoutPage() {
         return;
       }
 
-      const savedUser = localStorage.getItem("user");
-      const user = savedUser ? JSON.parse(savedUser) : null;
-      if (!user || !user.id) {
+      // Fetch user from API using JWT token
+      const token = sessionStorage.getItem("auth_token");
+      if (!token) {
         alert("Please log in first to place an order");
+        return;
+      }
+      
+      let user: any = null;
+      try {
+        const userRes = await fetch("/api/user/profile", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!userRes.ok) {
+          console.error("User profile fetch failed with status:", userRes.status);
+          const errorData = await userRes.json();
+          console.error("Error response:", errorData);
+          alert("Failed to load user information. Please log in again.");
+          return;
+        }
+        
+        const userData = await userRes.json();
+        if (userData.success && userData.user) {
+          user = userData.user;
+        } else {
+          console.error("Invalid user data response:", userData);
+          alert("Failed to load user information. Please try again.");
+          return;
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+        alert("Network error. Please try again.");
+        return;
+      }
+
+      if (!user || !user._id) {
+        console.error("User validation failed:", user);
+        alert("Failed to load user information. Please try again.");
         return;
       }
       
@@ -161,7 +195,7 @@ export default function CheckoutPage() {
       
       const totalAmount = subtotal + shippingCost;
       const orderData = {
-        userId: user.id,
+        userId: user._id,
         shippingInfo: { ...formData, state: formData.stateName },
         products: cartItems.map((item) => {
           // Robustly extract the raw MongoDB ObjectId from any cart item format:

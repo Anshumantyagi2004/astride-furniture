@@ -6,11 +6,19 @@ import Product from "@/models/Product";
 import Category from "@/models/Category";
 import { uploadToR2 } from "@/utils/uploadToR2";
 import { generateSlug } from "@/utils/generateSlug";
+import { verifyAdmin } from "@/lib/verifyAdmin";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req) {
     try {
+        if (!verifyAdmin(req)) {
+            return NextResponse.json(
+                { success: false, message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
         await connectDB();
         const formData = await req.formData();
 

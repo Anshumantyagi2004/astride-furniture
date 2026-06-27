@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
 import Order from "@/models/order/Order";
 import { sendTelegramOrderNotification } from "@/lib/sendTelegramNotification";
+import { verifyAdmin } from "@/lib/verifyAdmin";
 
 // Force Node.js runtime — mongoose and env vars (TELEGRAM_BOT_TOKEN) require Node runtime
 export const runtime = "nodejs";
@@ -64,6 +65,13 @@ export async function GET() {
 // Add these at the bottom of src/app/api/order/route.js
 export async function PUT(req) {
   try {
+    if (!verifyAdmin(req)) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
@@ -87,6 +95,13 @@ export async function PUT(req) {
 }
 export async function DELETE(req) {
   try {
+    if (!verifyAdmin(req)) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");

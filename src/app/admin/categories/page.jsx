@@ -50,6 +50,10 @@ export default function Page() {
             const { data } = await axios.delete(`/api/category?id=${id}`);
             if (data.success) {
                 toast.success("Category deleted successfully");
+                sessionStorage.removeItem("astride_products_cache");
+                sessionStorage.removeItem("astride_nav_products_cache");
+                sessionStorage.removeItem("astride_bestsellers_cache");
+                sessionStorage.removeItem("astride_nav_categories_cache");
                 getCategories();
                 if (editingId === id) {
                     cancelEdit();
@@ -102,6 +106,10 @@ export default function Page() {
                 const { data } = await axios.put("/api/category", formData);
                 if (data.success) {
                     toast.success("Category Updated Successfully");
+                    sessionStorage.removeItem("astride_products_cache");
+                    sessionStorage.removeItem("astride_nav_products_cache");
+                    sessionStorage.removeItem("astride_bestsellers_cache");
+                    sessionStorage.removeItem("astride_nav_categories_cache");
                     getCategories();
                     cancelEdit();
                 } else {
@@ -116,6 +124,10 @@ export default function Page() {
                 const { data } = await axios.post("/api/category", formData);
                 if (data.success) {
                     toast.success("Category Added Successfully");
+                    sessionStorage.removeItem("astride_products_cache");
+                    sessionStorage.removeItem("astride_nav_products_cache");
+                    sessionStorage.removeItem("astride_bestsellers_cache");
+                    sessionStorage.removeItem("astride_nav_categories_cache");
                     getCategories();
                     setCategoryName("");
                     setImageFile(null);
