@@ -25,21 +25,6 @@ export async function GET(req, { params }) {
             product = await Product.findOne({ slug: slug }).populate("category");
         }
 
-        if (!product && process.env.NODE_ENV === "development") {
-            try {
-                const productionUrl = process.env.PRODUCTION_URL || "https://astride-furniture.vercel.app";
-                const response = await fetch(`${productionUrl}/api/product/${slug}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        return NextResponse.json(data, { status: 200 });
-                    }
-                }
-            } catch (err) {
-                console.error("Error fetching fallback product from production:", err);
-            }
-        }
-
         if (!product) {
             return NextResponse.json(
                 { success: false, message: "Product not found", },
@@ -179,21 +164,21 @@ export async function PUT(req, { params }) {
 
         product.colorVariants = uploadedColorVariants;
 
-if (productName) {
-  product.productName = productName;
-  product.slug = generateSlug(productName);
-}
+        if (productName) {
+            product.productName = productName;
+            product.slug = generateSlug(productName);
+        }
 
-product.category = category ?? product.category;
-product.oldPrice = oldPrice ?? product.oldPrice;
-product.realPrice = realPrice ?? product.realPrice;
-product.shortDescription = shortDescription ?? product.shortDescription;
-product.longDescription = longDescription ?? product.longDescription;
-product.keyfeatures = keyfeatures ?? product.keyfeatures;
-product.application = application ?? product.application;
-product.whychoose = whychoose ?? product.whychoose;
-product.videoLinks = (videoLinks && videoLinks.length) ? videoLinks : product.videoLinks;
-product.specifications = (specifications && specifications.length) ? specifications : product.specifications;
+        product.category = category ?? product.category;
+        product.oldPrice = oldPrice ?? product.oldPrice;
+        product.realPrice = realPrice ?? product.realPrice;
+        product.shortDescription = shortDescription ?? product.shortDescription;
+        product.longDescription = longDescription ?? product.longDescription;
+        product.keyfeatures = keyfeatures ?? product.keyfeatures;
+        product.application = application ?? product.application;
+        product.whychoose = whychoose ?? product.whychoose;
+        product.videoLinks = (videoLinks && videoLinks.length) ? videoLinks : product.videoLinks;
+        product.specifications = (specifications && specifications.length) ? specifications : product.specifications;
 
         // UPDATE METADATA VALUES:
         if (metaTitleInput !== null && metaTitleInput !== undefined) {
