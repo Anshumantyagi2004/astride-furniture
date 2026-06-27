@@ -116,6 +116,9 @@ export default function ProductPageHome() {
   const searchParams = useSearchParams();
   const catParam = searchParams ? searchParams.get('category') : null;
   const searchParam = searchParams ? searchParams.get('search') : null;
+  
+  // Decode URL category immediately (no waiting)
+  const urlCategory = catParam ? decodeURIComponent(catParam) : null;
 
   // Helper to find a matching tab for a category param
   function findTabMatch(decoded, tabList) {
@@ -126,15 +129,10 @@ export default function ProductPageHome() {
     return match || null;
   }
 
-  // Apply URL category param whenever catParam or searchParam changes
+  // Set category IMMEDIATELY from URL (instant - no waiting for API)
   useEffect(() => {
-    if (catParam) {
-      const decoded = decodeURIComponent(catParam);
-      const match = findTabMatch(decoded, tabs);
-      if (match) {
-        setSelectedCategory(match);
-      }
-      // If no match yet (tabs not loaded), selectedCategory stays until tabs effect below runs
+    if (urlCategory) {
+      setSelectedCategory(urlCategory);
     } else {
       setSelectedCategory("All Products");
     }
@@ -143,18 +141,18 @@ export default function ProductPageHome() {
     } else {
       setSearchQuery("");
     }
-  }, [catParam, searchParam]);
+  }, [urlCategory, searchParam]);
 
-  // Re-apply URL category param once tabs are populated (handles initial page load timing)
+  // Verify and correct category match once tabs populate from API
   useEffect(() => {
-    if (tabs.length > 1 && catParam) {
-      const decoded = decodeURIComponent(catParam);
-      const match = findTabMatch(decoded, tabs);
-      if (match) {
+    if (tabs.length > 1 && urlCategory) {
+      const match = findTabMatch(urlCategory, tabs);
+      if (match && match !== urlCategory) {
+        // Only update if the API found an exact match that's different from URL
         setSelectedCategory(match);
       }
     }
-  }, [tabs]);
+  }, [tabs, urlCategory]);
 
   // Reset specific filters when category changes to avoid empty result sets
   useEffect(() => {
