@@ -93,22 +93,14 @@ export async function GET() {
             return NextResponse.json(categoryCache, { status: 200 });
         }
 
-        let data;
-        // Proxy production API when running locally to bypass DB connection issues
-        if (process.env.NODE_ENV === "development") {
-            const productionUrl = process.env.PRODUCTION_URL || "https://astride-furniture.vercel.app";
-            const response = await fetch(`${productionUrl}/api/category`, { cache: "no-store" });
-            data = await response.json();
-        } else {
-            await connectDB();
-            const categories = await Category.find().sort({ createdAt: -1 });
+        await connectDB();
+        const categories = await Category.find().sort({ createdAt: -1 });
 
-            data = {
-                success: true,
-                count: categories.length,
-                categories,
-            };
-        }
+        const data = {
+            success: true,
+            count: categories.length,
+            categories,
+        };
 
         categoryCache = data;
         categoryCacheTime = now;

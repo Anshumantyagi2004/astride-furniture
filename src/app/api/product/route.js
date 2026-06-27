@@ -171,24 +171,17 @@ export async function GET() {
         }
 
         let data;
-        // Proxy production API when running locally to bypass DB connection issues
-        if (process.env.NODE_ENV === "development") {
-            const productionUrl = process.env.PRODUCTION_URL || "https://astride-furniture.vercel.app";
-            const response = await fetch(`${productionUrl}/api/product`, { cache: "no-store" });
-            data = await response.json();
-        } else {
-            await connectDB();
-            const products = await Product.find(
-                {}, 
-                "productName slug category oldPrice realPrice backSupport height hours colors rating capacity colorVariants metaTitle metaDescription"
-            ).populate("category").sort({ createdAt: -1 });
+        await connectDB();
+        const products = await Product.find(
+            {}, 
+            "productName slug category oldPrice realPrice backSupport height hours colors rating capacity colorVariants metaTitle metaDescription"
+        ).populate("category").sort({ createdAt: -1 });
 
-            data = {
-                success: true,
-                count: products.length,
-                products,
-            };
-        }
+        data = {
+            success: true,
+            count: products.length,
+            products,
+        };
 
         global.productCache = data;
         global.productCacheTime = now;
