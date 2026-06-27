@@ -196,7 +196,8 @@ export default function BestSellerSection() {
         async function fetchProducts() {
             try {
                 setLoading(true);
-                const res = await fetch("/api/product");
+                // Add cache busting timestamp to always fetch fresh data
+                const res = await fetch(`/api/product?t=${Date.now()}`);
                 const data = await res.json();
                 if (data.success && data.products && data.products.length > 0) {
                     const mappedProducts = data.products.map((prod) => {
@@ -259,6 +260,11 @@ export default function BestSellerSection() {
             }
         }
         fetchProducts();
+        
+        // Auto-refresh every 10 seconds to catch product changes
+        const interval = setInterval(fetchProducts, 10000);
+        
+        return () => clearInterval(interval);
     }, []);
 
     return (
