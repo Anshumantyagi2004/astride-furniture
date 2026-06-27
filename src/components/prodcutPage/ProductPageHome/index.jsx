@@ -117,16 +117,24 @@ export default function ProductPageHome() {
   const catParam = searchParams ? searchParams.get('category') : null;
   const searchParam = searchParams ? searchParams.get('search') : null;
 
+  // Helper to find a matching tab for a category param
+  function findTabMatch(decoded, tabList) {
+    let match = tabList.find(t => t.toLowerCase() === decoded.toLowerCase());
+    if (!match && (decoded.toLowerCase().includes('bar') || decoded.toLowerCase().includes('stool') || decoded.toLowerCase().includes('cafe'))) {
+      match = tabList.find(t => t.toLowerCase().includes('bar')) || "Bar Stools & Cafe Chair";
+    }
+    return match || null;
+  }
+
+  // Apply URL category param whenever catParam or searchParam changes
   useEffect(() => {
     if (catParam) {
       const decoded = decodeURIComponent(catParam);
-      let match = tabs.find(t => t.toLowerCase() === decoded.toLowerCase());
-      if (!match && (decoded.toLowerCase().includes('bar') || decoded.toLowerCase().includes('stool') || decoded.toLowerCase().includes('cafe'))) {
-         match = "Bar Stools & Cafe Chair";
-      }
+      const match = findTabMatch(decoded, tabs);
       if (match) {
         setSelectedCategory(match);
       }
+      // If no match yet (tabs not loaded), selectedCategory stays until tabs effect below runs
     } else {
       setSelectedCategory("All Products");
     }
@@ -136,6 +144,17 @@ export default function ProductPageHome() {
       setSearchQuery("");
     }
   }, [catParam, searchParam]);
+
+  // Re-apply URL category param once tabs are populated (handles initial page load timing)
+  useEffect(() => {
+    if (tabs.length > 1 && catParam) {
+      const decoded = decodeURIComponent(catParam);
+      const match = findTabMatch(decoded, tabs);
+      if (match) {
+        setSelectedCategory(match);
+      }
+    }
+  }, [tabs]);
 
   // Reset specific filters when category changes to avoid empty result sets
   useEffect(() => {
