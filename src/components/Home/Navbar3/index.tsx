@@ -187,8 +187,30 @@ export default function Navbar3() {
             }
         };
         fetchData();
-        return () => { isMounted = false; };
+        
+        // Auto-refresh every 10 seconds to catch new categories
+        const interval = setInterval(fetchData, 10000);
+        
+        return () => { 
+            isMounted = false;
+            clearInterval(interval);
+        };
     }, []);
+
+    // 2. Memoized Dynamic Navigation Items (Uses categories from state)
+    const navItems = useMemo(() => {
+        if (categories.length > 0) {
+            return categories.map((cat: any) => cat.name);
+        }
+        // Fallback to hardcoded items if categories not loaded
+        return [
+            "Staff Chair",
+            "Office Chair",
+            "Gaming Chair",
+            "Study Chair",
+            "Bar Stools & Cafe Chair",
+        ];
+    }, [categories]);
 
     // 3. Memoized Dynamic Mega Dropdown Chairs (Reduces heavy computations on hover)
     const displayChairs = useMemo<SeriesChair[]>(() => {
@@ -309,7 +331,7 @@ export default function Navbar3() {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
-                        {NAV_ITEMS.map((item) => (
+                        {navItems.map((item) => (
                             <Link
                                 key={item}
                                 href={`/products?category=${encodeURIComponent(item)}`}
@@ -451,7 +473,7 @@ export default function Navbar3() {
                     {/* Mobile Navigation */}
                     {isOpen && (
                         <nav className="absolute left-0 right-0 top-full flex flex-col gap-4 border-b-2 border-slate-900 bg-white px-5 py-5 lg:hidden">
-                            {NAV_ITEMS.map((item) => (
+                            {navItems.map((item) => (
                                 <Link
                                     key={item}
                                     href={`/products?category=${encodeURIComponent(item)}`}

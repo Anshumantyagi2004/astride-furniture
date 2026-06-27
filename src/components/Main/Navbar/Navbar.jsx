@@ -251,8 +251,12 @@ export default function Navbar() {
       }
     };
     fetchData();
+    
+    // Auto-refresh every 10 seconds to catch new categories
+    const interval = setInterval(fetchData, 10000);
 
     return () => {
+      clearInterval(interval);
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('add-to-cart', handleStorageChange);
       window.removeEventListener('astride_cart_updated', handleStorageChange);

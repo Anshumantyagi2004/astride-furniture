@@ -100,10 +100,9 @@ const PRODUCTS = [
   },
 ];
 
-const TABS = ["All Products", "Gaming Chair", "Office Chair", "Staff Chair", "Study Chair", "Bar Stools & Cafe Chair"];
-
 export default function ProductPageHome() {
   const [productsList, setProductsList] = useState([]);
+  const [tabs, setTabs] = useState(["All Products"]); // Start with just "All Products"
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All Products");
   const [selectedBackSupport, setSelectedBackSupport] = useState(null);
@@ -120,7 +119,7 @@ export default function ProductPageHome() {
   useEffect(() => {
     if (catParam) {
       const decoded = decodeURIComponent(catParam);
-      let match = TABS.find(t => t.toLowerCase() === decoded.toLowerCase());
+      let match = tabs.find(t => t.toLowerCase() === decoded.toLowerCase());
       if (!match && (decoded.toLowerCase().includes('bar') || decoded.toLowerCase().includes('stool') || decoded.toLowerCase().includes('cafe'))) {
          match = "Bar Stools & Cafe Chair";
       }
@@ -135,7 +134,7 @@ export default function ProductPageHome() {
     } else {
       setSearchQuery("");
     }
-  }, [catParam, searchParam]);
+  }, [catParam, searchParam, tabs]);
 
   // Reset specific filters when category changes to avoid empty result sets
   useEffect(() => {
@@ -148,6 +147,30 @@ export default function ProductPageHome() {
   useEffect(() => {
     setMaxPrice(25000);
   }, [selectedCategory]);
+
+  // Fetch categories dynamically from API
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        // Fetch with cache busting timestamp
+        const res = await fetch(`/api/category?t=${Date.now()}`);
+        const data = await res.json();
+        if (data.success && data.categories && data.categories.length > 0) {
+          // Build tabs: "All Products" + category names
+          const categoryNames = data.categories.map((cat) => cat.name);
+          const newTabs = ["All Products", ...categoryNames];
+          setTabs(newTabs);
+        }
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    }
+    fetchCategories();
+    
+    // Refetch every 10 seconds to catch new categories
+    const interval = setInterval(fetchCategories, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem("astride_wishlist");
@@ -246,7 +269,8 @@ export default function ProductPageHome() {
 
       // 2. Fetch fresh data in the background
       try {
-        const res = await fetch("/api/product");
+        // Add cache busting with timestamp
+        const res = await fetch(`/api/product?t=${Date.now()}`);
         const data = await res.json();
         if (data.success && data.products && data.products.length > 0) {
           const mappedProducts = data.products.map((prod) => {
@@ -389,7 +413,7 @@ export default function ProductPageHome() {
         {/* Title */}
         <div className="text-center mb-6 md:mb-12">
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-black mb-3 md:mb-5">
-            {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory === "Gaming Chair" ? "Gaming Series" : selectedCategory === "Office Chair" ? "Office Series" : selectedCategory === "Staff Chair" ? "Staff Series" : selectedCategory === "Study Chair" ? "Study Series" : "Premium Bar Stools & Cafe Chairs"}
+            {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory + " Series"}
           </h1>
           <p className="max-w-2xl mx-auto text-xs md:text-base text-neutral-500 leading-relaxed font-medium px-2">
             Discover Astride's premium ergonomics — masterfully engineered seating built for long-session endurance, proactive posture correction, and premium styling.
@@ -410,7 +434,7 @@ export default function ProductPageHome() {
           </div>
 
           <div className="flex items-center gap-2 md:gap-3 overflow-x-auto pb-2 md:flex-wrap md:justify-center md:overflow-visible scrollbar-hide relative z-0" style={{ scrollbarWidth: 'none' }}>
-            {TABS.map((tab) => {
+            {tabs.map((tab) => {
               const isActive = selectedCategory === tab;
               return (
                 <button
