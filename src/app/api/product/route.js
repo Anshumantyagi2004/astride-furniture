@@ -161,7 +161,7 @@ export async function POST(req) {
 // Global in-memory cache for product GET requests (development & production)
 global.productCache = global.productCache || null;
 global.productCacheTime = global.productCacheTime || 0;
-const CACHE_TTL = 300000; // 5 minutes
+const CACHE_TTL = 60000; // 1 minute (reduced from 5 minutes for faster updates)
 
 export async function GET() {
     try {

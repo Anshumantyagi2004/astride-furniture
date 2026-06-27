@@ -103,7 +103,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
 
       // 2. Fetch single product data from database
       try {
-        const res = await fetch(`/api/product/${productId}`);
+        const res = await fetch(`/api/product/${productId}?t=${Date.now()}`);
         const data = await res.json();
         
         if (data.success && data.product) {
