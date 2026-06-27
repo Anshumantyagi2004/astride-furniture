@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 import { 
   User, 
   ShoppingBag, 
@@ -33,22 +34,39 @@ interface UserProfile {
 }
 
 interface OrderItem {
-  id: string | number;
-  name: string;
-  price: number;
+  productId: string;
+  productName: string;
   image: string;
-  quantity: number;
-  productId?: string;
   color?: string;
+  quantity: number;
+  price: number;
 }
 
 interface Order {
-  id: string;
-  date: string;
-  total: number;
+  _id: string;
+  userId: string;
+  shippingInfo: {
+    fullName: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    pinCode: string;
+  };
+  products: OrderItem[];
+  pricing: {
+    subtotal: number;
+    shippingCharge: number;
+    total: number;
+  };
+  paymentMethod: "COD" | "Razorpay";
+  paymentStatus: "Pending" | "Paid" | "Failed";
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
   status: string;
-  paymentMethod?: string;
-  items: OrderItem[];
+  createdAt: string;
 }
 
 interface WishlistItem {
@@ -67,46 +85,6 @@ const DEFAULT_PROFILE: UserProfile = {
   phone: "",
   avatar: "avatar_placeholder",
 };
-
-const MOCK_ORDERS: Order[] = [
-  {
-    id: "AST-2026-9938",
-    date: "May 28, 2026",
-    total: 14999,
-    status: "Delivered",
-    items: [
-      {
-        id: 1,
-        name: "Astride Assassin Pro",
-        price: 14999,
-        image: "/Png1/chair12_ErgoFit.webp",
-        quantity: 1
-      }
-    ]
-  },
-  {
-    id: "AST-2026-8841",
-    date: "April 15, 2026",
-    total: 34498,
-    status: "Delivered",
-    items: [
-      {
-        id: 2,
-        name: "Astride Monster T-Series",
-        price: 16499,
-        image: "/Png1/Chair7_Delton.webp",
-        quantity: 1
-      },
-      {
-        id: 3,
-        name: "Astride Vision Elite",
-        price: 17999,
-        image: "/Png1/chair4_ACE.webp",
-        quantity: 1
-      }
-    ]
-  }
-];
 
 const MOCK_WISHLIST: WishlistItem[] = [
   {
@@ -132,10 +110,14 @@ const MOCK_WISHLIST: WishlistItem[] = [
 export default function AccountPage({ activeTab }: AccountPageProps) {
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("astride_profile");
+    const handleLogout = async () => {
+    try {
+      await axios.post("/api/auth/logout");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+    sessionStorage.removeItem("auth_token");
+    localStorage.removeItem("astride_wishlist");
     router.push("/login");
   };
   
@@ -147,84 +129,47 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const fetchMyOrders = async (userId: string) => {
-    try {
-      const response = await fetch("/api/my-orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        const mappedOrders = (data.orders || []).map((o: any) => ({
-          id: o._id,
-          date: new Date(o.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }),
-          total: o.pricing?.total || 0,
-          status: o.status || o.orderStatus || "Pending",
-          paymentMethod: o.paymentMethod || "COD",
-          items: (o.products || []).map((p: any) => ({
-            id: p._id || p.productId,
-            name: p.productName,
-            price: p.price,
-            image: p.image,
-            quantity: p.quantity,
-            productId: p.productId,
-            color: p.color,
-          })),
-        }));
-        setOrders(mappedOrders);
-      }
-    } catch (error) {
-      console.error("Failed to fetch orders:", error);
-    }
-  };
-
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      router.push("/login");
-      return;
-    }
-    const storedProfile = localStorage.getItem("astride_profile");
-    
-    try {
-      const parsedUser = JSON.parse(storedUser);
-      if (parsedUser && parsedUser.id) {
-        fetchMyOrders(parsedUser.id);
-      } else {
+    const fetchUserProfile = async () => {
+      try {
+        const token = sessionStorage.getItem("auth_token");
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+        const { data } = await axios.get("/api/user/profile", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (data.success) {
+          setProfile(data.user);
+          setEditForm(data.user);
+        } else {
+          router.push("/login");
+        }
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+        sessionStorage.removeItem("auth_token");
         router.push("/login");
-        return;
       }
-    } catch (e) {
-      console.error(e);
-      router.push("/login");
-      return;
-    }
+    };
 
-    if (storedProfile) {
+    const fetchUserOrders = async () => {
       try {
-        const parsed = JSON.parse(storedProfile);
-        setProfile(parsed);
-        setEditForm(parsed);
-      } catch (e) {
-        console.error(e);
+        const token = sessionStorage.getItem("auth_token");
+        if (!token) return;
+        const { data } = await axios.get("/api/my-orders", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (data.success) {
+          setOrders(data.orders);
+        }
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
       }
-    } else if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        const newProfile: UserProfile = {
-          ...DEFAULT_PROFILE,
-          name: parsedUser.name || DEFAULT_PROFILE.name,
-          email: parsedUser.email || DEFAULT_PROFILE.email,
-          phone: parsedUser.phone || DEFAULT_PROFILE.phone,
-        };
-        setProfile(newProfile);
-        setEditForm(newProfile);
-        localStorage.setItem("astride_profile", JSON.stringify(newProfile));
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    };
+
+    fetchUserProfile();
+    fetchUserOrders();
 
     const savedWishlist = localStorage.getItem("astride_wishlist");
     if (savedWishlist) {
@@ -252,25 +197,27 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
     }));
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+    const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    setProfile(editForm);
-    localStorage.setItem("astride_profile", JSON.stringify(editForm));
-    
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        parsedUser.name = editForm.name;
-        localStorage.setItem("user", JSON.stringify(parsedUser));
-      } catch (e) {
-        console.error(e);
+    try {
+      const token = sessionStorage.getItem("auth_token");
+      if (!token) {
+        router.push("/login");
+        return;
       }
+      const { data } = await axios.put("/api/user/profile", editForm, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (data.success) {
+        setProfile(editForm);
+        setIsEditing(false);
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      }
+    } catch (error) {
+      console.error("Failed to save profile:", error);
+      setSaveSuccess(false);
     }
-
-    setIsEditing(false);
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
   };
 
   const handleMoveToCart = (item: WishlistItem) => {
@@ -512,18 +459,18 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                   ) : (
                     <div className="space-y-6">
                       {orders.map((order) => (
-                        <div key={order.id} className="border border-slate-200/80 rounded-2xl overflow-hidden bg-slate-50/10 hover:border-slate-300 transition-all">
+                        <div key={order._id} className="border border-slate-200/80 rounded-2xl overflow-hidden bg-slate-50/10 hover:border-slate-300 transition-all">
                           
                           {/* Order Card Header */}
                           <div className="bg-slate-50/80 px-5 md:px-6 py-5 border-b border-slate-200/60 flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4">
                             <div className="flex w-full md:w-auto items-center gap-8 md:gap-8">
                               <div className="flex-1 md:flex-none">
                                 <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Date</p>
-                                <p className="text-sm md:text-base font-bold text-slate-800">{order.date}</p>
+                                <p className="text-sm md:text-base font-bold text-slate-800">{new Date(order.createdAt).toLocaleDateString('en-IN')}</p>
                               </div>
                               <div className="flex-1 md:flex-none">
                                 <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Total</p>
-                                <p className="text-sm md:text-base font-black text-slate-800 font-extrabold">₹{order.total.toLocaleString()}</p>
+                                <p className="text-sm md:text-base font-black text-slate-800 font-extrabold">₹{(order.pricing?.total || 0).toLocaleString()}</p>
                               </div>
                               <div className="flex-1 md:flex-none">
                                 <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Method</p>
@@ -538,7 +485,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                             </div>
                             <div className="w-full md:w-auto text-left md:text-right mt-2 md:mt-0">
                               <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1 md:text-right">Order ID</p>
-                              <p className="text-sm md:text-base font-mono font-bold text-slate-800 md:text-right break-all">{order.id}</p>
+                              <p className="text-sm md:text-base font-mono font-bold text-slate-800 md:text-right break-all">{order._id}</p>
                             </div>
                           </div>
 
@@ -546,51 +493,51 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                           <div className="p-5 md:p-6 flex flex-col xl:flex-row justify-between items-start gap-8">
                             
                             <div className="space-y-4 flex-1 w-full">
-                              {order.items.map((item) => (
+                              {order.products.map((item, idx) => (
                                 <div
-                                  key={item.id}
+                                  key={idx}
                                   className="flex flex-row items-center gap-4 rounded-2xl p-4 bg-white/60 border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all"
                                 >
                                   {/* Image — compact, left side */}
                                   <Link
-                                    href={`/products/${item.productId || item.id}`}
+                                    href={`/products/${item.productId}`}
                                     className="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden bg-white border border-slate-200 shrink-0 group"
                                   >
                                     <Image
                                       src={item.image || "/logo.webp"}
-                                      alt={item.name || "Product Image"}
+                                      alt={item.productName || "Product Image"}
                                       fill
                                       className="object-contain p-2 mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
                                     />
                                   </Link>
 
                                   {/* Details — right side */}
-                                  <div className="flex-1 min-w-0">
-                                    <Link href={`/products/${item.productId || item.id}`}>
-                                      <h4 className="text-[15px] md:text-lg font-bold text-slate-900 hover:text-black transition leading-snug truncate">
-                                        {item.name}
+                                  <div className="flex-1 min-w-0 flex flex-col gap-2">
+                                    <Link href={`/products/${item.productId}`}>
+                                      <h4 className="text-[15px] md:text-lg font-bold text-slate-900 hover:text-black transition line-clamp-2 break-words">
+                                        {item.productName}
                                       </h4>
                                     </Link>
 
                                     {item.color && (
-                                      <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] md:text-xs font-bold text-slate-600 mt-1.5">
+                                      <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] md:text-xs font-bold text-slate-600 w-fit">
                                         {item.color}
                                       </span>
                                     )}
 
                                     {/* Price / Qty / Total — 3 cols */}
-                                    <div className="mt-3 grid grid-cols-3 gap-2">
-                                      <div>
+                                    <div className="mt-2 grid grid-cols-3 gap-3 w-full">
+                                      <div className="min-w-0">
                                         <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Price</p>
-                                        <p className="text-[13px] font-bold text-slate-900">₹{(item.price ?? 0).toLocaleString()}</p>
+                                        <p className="text-[13px] font-bold text-slate-900 truncate">₹{(item.price ?? 0).toLocaleString()}</p>
                                       </div>
-                                      <div>
+                                      <div className="min-w-0">
                                         <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Qty</p>
                                         <p className="text-[13px] font-bold text-slate-900">{item.quantity}</p>
                                       </div>
-                                      <div>
+                                      <div className="min-w-0">
                                         <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Total</p>
-                                        <p className="text-[13px] font-bold text-slate-500">₹{((item.price ?? 0) * (item.quantity ?? 0)).toLocaleString()}</p>
+                                        <p className="text-[13px] font-bold text-slate-500 truncate">₹{((item.price ?? 0) * (item.quantity ?? 0)).toLocaleString()}</p>
                                       </div>
                                     </div>
                                   </div>
@@ -664,11 +611,11 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                               <div className="flex flex-row md:flex-col items-stretch justify-end gap-3 w-full mt-2">
                                 <button
                                   onClick={() => {
-                                    order.items.forEach(item => {
+                                    order.products.forEach(item => {
                                       const cartEvent = new CustomEvent("add-to-cart", {
                                         detail: {
-                                          id: item.id,
-                                          name: item.name,
+                                          id: item.productId,
+                                          name: item.productName,
                                           price: item.price,
                                           image: item.image,
                                           quantity: item.quantity

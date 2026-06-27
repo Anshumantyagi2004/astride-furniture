@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/user/User";
+import { verifyAdmin } from "@/lib/verifyAdmin";
 
 export async function GET() {
   try {
@@ -29,10 +30,18 @@ export async function GET() {
 }
 
 export async function DELETE(req: Request) {
-  try {
+    try {
+    if (!verifyAdmin(req as any)) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
+ 
 
     if (!id) {
       return NextResponse.json(

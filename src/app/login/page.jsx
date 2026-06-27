@@ -47,8 +47,8 @@ export default function Page() {
       if (data.success) {
         setMessage({ type: "success", text: data.message });
         if (isLogin) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
+          // Store JWT token in sessionStorage (cleared when tab closes)
+          sessionStorage.setItem("auth_token", data.token);
           setTimeout(() => {
             router.push("/account");
           }, 1000);

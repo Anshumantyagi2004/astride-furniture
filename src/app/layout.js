@@ -19,6 +19,10 @@ const sans = Plus_Jakarta_Sans({
 export const metadata = {
   title: "Astrides",
   description: "Astrides",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 export const viewport = {

@@ -6,9 +6,17 @@ import connectDB from "@/config/connectDB";
 import Category from "@/models/Category";
 import { uploadToR2 } from "@/utils/uploadToR2";
 import { generateSlug } from "@/utils/generateSlug";
+import { verifyAdmin } from "@/lib/verifyAdmin";
 
 export async function POST(req) {
     try {
+        if (!verifyAdmin(req)) {
+            return NextResponse.json(
+                { success: false, message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
         await connectDB();
         const formData = await req.formData();
         const name = formData.get("name");
@@ -57,6 +65,8 @@ export async function POST(req) {
             metaTitle,
             metaDescription,
         });
+
+        categoryCache = null; // Clear cache after creating a new category
 
         return NextResponse.json(
             { success: true, message: "Category created successfully", category, },
@@ -113,7 +123,14 @@ export async function GET() {
 }
 
 export async function DELETE(req) {
-    try {
+   try {
+        if (!verifyAdmin(req)) {
+            return NextResponse.json(
+                { success: false, message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
         await connectDB();
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id");
@@ -133,6 +150,7 @@ export async function DELETE(req) {
             );
         }
 
+        categoryCache = null; // Clear cache after deleting a category
         return NextResponse.json(
             { success: true, message: "Category deleted successfully" },
             { status: 200 }
@@ -148,6 +166,13 @@ export async function DELETE(req) {
 
 export async function PUT(req) {
     try {
+        if (!verifyAdmin(req)) {
+            return NextResponse.json(
+                { success: false, message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
         await connectDB();
         const formData = await req.formData();
         const id = formData.get("id");
@@ -206,6 +231,8 @@ export async function PUT(req) {
         }
 
         await category.save();
+
+        categoryCache = null;
 
         return NextResponse.json(
             { success: true, message: "Category updated successfully", category },

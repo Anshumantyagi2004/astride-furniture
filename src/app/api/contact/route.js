@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
 import Contact from "@/models/contact/Contact";
+import { verifyAdmin } from "@/lib/verifyAdmin";
 
 // 1. Submit a Contact Form (POST)
 export async function POST(req) {
@@ -60,6 +61,13 @@ export async function GET() {
 // 3. Update status (PUT)
 export async function PUT(req) {
   try {
+    if (!verifyAdmin(req)) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
@@ -87,6 +95,13 @@ export async function PUT(req) {
 // 4. Delete message (DELETE)
 export async function DELETE(req) {
   try {
+    if (!verifyAdmin(req)) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
