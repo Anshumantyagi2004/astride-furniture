@@ -17,6 +17,7 @@ const chairData = [
         hoverImage: "/Png/img1 (2).png", 
         name: "Ergonomic Comfort", 
         subtitle: "ErgoFit",
+        productId: "6a27a9016149f2acd03556be",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
@@ -25,6 +26,7 @@ const chairData = [
         hoverImage: "/Png1/chair12_ErgoFit12a.png", 
         name: "ErgoFit Premium", 
         subtitle: "Ergonomic White",
+        productId: "6a27a9016149f2acd03556be",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
@@ -33,6 +35,7 @@ const chairData = [
         hoverImage: "/Png1/chair10_FitWell10a.png", 
         name: "Ergonomic Comfort", 
         subtitle: "FlexPro",
+        productId: "6a22790f4299b73c074f7e50",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
@@ -41,6 +44,7 @@ const chairData = [
         hoverImage: "/Png1/chair9_FitWell9a.png", 
         name: "FitWell Basic", 
         subtitle: "FitWell Ergonomic",
+        productId: "6a2269068d4f1a8c812a9e92",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
@@ -49,6 +53,7 @@ const chairData = [
         hoverImage: "/Png1/chair11_octave11a.png", 
         name: "Studio", 
         subtitle: "Octave",
+        productId: "6a225caabb685c5865ef3f59",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
@@ -57,30 +62,10 @@ const chairData = [
 function ChairCard({ chair, index, products }) {
     const [isHovered, setIsHovered] = useState(false);
 
-    let targetUrl = "/products";
-    const match = products.find(p => 
-        p.productName.toLowerCase() === chair.subtitle.toLowerCase() ||
-        p.productName.toLowerCase().includes(chair.subtitle.toLowerCase()) ||
-        (chair.subtitle === "ErgoFit" && p.slug === "chair12-ergofit") ||
-        (chair.subtitle === "Ergonomic White" && p.slug === "chair12-ergofit") ||
-        (chair.subtitle === "FlexPro" && p.slug === "chair10-fitwell") ||
-        (chair.subtitle === "FitWell Ergonomic" && p.slug === "chair9-fitwell") ||
-        (chair.subtitle === "Octave" && p.slug === "chair11-octave")
-    );
-    
-    if (match) {
-        targetUrl = `/products/${match.slug || match._id}`;
-    } else {
-        if (chair.subtitle === "ErgoFit" || chair.subtitle === "Ergonomic White") {
-            targetUrl = "/products/chair12-ergofit";
-        } else if (chair.subtitle === "FlexPro") {
-            targetUrl = "/products/chair10-fitwell";
-        } else if (chair.subtitle === "FitWell Ergonomic") {
-            targetUrl = "/products/chair9-fitwell";
-        } else if (chair.subtitle === "Octave") {
-            targetUrl = "/products/chair11-octave";
-        }
-    }
+    // Find product by ID (mapped in chairData) and use its slug for URL
+    // This way, navigation works even if slug changes
+    const product = products.find(p => p._id === chair.productId);
+    const targetUrl = product ? `/products/${product.slug}` : `/products`;
 
     return (
         <Link
