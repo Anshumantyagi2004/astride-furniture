@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination } from 'swiper/modules'; // Switched Navigation to Pagination
+import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
-import 'swiper/css/pagination'; // Imported pagination CSS
+import 'swiper/css/pagination';
 
 const sans = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -21,14 +21,13 @@ interface BentoCategory {
   title: string;
   subtitle: string;
   image: string;
-  colSpan: string; 
-  imageClass: string; 
+  colSpan: string;
+  imageClass: string;
   href: string;
-  translate?: string; 
+  translate?: string;
 }
 
-// Default fallback categories
-const DEFAULT_CATEGORIES: BentoCategory[] = [
+const CATEGORIES: BentoCategory[] = [
   {
     id: 1,
     title: 'Gaming Chair',
@@ -72,74 +71,6 @@ const DEFAULT_CATEGORIES: BentoCategory[] = [
 ];
 
 export default function BentoCategories() {
-  const [categories, setCategories] = useState<BentoCategory[]>(DEFAULT_CATEGORIES);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        // Fetch with cache busting timestamp
-        const res = await fetch(`/api/category?t=${Date.now()}`);
-        const data = await res.json();
-        
-        if (data.success && data.categories && data.categories.length > 0) {
-          // Map API categories to BentoCategory format
-          const mappedCategories = data.categories.map((cat: any, index: number) => {
-            // Determine layout and positioning based on index
-            const layouts = [
-              {
-                colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
-                imageClass: 'absolute right-2 bottom-0 w-[45%] md:w-[32%] h-[75%] md:h-[80%] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-                translate: '-translate-y-2 md:-translate-y-3'
-              },
-              {
-                colSpan: 'lg:col-span-4 md:col-span-5 col-span-12',
-                imageClass: 'absolute right-2 bottom-0 w-[42%] md:w-[35%] h-[75%] md:h-[80%] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-                translate: '-translate-y-4 md:-translate-y-9'
-              },
-              {
-                colSpan: 'lg:col-span-4 md:col-span-5 col-span-12',
-                imageClass: 'absolute right-2 bottom-0 w-[55%] md:w-[52%] h-[95%] md:h-[110%] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-                translate: ''
-              },
-              {
-                colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
-                imageClass: 'absolute right-2 bottom-0 w-[48%] md:w-[40%] h-[85%] md:h-[95%] transform group-hover:scale-105 transition-transform duration-500 ease-out',
-                translate: ''
-              }
-            ];
-            
-            const layout = layouts[index % layouts.length];
-            const categoryImage = cat.categoryImage || DEFAULT_CATEGORIES[index % DEFAULT_CATEGORIES.length].image;
-            
-            return {
-              id: cat._id || index + 1,
-              title: cat.name,
-              subtitle: cat.description || 'Explore our premium collection.',
-              image: categoryImage,
-              ...layout,
-              href: `/products?category=${encodeURIComponent(cat.name)}`
-            };
-          });
-          
-          setCategories(mappedCategories);
-        } else {
-          setCategories(DEFAULT_CATEGORIES);
-        }
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-        setCategories(DEFAULT_CATEGORIES);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchCategories();
-    
-    // Refetch every 10 seconds for new categories
-    const interval = setInterval(fetchCategories, 10000);
-    return () => clearInterval(interval);
-  }, []);
   return (
     <section 
       className={`w-full bg-[#FAFAFA] pt-6 pb-4 px-4 md:pt-8 md:pb-6 md:px-12 lg:px-20 overflow-hidden ${sans.className}`}
@@ -160,7 +91,7 @@ export default function BentoCategories() {
             pagination={{ clickable: true }} // Enabled the dots
             className="w-full h-full px-2 pb-12 !overflow-visible" // Added pb-12 for dot spacing
           >
-            {categories.map((category) => (
+            {CATEGORIES.map((category) => (
               <SwiperSlide key={category.id} className="h-auto">
                 <Link 
                   href={category.href}
@@ -204,7 +135,7 @@ export default function BentoCategories() {
 
         {/* DESKTOP VIEW: Standard Bento Grid */}
         <div className="hidden md:grid grid-cols-12 gap-[30px] w-full items-stretch">
-          {categories.map((category) => (
+          {CATEGORIES.map((category) => (
             <Link 
               href={category.href}
               key={category.id}
