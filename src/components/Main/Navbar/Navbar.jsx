@@ -236,7 +236,10 @@ export default function Navbar() {
   
   const getNormalizedCategoryName = (p) => {
     if (!p.category) return "";
-    const dbCategory = typeof p.category === 'object' && p.category.name ? p.category.name.toUpperCase() : "";
+    // Handle both object { name: "..." } and plain string category
+    const rawCat = typeof p.category === 'object' ? (p.category.name || "") : String(p.category);
+    const dbCategory = rawCat.toUpperCase();
+    if (!dbCategory) return "";
     if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) return "Gaming Chair";
     if (dbCategory.includes("EXECUTIVE")) return "Office Chair";
     if (dbCategory.includes("STAFF")) return "Staff Chair";
@@ -257,7 +260,10 @@ export default function Navbar() {
         })
         .map(p => ({
           name: p.productName || p.name || p.title,
-          image: p.colorVariants?.[0]?.images?.[0]?.url || '/placeholder.png',
+          image: p.colorVariants?.[0]?.images?.[0]?.url
+            || (typeof p.images?.[0] === 'string' ? p.images[0] : p.images?.[0]?.url)
+            || p.image
+            || '/placeholder.png',
           buyUrl: `/products/${p.slug || p._id}`,
           tag: p.whychoose || '',
         }));
