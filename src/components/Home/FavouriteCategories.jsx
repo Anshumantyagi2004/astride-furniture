@@ -169,7 +169,7 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
             <div className="hidden md:block absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
         </motion.div>
     );
-}););
+});
 FavouriteCard.displayName = "FavouriteCard";
 
 // ==========================================
