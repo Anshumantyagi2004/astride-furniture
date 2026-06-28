@@ -65,7 +65,7 @@ export default function WhyUs() {
                     initial={{ opacity: 0, y: 36 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "200px" }}
                     className="text-center max-w-3xl mx-auto mb-5"
                 >
                     <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#161316] leading-[1.08] tracking-tight font-sans lg:whitespace-nowrap">
@@ -123,7 +123,7 @@ export default function WhyUs() {
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.08 }}
-                            viewport={{ once: true }}
+                            viewport={{ once: true, margin: "200px" }}
                             whileHover={{ y: -8 }}
                             className="group relative rounded-[28px] border border-slate-200/70 bg-white p-8 flex flex-row items-center gap-4 md:block overflow-hidden transition-all duration-400 hover:border-slate-300 hover:shadow-[0_16px_48px_rgba(15,23,42,0.06)] cursor-default"
                         >

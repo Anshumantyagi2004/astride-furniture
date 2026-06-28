@@ -74,7 +74,7 @@ export default function ComparisonSection() {
                     <motion.div
                         initial={{ opacity: 0, y: 16 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
+                        viewport={{ once: true, margin: "200px" }}
                         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <span className="inline-block text-[10px] uppercase tracking-[0.22em] font-extrabold text-[#E25C37] mb-3 px-3.5 py-1 rounded-full border border-[#E25C37]/20 bg-[#E25C37]/[0.05]">
@@ -93,7 +93,7 @@ export default function ComparisonSection() {
                     <motion.div
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
+                        viewport={{ once: true, margin: "200px" }}
                         transition={{ delay: 0.2 }}
                         className="hidden sm:flex items-center gap-3 self-end sm:self-auto"
                     >
@@ -131,7 +131,7 @@ export default function ComparisonSection() {
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
+                                viewport={{ once: true, margin: "200px" }}
                                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                                 className="bg-white border border-[#E8E5E1] rounded-[28px] overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.05)]"
                             >

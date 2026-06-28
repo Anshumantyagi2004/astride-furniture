@@ -227,7 +227,7 @@ function SideCard({ video, onClick, index }) {
         <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
+            viewport={{ once: true, margin: "200px" }}
             transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ 
                 boxShadow: `0 0 25px 2px ${video.accentFrom}35, 0 12px 32px 0 rgba(0, 0, 0, 0.45), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2)`
@@ -326,7 +326,7 @@ export default function VideoTestimonials() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "200px" }}
                     transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     className="mb-8"
                 >
@@ -449,7 +449,7 @@ export default function VideoTestimonials() {
                         <motion.a
                             initial={{ opacity: 0, y: 15 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
+                            viewport={{ once: true, margin: "200px" }}
                             transition={{ duration: 0.5, delay: 0.4 }}
                             href="https://www.youtube.com/results?search_query=astride"
                             target="_blank"

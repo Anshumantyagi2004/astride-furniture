@@ -54,7 +54,7 @@ export default function BulkQueryForm() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "200px" }}
                     transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     className="text-center mb-12"
                 >
@@ -78,7 +78,7 @@ export default function BulkQueryForm() {
                 <motion.div
                     initial={{ opacity: 0, y: 32 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "200px" }}
                     transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                     className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-0 rounded-3xl overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.07),0_4px_20px_rgba(0,0,0,0.04)]"
                 >
@@ -121,7 +121,7 @@ export default function BulkQueryForm() {
                                                     key={id}
                                                     initial={{ opacity: 0, y: 16 }}
                                                     whileInView={{ opacity: 1, y: 0 }}
-                                                    viewport={{ once: true }}
+                                                    viewport={{ once: true, margin: "200px" }}
                                                     transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
                                                     className="flex flex-col gap-1.5"
                                                 >
@@ -197,7 +197,7 @@ export default function BulkQueryForm() {
                                             key={i}
                                             initial={{ opacity: 0, x: 16 }}
                                             whileInView={{ opacity: 1, x: 0 }}
-                                            viewport={{ once: true }}
+                                            viewport={{ once: true, margin: "200px" }}
                                             transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
                                             className="flex items-start gap-3"
                                         >
@@ -215,7 +215,7 @@ export default function BulkQueryForm() {
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     whileInView={{ opacity: 1, scale: 1 }}
-                                    viewport={{ once: true }}
+                                    viewport={{ once: true, margin: "200px" }}
                                     transition={{ duration: 0.5, delay: 0.6 }}
                                     className="flex-shrink-0 w-24 bg-white/5 rounded-xl p-2 border border-white/10 flex items-center justify-center"
                                 >
@@ -234,7 +234,7 @@ export default function BulkQueryForm() {
                         <motion.div
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
-                            viewport={{ once: true }}
+                            viewport={{ once: true, margin: "200px" }}
                             transition={{ duration: 0.6, delay: 0.5 }}
                             className="mt-10 pt-6 border-t border-white/[0.08]"
                         >

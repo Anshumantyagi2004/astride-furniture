@@ -34,7 +34,7 @@ export default function BrandAboutSection() {
                     ease: "power2.out",
                     scrollTrigger: {
                         trigger: containerRef.current,
-                        start: "top 80%",
+                        start: "top bottom",
                         toggleActions: "play none none reverse",
                     },
                 }
@@ -52,7 +52,7 @@ export default function BrandAboutSection() {
                     ease: "power2.out",
                     scrollTrigger: {
                         trigger: containerRef.current,
-                        start: "top 75%",
+                        start: "top bottom",
                         toggleActions: "play none none reverse",
                     },
                 }
@@ -71,7 +71,7 @@ export default function BrandAboutSection() {
                     ease: "power2.out",
                     scrollTrigger: {
                         trigger: containerRef.current,
-                        start: "top 70%",
+                        start: "top bottom",
                         toggleActions: "play none none reverse",
                     },
                 }

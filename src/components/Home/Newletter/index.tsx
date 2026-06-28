@@ -42,7 +42,7 @@ export default function Newletter() {
             opacity: 1,
             scale: [0.96, 1.04, 0.96]
           }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "200px" }}
           transition={{
             opacity: { duration: 0.6 },
             scale: {
@@ -66,7 +66,7 @@ export default function Newletter() {
           className="flex-1 flex flex-col justify-center text-center md:text-left"
           initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "200px" }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           <h2 className={`text-[clamp(1.5rem,3.2vw,36px)] md:text-[clamp(1.8rem,3.8vw,44px)] font-black uppercase leading-[1.05] tracking-tight text-[#131313] mb-[12px] max-w-[550px] ${sans.className}`}>
