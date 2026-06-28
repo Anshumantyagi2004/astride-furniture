@@ -12,6 +12,9 @@ import {
   CheckCircle,
   ArrowRight
 } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const MapSection = dynamic(() => import("./MapSection"), { ssr: false });
 
 interface ContactFormData {
   fullName: string;

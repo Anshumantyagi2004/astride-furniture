@@ -50,5 +50,5 @@ export default function MapSection() {
         />
       )}
     </div>
-  ) as React.ReactElement;
+  );
 }
