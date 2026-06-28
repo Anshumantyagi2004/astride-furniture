@@ -18,6 +18,7 @@ interface WishlistItem {
   originalPrice: number;
   discount: string;
   image: string;
+  slug?: string;
   rating: number;
 }
 
@@ -57,6 +58,7 @@ export default function WishlistPage() {
         name: item.name,
         price: item.price,
         image: item.image,
+        slug: item.slug,
         quantity: 1
       }
     });

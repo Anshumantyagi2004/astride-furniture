@@ -224,6 +224,7 @@ function BestsellerCard({ product }: { product: any }) {
                   price: product.rawPrice || 9999,
                   originalPrice: product.rawOriginalPrice || 12999,
                   image: product.image,
+                  slug: product.slug,
                   quantity: 1
                 } 
               }));

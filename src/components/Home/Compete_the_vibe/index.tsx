@@ -157,6 +157,7 @@ function VibeProductCard({ product }: { product: any }) {
                     name: product.name,
                     price: product.rawPrice,
                     image: product.image,
+                    slug: product.slug,
                     quantity: 1,
                   },
                 })
