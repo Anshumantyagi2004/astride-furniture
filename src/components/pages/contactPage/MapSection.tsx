@@ -3,8 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 export default function MapSection() {
-  const [loaded, setLoaded] = useState(false);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Use IntersectionObserver to lazy-load the iframe only when in view
   useEffect(() => {
@@ -50,5 +50,5 @@ export default function MapSection() {
         />
       )}
     </div>
-  );
+  ) as React.ReactElement;
 }
