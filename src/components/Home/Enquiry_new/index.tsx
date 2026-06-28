@@ -228,7 +228,7 @@ export default function Enquiry_New() {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "200px" }}
             variants={containerVariants}
           >
             <span

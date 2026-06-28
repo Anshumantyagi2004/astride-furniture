@@ -172,7 +172,7 @@ export default function Header5_New() {
         style={{ perspective: 1200 }}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: "200px" }}
         variants={containerVariants}
       >
         {/* Left Segment: Heading */}
