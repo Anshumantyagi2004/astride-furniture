@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Order from "@/models/order/Order";
+import Product from "@/models/Product";
 import jwt from "jsonwebtoken";
 
 export async function GET(req) {
@@ -36,9 +37,31 @@ export async function GET(req) {
       createdAt: -1,
     });
 
+    // Populate product slug from Product model for each order
+    const ordersWithSlugs = await Promise.all(
+      orders.map(async (order) => {
+        const orderObj = order.toObject();
+        
+        orderObj.products = await Promise.all(
+          orderObj.products.map(async (item) => {
+            if (item.slug) return item; // Already has slug
+            
+            try {
+              const product = await Product.findById(item.productId).select("slug");
+              return { ...item, slug: product?.slug || item.productId };
+            } catch {
+              return { ...item, slug: item.productId };
+            }
+          })
+        );
+        
+        return orderObj;
+      })
+    );
+
     return NextResponse.json({
       success: true,
-      orders,
+      orders: ordersWithSlugs,
     });
   } catch (error) {
     console.log(error);
@@ -68,9 +91,31 @@ export async function POST(req) {
       createdAt: -1,
     });
 
+    // Populate product slug from Product model for each order
+    const ordersWithSlugs = await Promise.all(
+      orders.map(async (order) => {
+        const orderObj = order.toObject();
+        
+        orderObj.products = await Promise.all(
+          orderObj.products.map(async (item) => {
+            if (item.slug) return item; // Already has slug
+            
+            try {
+              const product = await Product.findById(item.productId).select("slug");
+              return { ...item, slug: product?.slug || item.productId };
+            } catch {
+              return { ...item, slug: item.productId };
+            }
+          })
+        );
+        
+        return orderObj;
+      })
+    );
+
     return NextResponse.json({
       success: true,
-      orders,
+      orders: ordersWithSlugs,
     });
   } catch (error) {
     console.log(error);

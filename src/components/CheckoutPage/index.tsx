@@ -11,6 +11,7 @@ interface CartItem {
   name: string;
   price: number;
   image: string;
+  slug?: string;
   quantity: number;
   color?: string;
 }
@@ -219,6 +220,7 @@ export default function CheckoutPage() {
             productId,
             productName: item.name,
             image: item.image,
+            slug: item.slug,
             color: item.color ?? (rawIdStr.includes("-") ? rawIdStr.split("-").slice(1).join("-") : undefined),
             quantity: item.quantity,
             price: item.price,

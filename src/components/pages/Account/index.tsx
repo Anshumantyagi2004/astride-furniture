@@ -37,6 +37,7 @@ interface OrderItem {
   productId: string;
   productName: string;
   image: string;
+  slug: string;
   color?: string;
   quantity: number;
   price: number;
@@ -76,6 +77,7 @@ interface WishlistItem {
   originalPrice: number;
   discount: string;
   image: string;
+  slug?: string;
   rating: number;
 }
 
@@ -227,6 +229,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
         name: item.name,
         price: item.price,
         image: item.image,
+        slug: item.slug,
         quantity: 1
       }
     });
@@ -500,7 +503,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                 >
                                   {/* Image — compact, left side */}
                                   <Link
-                                    href={`/products/${item.productId}`}
+                                    href={`/products/${item.slug}`}
                                     className="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden bg-white border border-slate-200 shrink-0 group"
                                   >
                                     <Image
@@ -513,7 +516,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
 
                                   {/* Details — right side */}
                                   <div className="flex-1 min-w-0 flex flex-col gap-2">
-                                    <Link href={`/products/${item.productId}`}>
+                                    <Link href={`/products/${item.slug}`}>
                                       <h4 className="text-[15px] md:text-lg font-bold text-slate-900 hover:text-black transition line-clamp-2 break-words">
                                         {item.productName}
                                       </h4>

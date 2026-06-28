@@ -142,10 +142,11 @@ export default function DetailPageCard({ product }: { product: any }) {
   const handleAddToCartClick = () => {
     if (!product) return;
     const cartItem = {
-      id: `${product.id}-${selectedColor}`,
+      id: product.id,
       name: product.name,
       price: product.price,
       image: activeImage || product.image,
+      slug: product.slug,
       quantity: quantity,
       color: selectedColor
     };

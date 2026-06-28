@@ -44,6 +44,7 @@ const BestSellerCard = ({ product }) => {
       name: product.name,
       price: product.price,
       image: product.image,
+      slug: product.slug,
       quantity: 1
     };
     window.dispatchEvent(new CustomEvent('add-to-cart', { detail: cartItem }));
