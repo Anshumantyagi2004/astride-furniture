@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { X, Minus, Plus } from 'lucide-react';
-import gsap from 'gsap';
 
 interface CartItem {
   id: string | number;
@@ -21,219 +20,113 @@ export default function SideMenuAddToCart() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  // Don't render until after mount to prevent SSR flash
   const [isMounted, setIsMounted] = useState(false);
   const [isPending, startTransition] = useTransition();
-
-  // Refs for GSAP
-  const backdropRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
   const storageDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // ✅ Mobile detection - check after mount to avoid SSR issues
-  const [isMobile, setIsMobile] = useState(false);
-  
+  // Mount: set flag, load cart
   useEffect(() => {
-    // ✅ CRITICAL: Ensure cart is closed on mount
-    setIsOpen(false);
     setIsMounted(true);
-    setIsMobile(window.innerWidth < 768);
-    
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const savedCart = localStorage.getItem('astride_cart');
+    if (savedCart) {
+      try { setCartItems(JSON.parse(savedCart)); } catch {}
+    }
   }, []);
 
-  // Helper to sync to local storage & dispatch event (DEBOUNCED)
+  // Lock body scroll when open
+  useEffect(() => {
+    if (!isMounted) return;
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen, isMounted]);
+
+  // Debounced localStorage sync
   const syncCartState = useCallback((items: CartItem[]) => {
-    // Debounce localStorage writes to avoid blocking
-    if (storageDebounceRef.current) {
-      clearTimeout(storageDebounceRef.current);
-    }
-    
+    if (storageDebounceRef.current) clearTimeout(storageDebounceRef.current);
     storageDebounceRef.current = setTimeout(() => {
       localStorage.setItem('astride_cart', JSON.stringify(items));
       window.dispatchEvent(new Event('astride_cart_updated'));
-    }, 100); // Debounce 100ms
+    }, 100);
   }, []);
 
-  // Load cart from localStorage on mount
+  // Global cart events - only after mount
   useEffect(() => {
-    const savedCart = localStorage.getItem('astride_cart');
-    if (savedCart) {
-      try {
-        setCartItems(JSON.parse(savedCart));
-      } catch (e) {
-        console.error('Error parsing cart localStorage:', e);
-      }
-    }
-  }, []);
-
-  // Listen to add-to-cart global events
-  useEffect(() => {
-    // ✅ Only set up listeners AFTER component is mounted
     if (!isMounted) return;
 
     const handleAddToCart = (e: Event) => {
-      const customEvent = e as CustomEvent<CartItem>;
-      const newItem = customEvent.detail;
-
-      // Use functional state update to avoid reading localStorage here
-      setCartItems((prevItems) => {
-        const existingItemIndex = prevItems.findIndex(
-          (item) => item.id.toString() === newItem.id.toString()
-        );
-        
-        let updatedItems: CartItem[];
-        
-        if (existingItemIndex > -1) {
-          updatedItems = [...prevItems];
-          updatedItems[existingItemIndex] = {
-            ...updatedItems[existingItemIndex],
-            quantity: updatedItems[existingItemIndex].quantity + (newItem.quantity || 1)
-          };
-        } else {
-          updatedItems = [...prevItems, { ...newItem, quantity: newItem.quantity || 1 }];
-        }
-
-        syncCartState(updatedItems);
-        return updatedItems;
+      const newItem = (e as CustomEvent<CartItem>).detail;
+      setCartItems((prev) => {
+        const idx = prev.findIndex(i => i.id.toString() === newItem.id.toString());
+        const updated = idx > -1
+          ? prev.map((i, n) => n === idx ? { ...i, quantity: i.quantity + (newItem.quantity || 1) } : i)
+          : [...prev, { ...newItem, quantity: newItem.quantity || 1 }];
+        syncCartState(updated);
+        return updated;
       });
-
-      // Open side menu with slight delay to ensure state updates
-      setTimeout(() => {
-        setIsOpen(true);
-      }, 50);
-    };
-
-    // ✅ Only open cart if explicitly clicked - NOT on page load
-    const handleOpenCartOnly = () => {
       setIsOpen(true);
     };
 
-    window.addEventListener('add-to-cart', handleAddToCart);
-    window.addEventListener('open-cart-sidebar', handleOpenCartOnly);
+    const handleOpenCart = () => setIsOpen(true);
 
+    window.addEventListener('add-to-cart', handleAddToCart);
+    window.addEventListener('open-cart-sidebar', handleOpenCart);
     return () => {
       window.removeEventListener('add-to-cart', handleAddToCart);
-      window.removeEventListener('open-cart-sidebar', handleOpenCartOnly);
+      window.removeEventListener('open-cart-sidebar', handleOpenCart);
     };
-  }, [syncCartState, isMounted]);
-
-  // GSAP animation on open/close using Refs
-  useEffect(() => {
-    // Only run after mount
-    if (!isMounted) return;
-    
-    const backdrop = backdropRef.current;
-    const panel = panelRef.current;
-
-    if (!backdrop || !panel) return;
-
-    // ✅ Mobile: Use CSS classes for animation
-    if (isMobile) {
-      if (isOpen) {
-        document.body.style.overflow = 'hidden';
-        backdrop.classList.remove('opacity-0', 'pointer-events-none');
-        backdrop.classList.add('opacity-100', 'pointer-events-auto');
-        panel.classList.remove('translate-x-full');
-        panel.classList.add('translate-x-0');
-      } else {
-        document.body.style.overflow = '';
-        backdrop.classList.add('opacity-0', 'pointer-events-none');
-        backdrop.classList.remove('opacity-100', 'pointer-events-auto');
-        panel.classList.add('translate-x-full');
-        panel.classList.remove('translate-x-0');
-      }
-      return;
-    }
-
-    // Desktop: Use GSAP for smooth animations
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      
-      gsap.to(backdrop, { opacity: 1, duration: 0.3, pointerEvents: 'auto', ease: 'power2.out' });
-      gsap.fromTo(panel, 
-        { x: '105%', opacity: 0.9 }, 
-        { x: '0%', opacity: 1, duration: 0.5, ease: 'power4.out' }
-      );
-    } else {
-      document.body.style.overflow = '';
-      
-      gsap.to(backdrop, { opacity: 0, duration: 0.3, pointerEvents: 'none', ease: 'power2.in' });
-      gsap.to(panel, { x: '105%', duration: 0.4, ease: 'power3.in' });
-    }
-  }, [isOpen, isMobile, isMounted]);
+  }, [isMounted, syncCartState]);
 
   const handleUpdateQuantity = useCallback((id: string | number, delta: number) => {
     startTransition(() => {
-      setCartItems((prevItems) => {
-        const existingItem = prevItems.find((item) => item.id === id);
-        
-        if (existingItem && existingItem.quantity === 1 && delta === -1) {
-          const updated = prevItems.filter((item) => item.id !== id);
-          syncCartState(updated);
-          return updated;
-        }
-        
-        const updatedItems = prevItems.map((item) => {
-          if (item.id === id) {
-            return { ...item, quantity: Math.max(1, item.quantity + delta) };
-          }
-          return item;
-        });
-        
-        syncCartState(updatedItems);
-        return updatedItems;
-      });
-    });
-  }, [syncCartState]);
-
-  const handleRemoveItem = useCallback((id: string | number) => {
-    startTransition(() => {
-      setCartItems((prevItems) => {
-        const updated = prevItems.filter((item) => item.id !== id);
+      setCartItems((prev) => {
+        const item = prev.find(i => i.id === id);
+        const updated = item?.quantity === 1 && delta === -1
+          ? prev.filter(i => i.id !== id)
+          : prev.map(i => i.id === id ? { ...i, quantity: Math.max(1, i.quantity + delta) } : i);
         syncCartState(updated);
         return updated;
       });
     });
   }, [syncCartState]);
 
-  // Memoize calculations to prevent running on every render (like when toggling `isOpen`)
-  const { totalItemsCount, subtotal } = useMemo(() => {
-    return cartItems.reduce(
-      (acc, item) => ({
-        totalItemsCount: acc.totalItemsCount + item.quantity,
-        subtotal: acc.subtotal + (item.price * item.quantity)
-      }),
-      { totalItemsCount: 0, subtotal: 0 }
-    );
-  }, [cartItems]);
+  const handleRemoveItem = useCallback((id: string | number) => {
+    startTransition(() => {
+      setCartItems((prev) => {
+        const updated = prev.filter(i => i.id !== id);
+        syncCartState(updated);
+        return updated;
+      });
+    });
+  }, [syncCartState]);
+
+  const { totalItemsCount, subtotal } = useMemo(() => cartItems.reduce(
+    (acc, item) => ({
+      totalItemsCount: acc.totalItemsCount + item.quantity,
+      subtotal: acc.subtotal + item.price * item.quantity,
+    }),
+    { totalItemsCount: 0, subtotal: 0 }
+  ), [cartItems]);
+
+  // Don't render anything until after mount — prevents SSR/hydration flash
+  if (!isMounted) return null;
 
   return (
     <>
-      {/* Backdrop */}
-      <div 
-        ref={backdropRef}
+      {/* Backdrop — pure CSS fade */}
+      <div
         onClick={() => setIsOpen(false)}
-        className={`fixed inset-0 bg-black/45 z-[9999] transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/45 z-[9999] transition-opacity duration-300 ease-in-out ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       />
 
-      {/* Floating Cart Sidebar Panel */}
-      <div 
-        ref={panelRef}
-        className={`fixed top-0 right-0 bottom-0 md:top-4 md:right-4 md:bottom-4 w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transition-transform duration-300 ${
+      {/* Sidebar Panel — pure CSS slide */}
+      <div
+        className={`fixed top-0 right-0 bottom-0 md:top-4 md:right-4 md:bottom-4 w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
-        style={{ 
-          fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-          WebkitBackfaceVisibility: 'hidden',
-          backfaceVisibility: 'hidden',
-        }}
+        style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
       >
         {/* Header section */}
         <div className="p-6 pb-4 border-b border-neutral-100 flex items-center justify-between">
