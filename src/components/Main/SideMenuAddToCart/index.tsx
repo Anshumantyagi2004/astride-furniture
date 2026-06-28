@@ -33,6 +33,8 @@ export default function SideMenuAddToCart() {
   const [isMobile, setIsMobile] = useState(false);
   
   useEffect(() => {
+    // ✅ CRITICAL: Ensure cart is closed on mount
+    setIsOpen(false);
     setIsMounted(true);
     setIsMobile(window.innerWidth < 768);
     
@@ -71,6 +73,9 @@ export default function SideMenuAddToCart() {
 
   // Listen to add-to-cart global events
   useEffect(() => {
+    // ✅ Only set up listeners AFTER component is mounted
+    if (!isMounted) return;
+
     const handleAddToCart = (e: Event) => {
       const customEvent = e as CustomEvent<CartItem>;
       const newItem = customEvent.detail;
@@ -103,6 +108,7 @@ export default function SideMenuAddToCart() {
       }, 50);
     };
 
+    // ✅ Only open cart if explicitly clicked - NOT on page load
     const handleOpenCartOnly = () => {
       setIsOpen(true);
     };
@@ -114,7 +120,7 @@ export default function SideMenuAddToCart() {
       window.removeEventListener('add-to-cart', handleAddToCart);
       window.removeEventListener('open-cart-sidebar', handleOpenCartOnly);
     };
-  }, [syncCartState]);
+  }, [syncCartState, isMounted]);
 
   // GSAP animation on open/close using Refs
   useEffect(() => {
