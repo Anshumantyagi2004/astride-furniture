@@ -20,19 +20,14 @@ const sans = Plus_Jakarta_Sans({
 export default function Category() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     const getCategories = async () => {
         try {
             setLoading(true);
 
-            // Add cache busting with timestamp to force fresh data
-            const { data } = await axios.get(`/api/category?t=${Date.now()}`, {
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                }
-            });
+            // ✅ Use browser cache for category data (only fetch on mount)
+            const { data } = await axios.get(`/api/category`);
 
             if (data.success) {
                 const mappedCats = data.categories.map((cat) => {
@@ -51,12 +46,13 @@ export default function Category() {
     };
 
     useEffect(() => {
+        // ✅ Detect mobile on mount
+        setIsMobile(window.innerWidth < 768);
+        
+        // ✅ Only fetch once on mount - categories don't change frequently
         getCategories();
         
-        // Refetch categories every 10 seconds to catch new additions
-        const interval = setInterval(getCategories, 10000);
-        
-        // Also listen for storage changes (in case user opened admin in another tab)
+        // ✅ Only refetch if admin changes categories in another tab
         const handleStorageChange = () => {
             getCategories();
         };
@@ -64,7 +60,6 @@ export default function Category() {
         window.addEventListener('storage', handleStorageChange);
         
         return () => {
-            clearInterval(interval);
             window.removeEventListener('storage', handleStorageChange);
         };
     }, []);
@@ -99,8 +94,8 @@ export default function Category() {
                                 slidesPerView={2}
                                 loop={true}
                                 autoplay={{
-                                    delay: 1500,
-                                    disableOnInteraction: false,
+                                    delay: isMobile ? 2000 : 1500,
+                                    disableOnInteraction: true,
                                 }}
                                 className="w-full pb-4"
                             >
