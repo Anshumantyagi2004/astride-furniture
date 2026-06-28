@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { X, Minus, Plus } from 'lucide-react';
@@ -21,17 +21,27 @@ export default function SideMenuAddToCart() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isPending, startTransition] = useTransition();
 
   // Refs for GSAP
   const backdropRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const storageDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Helper to sync to local storage & dispatch event
+  // ✅ Mobile detection
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+  // Helper to sync to local storage & dispatch event (DEBOUNCED)
   const syncCartState = useCallback((items: CartItem[]) => {
-    localStorage.setItem('astride_cart', JSON.stringify(items));
-    setTimeout(() => {
+    // Debounce localStorage writes to avoid blocking
+    if (storageDebounceRef.current) {
+      clearTimeout(storageDebounceRef.current);
+    }
+    
+    storageDebounceRef.current = setTimeout(() => {
+      localStorage.setItem('astride_cart', JSON.stringify(items));
       window.dispatchEvent(new Event('astride_cart_updated'));
-    }, 0);
+    }, 100); // Debounce 100ms
   }, []);
 
   // Load cart from localStorage on mount
@@ -100,6 +110,26 @@ export default function SideMenuAddToCart() {
 
     if (!backdrop || !panel) return;
 
+    // ✅ Mobile optimization: Disable GSAP on mobile, use CSS instead
+    if (isMobile) {
+      // CSS-based animation for mobile (faster)
+      if (isOpen) {
+        document.body.style.overflow = 'hidden';
+        backdrop.style.opacity = '1';
+        backdrop.style.pointerEvents = 'auto';
+        panel.style.transform = 'translateX(0%)';
+        panel.style.opacity = '1';
+      } else {
+        document.body.style.overflow = '';
+        backdrop.style.opacity = '0';
+        backdrop.style.pointerEvents = 'none';
+        panel.style.transform = 'translateX(105%)';
+        panel.style.opacity = '0.9';
+      }
+      return;
+    }
+
+    // Desktop: Use GSAP for smooth animations
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       
@@ -114,35 +144,39 @@ export default function SideMenuAddToCart() {
       gsap.to(backdrop, { opacity: 0, duration: 0.3, pointerEvents: 'none', ease: 'power2.in' });
       gsap.to(panel, { x: '105%', duration: 0.4, ease: 'power3.in' });
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   const handleUpdateQuantity = useCallback((id: string | number, delta: number) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === id);
-      
-      if (existingItem && existingItem.quantity === 1 && delta === -1) {
-        const updated = prevItems.filter((item) => item.id !== id);
-        syncCartState(updated);
-        return updated;
-      }
-      
-      const updatedItems = prevItems.map((item) => {
-        if (item.id === id) {
-          return { ...item, quantity: Math.max(1, item.quantity + delta) };
+    startTransition(() => {
+      setCartItems((prevItems) => {
+        const existingItem = prevItems.find((item) => item.id === id);
+        
+        if (existingItem && existingItem.quantity === 1 && delta === -1) {
+          const updated = prevItems.filter((item) => item.id !== id);
+          syncCartState(updated);
+          return updated;
         }
-        return item;
+        
+        const updatedItems = prevItems.map((item) => {
+          if (item.id === id) {
+            return { ...item, quantity: Math.max(1, item.quantity + delta) };
+          }
+          return item;
+        });
+        
+        syncCartState(updatedItems);
+        return updatedItems;
       });
-      
-      syncCartState(updatedItems);
-      return updatedItems;
     });
   }, [syncCartState]);
 
   const handleRemoveItem = useCallback((id: string | number) => {
-    setCartItems((prevItems) => {
-      const updated = prevItems.filter((item) => item.id !== id);
-      syncCartState(updated);
-      return updated;
+    startTransition(() => {
+      setCartItems((prevItems) => {
+        const updated = prevItems.filter((item) => item.id !== id);
+        syncCartState(updated);
+        return updated;
+      });
     });
   }, [syncCartState]);
 
@@ -163,14 +197,31 @@ export default function SideMenuAddToCart() {
       <div 
         ref={backdropRef}
         onClick={() => setIsOpen(false)}
-        className="fixed inset-0 bg-black/45 z-[9999] opacity-0 pointer-events-none transition-opacity duration-300"
+        className="fixed inset-0 bg-black/45 z-[9999] opacity-0 pointer-events-none"
+        style={{
+          // ✅ Mobile optimization: CSS transition
+          ...(isMobile ? {
+            transition: 'opacity 0.25s ease-out',
+            WebkitBackfaceVisibility: 'hidden',
+          } : {})
+        }}
       />
 
       {/* Floating Cart Sidebar Panel */}
       <div 
         ref={panelRef}
         className="fixed top-0 right-0 bottom-0 md:top-4 md:right-4 md:bottom-4 w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transform translate-x-[105%]"
-        style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
+        style={{ 
+          fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+          // ✅ Mobile optimization: CSS transition instead of GSAP
+          ...(isMobile ? {
+            transform: 'translateX(105%)',
+            transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease-out',
+            WebkitBackfaceVisibility: 'hidden',
+            backfaceVisibility: 'hidden',
+            WebkitPerspective: '1000',
+          } : {})
+        }}
       >
         {/* Header section */}
         <div className="p-6 pb-4 border-b border-neutral-100 flex items-center justify-between">
@@ -186,7 +237,7 @@ export default function SideMenuAddToCart() {
         </div>
 
         {/* Cart Items List */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5 scrollbar-none">
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5 scrollbar-none" style={{ WebkitOverflowScrolling: 'touch' }}>
           {cartItems.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center gap-4 py-12">
               <span className="text-neutral-300 text-6xl">🛒</span>
@@ -205,9 +256,11 @@ export default function SideMenuAddToCart() {
                 <div className="relative w-20 h-20 bg-neutral-50 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-neutral-100">
                   <Image 
                     src={item.image} 
-                    alt={item.name} 
-                    fill
+                    alt={item.name}
+                    width={80}
+                    height={80}
                     className="object-contain p-2 mix-blend-multiply"
+                    loading="lazy"
                   />
                 </div>
 
