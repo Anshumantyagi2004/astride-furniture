@@ -1,6 +1,6 @@
-'use client';
- 
-import { useRef } from 'react';
+ 'use client';
+
+import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useScroll, useTransform, motion } from 'framer-motion';
 import { Timeline } from '@/components/ui/timeline';
@@ -82,6 +82,7 @@ export default function AboutPage() {
     offset: ['start start', 'end start'],
   });
   const heroY = useTransform(heroProgress, [0, 1], ['0vh', '40vh']);
+  
 
   return (
     <main className="bg-[#F8F9FA] text-[#161316]" style={{ fontFamily: '"Inter", sans-serif' }}>
@@ -101,7 +102,7 @@ export default function AboutPage() {
         </motion.div>
 
         {/* Hero text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-start pt-32 md:pt-40 text-center z-20 px-6">
+        <div className="absolute inset-0 flex flex-col items-center justify-start pt-24 md:pt-40 text-center z-20 px-6">
           <motion.h1
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -133,9 +134,7 @@ export default function AboutPage() {
             transition={{ duration: 0.7 }}
           >
             <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-4">Who We Are</p>
-            <h2
-              className="text-5xl sm:text-6xl font-extrabold uppercase leading-[0.9] tracking-tight mb-0"
-            >
+            <h2 className="text-5xl sm:text-6xl font-extrabold uppercase leading-[0.9] tracking-tight mb-0">
               <span className="block text-[#161316]">MADE FOR</span>
               <span className="block text-transparent [-webkit-text-stroke:2px_#18181b]">MAKERS</span>
             </h2>
@@ -169,11 +168,7 @@ export default function AboutPage() {
               transition={{ duration: 0.5, delay: i * 0.1 }}
               className="text-center"
             >
-              <p
-                className="text-white text-5xl sm:text-6xl font-extrabold uppercase leading-none tracking-tighter"
-              >
-                {stat.value}
-              </p>
+              <p className="text-white text-5xl sm:text-6xl font-extrabold uppercase leading-none tracking-tighter">{stat.value}</p>
               <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.2em] mt-3">{stat.label}</p>
             </motion.div>
           ))}
@@ -244,7 +239,7 @@ export default function AboutPage() {
               <div className="space-y-4">
                 <h4 className="text-2xl sm:text-3xl font-bold text-zinc-900 uppercase tracking-tight">International Expansion</h4>
                 <p className="text-zinc-600 text-base md:text-lg leading-relaxed max-w-xl font-light">
-                  Launched in UAE, Singapore, and the UK. Our ergonomic standards surpass European benchmarks, making comfort global.
+                  Launched in many other states. Our ergonomic standards surpass European benchmarks, making comfort global.
                 </p>
               </div>
             ),
