@@ -4,11 +4,11 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { ShoppingBag, Users, Award, Star } from "lucide-react";
 
-function Counter({ value, start }) {
+function Counter({ value, start, isMobile }) {
     const [count, setCount] = useState("0");
 
     useEffect(() => {
-        if (!start) return;
+        if (!start || isMobile) { setCount(value); return; }
         const match = value.match(/([\d.]+)(.*)/);
         if (!match) { setCount(value); return; }
         const numVal = parseFloat(match[1]);
@@ -41,6 +41,7 @@ const metrics = [
 export default function BrandTrustSection() {
     const [inView, setInView] = useState(false);
     const sectionRef = useRef(null);
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -101,7 +102,7 @@ export default function BrandTrustSection() {
                         background: "rgba(255,255,255,0.92)",
                         borderRadius: "20px",
                         border: "1px solid rgba(113,113,122,0.15)",
-                        boxShadow: "0 8px 40px rgba(24,24,27,0.06), inset 0 1px 0 rgba(255,255,255,0.8)",
+                        boxShadow: isMobile ? "none" : "0 8px 40px rgba(24,24,27,0.06), inset 0 1px 0 rgba(255,255,255,0.8)",
                     }}
                 >
                     {metrics.map((item, idx) => {
@@ -109,12 +110,12 @@ export default function BrandTrustSection() {
                         return (
                             <div
                                 key={idx}
-                                className={`group flex flex-col items-center justify-center py-10 px-6 cursor-default relative transition-all duration-300 hover:-translate-y-1 ${idx !== metrics.length - 1 ? "border-r border-zinc-900/[0.07]" : ""}`}
+                                className={`group flex flex-col items-center justify-center py-10 px-6 cursor-default relative transition-all duration-300 md:hover:-translate-y-1 ${idx !== metrics.length - 1 ? "border-r border-zinc-900/[0.07]" : ""}`}
                                 style={{ borderRadius: idx === 0 ? "20px 0 0 20px" : idx === metrics.length - 1 ? "0 20px 20px 0" : "" }}
                             >
                                 {/* Icon */}
                                 <div
-                                    className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110"
+                                    className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 md:group-hover:scale-110"
                                     style={{
                                         background: "linear-gradient(135deg, rgba(113,113,122,0.1), rgba(24,24,27,0.15))",
                                         border: "1px solid rgba(113,113,122,0.2)",
@@ -127,7 +128,7 @@ export default function BrandTrustSection() {
                                 <h3
                                     className="text-4xl md:text-5xl font-black tracking-tight leading-none mb-2 text-zinc-900"
                                 >
-                                    <Counter value={item.value} start={inView} />
+                                    <Counter value={item.value} start={inView} isMobile={isMobile} />
                                 </h3>
 
                                 {/* Label */}
@@ -139,7 +140,7 @@ export default function BrandTrustSection() {
 
                                 {/* Hover underline */}
                                 <div
-                                    className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 group-hover:w-10 rounded-full transition-all duration-500"
+                                    className="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-0 group-hover:w-10 rounded-full transition-all duration-500"
                                     style={{ background: "linear-gradient(90deg, #71717A, #18181B)" }}
                                 />
                             </div>
