@@ -18,7 +18,10 @@ const BestSellerSectionCard = ({ product }) => {
         : [product.image];
 
     useEffect(() => {
-        if (isHovered && images.length > 1) {
+        // ✅ Mobile optimization: Disable image carousel on mobile (< 768px)
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        
+        if (isHovered && images.length > 1 && !isMobile) {
             timerRef.current = setInterval(() => {
                 setCurrentImageIndex((prev) => (prev + 1) % images.length);
             }, 1000);
@@ -72,7 +75,7 @@ const BestSellerSectionCard = ({ product }) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => router.push(`/products/${product.slug || product.id}`)}
-            className="group relative rounded-2xl md:rounded-3xl border border-zinc-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-pointer"
+            className="group relative rounded-2xl md:rounded-3xl border border-zinc-200 bg-white overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-pointer"
         >
             {/* SALE / DISCOUNT BADGE */}
             <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20 flex flex-col gap-1 md:gap-2">
@@ -110,7 +113,7 @@ const BestSellerSectionCard = ({ product }) => {
                         src={images[currentImageIndex] || product.image}
                         alt={product.name}
                         fill
-                        className="object-contain p-4 md:p-6 drop-shadow-[0_15px_30px_rgba(0,0,0,0.08)] scale-100 group-hover:scale-105 transition-all duration-500"
+                        className="object-contain p-4 md:p-6 shadow-none md:drop-shadow-[0_15px_30px_rgba(0,0,0,0.08)] scale-100 md:group-hover:scale-105 transition-all duration-300 md:duration-500"
                         sizes="(max-width: 768px) 50vw, 25vw"
                     />
                 </div>

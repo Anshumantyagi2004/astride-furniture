@@ -38,6 +38,8 @@ const categories = [
 ];
 
 export default function CategorySlider() {
+  // ✅ Mobile optimization: Faster speed on mobile, disable autoplay duration on mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   
   return (
     <section className="w-full pt-10 bg-white overflow-hidden">
@@ -69,11 +71,11 @@ export default function CategorySlider() {
       <Swiper
         modules={[Autoplay]}
         autoplay={{
-          delay: 2000,
+          delay: isMobile ? 1500 : 2000,
           disableOnInteraction: false,
         }}
         loop={true}
-        // spaceBetween={20}
+        speed={isMobile ? 1000 : 3500}
         breakpoints={{
           0: {
             slidesPerView: 2,

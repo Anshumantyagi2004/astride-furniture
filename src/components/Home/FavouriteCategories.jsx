@@ -48,13 +48,15 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
     const [isHovered, setIsHovered] = useState(false);
     const timerRef = useRef(null);
     const router = useRouter();
+    // ✅ Mobile optimization: Disable image carousel on mobile
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
     const images = product.allImages && product.allImages.length > 0 
         ? product.allImages 
         : [product.image];
 
     useEffect(() => {
-        if (isHovered && images.length > 1) {
+        if (isHovered && images.length > 1 && !isMobile) {
             // Instantly switch to the 2nd image on hover
             setCurrentImageIndex(1);
             
@@ -68,7 +70,7 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
         };
-    }, [isHovered, images.length]);
+    }, [isHovered, images.length, isMobile]);
 
     const salePrice = product.price || 0;
     const originalPrice = product.originalPrice || 0;
@@ -79,14 +81,14 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
     return (
         <motion.div
             variants={cardMotionVariants}
-            whileHover={{ y: -6 }}
+            whileHover={!isMobile ? { y: -6 } : {}}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => router.push(`/products/${product.slug || product.id}`)}
-            className="group relative rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 hover:border-slate-300/80 hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] min-w-0 w-full cursor-pointer font-sans"
+            className="group relative rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 md:hover:border-slate-300/80 shadow-none md:hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] md:shadow-sm min-w-0 w-full cursor-pointer font-sans"
         >
             {/* Action Buttons */}
-            <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
+            <div className="hidden md:flex absolute top-4 right-4 z-20 flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
                 <button 
                     type="button"
                     className={`w-[34px] h-[34px] rounded-full shadow-sm border border-gray-100 flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-200 ${
@@ -119,12 +121,12 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
                     alt={product.name}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-contain p-4 sm:p-6 transform scale-100 group-hover:scale-105 transition-all duration-500 ease-in-out"
+                    className="object-contain p-4 sm:p-6 transform scale-100 md:group-hover:scale-105 transition-all duration-300 md:duration-500 ease-in-out"
                 />
 
                 {/* Internal Carousel Dots */}
                 {images.length > 1 && (
-                    <div className="absolute bottom-2 flex gap-1.5 justify-center w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                    <div className="hidden md:flex absolute bottom-2 gap-1.5 justify-center w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                         {images.map((_, idx) => (
                             <div 
                                 key={idx} 
@@ -135,7 +137,7 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
                 )}
 
                 {/* Metrics Badging */}
-                <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded-[6px] border border-gray-100 shadow-xs text-[10px] font-bold text-gray-700 flex items-center gap-1 font-sans">
+                <div className="absolute bottom-3 left-3 z-20 bg-white/95 md:backdrop-blur-xs px-2 py-0.5 rounded-[6px] border border-gray-100 shadow-xs text-[10px] font-bold text-gray-700 flex items-center gap-1 font-sans">
                     <span>{ratingValue}</span>
                     <span className="text-[#8B5CF6] text-xs">★</span>
                     <span className="text-gray-400 font-normal">({ratingReviews})</span>
@@ -147,7 +149,7 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
                 <div className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[#8B5CF6] mb-1 font-sans">
                     Astride Premium
                 </div>
-                <h3 className="text-xs sm:text-[16px] font-semibold text-gray-800 line-clamp-1 group-hover:text-[#8B5CF6] transition-colors duration-300 font-sans">
+                <h3 className="text-xs sm:text-[16px] font-semibold text-gray-800 line-clamp-1 md:group-hover:text-[#8B5CF6] transition-colors duration-300 font-sans">
                     {product.name}
                 </h3>
                 <div className="flex flex-wrap items-baseline gap-1.5 mt-2 font-sans">
@@ -164,10 +166,10 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
             </div>
 
             {/* Animated Underlines */}
-            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+            <div className="hidden md:block absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
         </motion.div>
     );
-});
+}););
 FavouriteCard.displayName = "FavouriteCard";
 
 // ==========================================

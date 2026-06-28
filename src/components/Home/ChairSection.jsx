@@ -73,17 +73,17 @@ function ChairCard({ chair, index, products }) {
             key={index}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className={`group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden hover:border-zinc-400 hover:-translate-y-3 transition-all duration-300 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] min-w-[290px] max-w-[320px] snap-center flex-shrink-0 md:min-w-0 md:max-w-none cursor-pointer block ${sans.className}`}
+            className={`group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden md:hover:border-zinc-400 md:hover:-translate-y-3 transition-all duration-300 shadow-none md:shadow-sm md:hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] min-w-[290px] max-w-[320px] snap-center flex-shrink-0 md:min-w-0 md:max-w-none cursor-pointer block ${sans.className}`}
         >
             {/* HOVER GLOW */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+            <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
 
             {/* IMAGE */}
             <div className="relative h-[300px] md:h-[420px] flex items-center justify-center p-6">
-                <div className="w-full h-full flex items-center justify-center relative transition-transform duration-300 group-hover:scale-103 group-hover:-rotate-1">
+                <div className="w-full h-full flex items-center justify-center relative transition-transform duration-300 md:group-hover:scale-103 md:group-hover:-rotate-1">
                     {/* Main Image */}
                     <div 
-                        className={`absolute w-full h-[260px] md:h-[380px] transition-all duration-500 flex items-center justify-center ${
+                        className={`absolute w-full h-[260px] md:h-[380px] transition-all duration-300 md:duration-500 flex items-center justify-center ${
                             isHovered ? "opacity-0 pointer-events-none" : "opacity-100"
                         }`}
                         style={{
@@ -95,13 +95,13 @@ function ChairCard({ chair, index, products }) {
                             alt={chair.name}
                             width={500}
                             height={500}
-                            className="w-full h-full object-contain drop-shadow-[0_25px_45px_rgba(0,0,0,0.08)] group-hover:drop-shadow-[0_35px_65px_rgba(0,0,0,0.12)] transition-all duration-500"
+                            className="w-full h-full object-contain shadow-none md:drop-shadow-[0_25px_45px_rgba(0,0,0,0.08)] md:group-hover:drop-shadow-[0_35px_65px_rgba(0,0,0,0.12)] transition-all duration-300 md:duration-500"
                         />
                     </div>
 
                     {/* Hover Image */}
                     <div 
-                        className={`absolute w-full h-[260px] md:h-[380px] transition-all duration-500 flex items-center justify-center ${
+                        className={`hidden md:flex absolute w-full h-[260px] md:h-[380px] transition-all duration-500 items-center justify-center ${
                             isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
                         }`}
                         style={{
@@ -130,7 +130,7 @@ function ChairCard({ chair, index, products }) {
                             {chair.subtitle}
                         </p>
                     </div>
-                    <div className="w-11 h-11 rounded-full bg-zinc-950 text-white flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:bg-zinc-800">
+                    <div className="w-11 h-11 rounded-full bg-zinc-950 text-white flex items-center justify-center md:hover:scale-110 transition-all duration-300 shadow-none md:shadow-[0_10px_30px_rgba(0,0,0,0.15)] md:hover:bg-zinc-800">
                         →
                     </div>
                 </div>

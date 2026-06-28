@@ -64,6 +64,8 @@ function Icon({ val }) {
 
 export default function ComparisonSection() {
     const swiperRef = useRef(null);
+    // ✅ Mobile optimization: Disable motion animations on mobile
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
     return (
         <section className="w-full pt-8 pb-4 bg-[#F8F7F5] overflow-hidden">
@@ -72,8 +74,8 @@ export default function ComparisonSection() {
                 {/* Header Row */}
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 sm:mb-6 gap-4 sm:gap-6">
                     <motion.div
-                        initial={{ opacity: 0, y: 16 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+                        initial={isMobile ? false : { opacity: 0, y: 16 }}
+                        whileInView={isMobile ? false : { opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "200px" }}
                         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     >
@@ -91,21 +93,21 @@ export default function ComparisonSection() {
 
                     {/* Custom Nav Arrows */}
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
+                        initial={isMobile ? false : { opacity: 0 }}
+                        whileInView={isMobile ? false : { opacity: 1 }}
                         viewport={{ once: true, margin: "200px" }}
                         transition={{ delay: 0.2 }}
                         className="hidden sm:flex items-center gap-3 self-end sm:self-auto max-md:!opacity-100 max-md:!transform-none"
                     >
                         <button
                             onClick={() => swiperRef.current?.slidePrev()}
-                            className="w-11 h-11 rounded-full border border-[#E2DDD8] bg-white hover:bg-[#1C1A17] hover:border-[#1C1A17] text-[#4A4540] hover:text-white flex items-center justify-center transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+                            className="w-11 h-11 rounded-full border border-[#E2DDD8] bg-white hover:bg-[#1C1A17] hover:border-[#1C1A17] text-[#4A4540] hover:text-white flex items-center justify-center transition-all duration-300 shadow-none md:shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
                         >
                             <ChevronLeft size={18} />
                         </button>
                         <button
                             onClick={() => swiperRef.current?.slideNext()}
-                            className="w-11 h-11 rounded-full border border-[#E2DDD8] bg-white hover:bg-[#1C1A17] hover:border-[#1C1A17] text-[#4A4540] hover:text-white flex items-center justify-center transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+                            className="w-11 h-11 rounded-full border border-[#E2DDD8] bg-white hover:bg-[#1C1A17] hover:border-[#1C1A17] text-[#4A4540] hover:text-white flex items-center justify-center transition-all duration-300 shadow-none md:shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
                         >
                             <ChevronRight size={18} />
                         </button>
@@ -129,11 +131,11 @@ export default function ComparisonSection() {
                     {comparisons.map((c, i) => (
                         <SwiperSlide key={i}>
                             <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
+                                initial={isMobile ? false : { opacity: 0, y: 20 }}
+                                whileInView={isMobile ? false : { opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "200px" }}
                                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                                className="bg-white border border-[#E8E5E1] rounded-[28px] overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.05)] max-md:!opacity-100 max-md:!transform-none"
+                                className="bg-white border border-[#E8E5E1] rounded-[28px] overflow-hidden shadow-none md:shadow-[0_8px_40px_rgba(0,0,0,0.05)] max-md:!opacity-100 max-md:!transform-none"
                             >
                                 {/* === TOP SECTION: Two chairs + VS === */}
                                 <div className="grid grid-cols-[1fr_1px_1fr] bg-[#FAFAF8]">
