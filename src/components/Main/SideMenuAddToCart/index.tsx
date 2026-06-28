@@ -21,6 +21,7 @@ export default function SideMenuAddToCart() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   // Refs for GSAP
@@ -28,8 +29,20 @@ export default function SideMenuAddToCart() {
   const panelRef = useRef<HTMLDivElement>(null);
   const storageDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // ✅ Mobile detection
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  // ✅ Mobile detection - check after mount to avoid SSR issues
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+    setIsMobile(window.innerWidth < 768);
+    
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Helper to sync to local storage & dispatch event (DEBOUNCED)
   const syncCartState = useCallback((items: CartItem[]) => {
@@ -105,26 +118,28 @@ export default function SideMenuAddToCart() {
 
   // GSAP animation on open/close using Refs
   useEffect(() => {
+    // Only run after mount
+    if (!isMounted) return;
+    
     const backdrop = backdropRef.current;
     const panel = panelRef.current;
 
     if (!backdrop || !panel) return;
 
-    // ✅ Mobile optimization: Disable GSAP on mobile, use CSS instead
+    // ✅ Mobile: Use CSS classes for animation
     if (isMobile) {
-      // CSS-based animation for mobile (faster)
       if (isOpen) {
         document.body.style.overflow = 'hidden';
-        backdrop.style.opacity = '1';
-        backdrop.style.pointerEvents = 'auto';
-        panel.style.transform = 'translateX(0%)';
-        panel.style.opacity = '1';
+        backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        backdrop.classList.add('opacity-100', 'pointer-events-auto');
+        panel.classList.remove('translate-x-full');
+        panel.classList.add('translate-x-0');
       } else {
         document.body.style.overflow = '';
-        backdrop.style.opacity = '0';
-        backdrop.style.pointerEvents = 'none';
-        panel.style.transform = 'translateX(105%)';
-        panel.style.opacity = '0.9';
+        backdrop.classList.add('opacity-0', 'pointer-events-none');
+        backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+        panel.classList.add('translate-x-full');
+        panel.classList.remove('translate-x-0');
       }
       return;
     }
@@ -144,7 +159,7 @@ export default function SideMenuAddToCart() {
       gsap.to(backdrop, { opacity: 0, duration: 0.3, pointerEvents: 'none', ease: 'power2.in' });
       gsap.to(panel, { x: '105%', duration: 0.4, ease: 'power3.in' });
     }
-  }, [isOpen, isMobile]);
+  }, [isOpen, isMobile, isMounted]);
 
   const handleUpdateQuantity = useCallback((id: string | number, delta: number) => {
     startTransition(() => {
@@ -197,30 +212,21 @@ export default function SideMenuAddToCart() {
       <div 
         ref={backdropRef}
         onClick={() => setIsOpen(false)}
-        className="fixed inset-0 bg-black/45 z-[9999] opacity-0 pointer-events-none"
-        style={{
-          // ✅ Mobile optimization: CSS transition
-          ...(isMobile ? {
-            transition: 'opacity 0.25s ease-out',
-            WebkitBackfaceVisibility: 'hidden',
-          } : {})
-        }}
+        className={`fixed inset-0 bg-black/45 z-[9999] transition-opacity duration-300 ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
       />
 
       {/* Floating Cart Sidebar Panel */}
       <div 
         ref={panelRef}
-        className="fixed top-0 right-0 bottom-0 md:top-4 md:right-4 md:bottom-4 w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transform translate-x-[105%]"
+        className={`fixed top-0 right-0 bottom-0 md:top-4 md:right-4 md:bottom-4 w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transition-transform duration-300 ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
         style={{ 
           fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-          // ✅ Mobile optimization: CSS transition instead of GSAP
-          ...(isMobile ? {
-            transform: 'translateX(105%)',
-            transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease-out',
-            WebkitBackfaceVisibility: 'hidden',
-            backfaceVisibility: 'hidden',
-            WebkitPerspective: '1000',
-          } : {})
+          WebkitBackfaceVisibility: 'hidden',
+          backfaceVisibility: 'hidden',
         }}
       >
         {/* Header section */}
