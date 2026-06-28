@@ -27,50 +27,6 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-// --- STATIC CHAIR DATA (Moved up so the search can use it as a fallback) ---
-const CHAIR_CATEGORIES = {
-  'Gaming Chair': {
-    label: 'Gaming Chair',
-    chairs: [
-      { name: 'ACE Pro Gaming', image: '/Png1/chair4_ACE.webp', tag: 'Bestseller', buyUrl: '#buy' },
-      { name: 'Apex Gaming', image: '/Png1/chair9_FitWell.webp', tag: 'Pro', buyUrl: '#buy' },
-      { name: 'RGB Gaming Chair', image: '/Product/InfographicDesign-1.webp', tag: 'Premium', buyUrl: '#buy' }
-    ]
-  },
-  'Office Chair': {
-    label: 'Office Chair',
-    chairs: [
-      { name: 'AlphaGrey', image: '/Png1/chair6_AlphaGrey.webp', tag: 'Premium Mesh', buyUrl: '#buy' },
-      { name: 'ErgoFit Executive', image: '/Png1/chair12_ErgoFit.webp', tag: 'High Back', buyUrl: '#buy' },
-      { name: 'Executive Mesh Chair', image: '/Product/AlphaBrown_8.webp', tag: 'Bestseller', buyUrl: '#buy' }
-    ]
-  },
-  'Staff Chair': {
-    label: 'Staff Chair',
-    chairs: [
-      { name: 'Delton Staff', image: '/Png1/Chair7_Delton.webp', tag: 'Comfort', buyUrl: '#buy' },
-      { name: 'AIRSENSE Task', image: '/Png1/chair5_AIRSENSE.webp', tag: 'Aero Mesh', buyUrl: '#buy' },
-      { name: 'Amica Black', image: '/Png1/Chair6a_Amica Black .webp', tag: 'Classic', buyUrl: '#buy' }
-    ]
-  },
-  'Study Chair': {
-    label: 'Study Chair',
-    chairs: [
-      { name: 'ErgoFit Pro', image: '/Product/1.webp', tag: 'Students', buyUrl: '#buy' },
-      { name: 'Comfort Office', image: '/Product/Infographic-6.webp', tag: 'Comfort', buyUrl: '#buy' },
-      { name: 'Modern Workspace', image: '/Product/InfographicDesign-1.webp', tag: 'Compact', buyUrl: '#buy' }
-    ]
-  },
-  'Bar Stools & Cafe Chair': {
-    label: 'Bar Stools & Cafe Chair',
-    chairs: [
-      { name: 'Zenith Stool', image: '/Png1/chair10_FitWell.webp', tag: 'Counter Stool', buyUrl: '#buy' },
-      { name: 'Apex Stool', image: '/Png1/chair9_FitWell.webp', tag: 'Bestseller', buyUrl: '#buy' },
-      { name: 'Luxury Bar Stool', image: '/Product/AlphaBrown_8.webp', tag: 'Premium', buyUrl: '#buy' }
-    ]
-  }
-};
-
 // --- HELPER TO EXTRACT PRODUCT IMAGE ---
 const getProductImage = (p) => {
   if (p.colorVariants?.[0]?.images?.[0]?.url) return p.colorVariants[0].images[0].url;
@@ -216,13 +172,12 @@ export default function Navbar() {
     window.addEventListener('add-to-cart', handleStorageChange);
     window.addEventListener('astride_cart_updated', handleStorageChange);
 
-    // Fetch dynamic categories and products
+    // ✅ Fetch dynamic categories and products ONCE on mount
     const fetchData = async () => {
       try {
-        const timestamp = Date.now();
         const [catRes, prodRes] = await Promise.all([
-          fetch(`/api/category?t=${timestamp}`),
-          fetch(`/api/product?t=${timestamp}`)
+          fetch(`/api/category`),
+          fetch(`/api/product`)
         ]);
         const [catData, prodData] = await Promise.all([
           catRes.json(),
@@ -252,14 +207,18 @@ export default function Navbar() {
     };
     fetchData();
     
-    // Auto-refresh every 10 seconds to catch new categories
-    const interval = setInterval(fetchData, 10000);
+    // ✅ Only refetch if admin changes data in another tab
+    const handleStorageRefresh = () => {
+      fetchData();
+    };
+    
+    window.addEventListener('navbar-refresh', handleStorageRefresh);
 
     return () => {
-      clearInterval(interval);
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('add-to-cart', handleStorageChange);
       window.removeEventListener('astride_cart_updated', handleStorageChange);
+      window.removeEventListener('navbar-refresh', handleStorageRefresh);
     };
   }, []);
 
@@ -304,9 +263,8 @@ export default function Navbar() {
         }));
     }
     
-    if (displayChairs.length === 0) {
-      displayChairs = CHAIR_CATEGORIES[activeMenu]?.chairs || [];
-    }
+    // ✅ Don't fall back to hardcoded data - show empty state instead
+    // This ensures new categories added by admin will show when products are added
   }
 
   if (adminLayout) return null;
@@ -661,6 +619,19 @@ export default function Navbar() {
                 </button>
               </>
             )}
+          </div>
+        </div>
+      )}
+      
+      {/* EMPTY STATE - Show when category is selected but no products found */}
+      {activeMenu && displayChairs.length === 0 && (
+        <div 
+          className="absolute left-0 top-full w-full bg-[#f8fafc] border-b border-gray-200 text-gray-900 py-10 px-12 z-[90] shadow-xl animate-in fade-in slide-in-from-top-2 duration-200"
+          onMouseEnter={() => setActiveMenu(activeMenu)}
+          onMouseLeave={() => setActiveMenu(null)}
+        >
+          <div className="max-w-7xl mx-auto px-10 text-center">
+            <p className="text-gray-500 font-medium">No products available in this category</p>
           </div>
         </div>
       )}
