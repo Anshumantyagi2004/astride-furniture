@@ -114,7 +114,7 @@ function FeaturedCard({ video, onPlay, isPlaying }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="relative rounded-2xl overflow-hidden w-full h-full min-h-[420px] lg:h-[510px] flex flex-col justify-end group cursor-pointer"
+            className="relative rounded-2xl overflow-hidden w-full h-full min-h-[420px] lg:h-[510px] flex flex-col justify-end group cursor-pointer max-md:!shadow-none max-md:!transform-none"
             style={{ boxShadow: `0 24px 48px -10px ${video.accentFrom}40` }}
         >
             {/* Glow ring */}
@@ -140,7 +140,7 @@ function FeaturedCard({ video, onPlay, isPlaying }) {
                         <img
                             src={video.thumbnail}
                             alt=""
-                            className="absolute inset-0 w-full h-full object-cover filter blur-[15px] opacity-40 scale-110 pointer-events-none"
+                            className="absolute inset-0 w-full h-full object-cover filter blur-[15px] opacity-40 scale-110 pointer-events-none max-md:hidden"
                         />
                         {/* Sharp centered image */}
                         <img

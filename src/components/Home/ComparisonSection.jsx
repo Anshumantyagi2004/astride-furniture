@@ -95,7 +95,7 @@ export default function ComparisonSection() {
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true, margin: "200px" }}
                         transition={{ delay: 0.2 }}
-                        className="hidden sm:flex items-center gap-3 self-end sm:self-auto"
+                        className="hidden sm:flex items-center gap-3 self-end sm:self-auto max-md:!opacity-100 max-md:!transform-none"
                     >
                         <button
                             onClick={() => swiperRef.current?.slidePrev()}
@@ -133,7 +133,7 @@ export default function ComparisonSection() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "200px" }}
                                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                                className="bg-white border border-[#E8E5E1] rounded-[28px] overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.05)]"
+                                className="bg-white border border-[#E8E5E1] rounded-[28px] overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.05)] max-md:!opacity-100 max-md:!transform-none"
                             >
                                 {/* === TOP SECTION: Two chairs + VS === */}
                                 <div className="grid grid-cols-[1fr_1px_1fr] bg-[#FAFAF8]">

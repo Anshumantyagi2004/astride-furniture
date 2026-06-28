@@ -150,7 +150,7 @@ export default function Category() {
                                             delay: index * 0.02,
                                         }}
                                         viewport={{ once: true, margin: "200px" }}
-                                        className="group relative overflow-hidden rounded-[14px] bg-white border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313] transition-transform duration-300 hover:-translate-y-2 hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)]">
+                                        className="group relative overflow-hidden rounded-[14px] bg-white border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313] transition-transform duration-300 hover:-translate-y-2 hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)] max-md:!opacity-100 max-md:!transform-none">
 
                                         <div className="relative h-[300px] w-full overflow-hidden bg-white border-b-[2.5px] border-[#131313]">
                                             <img
