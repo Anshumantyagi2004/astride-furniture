@@ -42,8 +42,9 @@ export async function GET(req) {
       orders.map(async (order) => {
         const orderObj = order.toObject();
         
-        orderObj.products = await Promise.all(
-          orderObj.products.map(async (item) => {
+        // Convert products to plain array and add slug
+        const productsWithSlugs = await Promise.all(
+          orderObj.products.map(async (item: any) => {
             if (item.slug) return item; // Already has slug
             
             try {
@@ -55,7 +56,11 @@ export async function GET(req) {
           })
         );
         
-        return orderObj;
+        // Return order with updated products
+        return {
+          ...orderObj,
+          products: productsWithSlugs,
+        };
       })
     );
 
@@ -96,8 +101,9 @@ export async function POST(req) {
       orders.map(async (order) => {
         const orderObj = order.toObject();
         
-        orderObj.products = await Promise.all(
-          orderObj.products.map(async (item) => {
+        // Convert products to plain array and add slug
+        const productsWithSlugs = await Promise.all(
+          orderObj.products.map(async (item: any) => {
             if (item.slug) return item; // Already has slug
             
             try {
@@ -109,7 +115,11 @@ export async function POST(req) {
           })
         );
         
-        return orderObj;
+        // Return order with updated products
+        return {
+          ...orderObj,
+          products: productsWithSlugs,
+        };
       })
     );
 
