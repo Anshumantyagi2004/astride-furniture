@@ -181,7 +181,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f1f3f5] text-slate-800 py-16 md:py-24 px-4 md:px-8 select-none relative overflow-hidden" style={{ fontFamily: '"Inter", sans-serif' }}>
+    <div className="min-h-screen bg-[#f1f3f5] text-slate-800 pt-6 md:pt-24 pb-8 md:pb-24 px-4 md:px-8 select-none relative overflow-hidden" style={{ fontFamily: '"Inter", sans-serif' }}>
       
       {/* Background ambient glows */}
       <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] rounded-full bg-slate-400/5 blur-[100px] pointer-events-none" />
@@ -404,18 +404,7 @@ export default function ContactPage() {
 
         {/* Map Section */}
         <div className="mt-16 bg-white border border-slate-200/60 rounded-[32px] p-4 md:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
-          <div className="w-full h-[350px] md:h-[480px] rounded-[24px] overflow-hidden relative border border-slate-100">
-            <iframe
-              src="https://maps.google.com/maps?q=Astride%20Furniture,%20J-113%20%26%20114,%20DSIIDC%20Industrial%20Area,%20Sector%204,%20Bawana,%20New%20Delhi,%20Delhi%20110039&t=&z=16&ie=UTF8&iwloc=&output=embed"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen={true}
-              loading="eager"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="absolute inset-0 grayscale contrast-[1.1] brightness-[0.95] opacity-90 hover:grayscale-0 transition-all duration-700"
-            />
-          </div>
+          <MapSection />
         </div>
 
       </div>

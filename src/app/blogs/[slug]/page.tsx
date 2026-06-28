@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useRef } from "react";
+import { use, useRef, useState, useEffect } from "react";
 import { blogs } from "@/data/blog";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -30,10 +30,24 @@ export default function BlogDetailsPage({
   const blog = blogs.find(
     (item) => item.slug === slug
   );
+  const [isMobile, setIsMobile] = useState(false);
 
   if (!blog) {
     notFound();
   }
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 767px)');
+    const handler = (e: MediaQueryList | MediaQueryListEvent) => setIsMobile((e as any).matches);
+    handler(mq);
+    if (mq.addEventListener) mq.addEventListener('change', handler as any);
+    else mq.addListener(handler as any);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener('change', handler as any);
+      else mq.removeListener(handler as any);
+    };
+  }, []);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -44,10 +58,10 @@ export default function BlogDetailsPage({
 
   const { scrollY } = useScroll();
 
-  // Parallax effects
-  const heroY = useTransform(scrollY, [0, 1000], [0, 400]);
-  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
-  const heroScale = useTransform(scrollY, [0, 500], [1, 1.1]);
+  // Disable parallax on mobile for better performance
+  const heroY = isMobile ? 0 : useTransform(scrollY, [0, 1000], [0, 400]);
+  const heroOpacity = isMobile ? 1 : useTransform(scrollY, [0, 500], [1, 0]);
+  const heroScale = isMobile ? 1 : useTransform(scrollY, [0, 500], [1, 1.1]);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -74,35 +88,36 @@ export default function BlogDetailsPage({
         style={{ scaleX: scrollYProgress }}
       />
 
-      {/* Floating Back Navigation Header */}
+      {/* Floating Back Navigation Header - Mobile optimized */}
       <motion.div 
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-        className="fixed top-8 left-8 z-50"
+        initial={{ opacity: 0, x: isMobile ? 0 : -20, y: isMobile ? 10 : 0 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ delay: isMobile ? 0.3 : 0.5, duration: 0.5 }}
+        className={`${isMobile ? 'fixed bottom-6 left-6 right-6 z-40' : 'fixed top-8 left-8 z-50'}`}
       >
         <Link 
           href="/blogs"
-          className="flex items-center gap-3 px-5 py-3 rounded-full bg-white/40 hover:bg-white/90 text-neutral-900 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-500 group border border-white/50"
+          className={`flex items-center gap-3 rounded-full bg-white/40 hover:bg-white/90 text-neutral-900 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-500 group border border-white/50 ${isMobile ? 'w-full justify-center py-4 px-6' : 'px-5 py-3'}`}
         >
           <div className="bg-neutral-900 text-white rounded-full p-1.5 transition-transform duration-300 group-hover:-translate-x-1">
-            <ArrowLeft size={16} strokeWidth={2.5} />
+            <ArrowLeft size={isMobile ? 20 : 16} strokeWidth={2.5} />
           </div>
-          <span className="text-sm font-bold tracking-widest uppercase">Back</span>
+          <span className={`font-bold tracking-widest uppercase ${isMobile ? 'text-base' : 'text-sm'}`}>Back</span>
         </Link>
       </motion.div>
 
       {/* Hero Section with Parallax */}
-      <section className="relative h-[80vh] min-h-[600px] w-full overflow-hidden bg-black flex items-end">
+      <section className="relative h-[60vh] md:h-[80vh] min-h-[400px] md:min-h-[600px] w-full overflow-hidden bg-black flex items-end">
         <motion.div 
           className="absolute inset-0 z-0"
-          style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
+          style={{ y: isMobile ? 0 : heroY, opacity: isMobile ? 1 : heroOpacity, scale: isMobile ? 1 : heroScale }}
         >
           <Image
             src={blog.image}
             alt={blog.title}
             fill
             priority
+            sizes="(max-width: 768px) 100vw, 100vw"
             className="object-cover opacity-100"
           />
           {/* Subtle bottom gradient only for text readability */}
@@ -110,38 +125,38 @@ export default function BlogDetailsPage({
         </motion.div>
 
         {/* Title Block */}
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-8 pb-20 md:pb-28">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 md:px-8 pb-12 md:pb-20 lg:pb-28">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: isMobile ? 20 : 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex flex-col items-center text-center space-y-8"
+            transition={{ duration: isMobile ? 0.6 : 0.8, delay: isMobile ? 0.1 : 0.2 }}
+            className="flex flex-col items-center text-center space-y-4 md:space-y-8"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white/90 backdrop-blur-md border border-white/20 text-sm font-bold tracking-widest uppercase">
-              <BookOpen size={16} />
+            <span className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-white/10 text-white/90 backdrop-blur-md border border-white/20 text-xs md:text-sm font-bold tracking-widest uppercase">
+              <BookOpen size={isMobile ? 14 : 16} />
               {blog.category}
             </span>
 
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[1.1] max-w-5xl">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-white tracking-tighter leading-[1.1] max-w-5xl">
               {blog.title}
             </h1>
 
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-white/70 text-base md:text-lg font-medium pt-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <User size={16} className="text-white" />
+            <div className="flex flex-col sm:flex-wrap sm:items-center sm:justify-center gap-3 sm:gap-x-8 sm:gap-y-4 text-white/70 text-xs sm:text-base md:text-lg font-medium pt-2 md:pt-4">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/20 flex items-center justify-center">
+                  <User size={isMobile ? 12 : 16} className="text-white" />
                 </div>
-                <span className="text-white/90">{blog.author}</span>
+                <span className="text-white/90 text-sm md:text-base">{blog.author}</span>
               </div>
               <span className="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block"></span>
-              <div className="flex items-center gap-2.5">
-                <Clock size={18} />
-                <span>{blog.readTime} read</span>
+              <div className="flex items-center gap-2">
+                <Clock size={isMobile ? 14 : 18} />
+                <span className="text-sm md:text-base">{blog.readTime} read</span>
               </div>
               <span className="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block"></span>
-              <div className="flex items-center gap-2.5">
-                <Calendar size={18} />
-                <span>{blog.date}</span>
+              <div className="flex items-center gap-2">
+                <Calendar size={isMobile ? 14 : 18} />
+                <span className="text-sm md:text-base">{blog.date}</span>
               </div>
             </div>
           </motion.div>

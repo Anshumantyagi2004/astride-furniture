@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 
 import {
@@ -17,6 +17,7 @@ import {
 
 export default function Footer() {
     const pathname = usePathname();
+    const router = useRouter();
     const [subscribed, setSubscribed] = useState(false);
 
     const adminLayout = pathname.startsWith("/admin");
@@ -116,15 +117,43 @@ export default function Footer() {
                             { name: "Contact Us", link: "/contact" },
                             { name: "FAQs", link: "/#faq" },
                             { name: "Track Order", link: "/account/orders" },
-                        ].map((item, index) => (
-                            <Link
-                                key={index}
-                                href={item.link}
-                                className="block text-[#bdbdbd] text-[14px] py-[5px] transition-all duration-200 hover:text-white hover:translate-x-1 font-sans font-medium"
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
+                        ].map((item, index) => {
+                            // Special handling for FAQs: ensure smooth scroll to homepage #faq
+                            if (item.name === 'FAQs') {
+                                return (
+                                    <a
+                                        key={index}
+                                        href="/#faq"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            // If already on homepage, just scroll
+                                            if (pathname === '/') {
+                                                const el = document.getElementById('faq');
+                                                if (el) {
+                                                    el.scrollIntoView({ behavior: 'smooth' });
+                                                }
+                                            } else {
+                                                // Navigate to homepage with hash
+                                                router.push('/#faq');
+                                            }
+                                        }}
+                                        className="block text-[#bdbdbd] text-[14px] py-[5px] transition-all duration-200 hover:text-white hover:translate-x-1 font-sans font-medium"
+                                    >
+                                        {item.name}
+                                    </a>
+                                );
+                            }
+
+                            return (
+                                <Link
+                                    key={index}
+                                    href={item.link}
+                                    className="block text-[#bdbdbd] text-[14px] py-[5px] transition-all duration-200 hover:text-white hover:translate-x-1 font-sans font-medium"
+                                >
+                                    {item.name}
+                                </Link>
+                            );
+                        })}
                     </div>
  
                     {/* Help Links (with Left Border) */}
