@@ -4,9 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
-import "swiper/css";
 
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -111,6 +108,7 @@ function VibeProductCard({ product }: { product: any }) {
           alt={product.name}
           width={300}
           height={200}
+          priority={true}
           className="mx-auto h-[130px] md:h-[200px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.06] group-hover:rotate-[-1.5deg]"
         />
 
@@ -183,7 +181,9 @@ function VibeProductCard({ product }: { product: any }) {
 
 export default function CompeteTheVibe() {
   const [products, setProducts] = useState<any[]>(STATIC_FALLBACKS);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Data Fetching
   useEffect(() => {
     async function fetchVibeProducts() {
       try {
@@ -201,10 +201,6 @@ export default function CompeteTheVibe() {
 
           if (multiImageProducts.length > 0) {
             const mapped = multiImageProducts.slice(0, 4).map((prod: any, idx: number) => {
-              const discPercent = prod.oldPrice && prod.realPrice
-                ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
-                : 60;
-
               let normalizedCategory = prod.category?.name || (typeof prod.category === "string" ? prod.category : "Ergonomic Chair");
 
               const blackVariant = prod.colorVariants?.find(
@@ -262,14 +258,48 @@ export default function CompeteTheVibe() {
     fetchVibeProducts();
   }, []);
 
+  // Lightweight Native Autoplay for Mobile
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    let isUserInteracting = false;
+    
+    const setInteracting = () => (isUserInteracting = true);
+    const clearInteracting = () => (isUserInteracting = false);
+
+    // Pause autoplay if the user is swiping manually
+    container.addEventListener("touchstart", setInteracting, { passive: true });
+    container.addEventListener("touchend", () => setTimeout(clearInteracting, 3000));
+
+    const interval = setInterval(() => {
+      if (isUserInteracting) return;
+
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      
+      // If we've reached the end, snap smoothly back to start, otherwise move by one item width (~50vw)
+      if (container.scrollLeft >= maxScroll - 10) {
+        container.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        const scrollAmount = container.clientWidth / 2; // Roughly one item
+        container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      }
+    }, 2500);
+
+    return () => {
+      clearInterval(interval);
+      container.removeEventListener("touchstart", setInteracting);
+      container.removeEventListener("touchend", clearInteracting);
+    };
+  }, []);
+
   return (
     <section className={`pt-2 pb-0 md:pt-3 md:pb-6 bg-white ${sans.className}`}>
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
         
-        {/* Header section - Flex Row to keep button on the right */}
+        {/* Header section */}
         <div className="mb-4 md:mb-12 flex flex-row items-end justify-between gap-2 md:gap-5">
           <div className="flex-1">
-            {/* Adjusted heading exactly to 35px for mobile */}
             <h2 className="text-[35px] md:text-[48px] lg:text-[58px] font-black leading-tight text-[#131313]">
               You might{" "}
               <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold">
@@ -287,25 +317,21 @@ export default function CompeteTheVibe() {
           </Link>
         </div>
 
-        {/* MOBILE VIEW (Auto-swiping 2 items per view) */}
-        <div className="block md:hidden w-full pb-0 px-1">
-          <Swiper
-            modules={[Autoplay]}
-            spaceBetween={12}
-            slidesPerView={2}
-            loop={true}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
-            className="w-full !overflow-visible"
-          >
+        {/* MOBILE VIEW: Instant Native CSS Scroll Snap */}
+        <div 
+          ref={scrollRef}
+          className="block md:hidden w-full pb-2 px-1 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+        >
+          <div className="flex gap-3 w-max">
             {products.map((product) => (
-              <SwiperSlide key={product.id} className="pb-0 pt-3 h-auto">
+              <div 
+                key={product.id} 
+                className="snap-start w-[calc(50vw-12px)] min-w-[150px] pb-1 pt-3 h-auto"
+              >
                 <VibeProductCard product={product} />
-              </SwiperSlide>
+              </div>
             ))}
-          </Swiper>
+          </div>
         </div>
 
         {/* DESKTOP VIEW (Standard Grid) */}
