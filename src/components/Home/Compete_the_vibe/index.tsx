@@ -227,7 +227,7 @@ export default function CompeteTheVibe() {
                 }
               }
 
-              const allImages = Array.from(allUrls).slice(0, 5); // Hard cap at 5 images per card
+              const allImages = Array.from(allUrls).slice(0, 3); // Hard cap at 5 images per card
               const defaultImage = allImages[0] || "/Png1/chair12_ErgoFit.webp";
               const stickerChoice = STICKERS[idx % STICKERS.length];
 
