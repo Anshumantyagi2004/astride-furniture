@@ -219,7 +219,7 @@ export default function Enquiry_New() {
   return (
     <section
       id="bulk"
-      className="overflow-hidden bg-[#131313] py-[32px] md:py-[40px] lg:py-[48px] text-white"
+      className="overflow-hidden bg-[#131313] pt-[12px] pb-[32px] md:py-[40px] lg:py-[48px] text-white"
     >
       <div className="mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-10 xl:gap-14 items-start">
