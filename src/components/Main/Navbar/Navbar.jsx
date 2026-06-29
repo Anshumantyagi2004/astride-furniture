@@ -260,12 +260,26 @@ export default function Navbar() {
     return simplify(rawCat) === simplify(menu);
   };
 
-  // Retrieve display products
+  // Retrieve display products - match by category _id for accuracy
   let displayChairs = [];
-  if (activeMenu) {
-    if (products.length > 0) {
-      displayChairs = products
-        .filter(p => catMatches(p, activeMenu))
+  if (activeMenu && products.length > 0) {
+    // Find the category object for the active menu item
+    const activeCategory = categoryList.find(c => c.name === activeMenu);
+    
+    displayChairs = products
+      .filter(p => {
+        if (!p.category) return false;
+        const pCatId = typeof p.category === 'object' ? String(p.category._id || '') : String(p.category);
+        const pCatName = typeof p.category === 'object' ? (p.category.name || '') : '';
+        
+        // Primary: match by _id (most reliable)
+        if (activeCategory?._id && pCatId === String(activeCategory._id)) return true;
+        
+        // Fallback: normalize both names and compare
+        const simplify = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return simplify(pCatName) === simplify(activeMenu) || 
+               simplify(getNormalizedCategoryName(p)) === simplify(activeMenu);
+      })
         .map(p => ({
           name: p.productName || p.name || p.title,
           image: p.colorVariants?.[0]?.images?.[0]?.url
@@ -275,10 +289,6 @@ export default function Navbar() {
           buyUrl: `/products/${p.slug || p._id}`,
           tag: p.whychoose || '',
         }));
-    }
-    
-    // ✅ Don't fall back to hardcoded data - show empty state instead
-    // This ensures new categories added by admin will show when products are added
   }
 
   if (adminLayout) return null;
