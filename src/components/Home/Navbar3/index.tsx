@@ -59,10 +59,7 @@ const CHAIR_CATEGORIES: Record<string, ChairCategory> = {
     },
     "Bar Stools & Cafe Chair": {
         label: "Bar Stools & Cafe Chair",
-        chairs: [
-            { name: "Zenith Stool", image: "/Png1/chair10_FitWell.webp", tag: "Counter Stool", buyUrl: "/products/chair10-fitwell" },
-            { name: "Apex Stool", image: "/Png1/chair9_FitWell.webp", tag: "Bestseller", buyUrl: "/products/chair9-fitwell" }
-        ]
+        chairs: []
     }
 };
 
@@ -77,7 +74,9 @@ const NAV_ITEMS = [
 // Helper outside component scope to prevent re-allocating memory during renders
 const getNormalizedCategoryName = (p: any) => {
     if (!p?.category) return "";
-    const dbCategory = typeof p.category === "object" && p.category.name ? p.category.name.toUpperCase() : "";
+    const rawName = typeof p.category === "object" && p.category.name ? p.category.name : "";
+    const dbCategory = rawName.replace(/\s+/g, ' ').trim().toUpperCase();
+    
     if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) return "Gaming Chair";
     if (dbCategory.includes("EXECUTIVE")) return "Office Chair";
     if (dbCategory.includes("STAFF")) return "Staff Chair";
@@ -170,9 +169,16 @@ export default function Navbar3() {
 
                 if (catData?.success) {
                     const mappedCats = catData.categories.map((cat: any) => {
-                        if (cat.name === "Executive Chair") return { ...cat, name: "Office Chair" };
-                        if (cat.name === "Bar Stool" || cat.name === "Bar Stools") return { ...cat, name: "Bar Stools & Cafe Chair" };
-                        return cat;
+                        // Normalize whitespace first
+                        const cleanName = cat.name.replace(/\s+/g, ' ').trim();
+                        const upperName = cleanName.toUpperCase();
+                        
+                        // Map to standard display names
+                        if (upperName.includes("EXECUTIVE")) return { ...cat, name: "Office Chair" };
+                        if (upperName.includes("BAR") || upperName.includes("STOOL") || upperName.includes("CAFE")) {
+                            return { ...cat, name: "Bar Stools & Cafe Chair" };
+                        }
+                        return { ...cat, name: cleanName };
                     });
                     setCategories(mappedCats);
                     sessionStorage.setItem("astride_nav_categories_cache", JSON.stringify(mappedCats));
@@ -188,12 +194,8 @@ export default function Navbar3() {
         };
         fetchData();
         
-        // Auto-refresh every 10 seconds to catch new categories
-        const interval = setInterval(fetchData, 10000);
-        
         return () => { 
             isMounted = false;
-            clearInterval(interval);
         };
     }, []);
 
