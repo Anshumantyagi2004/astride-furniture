@@ -565,29 +565,38 @@ export default function DetailPageCard({ product }: { product: any }) {
               </button>
               <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'description' ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className="px-5 pb-6 text-[#444] text-[15px] leading-[1.6]">
-                  <p className="mb-6">The ErgoFit Premium is our most technologically advanced ergonomic chair yet — developed with orthopedic research to optimize posture, maximize breathability, and keep you locked in through long sessions.</p>
-                  <ul className="space-y-4">
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span>Precision-engineered seat base with adjustable depth</span>
-                    </li>
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span>Breathable premium mesh — zero swamp-back</span>
-                    </li>
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span>Dynamic lumbar support that auto-adjusts in real time</span>
-                    </li>
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span>Multi-dimensional 4D armrests</span>
-                    </li>
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span>Smooth 360° revolve + whisper-quiet castors</span>
-                    </li>
-                  </ul>
+                  {product.longDescription ? (
+                    <div
+                      className="animate-fade-in space-y-4 description-style"
+                      dangerouslySetInnerHTML={{ __html: product.longDescription }}
+                    />
+                  ) : (
+                    <>
+                      <p className="mb-6">The ErgoFit Premium is our most technologically advanced ergonomic chair yet — developed with orthopedic research to optimize posture, maximize breathability, and keep you locked in through long sessions.</p>
+                      <ul className="space-y-4">
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                          <span>Precision-engineered seat base with adjustable depth</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                          <span>Breathable premium mesh — zero swamp-back</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                          <span>Dynamic lumbar support that auto-adjusts in real time</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                          <span>Multi-dimensional 4D armrests</span>
+                        </li>
+                        <li className="flex gap-4 items-start">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                          <span>Smooth 360° revolve + whisper-quiet castors</span>
+                        </li>
+                      </ul>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -740,32 +749,39 @@ export default function DetailPageCard({ product }: { product: any }) {
               </button>
               <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'whychoose' ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className="px-5 pb-6 text-[#444] text-[15px] leading-[1.6]">
-                  <ul className="space-y-4 animate-fade-in">
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span><strong className="text-black font-semibold">Ergonomic Innovation:</strong> ASTRIDE® is dedicated to delivering high-quality office seating solutions that combine comfort, durability, and ergonomic innovation.</span>
-                    </li>
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span><strong className="text-black font-semibold">Postural Support:</strong> Designed to support healthy posture and improve productivity through thoughtful ergonomic features.</span>
-                    </li>
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span><strong className="text-black font-semibold">Premium Materials:</strong> Manufactured using premium nylon and polypropylene materials for superior durability and dependable long-term performance.</span>
-                    </li>
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span><strong className="text-black font-semibold">Adaptive Functionality:</strong> Features adjustable seating functionality that adapts to different users and workspace requirements.</span>
-                    </li>
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span><strong className="text-black font-semibold">Versatile Aesthetics:</strong> Combines professional aesthetics with practical usability, making it suitable for both residential and commercial applications.</span>
-                    </li>
-                    <li className="flex gap-4 items-start">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
-                      <span><strong className="text-black font-semibold">Exceptional Value:</strong> Offers exceptional value through its blend of ergonomic comfort, durable construction, modern styling, and reliable performance.</span>
-                    </li>
-                  </ul>
+                  {product.whychoose ? (
+                    <div
+                      className="animate-fade-in space-y-4 description-style"
+                      dangerouslySetInnerHTML={{ __html: product.whychoose }}
+                    />
+                  ) : (
+                    <ul className="space-y-4 animate-fade-in">
+                      <li className="flex gap-4 items-start">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                        <span><strong className="text-black font-semibold">Ergonomic Innovation:</strong> ASTRIDE® is dedicated to delivering high-quality office seating solutions that combine comfort, durability, and ergonomic innovation.</span>
+                      </li>
+                      <li className="flex gap-4 items-start">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                        <span><strong className="text-black font-semibold">Postural Support:</strong> Designed to support healthy posture and improve productivity through thoughtful ergonomic features.</span>
+                      </li>
+                      <li className="flex gap-4 items-start">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                        <span><strong className="text-black font-semibold">Premium Materials:</strong> Manufactured using premium nylon and polypropylene materials for superior durability and dependable long-term performance.</span>
+                      </li>
+                      <li className="flex gap-4 items-start">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                        <span><strong className="text-black font-semibold">Adaptive Functionality:</strong> Features adjustable seating functionality that adapts to different users and workspace requirements.</span>
+                      </li>
+                      <li className="flex gap-4 items-start">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                        <span><strong className="text-black font-semibold">Versatile Aesthetics:</strong> Combines professional aesthetics with practical usability, making it suitable for both residential and commercial applications.</span>
+                      </li>
+                      <li className="flex gap-4 items-start">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="flex-none w-[19px] h-[19px] mt-[3px]"><path d="m5 13 4 4L19 7" /></svg>
+                        <span><strong className="text-black font-semibold">Exceptional Value:</strong> Offers exceptional value through its blend of ergonomic comfort, durable construction, modern styling, and reliable performance.</span>
+                      </li>
+                    </ul>
+                  )}
                 </div>
               </div>
             </div>
