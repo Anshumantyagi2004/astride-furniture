@@ -234,10 +234,8 @@ export default function Navbar() {
   ];
 
   const categoryList = categories.length > 0 ? categories : fallbackCategories;
-  
   const getNormalizedCategoryName = (p) => {
     if (!p.category) return "";
-    // Handle both object { name: "..." } and plain string category
     const rawCat = typeof p.category === 'object' ? (p.category.name || "") : String(p.category);
     const dbCategory = rawCat.toUpperCase();
     if (!dbCategory) return "";
@@ -247,38 +245,32 @@ export default function Navbar() {
     if (dbCategory.includes("STUDY")) return "Study Chair";
     if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) return "Bar Stools & Cafe Chair";
     if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) return "Office Chair";
-    return rawCat; // Return original name as fallback for direct match
+    return rawCat;
   };
 
-  // Fuzzy category match: strip special chars and compare lowercase
-  const catMatches = (p, menu) => {
-    const normalized = getNormalizedCategoryName(p);
-    if (normalized === menu) return true;
-    // Fallback: compare raw category name directly (case-insensitive, ignore &/special chars)
-    const rawCat = typeof p.category === 'object' ? (p.category.name || "") : String(p.category || "");
-    const simplify = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-    return simplify(rawCat) === simplify(menu);
-  };
+  // Build a map of normalized name → category _id for fast lookup
+  const catIdByName = {};
+  categoryList.forEach(c => {
+    catIdByName[c.name] = String(c._id);
+  });
 
-  // Retrieve display products - match by category _id for accuracy
+  // Retrieve display products
   let displayChairs = [];
   if (activeMenu && products.length > 0) {
-    // Find the category object for the active menu item
-    const activeCategory = categoryList.find(c => c.name === activeMenu);
-    
+    const activeCatId = catIdByName[activeMenu];
+    console.log('[NAV DEBUG] activeMenu:', activeMenu, '| activeCatId:', activeCatId);
+    console.log('[NAV DEBUG] categoryList:', categoryList.map(c => ({name: c.name, _id: String(c._id)})));
+    console.log('[NAV DEBUG] first 3 product categories:', products.slice(0,3).map(p => ({
+      name: p.productName,
+      catId: typeof p.category === 'object' ? String(p.category._id) : String(p.category),
+      catName: typeof p.category === 'object' ? p.category.name : p.category
+    })));
     displayChairs = products
       .filter(p => {
         if (!p.category) return false;
         const pCatId = typeof p.category === 'object' ? String(p.category._id || '') : String(p.category);
-        const pCatName = typeof p.category === 'object' ? (p.category.name || '') : '';
-        
-        // Primary: match by _id (most reliable)
-        if (activeCategory?._id && pCatId === String(activeCategory._id)) return true;
-        
-        // Fallback: normalize both names and compare
-        const simplify = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-        return simplify(pCatName) === simplify(activeMenu) || 
-               simplify(getNormalizedCategoryName(p)) === simplify(activeMenu);
+        if (activeCatId && pCatId === activeCatId) return true;
+        return getNormalizedCategoryName(p) === activeMenu;
       })
         .map(p => ({
           name: p.productName || p.name || p.title,
