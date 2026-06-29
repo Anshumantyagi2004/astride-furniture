@@ -24,7 +24,6 @@ const ALL_CHAIRS = [
   { src: "/Png1/chair11_octave.webp", name: "Octave Studio", price: 299, slug: "chair11-octave" },
 ].sort((a, b) => b.price - a.price);
 
-// OPTIMIZATION: Invisible items use maxCount layout so they don't trigger CSS motion when hidden
 function getPosition(index: number, visibleCount: number, maxCount: number, isMobile: boolean) {
   const isVisible = index < visibleCount;
   const effectiveTotal = isVisible ? visibleCount : maxCount;
@@ -65,7 +64,6 @@ function getPosition(index: number, visibleCount: number, maxCount: number, isMo
   return { left, top, scale, zIndex: 100 - index };
 }
 
-// OPTIMIZATION: Primitives passed individually ensures React.memo works flawlessly
 const ChairCard = memo(({ chair, left, top, scale, zIndex, isVisible, index }: { 
   chair: any, left: string, top: string, scale: number, zIndex: number, isVisible: boolean, index: number 
 }) => {
@@ -77,7 +75,6 @@ const ChairCard = memo(({ chair, left, top, scale, zIndex, isVisible, index }: {
       style={{
         left,
         top,
-        // translate3d forces GPU hardware acceleration on mobile
         transform: `translate3d(-50%, -50%, 0) scale(${isVisible ? scale : 0.1})`,
         opacity: isVisible ? 1 : 0,
         zIndex,
@@ -141,16 +138,20 @@ interface ChairFinderProps {
 export default function ChairFinder({ onBack }: ChairFinderProps) {
   const [chairs, setChairs] = useState<any[]>(ALL_CHAIRS);
   
-  const [sliderValue, setSliderValue] = useState(0);
-  const [gridValue, setGridValue] = useState(0); 
-  
+  // OPTIMIZATION: Only track the exact number of chairs visible in React State
+  const [visibleCount, setVisibleCount] = useState(ALL_CHAIRS.length);
+  const visibleCountRef = useRef(ALL_CHAIRS.length);
+
   const [isMobile, setIsMobile] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
 
+  // OPTIMIZATION: Direct DOM manipulation refs for absolute zero-latency slider
+  const fillRef = useRef<HTMLDivElement>(null);
+  const thumbRef = useRef<HTMLDivElement>(null);
+  
   const activePointer = useRef<number | null>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
-  const lastGridUpdate = useRef<number>(0);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -181,7 +182,10 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
             const src = (typeof firstImg === 'string' ? firstImg : firstImg?.url) || p.colorVariants?.[0]?.images?.[0]?.url || "/placeholder.png";
             return { src, name: p.productName, price: p.realPrice || 0, slug: p.slug || p._id };
           }).sort((a: any, b: any) => b.price - a.price);
+          
           setChairs(mapped);
+          setVisibleCount(mapped.length);
+          visibleCountRef.current = mapped.length;
         }
       } catch (err) {
         console.error("Error loading products for ChairFinder:", err);
@@ -189,10 +193,6 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     };
     fetchProducts();
   }, []);
-
-  const visibleCount = useMemo(() => {
-    return Math.max(1, Math.ceil(chairs.length * (1 - gridValue / 100)));
-  }, [chairs.length, gridValue]);
 
   const { row1, row2, row3 } = useMemo(() => {
     return {
@@ -202,7 +202,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     };
   }, [chairs]);
 
-  const updateSliderFromEvent = (clientX: number, isFinalSync: boolean = false) => {
+  const updateSliderFromEvent = (clientX: number) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
@@ -211,12 +211,16 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     
     rafRef.current = requestAnimationFrame(() => {
-      setSliderValue(percentage);
+      // 1. DIRECT DOM MUTATION: Bypasses React entirely for 120fps thumb movement
+      if (fillRef.current) fillRef.current.style.width = `${percentage}%`;
+      if (thumbRef.current) thumbRef.current.style.left = `calc(${percentage}% - 12px)`;
 
-      const now = performance.now();
-      if (isFinalSync || now - lastGridUpdate.current > 50) { // Bumped throttle to 50ms for slightly smoother trailing 
-        setGridValue(percentage);
-        lastGridUpdate.current = now;
+      // 2. ONLY WAKE UP REACT IF A CHAIR NEEDS TO DISAPPEAR/APPEAR
+      const newVisibleCount = Math.max(1, Math.ceil(chairs.length * (1 - percentage / 100)));
+      
+      if (newVisibleCount !== visibleCountRef.current) {
+        visibleCountRef.current = newVisibleCount;
+        setVisibleCount(newVisibleCount); // This triggers the ChairGrid update
       }
     });
   };
@@ -238,7 +242,6 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     if (e.pointerId !== activePointer.current) return;
     activePointer.current = null;
     e.currentTarget.releasePointerCapture(e.pointerId);
-    updateSliderFromEvent(e.clientX, true); 
   };
 
   return (
@@ -332,17 +335,16 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
             >
               <div className="absolute left-0 right-0 h-2 bg-gray-100 rounded-full overflow-hidden shadow-inner pointer-events-none">
                 <div
-                  className="h-full rounded-full transition-none"
-                  style={{
-                    width: `${sliderValue}%`,
-                    background: "#9ca3af",
-                  }}
+                  ref={fillRef}
+                  className="h-full rounded-full transition-none will-change-[width]"
+                  style={{ width: "0%", background: "#9ca3af" }}
                 />
               </div>
               
               <div
-                className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white shadow-[0_2px_10px_rgba(0,0,0,0.15)] pointer-events-none border-[3px] border-[#9ca3af] transition-none"
-                style={{ left: `calc(${sliderValue}% - 12px)` }}
+                ref={thumbRef}
+                className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white shadow-[0_2px_10px_rgba(0,0,0,0.15)] pointer-events-none border-[3px] border-[#9ca3af] transition-none will-change-[left]"
+                style={{ left: "calc(0% - 12px)" }}
               />
             </div>
           </div>
