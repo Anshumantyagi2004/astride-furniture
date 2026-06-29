@@ -19,7 +19,10 @@ export default function AstrideOffers() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch("/api/product");
+        const res = await fetch("/api/product?t=" + Date.now(), {
+          cache: "no-store",
+          headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
+        });
         const data = await res.json();
         if (data.success && data.products && data.products.length > 0) {
           // Filter to only products with multiple images

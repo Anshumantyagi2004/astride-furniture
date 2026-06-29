@@ -2,6 +2,10 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import Loader from "@/components/ui/loader";
 
+// Force dynamic rendering to always fetch fresh product data
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // ADD METADATA FOR THE PRODUCTS PAGE:
 export const metadata = {
     title: "Shop Premium Ergonomic Chairs | Astride",

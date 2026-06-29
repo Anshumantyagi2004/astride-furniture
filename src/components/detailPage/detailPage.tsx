@@ -24,88 +24,16 @@ export default function DetailPage({ productId }: { productId?: string }) {
       
       let initialProduct: any = null;
 
-      // 1. Check local cache (sessionStorage) for instant rendering
+      // Always fetch fresh data from API, don't use stale session cache
+      // Fetch single product data from database with cache busting
       try {
-        const cached = sessionStorage.getItem("astride_products_cache");
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          if (parsed && parsed.length > 0) {
-            const found = parsed.find((p: any) => 
-              p.id?.toString() === productId?.toString() || 
-              p.slug === productId
-            );
-            if (found) {
-              initialProduct = found;
-              setProduct(found);
-              setLoading(false); // disable loading spinner instantly
-            }
+        const res = await fetch(`/api/product/${productId}?t=${Date.now()}`, {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+            "Pragma": "no-cache"
           }
-        }
-
-        if (!initialProduct) {
-          const rawCached = sessionStorage.getItem("astride_nav_products_cache");
-          if (rawCached) {
-            const parsed = JSON.parse(rawCached);
-            if (parsed && parsed.length > 0) {
-              const foundDb = parsed.find((p: any) => 
-                p._id?.toString() === productId?.toString() || 
-                p.slug === productId
-              );
-              if (foundDb) {
-                const discPercent = foundDb.oldPrice && foundDb.realPrice
-                  ? Math.round((1 - (foundDb.realPrice / foundDb.oldPrice)) * 100)
-                  : 60;
-                
-                // Use actual category name from database instead of normalizing
-                const category = foundDb.category && foundDb.category.name ? foundDb.category.name : "Ergonomic Chairs";
-
-                const blackVariant = foundDb.colorVariants?.find(
-                  (v: any) => v.colorName?.toLowerCase() === "black"
-                );
-                const blackImage = blackVariant?.images?.[0]?.url;
-                const fallbackImage = foundDb.colorVariants?.find(
-                  (v: any) => v.images && v.images.length > 0
-                )?.images?.[0]?.url;
-
-                const mapped = {
-                  id: foundDb._id,
-                  slug: foundDb.slug,
-                  name: foundDb.productName,
-                  price: foundDb.realPrice,
-                  originalPrice: foundDb.oldPrice,
-                  discount: `-${discPercent}%`,
-                  image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
-                  category: category,
-                  backSupport: foundDb.backSupport || "High Back",
-                  height: foundDb.height || "5'7\" - 6'6\"",
-                  hours: foundDb.hours || "8+ Hours",
-                  colors: foundDb.colorVariants && foundDb.colorVariants.length > 0 
-                    ? foundDb.colorVariants.map((v: any) => v.colorName).filter(Boolean)
-                    : [],
-                  colorVariants: foundDb.colorVariants || [],
-                  rating: foundDb.rating || 4.7,
-                  capacity: foundDb.capacity || "150 kg",
-                  shortDescription: foundDb.shortDescription,
-                  longDescription: foundDb.longDescription,
-                  keyfeatures: foundDb.keyfeatures,
-                  application: foundDb.application,
-                  whychoose: foundDb.whychoose,
-                  specifications: foundDb.specifications
-                };
-                initialProduct = mapped;
-                setProduct(mapped);
-                setLoading(false);
-              }
-            }
-          }
-        }
-      } catch (e) {
-        console.error("Error loading product from cache:", e);
-      }
-
-      // 2. Fetch single product data from database
-      try {
-        const res = await fetch(`/api/product/${productId}?t=${Date.now()}`);
+        });
         const data = await res.json();
         
         if (data.success && data.product) {

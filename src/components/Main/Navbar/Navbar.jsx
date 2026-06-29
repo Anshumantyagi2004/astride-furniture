@@ -175,9 +175,10 @@ export default function Navbar() {
     // ✅ Fetch dynamic categories and products ONCE on mount
     const fetchData = async () => {
       try {
+        const timestamp = Date.now();
         const [catRes, prodRes] = await Promise.all([
-          fetch(`/api/category`),
-          fetch(`/api/product`)
+          fetch(`/api/category?t=${timestamp}`, { cache: "no-store", headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }),
+          fetch(`/api/product?t=${timestamp}`, { cache: "no-store", headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } })
         ]);
         const [catData, prodData] = await Promise.all([
           catRes.json(),

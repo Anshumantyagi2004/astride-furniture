@@ -145,7 +145,10 @@ export default function ChairSection() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await fetch("/api/product");
+                const res = await fetch("/api/product?t=" + Date.now(), {
+                  cache: "no-store",
+                  headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
+                });
                 const data = await res.json();
                 if (data?.success) {
                     setProducts(data.products);

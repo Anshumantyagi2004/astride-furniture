@@ -157,8 +157,8 @@ export default function Navbar3() {
             try {
                 const timestamp = Date.now();
                 const [catRes, prodRes] = await Promise.all([
-                    fetch(`/api/category?t=${timestamp}`),
-                    fetch(`/api/product?t=${timestamp}`)
+                    fetch(`/api/category?t=${timestamp}`, { cache: "no-store", headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }),
+                    fetch(`/api/product?t=${timestamp}`, { cache: "no-store", headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } })
                 ]);
                 const [catData, prodData] = await Promise.all([
                     catRes.json(),
