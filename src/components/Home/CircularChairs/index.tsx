@@ -45,6 +45,10 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
         setTimeout(() => {
           const el = document.getElementById("circular-chairs");
           if (el) el.scrollIntoView({ behavior: "smooth" });
+
+          const url = new URL(window.location.href);
+          url.searchParams.delete("finder");
+          window.history.replaceState({}, "", url.pathname + url.search);
         }, 100);
       }
     };

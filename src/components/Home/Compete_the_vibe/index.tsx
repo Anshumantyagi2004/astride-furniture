@@ -268,7 +268,6 @@ export default function CompeteTheVibe() {
     const setInteracting = () => (isUserInteracting = true);
     const clearInteracting = () => (isUserInteracting = false);
 
-    // Pause autoplay if the user is swiping manually
     container.addEventListener("touchstart", setInteracting, { passive: true });
     container.addEventListener("touchend", () => setTimeout(clearInteracting, 3000));
 
@@ -277,11 +276,10 @@ export default function CompeteTheVibe() {
 
       const maxScroll = container.scrollWidth - container.clientWidth;
       
-      // If we've reached the end, snap smoothly back to start, otherwise move by one item width (~50vw)
       if (container.scrollLeft >= maxScroll - 10) {
         container.scrollTo({ left: 0, behavior: "smooth" });
       } else {
-        const scrollAmount = container.clientWidth / 2; // Roughly one item
+        const scrollAmount = container.clientWidth / 2;
         container.scrollBy({ left: scrollAmount, behavior: "smooth" });
       }
     }, 2500);
@@ -317,16 +315,17 @@ export default function CompeteTheVibe() {
           </Link>
         </div>
 
-        {/* MOBILE VIEW: Instant Native CSS Scroll Snap */}
+        {/* MOBILE VIEW: Edge-to-edge scroll container with exactly calculated widths */}
         <div 
           ref={scrollRef}
-          className="block md:hidden w-full pt-4 pb-2 px-1 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+          className="block md:hidden w-[calc(100%+32px)] -ml-4 pt-4 pb-4 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
         >
-          <div className="flex gap-3 w-max">
+          <div className="flex gap-3 w-max px-4">
             {products.map((product) => (
               <div 
                 key={product.id} 
-                className="snap-start w-[calc(50vw-12px)] min-w-[150px] pb-1 pt-3 h-auto"
+                // Exactly half the screen minus gap and padding.
+                className="snap-start w-[calc((100vw-44px)/2)] pt-3 pb-2 h-auto"
               >
                 <VibeProductCard product={product} />
               </div>

@@ -288,6 +288,15 @@ const CertCard = memo(({
   const [isFlipped, setIsFlipped] = useState(false);
   // Track if the back panel has ever been opened to lazily render the iframe
   const [hasBeenOpened, setHasBeenOpened] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
+  const [zoom, setZoom] = useState(1);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const ua = navigator.userAgent.toLowerCase();
+      setIsAndroid(/android/i.test(ua));
+    }
+  }, []);
 
   const handleFlipTrue = () => {
     setIsFlipped(true);
@@ -299,6 +308,7 @@ const CertCard = memo(({
 
   const handleFlipFalse = () => {
     setIsFlipped(false);
+    setZoom(1);
     if (swiper && swiper.autoplay) {
       swiper.autoplay.start();
     }
@@ -394,28 +404,87 @@ const CertCard = memo(({
                   {title} PDF
                 </h3>
               </div>
-              <button 
-                type="button"
-                onClick={handleFlipFalse}
-                className="text-[11px] font-black bg-black/25 hover:bg-black/40 px-2.5 py-1.5 rounded-lg transition-all duration-200 active:scale-95 text-white cursor-pointer shrink-0"
-              >
-                Back ⟲
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                {!isAndroid && (
+                  <div className="flex items-center gap-1 bg-black/20 px-2 py-1 rounded-lg border border-white/5">
+                    <button
+                      type="button"
+                      onClick={() => setZoom(z => Math.max(1, z - 0.25))}
+                      disabled={zoom <= 1}
+                      className="w-6 h-6 rounded-md bg-black/25 hover:bg-black/40 text-white font-bold flex items-center justify-center text-xs disabled:opacity-40 transition-all active:scale-90 cursor-pointer"
+                      title="Zoom Out"
+                    >
+                      −
+                    </button>
+                    <span className="text-[10px] font-mono font-bold text-white/90 min-w-[32px] text-center select-none">
+                      {Math.round(zoom * 100)}%
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setZoom(z => Math.min(2.5, z + 0.25))}
+                      disabled={zoom >= 2.5}
+                      className="w-6 h-6 rounded-md bg-black/25 hover:bg-black/40 text-white font-bold flex items-center justify-center text-xs disabled:opacity-40 transition-all active:scale-90 cursor-pointer"
+                      title="Zoom In"
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
+                <button 
+                  type="button"
+                  onClick={handleFlipFalse}
+                  className="text-[11px] font-black bg-black/25 hover:bg-black/40 px-2.5 py-1.5 rounded-lg transition-all duration-200 active:scale-95 text-white cursor-pointer"
+                >
+                  Back ⟲
+                </button>
+              </div>
             </div>
             
-            <div className="w-full flex-1 rounded-xl overflow-y-auto bg-black/35 border border-white/5 relative scrollbar-none">
+            <div className="w-full flex-1 rounded-xl overflow-auto bg-black/35 border border-white/5 relative scrollbar-none">
               {/* Performance improvement: Lazy load iframes only upon actual user card flip action */}
               {hasBeenOpened ? (
-                <iframe 
-                  src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`} 
-                  className="w-full h-full border-0 min-h-[260px]"
-                  style={{ 
-                    height: iframeHeight,
-                    pointerEvents: "auto"
-                  }}
-                  title={`${title} Certificate`}
-                  loading="lazy"
-                />
+                isAndroid ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center gap-4 min-h-[260px]">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke={accentColor}
+                      strokeWidth="2"
+                      className="w-12 h-12 animate-pulse"
+                    >
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                      <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                    <div className="space-y-1">
+                      <p className="text-white font-bold text-sm">Preview Unavailable</p>
+                      <p className="text-white/60 text-xs px-2">Android devices do not support inline PDF viewing.</p>
+                    </div>
+                    <a
+                      href={pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-2.5 bg-white text-black font-extrabold rounded-xl text-xs hover:bg-white/90 transition duration-200 active:scale-95 shadow-md flex items-center gap-1.5 cursor-pointer"
+                    >
+                      Open PDF Certificate
+                    </a>
+                  </div>
+                ) : (
+                  <iframe 
+                    src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`} 
+                    className="border-0 min-h-[260px]"
+                    style={{ 
+                      width: `${100 * zoom}%`,
+                      height: `calc(${iframeHeight} * ${zoom})`,
+                      pointerEvents: "auto",
+                      transition: "width 0.2s ease, height 0.2s ease",
+                    }}
+                    title={`${title} Certificate`}
+                    loading="lazy"
+                  />
+                )
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs">
                   Loading Preview...
