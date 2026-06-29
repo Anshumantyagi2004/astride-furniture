@@ -75,11 +75,11 @@ const ChairCard = memo(({ chair, left, top, scale, zIndex, isVisible, index }: {
       style={{
         left,
         top,
-        transform: `translate3d(-50%, -50%, 0) scale(${isVisible ? scale : 0.1})`,
+        transform: `translate3d(-50%, -50%, 0) scale(${isVisible ? scale : 0.85})`,
         opacity: isVisible ? 1 : 0,
         zIndex,
         pointerEvents: isVisible ? "auto" : "none",
-        transition: "left 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease-out",
+        transition: "left 0.7s cubic-bezier(0.16, 1, 0.3, 1), top 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
       }}
     >
       <Link href={detailUrl} className="relative block w-full h-full cursor-pointer hover:scale-105 transition-transform duration-300">
@@ -89,7 +89,7 @@ const ChairCard = memo(({ chair, left, top, scale, zIndex, isVisible, index }: {
           fill
           sizes="(max-width: 768px) 150px, 250px"
           priority={index < 8} 
-          className="object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.05)]"
+          className="object-contain drop-shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
         />
       </Link>
     </div>
@@ -111,7 +111,7 @@ const ChairGrid = memo(({ chairs, visibleCount, isMobile }: { chairs: any[], vis
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className="relative w-full h-full mx-auto"
     >
       {chairs.map((chair, index) => (
@@ -204,15 +204,16 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    const percentage = (x / rect.width) * 100;
+    const percentage = x / rect.width;
 
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     
     rafRef.current = requestAnimationFrame(() => {
-      if (fillRef.current) fillRef.current.style.width = `${percentage}%`;
-      if (thumbRef.current) thumbRef.current.style.left = `calc(${percentage}% - 12px)`;
+      // GPU-accelerated direct DOM mutations (Zero Layout Thrashing)
+      if (fillRef.current) fillRef.current.style.transform = `scaleX(${percentage})`;
+      if (thumbRef.current) thumbRef.current.style.transform = `translate3d(${x - 12}px, -50%, 0)`;
 
-      const newVisibleCount = Math.max(1, Math.ceil(chairs.length * (1 - percentage / 100)));
+      const newVisibleCount = Math.max(1, Math.ceil(chairs.length * (1 - percentage)));
       
       if (newVisibleCount !== visibleCountRef.current) {
         visibleCountRef.current = newVisibleCount;
@@ -226,11 +227,21 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     activePointer.current = e.pointerId;
     e.currentTarget.setPointerCapture(e.pointerId);
     if (!isTouched) setIsTouched(true);
+    
+    if (thumbRef.current) {
+      thumbRef.current.style.transition = 'transform 0.1s cubic-bezier(0.16, 1, 0.3, 1)';
+    }
+    
     updateSliderFromEvent(e.clientX);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerId !== activePointer.current) return;
+    
+    if (thumbRef.current) {
+      thumbRef.current.style.transition = 'none';
+    }
+    
     updateSliderFromEvent(e.clientX);
   };
 
@@ -241,12 +252,11 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
   };
 
   return (
-    <div className="absolute inset-0 z-[999] w-full h-full bg-[#f5f5f5] flex flex-col overflow-hidden pt-[10px] px-[10px]">
+    <div className="absolute inset-0 z-[999] w-full h-full bg-[#f5f5f7] flex flex-col overflow-hidden pt-[10px] px-[10px]">
       
-      {/* Top Right Close Button */}
       <button
         onClick={onBack}
-        className="absolute top-6 right-6 z-[100] w-12 h-12 flex items-center justify-center rounded-full bg-white/90 hover:bg-white text-gray-500 hover:text-gray-900 shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-gray-200/50 transition-all duration-200 hover:scale-105 active:scale-95"
+        className="absolute top-6 right-6 z-[100] w-12 h-12 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md hover:bg-white text-gray-500 hover:text-gray-900 shadow-[0_8px_24px_rgba(0,0,0,0.06)] border border-gray-200/50 transition-all duration-300 hover:scale-105 active:scale-95"
         aria-label="Close and go back"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -262,12 +272,12 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
               key="moving-swiper"
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="w-full h-full flex flex-col justify-center gap-4 md:gap-8 mx-auto py-8"
             >
               <div className="text-center mb-2 px-4">
-                <span className="text-zinc-500 text-[10px] tracking-widest uppercase block mb-0.5">Interactive Discovery</span>
+                <span className="text-zinc-500 text-[10px] tracking-widest uppercase block mb-1">Interactive Discovery</span>
                 <h2 className="text-gray-900 text-2xl md:text-3xl font-serif font-bold uppercase tracking-tight">Slide sitting time to find your perfect chair</h2>
               </div>
               
@@ -275,7 +285,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                 <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 5} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                   {row1.map((chair, idx) => (
                     <SwiperSlide key={`r1-${idx}`} className="flex justify-center items-center">
-                      <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]" />
+                      <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.06)]" />
                     </SwiperSlide>
                   ))}
                 </Swiper>
@@ -285,7 +295,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                 <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 5} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false, reverseDirection: true }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                   {row2.map((chair, idx) => (
                     <SwiperSlide key={`r2-${idx}`} className="flex justify-center items-center">
-                      <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]" />
+                      <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.06)]" />
                     </SwiperSlide>
                   ))}
                 </Swiper>
@@ -295,7 +305,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                 <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 5} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                   {row3.map((chair, idx) => (
                     <SwiperSlide key={`r3-${idx}`} className="flex justify-center items-center">
-                      <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]" />
+                      <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.06)]" />
                     </SwiperSlide>
                   ))}
                 </Swiper>
@@ -307,48 +317,46 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
         </AnimatePresence>
       </div>
 
-      <div className="w-full flex justify-center pb-8 sm:pb-6 px-4 relative z-50">
-        <div className="w-full max-w-[500px] bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-gray-200/50 px-5 py-4 flex flex-col gap-3">
+      <div className="w-full flex justify-center pb-10 sm:pb-8 px-4 relative z-50">
+        <div className="w-full max-w-[480px] bg-white/80 backdrop-blur-2xl rounded-[24px] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.1)] border border-white/40 px-6 py-5 flex flex-col gap-4">
           
-          {/* Top row: 100% width for the slider track */}
           <div className="w-full">
             <div 
               ref={trackRef}
-              className="relative w-full h-10 flex items-center cursor-pointer select-none touch-none"
+              className="relative w-full h-10 flex items-center cursor-pointer select-none touch-none group"
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
               onPointerCancel={handlePointerUp}
               style={{ touchAction: "none" }}
             >
-              <div className="absolute left-0 right-0 h-2 bg-gray-100 rounded-full overflow-hidden shadow-inner pointer-events-none">
+              <div className="absolute left-0 right-0 h-2.5 bg-gray-200/60 rounded-full overflow-hidden pointer-events-none inset-0 my-auto shadow-inner">
                 <div
                   ref={fillRef}
-                  className="h-full rounded-full transition-none will-change-[width]"
-                  style={{ width: "0%", background: "#9ca3af" }}
+                  className="h-full w-full rounded-full transition-none will-change-transform"
+                  style={{ transform: "scaleX(0)", transformOrigin: "left", background: "#8e95a0" }}
                 />
               </div>
               
               <div
                 ref={thumbRef}
-                className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white shadow-[0_2px_10px_rgba(0,0,0,0.15)] pointer-events-none border-[3px] border-[#9ca3af] transition-none will-change-[left]"
-                style={{ left: "calc(0% - 12px)" }}
+                className="absolute top-1/2 left-0 w-7 h-7 rounded-full bg-white shadow-[0_4px_16px_rgba(0,0,0,0.2)] pointer-events-none border-[3.5px] border-[#8e95a0] transition-none will-change-transform group-active:scale-95 duration-200"
+                style={{ transform: "translate3d(-14px, -50%, 0)" }}
               />
             </div>
           </div>
 
-          {/* Bottom row: Back Button + Text */}
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={onBack}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 hover:bg-gray-100 border border-gray-200/50 transition-all duration-200 text-gray-500 hover:text-gray-700 active:scale-95 shadow-sm"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-200/60 transition-all duration-300 text-gray-500 hover:text-gray-800 active:scale-90 shadow-sm"
               aria-label="Go back"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase pointer-events-none mt-0.5">
+            <span className="text-[11px] font-bold tracking-[0.2em] text-gray-400 uppercase pointer-events-none">
               Adjust Sitting Time
             </span>
           </div>
