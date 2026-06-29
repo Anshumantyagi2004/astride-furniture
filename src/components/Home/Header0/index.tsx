@@ -44,6 +44,11 @@ export default function Header0() {
       const params = new URLSearchParams(window.location.search);
       if (params.get("finder") === "true") {
         setShowFinder(true);
+        setTimeout(() => {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("finder");
+          window.history.replaceState({}, "", url.pathname + url.search);
+        }, 100);
       }
     };
 

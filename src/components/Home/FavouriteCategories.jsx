@@ -285,7 +285,7 @@ export default function FavouriteCategories() {
     const activeProducts = productsList.filter(p => p.category === activeCategory);
 
     return (
-        <section className={`w-full pt-16 pb-10 bg-[#F8F9FA] overflow-hidden ${sans.className}`}>
+        <section className={`w-full pt-4 md:pt-16 pb-10 bg-[#F8F9FA] overflow-hidden ${sans.className}`}>
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col items-start text-left mb-4">
                     <span className="inline-flex items-center text-[#8B5CF6] text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2 font-sans">
