@@ -311,7 +311,7 @@ export default function VideoTestimonials() {
 
     return (
         <section
-            className={`relative w-full pt-2 pb-10 lg:pt-3 lg:pb-14 overflow-hidden ${sans.className}`}
+            className={`relative w-full pt-2 pb-0 lg:pt-3 lg:pb-14 overflow-hidden ${sans.className}`}
             style={{ backgroundColor: "#0d0d0d" }}
         >
             {/* Ambient gradient orbs */}
@@ -374,7 +374,7 @@ export default function VideoTestimonials() {
                 `}</style>
 
                 {/* MOBILE LAYOUT (lg:hidden) */}
-                <div className="block lg:hidden w-full pb-8">
+                <div className="block lg:hidden w-full pb-0">
                     <Swiper
                         modules={[Pagination]}
                         pagination={{ clickable: true }}

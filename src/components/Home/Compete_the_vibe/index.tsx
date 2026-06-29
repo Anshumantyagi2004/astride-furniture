@@ -320,7 +320,7 @@ export default function CompeteTheVibe() {
         {/* MOBILE VIEW: Instant Native CSS Scroll Snap */}
         <div 
           ref={scrollRef}
-          className="block md:hidden w-full pb-2 px-1 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+          className="block md:hidden w-full pt-4 pb-2 px-1 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
         >
           <div className="flex gap-3 w-max">
             {products.map((product) => (
