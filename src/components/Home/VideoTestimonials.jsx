@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+// 1. OPTIMIZATION: Import 'm' and 'LazyMotion' instead of the heavy 'motion'
+import { m, LazyMotion, domAnimation, AnimatePresence } from "framer-motion";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { FaYoutube, FaInstagram, FaPlay, FaStar, FaArrowRight } from "react-icons/fa6";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -106,9 +107,11 @@ function StarRating({ count }) {
 // ------------------------------------------------------------------
 // FEATURED (large left) card
 // ------------------------------------------------------------------
-function FeaturedCard({ video, onPlay, isPlaying }) {
+// 2. OPTIMIZATION: Added `isPriority` prop to handle lazy loading
+function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
     return (
-        <motion.div
+        // 3. OPTIMIZATION: Changed motion.div to m.div
+        <m.div
             key={video.id}
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -141,14 +144,15 @@ function FeaturedCard({ video, onPlay, isPlaying }) {
                             src={video.thumbnail}
                             alt=""
                             className="absolute inset-0 w-full h-full object-cover filter blur-[15px] opacity-40 scale-110 pointer-events-none max-md:hidden"
+                            loading={isPriority ? "eager" : "lazy"} // Dynamic loading
                         />
                         {/* Sharp centered image */}
                         <img
                             src={video.thumbnail}
                             alt={video.author}
                             className="relative h-full w-auto object-contain transition-transform duration-700 group-hover:scale-102 z-10"
-                            loading="eager"
-                            fetchPriority="high"
+                            loading={isPriority ? "eager" : "lazy"} // Only eager load the first one
+                            fetchPriority={isPriority ? "high" : "auto"} // Release network choke
                         />
                         {/* Overlays */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 z-10 pointer-events-none" />
@@ -186,7 +190,7 @@ function FeaturedCard({ video, onPlay, isPlaying }) {
                     className="absolute inset-0 z-20 flex items-center justify-center"
                     aria-label="Play featured video"
                 >
-                    <motion.div
+                    <m.div
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         className="w-16 h-16 rounded-full flex items-center justify-center relative"
@@ -199,7 +203,7 @@ function FeaturedCard({ video, onPlay, isPlaying }) {
                         {/* Pulse rings */}
                         <span className="absolute inset-0 rounded-full animate-ping opacity-25"
                             style={{ background: `linear-gradient(135deg, ${video.accentFrom}, ${video.accentTo})` }} />
-                    </motion.div>
+                    </m.div>
                 </button>
             )}
 
@@ -215,7 +219,7 @@ function FeaturedCard({ video, onPlay, isPlaying }) {
                     </div>
                 </div>
             )}
-        </motion.div>
+        </m.div>
     );
 }
 
@@ -224,7 +228,7 @@ function FeaturedCard({ video, onPlay, isPlaying }) {
 // ------------------------------------------------------------------
 function SideCard({ video, onClick, index }) {
     return (
-        <motion.div
+        <m.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "200px" }}
@@ -290,7 +294,7 @@ function SideCard({ video, onClick, index }) {
                     <FaArrowRight size={10} className="text-white" />
                 </div>
             </div>
-        </motion.div>
+        </m.div>
     );
 }
 
@@ -306,172 +310,176 @@ export default function VideoTestimonials() {
 
     const handleSelectSideCard = (id) => {
         setSelectedId(id);
-        setPlayingId(null); // Don't auto-play — let the user press Play on the featured card
+        setPlayingId(null); 
     };
 
     return (
-        <section
-            className={`relative w-full pt-2 pb-0 lg:pt-3 lg:pb-14 overflow-hidden ${sans.className}`}
-            style={{ backgroundColor: "#0d0d0d" }}
-        >
-            {/* Ambient gradient orbs */}
-            <div className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full blur-[100px] opacity-15 pointer-events-none"
-                style={{ background: "radial-gradient(circle, #8B5CF6, transparent 70%)" }} />
-            <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full blur-[80px] opacity-10 pointer-events-none"
-                style={{ background: "radial-gradient(circle, #EC4899, transparent 70%)" }} />
+        // 4. OPTIMIZATION: Wrap the whole section in LazyMotion to defer animation parsing
+        <LazyMotion features={domAnimation}>
+            <section
+                className={`relative w-full pt-2 pb-0 lg:pt-3 lg:pb-14 overflow-hidden ${sans.className}`}
+                style={{ backgroundColor: "#0d0d0d" }}
+            >
+                {/* Ambient gradient orbs */}
+                <div className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full blur-[100px] opacity-15 pointer-events-none"
+                    style={{ background: "radial-gradient(circle, #8B5CF6, transparent 70%)" }} />
+                <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full blur-[80px] opacity-10 pointer-events-none"
+                    style={{ background: "radial-gradient(circle, #EC4899, transparent 70%)" }} />
 
-            <div className="relative max-w-[1150px] mx-auto px-5 md:px-8">
+                <div className="relative max-w-[1150px] mx-auto px-5 md:px-8">
 
-                {/* ── HEADER ── */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "200px" }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                    className="mb-8"
-                >
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                        <div>
-                            <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[3px] text-transparent bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] bg-clip-text mb-2.5">
-                                <span className="inline-block w-6 h-px bg-gradient-to-r from-[#8B5CF6] to-[#EC4899]" />
-                                Social Proof
-                            </span>
-                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
-                                Hear it from{" "}
-                                <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent">
-                                    real people.
-                                </span>
-                            </h2>
-                            <p className="mt-2 text-white/40 text-xs sm:text-sm max-w-sm font-medium">
-                                Unfiltered reviews from YouTube Shorts. 100% genuine.
-                            </p>
-                        </div>
-
-                        {/* Stats strip */}
-                        <div className="flex items-center gap-5 shrink-0">
-                            {[
-                                { label: "Reviews", value: "4,200+" },
-                                { label: "Avg Rating", value: "4.9 ★" },
-                             ].map((s) => (
-                                 <div key={s.label} className="text-center">
-                                     <p className="text-2xl font-black text-white">{s.value}</p>
-                                     <p className="text-[10px] text-white/40 font-semibold uppercase tracking-widest mt-0.5">{s.label}</p>
-                                 </div>
-                             ))}
-                        </div>
-                    </div>
-                </motion.div>
-
-                {/* CSS custom override for swiper pagination in this component */}
-                <style jsx global>{`
-                    .video-swiper .swiper-pagination-bullet {
-                        background: rgba(255, 255, 255, 0.3) !important;
-                        opacity: 1 !important;
-                    }
-                    .video-swiper .swiper-pagination-bullet-active {
-                        background: #8B5CF6 !important;
-                    }
-                `}</style>
-
-                {/* MOBILE LAYOUT (lg:hidden) */}
-                <div className="block lg:hidden w-full pb-0">
-                    <Swiper
-                        modules={[Pagination]}
-                        pagination={{ clickable: true }}
-                        spaceBetween={16}
-                        slidesPerView={1}
-                        className="video-swiper w-full"
-                        onSlideChange={() => setPlayingId(null)}
+                    {/* ── HEADER ── */}
+                    <m.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "200px" }}
+                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                        className="mb-8"
                     >
-                        {videos.map((v) => (
-                            <SwiperSlide key={v.id}>
-                                <div className="h-[430px] w-full">
-                                    <FeaturedCard
-                                        video={v}
-                                        onPlay={() => setPlayingId(v.id)}
-                                        isPlaying={playingId === v.id}
-                                    />
-                                </div>
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                    
-                    {/* Bottom CTA strip for mobile */}
-                    <div className="mt-4">
-                        <a
-                            href="https://www.youtube.com/results?search_query=astride"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-between gap-3 px-5 py-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 group"
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div>
+                                <span className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[3px] text-transparent bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] bg-clip-text mb-2.5">
+                                    <span className="inline-block w-6 h-px bg-gradient-to-r from-[#8B5CF6] to-[#EC4899]" />
+                                    Social Proof
+                                </span>
+                                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
+                                    Hear it from{" "}
+                                    <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent">
+                                        real people.
+                                    </span>
+                                </h2>
+                                <p className="mt-2 text-white/40 text-xs sm:text-sm max-w-sm font-medium">
+                                    Unfiltered reviews from YouTube Shorts. 100% genuine.
+                                </p>
+                            </div>
+
+                            {/* Stats strip */}
+                            <div className="flex items-center gap-5 shrink-0">
+                                {[
+                                    { label: "Reviews", value: "4,200+" },
+                                    { label: "Avg Rating", value: "4.9 ★" },
+                                 ].map((s) => (
+                                     <div key={s.label} className="text-center">
+                                         <p className="text-2xl font-black text-white">{s.value}</p>
+                                         <p className="text-[10px] text-white/40 font-semibold uppercase tracking-widest mt-0.5">{s.label}</p>
+                                     </div>
+                                 ))}
+                            </div>
+                        </div>
+                    </m.div>
+
+                    <style jsx global>{`
+                        .video-swiper .swiper-pagination-bullet {
+                            background: rgba(255, 255, 255, 0.3) !important;
+                            opacity: 1 !important;
+                        }
+                        .video-swiper .swiper-pagination-bullet-active {
+                            background: #8B5CF6 !important;
+                        }
+                    `}</style>
+
+                    {/* MOBILE LAYOUT (lg:hidden) */}
+                    <div className="block lg:hidden w-full pb-0">
+                        <Swiper
+                            modules={[Pagination]}
+                            pagination={{ clickable: true }}
+                            spaceBetween={16}
+                            slidesPerView={1}
+                            className="video-swiper w-full"
+                            onSlideChange={() => setPlayingId(null)}
                         >
-                            <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#8B5CF6] to-[#EC4899]">
-                                    <FaYoutube size={16} className="text-white" />
+                            {videos.map((v, index) => (
+                                <SwiperSlide key={v.id}>
+                                    <div className="h-[430px] w-full">
+                                        <FeaturedCard
+                                            video={v}
+                                            onPlay={() => setPlayingId(v.id)}
+                                            isPlaying={playingId === v.id}
+                                            isPriority={index === 0} // ONLY load the first mobile slide immediately
+                                        />
+                                    </div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                        
+                        {/* Bottom CTA strip for mobile */}
+                        <div className="mt-4">
+                            <a
+                                href="https://www.youtube.com/results?search_query=astride"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-between gap-3 px-5 py-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 group"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#8B5CF6] to-[#EC4899]">
+                                        <FaYoutube size={16} className="text-white" />
+                                    </div>
+                                    <div>
+                                        <p className="text-white font-bold text-xs">See 200+ more reviews</p>
+                                        <p className="text-white/40 text-[10px]">On YouTube</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-white font-bold text-xs">See 200+ more reviews</p>
-                                    <p className="text-white/40 text-[10px]">On YouTube</p>
+                                <div className="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#8B5CF6] group-hover:bg-[#8B5CF6]/20 transition-all duration-300">
+                                    <FaArrowRight size={10} className="text-white/60 group-hover:text-white transition-colors" />
                                 </div>
-                            </div>
-                            <div className="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#8B5CF6] group-hover:bg-[#8B5CF6]/20 transition-all duration-300">
-                                <FaArrowRight size={10} className="text-white/60 group-hover:text-white transition-colors" />
-                            </div>
-                        </a>
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* DESKTOP LAYOUT (lg:grid) */}
+                    <div className="hidden lg:grid grid-cols-[1fr_1.05fr] gap-4 items-stretch">
+                        {/* LEFT: Featured card */}
+                        <div className="relative w-full h-full min-h-[420px] lg:h-[510px]">
+                            <AnimatePresence mode="wait">
+                                <FeaturedCard
+                                    key={featured.id}
+                                    video={featured}
+                                    onPlay={() => setPlayingId(featured.id)}
+                                    isPlaying={playingId === featured.id}
+                                    isPriority={true} // Desktop featured image should always load immediately
+                                />
+                            </AnimatePresence>
+                        </div>
+
+                        {/* RIGHT: 3 side cards stacked */}
+                        <div className="flex flex-col gap-3">
+                            {sideVideos.map((v, i) => (
+                                <SideCard
+                                    key={v.id}
+                                    video={v}
+                                    index={i}
+                                    onClick={() => handleSelectSideCard(v.id)}
+                                />
+                            ))}
+
+                            {/* Bottom CTA strip */}
+                            <m.a
+                                initial={{ opacity: 0, y: 15 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "200px" }}
+                                transition={{ duration: 0.5, delay: 0.4 }}
+                                href="https://www.youtube.com/results?search_query=astride"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-between gap-3 px-5 py-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 group"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#8B5CF6] to-[#EC4899]">
+                                        <FaYoutube size={16} className="text-white" />
+                                    </div>
+                                    <div>
+                                        <p className="text-white font-bold text-xs">See 200+ more reviews</p>
+                                        <p className="text-white/40 text-[10px]">On YouTube</p>
+                                    </div>
+                                </div>
+                                <div className="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#8B5CF6] group-hover:bg-[#8B5CF6]/20 transition-all duration-300">
+                                    <FaArrowRight size={10} className="text-white/60 group-hover:text-white transition-colors" />
+                                </div>
+                            </m.a>
+                        </div>
                     </div>
                 </div>
-
-                {/* DESKTOP LAYOUT (lg:grid) */}
-                <div className="hidden lg:grid grid-cols-[1fr_1.05fr] gap-4 items-stretch">
-                    {/* LEFT: Featured card */}
-                    <div className="relative w-full h-full min-h-[420px] lg:h-[510px]">
-                        <AnimatePresence mode="wait">
-                            <FeaturedCard
-                                key={featured.id}
-                                video={featured}
-                                onPlay={() => setPlayingId(featured.id)}
-                                isPlaying={playingId === featured.id}
-                            />
-                        </AnimatePresence>
-                    </div>
-
-                    {/* RIGHT: 3 side cards stacked */}
-                    <div className="flex flex-col gap-3">
-                        {sideVideos.map((v, i) => (
-                            <SideCard
-                                key={v.id}
-                                video={v}
-                                index={i}
-                                onClick={() => handleSelectSideCard(v.id)}
-                            />
-                        ))}
-
-                        {/* Bottom CTA strip */}
-                        <motion.a
-                            initial={{ opacity: 0, y: 15 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "200px" }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
-                            href="https://www.youtube.com/results?search_query=astride"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-between gap-3 px-5 py-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 group"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#8B5CF6] to-[#EC4899]">
-                                    <FaYoutube size={16} className="text-white" />
-                                </div>
-                                <div>
-                                    <p className="text-white font-bold text-xs">See 200+ more reviews</p>
-                                    <p className="text-white/40 text-[10px]">On YouTube</p>
-                                </div>
-                            </div>
-                            <div className="w-7 h-7 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#8B5CF6] group-hover:bg-[#8B5CF6]/20 transition-all duration-300">
-                                <FaArrowRight size={10} className="text-white/60 group-hover:text-white transition-colors" />
-                            </div>
-                        </motion.a>
-                    </div>
-                </div>
-            </div>
-        </section>
+            </section>
+        </LazyMotion>
     );
 }
