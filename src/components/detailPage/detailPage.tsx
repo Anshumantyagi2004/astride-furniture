@@ -165,7 +165,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
 
   if (loading) {
     return (
-      <div className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-[#ffffff] min-h-screen flex items-center justify-center font-sans">
+      <div className="fixed inset-0 w-screen h-screen bg-white flex items-center justify-center font-sans z-50">
         <div className="flex flex-col items-center gap-4">
           <Loader />
           <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest mt-4">Loading Premium Seating...</p>

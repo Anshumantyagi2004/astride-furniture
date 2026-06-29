@@ -189,7 +189,8 @@ export default function Navbar() {
             if (cat.name === "Executive Chair") {
               return { ...cat, name: "Office Chair" };
             }
-            if (cat.name === "Bar Stool" || cat.name === "Bar Stools") {
+            const catUpper = cat.name.toUpperCase();
+            if (catUpper.includes("BAR") || catUpper.includes("STOOL") || catUpper.includes("CAFE")) {
               return { ...cat, name: "Bar Stools & Cafe Chair" };
             }
             return cat;
@@ -246,7 +247,17 @@ export default function Navbar() {
     if (dbCategory.includes("STUDY")) return "Study Chair";
     if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) return "Bar Stools & Cafe Chair";
     if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) return "Office Chair";
-    return "";
+    return rawCat; // Return original name as fallback for direct match
+  };
+
+  // Fuzzy category match: strip special chars and compare lowercase
+  const catMatches = (p, menu) => {
+    const normalized = getNormalizedCategoryName(p);
+    if (normalized === menu) return true;
+    // Fallback: compare raw category name directly (case-insensitive, ignore &/special chars)
+    const rawCat = typeof p.category === 'object' ? (p.category.name || "") : String(p.category || "");
+    const simplify = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return simplify(rawCat) === simplify(menu);
   };
 
   // Retrieve display products
@@ -254,10 +265,7 @@ export default function Navbar() {
   if (activeMenu) {
     if (products.length > 0) {
       displayChairs = products
-        .filter(p => {
-          const normalizedCat = getNormalizedCategoryName(p);
-          return normalizedCat === activeMenu;
-        })
+        .filter(p => catMatches(p, activeMenu))
         .map(p => ({
           name: p.productName || p.name || p.title,
           image: p.colorVariants?.[0]?.images?.[0]?.url
@@ -353,10 +361,6 @@ export default function Navbar() {
                 <X size={14} strokeWidth={2.5} />
               </button>
             )}
-            {isMounted && (
-              <pre style={{position:"absolute",background:"rgba(0,0,0,0.8)",color:"white",padding:"4px",zIndex:60}}>{JSON.stringify(suggestions.slice(0,5),null,2)}</pre>
-            )}
-            
             {/* Desktop Suggestions Dropdown */}
             {isMounted && suggestions.length > 0 && (
               <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] max-h-[300px] overflow-y-auto py-1 block z-50">
