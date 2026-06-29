@@ -1,9 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
 
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -62,32 +65,44 @@ const STATIC_FALLBACKS = [
   }
 ];
 
+const STICKERS = [
+  { text: "staff fave", bg: "bg-[#DCF351] text-[#131313]" },
+  { text: "", bg: "" },
+  { text: "new drop", bg: "bg-[#DCF351] text-[#131313]" },
+  { text: "boss mode", bg: "bg-[#EC4899] text-white" }
+];
+
 function VibeProductCard({ product }: { product: any }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const images = product.allImages && product.allImages.length > 0
-    ? product.allImages
-    : [product.image];
+  // Memoize to prevent unnecessary array recreation on renders
+  const images = useMemo(() => {
+    return product.allImages?.length > 0 ? product.allImages : [product.image];
+  }, [product.allImages, product.image]);
 
   useEffect(() => {
-    if (images.length > 1) {
-      setCurrentImageIndex(0);
+    if (isHovered && images.length > 1) {
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
-      }, 2000);
+      }, 1000);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
+      setCurrentImageIndex(0);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [images.length]);
+  }, [isHovered, images.length]);
 
   return (
     <Link
       href={`/products/${product.slug || product.id}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className="group relative flex flex-col overflow-visible rounded-[18px] md:rounded-[28px] border-[2px] md:border-[2.5px] border-[#131313] bg-white shadow-[4px_4px_0_#131313] md:shadow-[6px_6px_0_#131313] transition-all duration-[250ms] hover:-translate-y-[5px] md:hover:-translate-y-[7px] hover:shadow-[6px_8px_0_rgba(19,19,19,0.9)] md:hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)] cursor-pointer h-full"
     >
-      {/* Sticker */}
       {product.sticker && (
         <span
           className={`absolute left-2 md:left-4 top-[-10px] md:top-[-13px] z-10 rotate-[-3deg] px-2 md:px-[14px] py-1 md:py-[5px] text-[10px] md:text-[13px] font-semibold border-[2px] md:border-[2.5px] border-[#131313] shadow-[2px_2px_0_#131313] md:shadow-[3px_3px_0_#131313] ${product.stickerBg}`}
@@ -96,20 +111,18 @@ function VibeProductCard({ product }: { product: any }) {
         </span>
       )}
 
-      {/* Product Image Wrapper */}
       <div className="rounded-t-[16px] md:rounded-t-[25px] bg-[radial-gradient(ellipse_at_50%_80%,#f4f4f5,#fff_70%)] px-2 md:px-[16px] pb-2 md:pb-[6px] pt-4 md:pt-[24px] relative h-[160px] md:h-[230px] flex items-center justify-center overflow-hidden">
         <Image
           src={images[currentImageIndex] || product.image}
           alt={product.name}
           width={300}
           height={200}
-          priority={true}
+          loading="lazy"
           className="mx-auto h-[130px] md:h-[200px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.06] group-hover:rotate-[-1.5deg]"
         />
 
-        {/* Pagination Dots */}
         {images.length > 1 && (
-          <div className="absolute bottom-2 flex gap-1.5 justify-center w-full opacity-100 transition-opacity duration-300 z-10">
+          <div className="absolute bottom-2 flex gap-1.5 justify-center w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
             {images.map((_: any, idx: number) => (
               <div 
                 key={idx} 
@@ -120,7 +133,6 @@ function VibeProductCard({ product }: { product: any }) {
         )}
       </div>
 
-      {/* Product Info */}
       <div className="flex flex-1 flex-col gap-1 md:gap-[7px] px-3 md:px-[18px] pb-3 md:pb-[20px] pt-3 md:pt-[16px]">
         <span className="text-[9px] md:text-[11px] font-bold uppercase tracking-[0.14em] text-[#EC4899]">
           {product.category}
@@ -176,63 +188,56 @@ function VibeProductCard({ product }: { product: any }) {
 
 export default function CompeteTheVibe() {
   const [products, setProducts] = useState<any[]>(STATIC_FALLBACKS);
-  const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Data Fetching
   useEffect(() => {
+    let isMounted = true; // Cleanup flag to prevent memory leaks on unmount
+
     async function fetchVibeProducts() {
       try {
-        const res = await fetch("/api/product?t=" + Date.now(), {
-          cache: "no-store",
-          headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
-        });
+        const res = await fetch("/api/product");
         const data = await res.json();
 
-        if (data.success && data.products && data.products.length > 0) {
-          const multiImageProducts = data.products.filter((prod: any) => {
-            const imageCount = prod.colorVariants?.reduce(
-              (acc: number, variant: any) => acc + (variant.images?.length || 0),
-              0
-            ) || 0;
-            return imageCount > 1;
-          });
+        if (data.success && data.products?.length > 0 && isMounted) {
+          
+          // 1. Filter efficiently: Look only for "Office" category and limit to max 6 immediately.
+          const officeProducts = data.products
+            .filter((prod: any) => {
+              const catName = typeof prod.category === "string" 
+                ? prod.category.toLowerCase() 
+                : (prod.category?.name || "").toLowerCase();
+              return catName.includes("office");
+            })
+            .slice(0, 6); // Max 6 boundary applied before heavy mapping
 
-          if (multiImageProducts.length > 0) {
-            const mapped = multiImageProducts.slice(0, 4).map((prod: any, idx: number) => {
-              let normalizedCategory = prod.category?.name || (typeof prod.category === "string" ? prod.category : "Ergonomic Chair");
-
-              const blackVariant = prod.colorVariants?.find(
-                (v: any) => v.colorName?.toLowerCase() === "black"
-              );
-              const blackImage = blackVariant?.images?.[0]?.url;
-              const fallbackImage = prod.colorVariants?.find(
-                (v: any) => v.images && v.images.length > 0
-              )?.images?.[0]?.url;
-
-              const colorImages = prod.colorVariants?.reduce((acc: string[], variant: any) => {
-                if (variant.images) {
-                  return [...acc, ...variant.images.map((img: any) => img.url)];
+          if (officeProducts.length > 0) {
+            const mapped = officeProducts.map((prod: any, idx: number) => {
+              const normalizedCategory = prod.category?.name || (typeof prod.category === "string" ? prod.category : "Office Chair");
+              
+              // 2. Performance: Limit how many image variations we extract into memory to cap DOM dots.
+              const allUrls = new Set<string>();
+              if (prod.images?.length) prod.images.forEach((img: any) => allUrls.add(img.url || img));
+              
+              // Only pull up to 4 variant images to save RAM
+              let variantCount = 0;
+              for (const variant of (prod.colorVariants || [])) {
+                if (variantCount >= 4) break; 
+                if (variant.images?.length) {
+                   allUrls.add(variant.images[0].url);
+                   variantCount++;
                 }
-                return acc;
-              }, []) || [];
-              const rootImages = prod.images ? prod.images.map((img: any) => img.url || img) : [];
-              const allImages = [...rootImages, ...colorImages];
+              }
 
-              const stickers = [
-                { text: "staff fave", bg: "bg-[#DCF351] text-[#131313]" },
-                { text: "", bg: "" },
-                { text: "new drop", bg: "bg-[#DCF351] text-[#131313]" },
-                { text: "boss mode", bg: "bg-[#EC4899] text-white" }
-              ];
-              const stickerChoice = stickers[idx % stickers.length];
+              const allImages = Array.from(allUrls).slice(0, 5); // Hard cap at 5 images per card
+              const defaultImage = allImages[0] || "/Png1/chair12_ErgoFit.webp";
+              const stickerChoice = STICKERS[idx % STICKERS.length];
 
               return {
                 id: prod._id,
                 slug: prod.slug,
                 name: prod.productName,
                 category: normalizedCategory,
-                image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
-                allImages: Array.from(new Set(allImages)),
+                image: defaultImage,
+                allImages,
                 oldPrice: `₹${(prod.oldPrice || prod.realPrice * 2).toLocaleString()}`,
                 price: `₹${prod.realPrice.toLocaleString()}`,
                 rawPrice: prod.realPrice,
@@ -241,51 +246,19 @@ export default function CompeteTheVibe() {
               };
             });
 
-            if (mapped.length < 4) {
-              const needed = 4 - mapped.length;
-              setProducts([...mapped, ...STATIC_FALLBACKS.slice(0, needed)]);
-            } else {
-              setProducts(mapped);
-            }
+            // 3. Fallback filler logic if we found fewer than 6, though mapping naturally scales to whatever is found up to 6.
+            setProducts(mapped);
           }
         }
       } catch (e) {
         console.error("Error fetching recommended vibe products:", e);
       }
     }
+
     fetchVibeProducts();
-  }, []);
-
-  // Lightweight Native Autoplay for Mobile
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    let isUserInteracting = false;
-    
-    const setInteracting = () => (isUserInteracting = true);
-    const clearInteracting = () => (isUserInteracting = false);
-
-    container.addEventListener("touchstart", setInteracting, { passive: true });
-    container.addEventListener("touchend", () => setTimeout(clearInteracting, 3000));
-
-    const interval = setInterval(() => {
-      if (isUserInteracting) return;
-
-      const maxScroll = container.scrollWidth - container.clientWidth;
-      
-      if (container.scrollLeft >= maxScroll - 10) {
-        container.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        const scrollAmount = container.clientWidth / 2;
-        container.scrollBy({ left: scrollAmount, behavior: "smooth" });
-      }
-    }, 2500);
 
     return () => {
-      clearInterval(interval);
-      container.removeEventListener("touchstart", setInteracting);
-      container.removeEventListener("touchend", clearInteracting);
+      isMounted = false;
     };
   }, []);
 
@@ -293,7 +266,6 @@ export default function CompeteTheVibe() {
     <section className={`pt-2 pb-0 md:pt-3 md:pb-6 bg-white ${sans.className}`}>
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
         
-        {/* Header section */}
         <div className="mb-4 md:mb-12 flex flex-row items-end justify-between gap-2 md:gap-5">
           <div className="flex-1">
             <h2 className="text-[35px] md:text-[48px] lg:text-[58px] font-black leading-tight text-[#131313]">
@@ -313,25 +285,26 @@ export default function CompeteTheVibe() {
           </Link>
         </div>
 
-        {/* MOBILE VIEW: Edge-to-edge scroll container with exactly calculated widths */}
-        <div 
-          ref={scrollRef}
-          className="block md:hidden w-[calc(100%+32px)] -ml-4 pt-4 pb-4 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
-        >
-          <div className="flex gap-3 w-max px-4">
+        <div className="block md:hidden w-full pb-0 px-1">
+          <Swiper
+            modules={[Autoplay]}
+            spaceBetween={12}
+            slidesPerView={2}
+            loop={true}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
+            }}
+            className="w-full !overflow-visible"
+          >
             {products.map((product) => (
-              <div 
-                key={product.id} 
-                // Exactly half the screen minus gap and padding.
-                className="snap-start w-[calc((100vw-44px)/2)] pt-3 pb-2 h-auto"
-              >
+              <SwiperSlide key={product.id} className="pb-0 pt-3 h-auto">
                 <VibeProductCard product={product} />
-              </div>
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
         </div>
 
-        {/* DESKTOP VIEW (Standard Grid) */}
         <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]">
           {products.map((product) => (
             <VibeProductCard key={product.id} product={product} />

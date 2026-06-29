@@ -417,20 +417,38 @@ export default function ProductPageHome() {
           </p>
         </div>
 
-        {/* ── Category Tabs — Horizontal Scrollable on Mobile ── */}
+        {/* ── Category Tabs ── */}
         <div className="relative mb-4 md:mb-8">
-          {/* Mobile Swipe Hint */}
-          <div className="flex items-center justify-between text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] px-1 mb-2.5 md:hidden select-none">
-            <span>Select Category</span>
-            <span className="flex items-center gap-1.5 text-slate-600 font-extrabold animate-pulse">
-              Swipe
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </span>
+          
+          {/* MOBILE UI (From FavouriteCategories) */}
+          <div className="w-full mx-auto md:hidden bg-gray-100 rounded-[24px] border border-gray-200/50 p-2 mb-4">
+            <div className="flex flex-wrap gap-1.5 items-center justify-center w-full">
+              {tabs.map((tab) => {
+                const isActive = selectedCategory === tab;
+                return (
+                  <button
+                    key={tab}
+                    onClick={() => {
+                      setSelectedCategory(tab);
+                      if (tab === "All Products") router.push("/products");
+                      else router.push(`/products?category=${encodeURIComponent(tab)}`);
+                    }}
+                    className="relative px-3.5 py-2 rounded-full text-[11px] font-bold transition-colors duration-300 focus:outline-none shrink-0"
+                  >
+                    {isActive && (
+                      <div className="absolute inset-0 bg-[#161316] rounded-full shadow-sm" />
+                    )}
+                    <span className={`relative z-10 transition-colors duration-300 ${isActive ? "text-white" : "text-gray-500"}`}>
+                      {tab}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-3 overflow-x-auto pb-2 md:flex-wrap md:justify-center md:overflow-visible scrollbar-hide relative z-0" style={{ scrollbarWidth: 'none' }}>
+          {/* DESKTOP UI (Original) */}
+          <div className="hidden md:flex items-center justify-center gap-3 overflow-visible relative z-0 flex-wrap">
             {tabs.map((tab) => {
               const isActive = selectedCategory === tab;
               return (
@@ -438,7 +456,6 @@ export default function ProductPageHome() {
                   key={tab}
                   onClick={() => {
                     setSelectedCategory(tab);
-                    // Update URL when category is selected
                     if (tab === "All Products") {
                       router.push("/products");
                     } else {
@@ -446,7 +463,7 @@ export default function ProductPageHome() {
                       router.push(`/products?category=${encoded}`);
                     }
                   }}
-                  className={`shrink-0 px-4 md:px-6 py-2.5 md:py-3 rounded-full font-bold uppercase text-[10px] md:text-xs tracking-widest focus:outline-none transition-all duration-300 ${
+                  className={`shrink-0 px-6 py-3 rounded-full font-bold uppercase text-xs tracking-widest focus:outline-none transition-all duration-300 ${
                     isActive 
                       ? "bg-black text-white shadow-lg scale-105" 
                       : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-black"
@@ -457,8 +474,6 @@ export default function ProductPageHome() {
               );
             })}
           </div>
-          {/* Fade mask for mobile overflow */}
-          <div className="absolute right-0 bottom-2 top-[22px] w-12 bg-gradient-to-l from-[#f8fafc] to-transparent pointer-events-none md:hidden z-10" />
         </div>
 
         {/* ── Mobile Filter Bar ── */}
