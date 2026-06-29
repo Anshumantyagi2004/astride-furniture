@@ -14,7 +14,6 @@ const sans = Plus_Jakarta_Sans({
 const BestSellerCard = ({ product }) => {
   const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
   const timerRef = useRef(null);
 
   const images = product.allImages && product.allImages.length > 0 
@@ -22,21 +21,18 @@ const BestSellerCard = ({ product }) => {
     : [product.image];
 
   useEffect(() => {
-    if (isHovered && images.length > 1) {
-      // Instantly switch to the 2nd image on hover
-      setCurrentImageIndex(1);
-      
+    // Auto-start looping images for product cards
+    if (images.length > 1) {
+      // start from first image
+      setCurrentImageIndex(0);
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
-      }, 1000);
-    } else {
-      if (timerRef.current) clearInterval(timerRef.current);
-      setCurrentImageIndex(0);
+      }, 2000);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isHovered, images.length]);
+  }, [images.length]);
 
   const handleAddToCart = () => {
     const cartItem = {
@@ -51,11 +47,7 @@ const BestSellerCard = ({ product }) => {
   };
 
   return (
-    <div 
-      className="flex flex-col group h-full justify-between font-sans"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="flex flex-col group h-full justify-between font-sans">
       <div 
         onClick={() => router.push(`/products/${product.slug || product.id}`)}
         className="cursor-pointer"
@@ -80,7 +72,7 @@ const BestSellerCard = ({ product }) => {
 
           {/* Pagination Dots */}
           {images.length > 1 && (
-            <div className="absolute bottom-3 flex gap-1.5 justify-center w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+            <div className="absolute bottom-3 flex gap-1.5 justify-center w-full opacity-100 transition-opacity duration-300 z-10">
               {images.map((_, idx) => (
                 <div 
                   key={idx} 

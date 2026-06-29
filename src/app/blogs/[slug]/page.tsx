@@ -11,7 +11,6 @@ import {
   useTransform,
 } from "framer-motion";
 import { 
-  ArrowLeft, 
   Calendar, 
   Clock, 
   User, 
@@ -89,24 +88,6 @@ export default function BlogDetailsPage({
         className="fixed left-0 top-0 z-[100] h-1 bg-indigo-600 origin-left"
         style={{ scaleX: scrollYProgress }}
       />
-
-      {/* Floating Back Navigation Header - Mobile optimized */}
-      <motion.div 
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-        className="fixed top-6 left-6 md:top-8 md:left-8 z-50"
-      >
-        <Link 
-          href="/blogs"
-          className="flex items-center gap-2 md:gap-3 rounded-full bg-white/40 hover:bg-white/90 text-neutral-900 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-500 group border border-white/50 px-4 md:px-5 py-2.5 md:py-3"
-        >
-          <div className="bg-neutral-900 text-white rounded-full p-1 md:p-1.5 transition-transform duration-300 group-hover:-translate-x-1">
-            <ArrowLeft size={18} strokeWidth={2.5} />
-          </div>
-          <span className="font-bold tracking-widest uppercase text-sm hidden md:inline">Back</span>
-        </Link>
-      </motion.div>
 
       {/* Hero Section with Parallax */}
       <section className="relative h-[60vh] md:h-[80vh] min-h-[400px] md:min-h-[600px] w-full overflow-hidden bg-black flex items-end">

@@ -5,6 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
 
+// Swiper Imports
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
+
 const sans = Plus_Jakarta_Sans({
     subsets: ["latin"],
     weight: ["400", "500", "600", "700", "800"],
@@ -59,61 +64,49 @@ const chairData = [
     },
 ];
 
-function ChairCard({ chair, index, products }) {
-    const [isHovered, setIsHovered] = useState(false);
-
-    // Find product by ID (mapped in chairData) and use its slug for URL
-    // This way, navigation works even if slug changes
+function ChairCard({ chair, products, priorityLoad }) {
+    // Find product by ID
     const product = products.find(p => p._id === chair.productId);
     const targetUrl = product ? `/products/${product.slug}` : `/products`;
 
     return (
         <Link
             href={targetUrl}
-            key={index}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className={`group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden md:hover:border-zinc-400 md:hover:-translate-y-3 transition-all duration-300 shadow-none md:shadow-sm md:hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] min-w-[290px] max-w-[320px] snap-center flex-shrink-0 md:min-w-0 md:max-w-none cursor-pointer block ${sans.className}`}
+            className={`group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden transition-all duration-300 block h-full w-full cursor-pointer md:hover:border-zinc-400 md:hover:-translate-y-3 md:hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] ${sans.className}`}
         >
-            {/* HOVER GLOW */}
-            <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+            {/* HOVER GLOW (Desktop Only) */}
+            <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 
-            {/* IMAGE */}
+            {/* IMAGE CONTAINER */}
             <div className="relative h-[300px] md:h-[420px] flex items-center justify-center p-6">
-                <div className="w-full h-full flex items-center justify-center relative transition-transform duration-300 md:group-hover:scale-103 md:group-hover:-rotate-1">
-                    {/* Main Image */}
+                <div className="w-full h-full flex items-center justify-center relative transition-transform duration-300 md:group-hover:scale-105 md:group-hover:-rotate-1">
+                    
+                    {/* Main Image (Stacked - visible by default, hides on desktop hover) */}
                     <div 
-                        className={`absolute w-full h-[260px] md:h-[380px] transition-all duration-300 md:duration-500 flex items-center justify-center ${
-                            isHovered ? "opacity-0 pointer-events-none" : "opacity-100"
-                        }`}
-                        style={{
-                            transform: isHovered ? "scale(0.90)" : `scale(${chair.mainScaleValue || 0.95})`
-                        }}
+                        className="absolute w-full h-[260px] md:h-[380px] transition-all duration-500 flex items-center justify-center md:group-hover:opacity-0 md:group-hover:scale-90"
+                        style={{ transform: `scale(${chair.mainScaleValue || 0.95})` }}
                     >
                         <Image
                             src={chair.mainImage}
                             alt={chair.name}
-                            width={500}
-                            height={500}
-                            className="w-full h-full object-contain shadow-none md:drop-shadow-[0_25px_45px_rgba(0,0,0,0.08)] md:group-hover:drop-shadow-[0_35px_65px_rgba(0,0,0,0.12)] transition-all duration-300 md:duration-500"
+                            width={400}
+                            height={400}
+                            priority={priorityLoad}
+                            className="w-full h-full object-contain shadow-none transition-all duration-500"
                         />
                     </div>
 
-                    {/* Hover Image */}
+                    {/* Hover Image (Stacked - hidden by default, shows on desktop hover) */}
                     <div 
-                        className={`hidden md:flex absolute w-full h-[260px] md:h-[380px] transition-all duration-500 items-center justify-center ${
-                            isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
-                        }`}
-                        style={{
-                            transform: isHovered ? `scale(${chair.hoverScaleValue || 1.00})` : "scale(0.90)"
-                        }}
+                        className="hidden md:flex absolute w-full h-[260px] md:h-[380px] transition-all duration-500 items-center justify-center opacity-0 scale-90 md:group-hover:opacity-100 md:group-hover:scale-100 pointer-events-none"
                     >
                         <Image
                             src={chair.hoverImage}
-                            alt={chair.name}
-                            width={500}
-                            height={500}
-                            className="w-full h-full object-contain drop-shadow-[0_25px_45px_rgba(0,0,0,0.08)] group-hover:drop-shadow-[0_35px_65px_rgba(0,0,0,0.12)] transition-all duration-500"
+                            alt={`${chair.name} Alternative View`}
+                            width={400}
+                            height={400}
+                            loading="lazy"
+                            className="w-full h-full object-contain drop-shadow-[0_25px_45px_rgba(0,0,0,0.08)] transition-all duration-500"
                         />
                     </div>
                 </div>
@@ -130,7 +123,7 @@ function ChairCard({ chair, index, products }) {
                             {chair.subtitle}
                         </p>
                     </div>
-                    <div className="w-11 h-11 rounded-full bg-zinc-950 text-white flex items-center justify-center md:hover:scale-110 transition-all duration-300 shadow-none md:shadow-[0_10px_30px_rgba(0,0,0,0.15)] md:hover:bg-zinc-800">
+                    <div className="w-11 h-11 rounded-full bg-zinc-950 text-white flex items-center justify-center transition-all duration-300 md:group-hover:scale-110 md:group-hover:bg-zinc-800">
                         →
                     </div>
                 </div>
@@ -161,9 +154,10 @@ export default function ChairSection() {
     }, []);
 
     return (
-        <section className={`relative overflow-hidden bg-[#f1f3f5] pb-2 pt-2 border-t border-t-white ${sans.className}`}>
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-zinc-400/10 blur-[180px] rounded-full"></div>
-            <div className="relative z-10 md:px-25 px-4 lg:px-10">
+        <section className={`relative overflow-hidden bg-[#f1f3f5] pb-10 pt-6 border-t border-t-white ${sans.className}`}>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-zinc-400/10 blur-[180px] rounded-full pointer-events-none"></div>
+            
+            <div className="relative z-10 px-4 md:px-10 lg:px-20 mx-auto max-w-[1600px]">
                 <div className="text-center mb-8">
                     <p className={`uppercase tracking-[5px] text-[#8B5CF6] text-sm font-extrabold ${sans.className}`}>
                         Premium Ergonomics
@@ -174,11 +168,44 @@ export default function ChairSection() {
                     </h2>
                 </div>
 
-                {/* CARDS */}
-                <div className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-6 scrollbar-hide md:grid md:grid-cols-2 xl:grid-cols-5 md:gap-6 -mx-4 px-4 md:mx-0 md:px-0">
-                    {chairData.map((chair, index) => (
-                        <ChairCard key={index} chair={chair} index={index} products={products} />
-                    ))}
+                {/* SWIPER CAROUSEL */}
+                <div className="w-full">
+                    <Swiper
+                        modules={[Autoplay]}
+                        spaceBetween={20}
+                        slidesPerView={1} // Changed from 1.15 to exactly 1 to remove side lines
+                        loop={true}
+                        autoplay={{
+                            delay: 2500,
+                            disableOnInteraction: false,
+                            pauseOnMouseEnter: true
+                        }}
+                        breakpoints={{
+                            640: {
+                                slidesPerView: 2.2,
+                                spaceBetween: 20,
+                            },
+                            1024: {
+                                slidesPerView: 4,
+                                spaceBetween: 24,
+                            },
+                            1280: {
+                                slidesPerView: 5,
+                                spaceBetween: 24,
+                            }
+                        }}
+                        className="!pb-10"
+                    >
+                        {chairData.map((chair, index) => (
+                            <SwiperSlide key={index} className="!h-auto flex">
+                                <ChairCard 
+                                    chair={chair} 
+                                    products={products} 
+                                    priorityLoad={index < 2} 
+                                />
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
                 </div>
             </div>
         </section>
