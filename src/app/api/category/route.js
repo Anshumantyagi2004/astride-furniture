@@ -19,12 +19,14 @@ export async function POST(req) {
 
         await connectDB();
         const formData = await req.formData();
-        const name = formData.get("name");
+        const rawName = formData.get("name");
+        const name = rawName ? rawName.replace(/\s+/g, ' ').trim() : null;
         const image = formData.get("image");
 
-          // ADD THESE TWO LINES:
-        const metaTitleInput = formData.get("metaTitle");
-        const metaDescriptionInput = formData.get("metaDescription");
+        const rawMetaTitle = formData.get("metaTitle");
+        const metaTitleInput = rawMetaTitle ? rawMetaTitle.replace(/\s+/g, ' ').trim() : null;
+        const rawMetaDesc = formData.get("metaDescription");
+        const metaDescriptionInput = rawMetaDesc ? rawMetaDesc.replace(/\s+/g, ' ').trim() : null;
 
         if (!name || !image) {
             return NextResponse.json(
@@ -168,10 +170,13 @@ export async function PUT(req) {
         await connectDB();
         const formData = await req.formData();
         const id = formData.get("id");
-        const name = formData.get("name");
+        const rawName = formData.get("name");
+        const name = rawName ? rawName.replace(/\s+/g, ' ').trim() : null;
         const image = formData.get("image");
-        const metaTitleInput = formData.get("metaTitle");
-        const metaDescriptionInput = formData.get("metaDescription");
+        const rawMetaTitle = formData.get("metaTitle");
+        const metaTitleInput = rawMetaTitle ? rawMetaTitle.replace(/\s+/g, ' ').trim() : null;
+        const rawMetaDesc = formData.get("metaDescription");
+        const metaDescriptionInput = rawMetaDesc ? rawMetaDesc.replace(/\s+/g, ' ').trim() : null;
 
         if (!id) {
             return NextResponse.json(
