@@ -1,9 +1,5 @@
 import dynamic from 'next/dynamic';
 
-// Force dynamic rendering to always fetch fresh product data
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 // Static imports — loaded normally
 import CircularChairs from "@/components/Home/CircularChairs";
 import Category from "@/components/Home/Category";
@@ -78,25 +74,12 @@ export default function Home() {
      <CertificationsBento/>
       <ChairSection />
       <Header2 />
-     
       <AboutSection_New/>
       <CompeteTheVibe/>
-      
-     
-     
-      
-     
-       
-      
-     
       <WhyUs />
-      
-      
       <StatsSection_New/> 
-      
       {/* <BrandTrustSection /> */}
       {/* <BestSellerSection/> */}
-      
       {/* <ClientLogoSlider /> */}
       <Reviews_New/>
       {/* <Reviews /> */}

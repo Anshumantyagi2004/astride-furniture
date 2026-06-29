@@ -1,5 +1,5 @@
 import React from 'react'
-import dynamic from 'next/dynamic'
+import dynamicImport from 'next/dynamic'
 import Loader from "@/components/ui/loader";
 
 // Force dynamic rendering to always fetch fresh product data
@@ -14,7 +14,7 @@ export const metadata = {
 
 
 
-const ProductPageHome = dynamic(() => import('@/components/prodcutPage/ProductPageHome'), {
+const ProductPageHome = dynamicImport(() => import('@/components/prodcutPage/ProductPageHome'), {
   loading: () => (
     <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
       <Loader />
