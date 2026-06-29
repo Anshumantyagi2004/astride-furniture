@@ -57,7 +57,6 @@ export default function Reviews_New() {
           <h2 className="text-4xl md:text-6xl font-sans font-black tracking-tight mb-4 uppercase text-[#131313]">
             Loved by <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent">professionals.</span>
           </h2>
-          {/* Replaced whitespace-nowrap with whitespace-normal on mobile, wrapped text */}
           <p className="text-zinc-600 text-[15px] md:text-xl font-medium tracking-wide whitespace-normal md:whitespace-nowrap px-2 md:px-0 leading-relaxed">
             Gamers, devs, and creators who upgraded their setup with Astride comfort.
           </p>
@@ -67,7 +66,7 @@ export default function Reviews_New() {
         <div className="block md:hidden w-full pb-2 px-1">
           <Swiper
             modules={[Autoplay, Pagination]}
-            spaceBetween={0}
+            spaceBetween={16}
             slidesPerView={1}
             loop={true}
             autoplay={{
@@ -75,12 +74,12 @@ export default function Reviews_New() {
               disableOnInteraction: false,
             }}
             pagination={{ clickable: true }}
-            className="w-full pb-10" // Reduced bottom padding to just enough for the dots
+            className="w-full !pb-12 !pt-4" // Ensures shadow and tape are not clipped
           >
             {reviews.map((review, i) => (
-              <SwiperSlide key={i} className="w-full pb-4 px-1.5 pt-4">
+              <SwiperSlide key={i} className="w-full px-1.5 h-auto">
                 <div
-                  className={`relative ${review.cardBg} border-[2.5px] border-[#131313] px-7 py-7 pb-8 rounded-lg`}
+                  className={`relative ${review.cardBg} border-[2.5px] border-[#131313] px-7 py-7 pb-8 rounded-lg h-full`}
                   style={{
                     boxShadow: "6px 6px 0px #131313",
                   }}
@@ -106,7 +105,7 @@ export default function Reviews_New() {
                   </p>
 
                   {/* Reviewer Info */}
-                  <div className="flex items-center gap-3 pt-2 border-t border-[#131313]/10">
+                  <div className="flex items-center gap-3 pt-2 border-t border-[#131313]/10 mt-auto">
                     {/* Avatar */}
                     <div className="relative w-12 h-12 shrink-0 rounded-full border-[2.5px] border-[#131313] overflow-hidden">
                       <Image
@@ -114,6 +113,7 @@ export default function Reviews_New() {
                         alt={review.name}
                         fill
                         sizes="48px"
+                        loading={i === 0 ? "eager" : "lazy"} // Only eager load the first one for speed
                         className="object-cover"
                       />
                     </div>
@@ -129,11 +129,11 @@ export default function Reviews_New() {
         </div>
 
         {/* DESKTOP VIEW (Grid) */}
-        <div className="hidden md:grid grid-cols-3 gap-10 items-start">
+        <div className="hidden md:grid grid-cols-3 gap-10 items-stretch">
           {reviews.map((review, i) => (
             <div
               key={i}
-              className={`relative ${review.cardBg} border-[2.5px] border-[#131313] px-7 py-7 pb-8 rounded-lg transition-transform duration-300 hover:rotate-0 hover:scale-[1.02] ${review.rotateClass}`}
+              className={`relative ${review.cardBg} border-[2.5px] border-[#131313] px-7 py-7 pb-8 rounded-lg transition-transform duration-300 hover:rotate-0 hover:scale-[1.02] ${review.rotateClass} flex flex-col`}
               style={{
                 boxShadow: "6px 6px 0px #131313",
               }}
@@ -159,7 +159,7 @@ export default function Reviews_New() {
               </p>
 
               {/* Reviewer Info */}
-              <div className="flex items-center gap-3 pt-2 border-t border-[#131313]/10">
+              <div className="flex items-center gap-3 pt-2 border-t border-[#131313]/10 mt-auto">
                 {/* Avatar */}
                 <div className="relative w-12 h-12 shrink-0 rounded-full border-[2.5px] border-[#131313] overflow-hidden">
                   <Image
@@ -180,7 +180,7 @@ export default function Reviews_New() {
         </div>
 
         {/* Proof bottom line - Hidden on Mobile */}
-        <p className="hidden md:block text-center mt-6 font-bold text-[#131313] text-lg">
+        <p className="hidden md:block text-center mt-8 font-bold text-[#131313] text-lg">
           500+ verified reviews — <span className="bg-gradient-to-r from-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-serif italic text-2xl font-black ml-1">real people, real comfort ♥</span>
         </p>
 
