@@ -65,20 +65,20 @@ export default function Category() {
     }, []);
 
     return (
-        <section className={`relative overflow-hidden bg-[#FAFAFA] pt-2 pb-4 ${sans.className}`}>
+        <section className={`relative overflow-hidden bg-[#FAFAFA] pt-0 md:pt-2 pb-2 md:pb-4 ${sans.className}`}>
 
             {/* HEADING */}
-            <div className="relative z-10 md:px-15 px-4 mb-4 max-w-[1400px] mx-auto">
-                <p className="uppercase tracking-[5px] text-[#8B5CF6] text-sm font-extrabold mb-2">
+            <div className="relative z-10 md:px-15 px-4 mb-2 md:mb-4 max-w-[1400px] mx-auto">
+                <p className="uppercase tracking-[5px] text-[#8B5CF6] text-xs md:text-sm font-extrabold mb-1 md:mb-2">
                     Browse Collection
                 </p>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#131313] leading-[1.05] mt-2 tracking-tight">
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-[#131313] leading-[1.05] mt-1 md:mt-2 tracking-tight">
                     Trending <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold pr-2">Category</span>
                 </h2>
             </div>
 
             {/* CONTENT */}
-            <div className="relative md:px-15 px-4 pt-2">
+            <div className="relative md:px-15 px-4 pt-0 md:pt-2">
 
                 {loading ? (
                     <div className="text-center text-zinc-600 text-lg font-medium">
@@ -97,7 +97,7 @@ export default function Category() {
                                     delay: isMobile ? 2000 : 1500,
                                     disableOnInteraction: true,
                                 }}
-                                className="w-full pb-4"
+                                className="w-full pb-2 md:pb-4"
                             >
                                 {categories.map((category, index) => (
                                     <SwiperSlide key={index}>

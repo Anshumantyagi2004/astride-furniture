@@ -133,8 +133,15 @@ export default function Footer() {
                                                     el.scrollIntoView({ behavior: 'smooth' });
                                                 }
                                             } else {
-                                                // Navigate to homepage with hash
-                                                router.push('/#faq');
+                                                // Navigate to homepage first
+                                                router.push('/');
+                                                // After navigation completes, scroll to FAQ
+                                                setTimeout(() => {
+                                                    const el = document.getElementById('faq');
+                                                    if (el) {
+                                                        el.scrollIntoView({ behavior: 'smooth' });
+                                                    }
+                                                }, 500);
                                             }
                                         }}
                                         className="block text-[#bdbdbd] text-[14px] py-[5px] transition-all duration-200 hover:text-white hover:translate-x-1 font-sans font-medium"

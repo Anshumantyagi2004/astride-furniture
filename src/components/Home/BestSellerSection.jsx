@@ -279,21 +279,21 @@ export default function BestSellerSection() {
             <div className="relative z-10 lg:px-15 md:px-10 px-6">
                 
                 {/* SECTION HEADER */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-5">
-                    <div className="flex flex-col items-start text-left">
+                <div className="flex flex-row items-center md:items-end justify-between gap-3 md:gap-4 mb-5">
+                    <div className="flex flex-col items-start text-left flex-1">
                         <span className="inline-flex md:hidden items-center text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] mb-2">
                             EXPLORE BESTSELLERS
                         </span>
-                        <div className="text-5xl sm:text-6xl lg:text-[4rem] font-extrabold uppercase leading-[0.9] tracking-tighter">
+                        <div className="text-3xl sm:text-4xl md:text-5xl lg:text-[4rem] font-extrabold uppercase leading-[0.9] tracking-tighter">
                             <span className="block text-[#161316]">BEST SELLING</span>
                             <span className="block text-transparent [-webkit-text-stroke:1.5px_#18181b] mt-[6px]">CHAIRS</span>
                         </div>
                     </div>
 
-                    <div>
+                    <div className="shrink-0">
                         <Link 
                             href="/products" 
-                            className="group inline-flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 rounded-full border border-zinc-900 text-zinc-900 font-bold uppercase tracking-wider text-xs md:text-sm hover:bg-zinc-900 hover:text-white transition-colors duration-300"
+                            className="group inline-flex items-center gap-2 md:gap-3 px-3 md:px-8 py-2 md:py-4 rounded-full border border-zinc-900 text-zinc-900 font-bold uppercase tracking-wider text-xs md:text-sm hover:bg-zinc-900 hover:text-white transition-colors duration-300 whitespace-nowrap"
                         >
                             All Products
                             <span className="group-hover:translate-x-1 transition-transform duration-300">

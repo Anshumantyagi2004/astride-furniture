@@ -31,12 +31,14 @@ export default function BlogDetailsPage({
     (item) => item.slug === slug
   );
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   if (!blog) {
     notFound();
   }
 
   useEffect(() => {
+    setMounted(true);
     if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(max-width: 767px)');
     const handler = (e: MediaQueryList | MediaQueryListEvent) => setIsMobile((e as any).matches);
@@ -58,10 +60,10 @@ export default function BlogDetailsPage({
 
   const { scrollY } = useScroll();
 
-  // Disable parallax on mobile for better performance
-  const heroY = isMobile ? 0 : useTransform(scrollY, [0, 1000], [0, 400]);
-  const heroOpacity = isMobile ? 1 : useTransform(scrollY, [0, 500], [1, 0]);
-  const heroScale = isMobile ? 1 : useTransform(scrollY, [0, 500], [1, 1.1]);
+  // Parallax effects - disabled on mobile automatically by viewport
+  const heroY = useTransform(scrollY, [0, 1000], [0, 400]);
+  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 500], [1, 1.1]);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -90,19 +92,19 @@ export default function BlogDetailsPage({
 
       {/* Floating Back Navigation Header - Mobile optimized */}
       <motion.div 
-        initial={{ opacity: 0, x: isMobile ? 0 : -20, y: isMobile ? 10 : 0 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ delay: isMobile ? 0.3 : 0.5, duration: 0.5 }}
-        className={`${isMobile ? 'fixed bottom-6 left-6 right-6 z-40' : 'fixed top-8 left-8 z-50'}`}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="fixed top-6 left-6 md:top-8 md:left-8 z-50"
       >
         <Link 
           href="/blogs"
-          className={`flex items-center gap-3 rounded-full bg-white/40 hover:bg-white/90 text-neutral-900 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-500 group border border-white/50 ${isMobile ? 'w-full justify-center py-4 px-6' : 'px-5 py-3'}`}
+          className="flex items-center gap-2 md:gap-3 rounded-full bg-white/40 hover:bg-white/90 text-neutral-900 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-500 group border border-white/50 px-4 md:px-5 py-2.5 md:py-3"
         >
-          <div className="bg-neutral-900 text-white rounded-full p-1.5 transition-transform duration-300 group-hover:-translate-x-1">
-            <ArrowLeft size={isMobile ? 20 : 16} strokeWidth={2.5} />
+          <div className="bg-neutral-900 text-white rounded-full p-1 md:p-1.5 transition-transform duration-300 group-hover:-translate-x-1">
+            <ArrowLeft size={18} strokeWidth={2.5} />
           </div>
-          <span className={`font-bold tracking-widest uppercase ${isMobile ? 'text-base' : 'text-sm'}`}>Back</span>
+          <span className="font-bold tracking-widest uppercase text-sm hidden md:inline">Back</span>
         </Link>
       </motion.div>
 
@@ -110,7 +112,11 @@ export default function BlogDetailsPage({
       <section className="relative h-[60vh] md:h-[80vh] min-h-[400px] md:min-h-[600px] w-full overflow-hidden bg-black flex items-end">
         <motion.div 
           className="absolute inset-0 z-0"
-          style={{ y: isMobile ? 0 : heroY, opacity: isMobile ? 1 : heroOpacity, scale: isMobile ? 1 : heroScale }}
+          style={{ 
+            y: mounted && !isMobile ? heroY : 0, 
+            opacity: mounted && !isMobile ? heroOpacity : 1, 
+            scale: mounted && !isMobile ? heroScale : 1 
+          }}
         >
           <Image
             src={blog.image}
@@ -127,13 +133,13 @@ export default function BlogDetailsPage({
         {/* Title Block */}
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 md:px-8 pb-12 md:pb-20 lg:pb-28">
           <motion.div
-            initial={{ opacity: 0, y: isMobile ? 20 : 30 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: isMobile ? 0.6 : 0.8, delay: isMobile ? 0.1 : 0.2 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="flex flex-col items-center text-center space-y-4 md:space-y-8"
           >
             <span className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-white/10 text-white/90 backdrop-blur-md border border-white/20 text-xs md:text-sm font-bold tracking-widest uppercase">
-              <BookOpen size={isMobile ? 14 : 16} />
+              <BookOpen size={16} />
               {blog.category}
             </span>
 
@@ -144,18 +150,18 @@ export default function BlogDetailsPage({
             <div className="flex flex-col sm:flex-wrap sm:items-center sm:justify-center gap-3 sm:gap-x-8 sm:gap-y-4 text-white/70 text-xs sm:text-base md:text-lg font-medium pt-2 md:pt-4">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <User size={isMobile ? 12 : 16} className="text-white" />
+                  <User size={16} className="text-white" />
                 </div>
                 <span className="text-white/90 text-sm md:text-base">{blog.author}</span>
               </div>
               <span className="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block"></span>
               <div className="flex items-center gap-2">
-                <Clock size={isMobile ? 14 : 18} />
+                <Clock size={18} />
                 <span className="text-sm md:text-base">{blog.readTime} read</span>
               </div>
               <span className="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block"></span>
               <div className="flex items-center gap-2">
-                <Calendar size={isMobile ? 14 : 18} />
+                <Calendar size={18} />
                 <span className="text-sm md:text-base">{blog.date}</span>
               </div>
             </div>
@@ -174,12 +180,6 @@ export default function BlogDetailsPage({
               <div className="flex flex-col gap-3">
                 <button onClick={handleShare} className="w-12 h-12 rounded-full bg-white border border-neutral-100 flex items-center justify-center text-neutral-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all duration-300 shadow-sm hover:shadow-md">
                   <LinkIcon size={20} />
-                </button>
-                <button className="w-12 h-12 rounded-full bg-white border border-neutral-100 flex items-center justify-center text-neutral-600 hover:text-blue-500 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
-                </button>
-                <button className="w-12 h-12 rounded-full bg-white border border-neutral-100 flex items-center justify-center text-neutral-600 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                 </button>
                 <button className="w-12 h-12 rounded-full bg-white border border-neutral-100 flex items-center justify-center text-neutral-600 hover:text-blue-700 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
@@ -250,11 +250,8 @@ export default function BlogDetailsPage({
                   <button onClick={handleShare} className="p-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 hover:text-indigo-600">
                     <Share2 size={18} />
                   </button>
-                  <button className="p-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 hover:text-blue-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
-                  </button>
-                  <button className="p-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 hover:text-blue-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                  <button className="p-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 hover:text-blue-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
                   </button>
                 </div>
               </div>
