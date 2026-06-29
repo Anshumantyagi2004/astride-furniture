@@ -24,10 +24,14 @@ const ALL_CHAIRS = [
   { src: "/Png1/chair11_octave.webp", name: "Octave Studio", price: 299, slug: "chair11-octave" },
 ].sort((a, b) => b.price - a.price);
 
-function getPosition(index: number, total: number, isMobile: boolean) {
-  if (total === 1) return { left: "50%", top: "45%", scale: isMobile ? 0.9 : 1.1, zIndex: 100 };
+// OPTIMIZATION: Invisible items use maxCount layout so they don't trigger CSS motion when hidden
+function getPosition(index: number, visibleCount: number, maxCount: number, isMobile: boolean) {
+  const isVisible = index < visibleCount;
+  const effectiveTotal = isVisible ? visibleCount : maxCount;
 
-  if (total === 2) {
+  if (effectiveTotal === 1) return { left: "50%", top: "45%", scale: isMobile ? 0.9 : 1.1, zIndex: 100 };
+
+  if (effectiveTotal === 2) {
     return {
       left: index === 0 ? (isMobile ? "30%" : "35%") : (isMobile ? "70%" : "65%"),
       top: "45%",
@@ -36,7 +40,7 @@ function getPosition(index: number, total: number, isMobile: boolean) {
     };
   }
 
-  if (total === 3) {
+  if (effectiveTotal === 3) {
     if (isMobile) {
       if (index === 0) return { left: "20%", top: "45%", scale: 0.65, zIndex: 90 };
       if (index === 1) return { left: "50%", top: "45%", scale: 0.75, zIndex: 100 };
@@ -51,7 +55,7 @@ function getPosition(index: number, total: number, isMobile: boolean) {
   const columns = isMobile ? 4 : 5;
   const row = Math.floor(index / columns);
   const col = index % columns;
-  const itemsInRow = Math.min(columns, total - row * columns);
+  const itemsInRow = Math.min(columns, effectiveTotal - row * columns);
   const colOffset = (columns - itemsInRow) / 2;
 
   const left = isMobile ? `${12.5 + (col + colOffset) * 25}%` : `${15 + (col + colOffset) * 17.5}%`; 
@@ -61,22 +65,24 @@ function getPosition(index: number, total: number, isMobile: boolean) {
   return { left, top, scale, zIndex: 100 - index };
 }
 
-// OPTIMIZATION: Memoize the individual chair card so unchanged cards NEVER re-render
-const ChairCard = memo(({ chair, pos, isVisible, index }: { chair: any, pos: any, isVisible: boolean, index: number }) => {
+// OPTIMIZATION: Primitives passed individually ensures React.memo works flawlessly
+const ChairCard = memo(({ chair, left, top, scale, zIndex, isVisible, index }: { 
+  chair: any, left: string, top: string, scale: number, zIndex: number, isVisible: boolean, index: number 
+}) => {
   const detailUrl = chair.slug ? `/products/${chair.slug}` : `/products`;
 
   return (
     <div
       className="absolute w-[150px] h-[150px] md:w-[250px] md:h-[250px]"
       style={{
-        left: pos.left,
-        top: pos.top,
-        transform: `translate(-50%, -50%) scale(${isVisible ? pos.scale : 0.1})`,
+        left,
+        top,
+        // translate3d forces GPU hardware acceleration on mobile
+        transform: `translate3d(-50%, -50%, 0) scale(${isVisible ? scale : 0.1})`,
         opacity: isVisible ? 1 : 0,
-        zIndex: pos.zIndex,
+        zIndex,
         pointerEvents: isVisible ? "auto" : "none",
         transition: "left 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease-out",
-        willChange: "transform, opacity", // Kept minimal per instructions
       }}
     >
       <Link href={detailUrl} className="relative block w-full h-full cursor-pointer hover:scale-105 transition-transform duration-300">
@@ -95,11 +101,12 @@ const ChairCard = memo(({ chair, pos, isVisible, index }: { chair: any, pos: any
 ChairCard.displayName = "ChairCard";
 
 const ChairGrid = memo(({ chairs, visibleCount, isMobile }: { chairs: any[], visibleCount: number, isMobile: boolean }) => {
-  // OPTIMIZATION: Precompute positions array so we don't run the math 13 times on every tiny render
+  const maxCount = chairs.length;
+  
   const positions = useMemo(() => {
     const totalVisible = Math.max(1, visibleCount);
-    return chairs.map((_, index) => getPosition(index, totalVisible, isMobile));
-  }, [chairs.length, visibleCount, isMobile]);
+    return chairs.map((_, index) => getPosition(index, totalVisible, maxCount, isMobile));
+  }, [maxCount, visibleCount, isMobile]);
 
   return (
     <motion.div
@@ -114,7 +121,10 @@ const ChairGrid = memo(({ chairs, visibleCount, isMobile }: { chairs: any[], vis
         <ChairCard 
           key={chair.name} 
           chair={chair} 
-          pos={positions[index]} 
+          left={positions[index].left}
+          top={positions[index].top}
+          scale={positions[index].scale}
+          zIndex={positions[index].zIndex}
           isVisible={index < visibleCount} 
           index={index} 
         />
@@ -131,19 +141,15 @@ interface ChairFinderProps {
 export default function ChairFinder({ onBack }: ChairFinderProps) {
   const [chairs, setChairs] = useState<any[]>(ALL_CHAIRS);
   
-  // Separation of state: One for the fast thumb, one for the heavy grid
   const [sliderValue, setSliderValue] = useState(0);
   const [gridValue, setGridValue] = useState(0); 
   
   const [isMobile, setIsMobile] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
 
-  // Pointer Event Refs
   const activePointer = useRef<number | null>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
-  
-  // Throttle Ref
   const lastGridUpdate = useRef<number>(0);
 
   useEffect(() => {
@@ -184,12 +190,10 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     fetchProducts();
   }, []);
 
-  // OPTIMIZATION: Grid calculates based on throttled `gridValue` instead of live `sliderValue`
   const visibleCount = useMemo(() => {
     return Math.max(1, Math.ceil(chairs.length * (1 - gridValue / 100)));
   }, [chairs.length, gridValue]);
 
-  // OPTIMIZATION: Memoize row arrays so they aren't recreated every render frame
   const { row1, row2, row3 } = useMemo(() => {
     return {
       row1: chairs.length >= 5 ? [...chairs.slice(0, 5), ...chairs.slice(0, 5)] : [...chairs, ...chairs],
@@ -198,7 +202,6 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     };
   }, [chairs]);
 
-  // Custom Pointer Logic
   const updateSliderFromEvent = (clientX: number, isFinalSync: boolean = false) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
@@ -208,12 +211,10 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     
     rafRef.current = requestAnimationFrame(() => {
-      // 1. Instantly update visual thumb
       setSliderValue(percentage);
 
-      // 2. Throttle the heavy grid update (only run every 80ms to keep dragging buttery smooth)
       const now = performance.now();
-      if (isFinalSync || now - lastGridUpdate.current > 80) {
+      if (isFinalSync || now - lastGridUpdate.current > 50) { // Bumped throttle to 50ms for slightly smoother trailing 
         setGridValue(percentage);
         lastGridUpdate.current = now;
       }
@@ -237,7 +238,6 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     if (e.pointerId !== activePointer.current) return;
     activePointer.current = null;
     e.currentTarget.releasePointerCapture(e.pointerId);
-    // Force a final grid sync when finger lets go
     updateSliderFromEvent(e.clientX, true); 
   };
 
