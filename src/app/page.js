@@ -54,13 +54,6 @@ export default function Home() {
        
          <Header6_New/>  
         <BestSeller/>
-       
-      
-     
-     
-       
-    
-      
       <Category />
      
      
