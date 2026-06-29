@@ -138,14 +138,12 @@ interface ChairFinderProps {
 export default function ChairFinder({ onBack }: ChairFinderProps) {
   const [chairs, setChairs] = useState<any[]>(ALL_CHAIRS);
   
-  // OPTIMIZATION: Only track the exact number of chairs visible in React State
   const [visibleCount, setVisibleCount] = useState(ALL_CHAIRS.length);
   const visibleCountRef = useRef(ALL_CHAIRS.length);
 
   const [isMobile, setIsMobile] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
 
-  // OPTIMIZATION: Direct DOM manipulation refs for absolute zero-latency slider
   const fillRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLDivElement>(null);
   
@@ -211,16 +209,14 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     
     rafRef.current = requestAnimationFrame(() => {
-      // 1. DIRECT DOM MUTATION: Bypasses React entirely for 120fps thumb movement
       if (fillRef.current) fillRef.current.style.width = `${percentage}%`;
       if (thumbRef.current) thumbRef.current.style.left = `calc(${percentage}% - 12px)`;
 
-      // 2. ONLY WAKE UP REACT IF A CHAIR NEEDS TO DISAPPEAR/APPEAR
       const newVisibleCount = Math.max(1, Math.ceil(chairs.length * (1 - percentage / 100)));
       
       if (newVisibleCount !== visibleCountRef.current) {
         visibleCountRef.current = newVisibleCount;
-        setVisibleCount(newVisibleCount); // This triggers the ChairGrid update
+        setVisibleCount(newVisibleCount);
       }
     });
   };
@@ -247,6 +243,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
   return (
     <div className="absolute inset-0 z-[999] w-full h-full bg-[#f5f5f5] flex flex-col overflow-hidden pt-[10px] px-[10px]">
       
+      {/* Top Right Close Button */}
       <button
         onClick={onBack}
         className="absolute top-6 right-6 z-[100] w-12 h-12 flex items-center justify-center rounded-full bg-white/90 hover:bg-white text-gray-500 hover:text-gray-900 shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-gray-200/50 transition-all duration-200 hover:scale-105 active:scale-95"
@@ -311,22 +308,13 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
       </div>
 
       <div className="w-full flex justify-center pb-8 sm:pb-6 px-4 relative z-50">
-        <div className="w-full max-w-[500px] bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-gray-200/50 px-5 py-4 flex flex-col gap-2">
+        <div className="w-full max-w-[500px] bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-gray-200/50 px-5 py-4 flex flex-col gap-3">
           
-          <div className="flex items-center gap-4 w-full">
-            <button
-              onClick={onBack}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 hover:bg-gray-100 border border-gray-200/50 transition-all duration-200 text-gray-500 hover:text-gray-700 flex-shrink-0 active:scale-95"
-              aria-label="Go back"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-
+          {/* Top row: 100% width for the slider track */}
+          <div className="w-full">
             <div 
               ref={trackRef}
-              className="relative flex-1 h-10 flex items-center cursor-pointer select-none touch-none"
+              className="relative w-full h-10 flex items-center cursor-pointer select-none touch-none"
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
@@ -349,8 +337,18 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
             </div>
           </div>
 
-          <div className="flex justify-center pl-14 pointer-events-none">
-            <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase">
+          {/* Bottom row: Back Button + Text */}
+          <div className="flex items-center justify-center gap-3">
+            <button
+              onClick={onBack}
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 hover:bg-gray-100 border border-gray-200/50 transition-all duration-200 text-gray-500 hover:text-gray-700 active:scale-95 shadow-sm"
+              aria-label="Go back"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase pointer-events-none mt-0.5">
               Adjust Sitting Time
             </span>
           </div>
