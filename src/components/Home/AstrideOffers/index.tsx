@@ -247,34 +247,25 @@ export default function AstrideOffers() {
 
 function DealCard({ deal }: { deal: any }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (isHovered && deal.images && deal.images.length > 1) {
+    if (deal.images && deal.images.length > 1) {
+      setCurrentImageIndex(0);
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % deal.images.length);
-      }, 1500);
-    } else {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      setCurrentImageIndex(0);
+      }, 2000);
     }
-
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
     };
-  }, [isHovered, deal.images]);
+  }, [deal.images]);
 
   return (
     <Link 
       href={`/products/${deal.slug || deal.id}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className="w-full md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] h-[460px] shrink-0 flex flex-col justify-between bg-white rounded-[14px] p-4 snap-start group relative border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313] hover:-translate-y-1 hover:shadow-[8px_8px_0_#131313] transition-all duration-300"
     >
       <div>
@@ -296,7 +287,7 @@ function DealCard({ deal }: { deal: any }) {
           </div>
 
           {/* Dots Indicator (visible on hover) */}
-          {deal.images.length > 1 && isHovered && (
+          {deal.images.length > 1 && (
             <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-10">
               {deal.images.map((_: any, idx: number) => (
                 <span 

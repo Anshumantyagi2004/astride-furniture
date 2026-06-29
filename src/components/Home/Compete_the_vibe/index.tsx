@@ -64,7 +64,6 @@ const STATIC_FALLBACKS = [
 
 function VibeProductCard({ product }: { product: any }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const images = product.allImages && product.allImages.length > 0
@@ -72,24 +71,20 @@ function VibeProductCard({ product }: { product: any }) {
     : [product.image];
 
   useEffect(() => {
-    if (isHovered && images.length > 1) {
+    if (images.length > 1) {
+      setCurrentImageIndex(0);
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
-      }, 1000);
-    } else {
-      if (timerRef.current) clearInterval(timerRef.current);
-      setCurrentImageIndex(0);
+      }, 2000);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isHovered, images.length]);
+  }, [images.length]);
 
   return (
     <Link
       href={`/products/${product.slug || product.id}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className="group relative flex flex-col overflow-visible rounded-[18px] md:rounded-[28px] border-[2px] md:border-[2.5px] border-[#131313] bg-white shadow-[4px_4px_0_#131313] md:shadow-[6px_6px_0_#131313] transition-all duration-[250ms] hover:-translate-y-[5px] md:hover:-translate-y-[7px] hover:shadow-[6px_8px_0_rgba(19,19,19,0.9)] md:hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)] cursor-pointer h-full"
     >
       {/* Sticker */}
@@ -114,7 +109,7 @@ function VibeProductCard({ product }: { product: any }) {
 
         {/* Pagination Dots */}
         {images.length > 1 && (
-          <div className="absolute bottom-2 flex gap-1.5 justify-center w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+          <div className="absolute bottom-2 flex gap-1.5 justify-center w-full opacity-100 transition-opacity duration-300 z-10">
             {images.map((_: any, idx: number) => (
               <div 
                 key={idx} 
