@@ -245,7 +245,6 @@ export default function BestSellersSection_New() {
 
   useEffect(() => {
     async function fetchProducts() {
-      // 1. Try reading from cache first for instant display
       try {
         const cached = sessionStorage.getItem("astride_bestsellers_cache");
         if (cached) {
@@ -259,7 +258,6 @@ export default function BestSellersSection_New() {
         console.error("Failed to parse cached bestsellers:", e);
       }
 
-      // 2. Fetch fresh products from the API in the background
       try {
         const res = await fetch("/api/product?t=" + Date.now(), {
           cache: "no-store",
@@ -294,7 +292,6 @@ export default function BestSellersSection_New() {
             const fallbackVariant = prod.colorVariants?.find((v: any) => v.images && v.images.length > 0);
             const fallbackImage = fallbackVariant?.images?.[0]?.url;
 
-            // Extract image URLs from the default active variant only
             const defaultVariant = blackVariant || fallbackVariant;
             const allImages = defaultVariant?.images?.map((img: any) => img.url) || [];
 
@@ -318,7 +315,6 @@ export default function BestSellersSection_New() {
             };
           });
 
-          // Pick only those that have multiple images to ensure the hover slideshow works on all of them
           const withMultipleImages = mappedProducts.filter((p: any) => p.allImages && p.allImages.length > 1);
           
           let finalProducts = [...withMultipleImages];
@@ -329,7 +325,6 @@ export default function BestSellersSection_New() {
           
           const resultList = finalProducts.slice(0, 8);
           setProductsList(resultList);
-          // Save fresh list to cache
           sessionStorage.setItem("astride_bestsellers_cache", JSON.stringify(resultList));
         }
       } catch (err) {
@@ -343,30 +338,31 @@ export default function BestSellersSection_New() {
 
   return (
     <section id="shop" className="pt-2 pb-[10px] md:pt-3 md:pb-[15px] lg:pt-4 lg:pb-[20px] overflow-hidden">
-      {/* Slightly reduced outer padding on mobile to account for the larger inner gap */}
       <div className="mx-auto max-w-[1440px] px-3 md:px-8 lg:px-12">
-        {/* Section Header */}
-        <div className="mb-4 flex flex-wrap items-end justify-between gap-5 px-1 md:px-0">
-          <div>
-            <span className={`inline-block rounded-full border border-[#131313] bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-[#8B5CF6] ${sans.className}`}>
+        {/* Section Header UPDATED: Now vertically stacking, with pill/button in the same flex row */}
+        <div className="mb-4 flex flex-col gap-2 px-1 md:px-0">
+          
+          <div className="flex flex-row items-center justify-between w-full">
+            <span className={`inline-block rounded-full border border-[#131313] bg-white px-3 py-1.5 md:px-4 md:py-2 text-[10px] md:text-xs font-bold uppercase tracking-[0.15em] text-[#8B5CF6] shrink-0 ${sans.className}`}>
               Explore bestsellers
             </span>
 
-            <h2 className={`mt-2 text-[36px] font-black leading-tight text-[#131313] md:text-[48px] lg:text-[58px] ${sans.className}`}>
-              Best selling{" "}
-              <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold">
-                chairs.
-              </span>
-            </h2>
+            {/* Reduced padding specifically on mobile: px-3 py-1.5 */}
+            <Link
+              href="/products"
+              className={`inline-flex items-center gap-1 md:gap-2 rounded-full bg-[#131313] px-3 py-1.5 md:px-7 md:py-4 font-bold text-white transition duration-300 hover:-translate-y-1 hover:bg-[#1F1F1F] hover:shadow-xl text-[11px] md:text-base shrink-0 ${sans.className}`}
+            >
+              All products
+              <span className="text-sm md:text-lg">→</span>
+            </Link>
           </div>
 
-          <Link
-            href="/products"
-            className={`inline-flex items-center gap-2 rounded-full bg-[#131313] px-7 py-4 font-bold text-white transition duration-300 hover:-translate-y-1 hover:bg-[#1F1F1F] hover:shadow-xl ${sans.className}`}
-          >
-            All products
-            <span className="text-lg">→</span>
-          </Link>
+          <h2 className={`mt-1 text-[36px] font-black leading-tight text-[#131313] md:text-[48px] lg:text-[58px] ${sans.className}`}>
+            Best selling{" "}
+            <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold">
+              chairs.
+            </span>
+          </h2>
         </div>
 
         {/* Product Grid */}
@@ -377,6 +373,7 @@ export default function BestSellersSection_New() {
         ) : (
           <>
             {/* MOBILE 2x2 GRID SWIPER (md:hidden) */}
+            {/* Added pt-4 to prevent the sticker from getting chopped off */}
             <div className="block md:hidden w-full mt-6">
               <style jsx global>{`
                 .best-swiper.swiper {
@@ -407,7 +404,8 @@ export default function BestSellersSection_New() {
               >
                 {productsList.map((product) => (
                   <SwiperSlide key={product.id}>
-                    <div className="pb-3">
+                    {/* Added pt-4 here as well for good measure */}
+                    <div className="pb-3 pt-4">
                       <BestsellerCard product={product} />
                     </div>
                   </SwiperSlide>
@@ -416,7 +414,8 @@ export default function BestSellersSection_New() {
             </div>
 
             {/* DESKTOP/TABLET GRID VIEW (hidden md:grid) */}
-            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px] px-1 md:px-0 mt-6">
+            {/* Added pt-4 for the same reason on desktop */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px] px-1 md:px-0 mt-6 pt-4">
               {productsList.map((product) => (
                 <BestsellerCard key={product.id} product={product} />
               ))}

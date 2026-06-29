@@ -15,21 +15,15 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
     : [product.image];
 
   useEffect(() => {
-    if (isHovered && images.length > 1) {
-      // Instantly switch to the 2nd image on hover
-      setCurrentImageIndex(1);
-      
+    if (images.length > 1) {
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
-      }, 1000);
-    } else {
-      if (timerRef.current) clearInterval(timerRef.current);
-      setCurrentImageIndex(0);
+      }, 2000);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isHovered, images.length]);
+  }, [images.length]);
   
   return (
     <div 
@@ -80,7 +74,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
 
         {/* Pagination Dots */}
         {images.length > 1 && (
-          <div className="absolute bottom-0 flex gap-1.5 justify-center w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+          <div className="absolute bottom-0 flex gap-1.5 justify-center w-full opacity-100 transition-opacity duration-300 z-10">
             {images.map((_, idx) => (
               <div 
                 key={idx} 
