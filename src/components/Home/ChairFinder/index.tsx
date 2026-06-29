@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useMemo, memo, useDeferredValue } from "react";
+import { useState, useEffect, useMemo, memo, useDeferredValue, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { motion, AnimatePresence } from "framer-motion";
@@ -123,11 +123,15 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
   const [chairs, setChairs] = useState<any[]>(ALL_CHAIRS);
   const [sliderValue, setSliderValue] = useState(0);
   
-  // MAGIC FIX 2: Decouple the fast slider movement from the heavy grid math
   const deferredSliderValue = useDeferredValue(sliderValue);
   
   const [isMobile, setIsMobile] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
+
+  // --- Pointer Event Refs ---
+  const activePointer = useRef<number | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -172,7 +176,6 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     fetchProducts();
   }, []);
 
-  // Use the deferred value so the slider thumb doesn't lag behind the render
   const visibleCount = useMemo(() => 
     Math.max(1, Math.ceil(chairs.length * (1 - deferredSliderValue / 100))), 
   [chairs.length, deferredSliderValue]);
@@ -181,10 +184,42 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
   const row2 = chairs.length >= 10 ? [...chairs.slice(5, 10), ...chairs.slice(5, 10)] : [...chairs, ...chairs];
   const row3 = chairs.length >= 10 ? [...chairs.slice(10), ...chairs.slice(10)] : [...chairs, ...chairs];
 
+  // --- Custom Pointer Logic ---
+  const updateSliderFromEvent = (clientX: number) => {
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    const percentage = (x / rect.width) * 100;
+
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    
+    rafRef.current = requestAnimationFrame(() => {
+      setSliderValue(percentage);
+    });
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (activePointer.current !== null) return;
+    activePointer.current = e.pointerId;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    if (!isTouched) setIsTouched(true);
+    updateSliderFromEvent(e.clientX);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerId !== activePointer.current) return;
+    updateSliderFromEvent(e.clientX);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerId !== activePointer.current) return;
+    activePointer.current = null;
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+
   return (
     <div className="absolute inset-0 z-[999] w-full h-full bg-[#f5f5f5] flex flex-col overflow-hidden pt-[10px] px-[10px]">
       
-      {/* ── Close Button ── */}
       <button
         onClick={onBack}
         className="absolute top-6 right-6 z-[100] w-12 h-12 flex items-center justify-center rounded-full bg-white/90 hover:bg-white text-gray-500 hover:text-gray-900 shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-gray-200/50 transition-all duration-200 hover:scale-105 active:scale-95"
@@ -196,7 +231,6 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
         </svg>
       </button>
 
-      {/* ── Main content area ── */}
       <div className="flex-1 relative overflow-hidden flex items-center justify-center">
         <AnimatePresence mode="wait">
           {!isTouched ? (
@@ -249,12 +283,9 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
         </AnimatePresence>
       </div>
 
-      {/* ── Redesigned Bottom Slider Card ── */}
       <div className="w-full flex justify-center pb-8 sm:pb-6 px-4 relative z-50">
-        {/* Changed layout to flex-col to accommodate the text below */}
         <div className="w-full max-w-[500px] bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-gray-200/50 px-5 py-4 flex flex-col gap-2">
           
-          {/* Top row: Button + Wide Slider */}
           <div className="flex items-center gap-4 w-full">
             <button
               onClick={onBack}
@@ -266,10 +297,19 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
               </svg>
             </button>
 
-            <div className="relative flex-1 h-10 flex items-center">
-              <div className="absolute left-0 right-0 h-2 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+            {/* Custom Interactive Slider Track */}
+            <div 
+              ref={trackRef}
+              className="relative flex-1 h-10 flex items-center cursor-pointer select-none touch-none"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              style={{ touchAction: "none" }} // Disables mobile scrolling entirely during interaction
+            >
+              <div className="absolute left-0 right-0 h-2 bg-gray-100 rounded-full overflow-hidden shadow-inner pointer-events-none">
                 <div
-                  className="h-full rounded-full transition-all duration-75"
+                  className="h-full rounded-full transition-none"
                   style={{
                     width: `${sliderValue}%`,
                     background: "#9ca3af",
@@ -277,28 +317,14 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                 />
               </div>
               
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={sliderValue}
-                onChange={(e) => {
-                  if (!isTouched) setIsTouched(true);
-                  setSliderValue(Number(e.target.value));
-                }}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 m-0 touch-none"
-                aria-label="Sitting time"
-              />
-              
               <div
-                className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white shadow-[0_2px_10px_rgba(0,0,0,0.15)] pointer-events-none border-[3px] border-[#9ca3af] transition-all duration-75"
+                className="absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white shadow-[0_2px_10px_rgba(0,0,0,0.15)] pointer-events-none border-[3px] border-[#9ca3af] transition-none"
                 style={{ left: `calc(${sliderValue}% - 12px)` }}
               />
             </div>
           </div>
 
-          {/* Bottom row: Text */}
-          <div className="flex justify-center pl-14">
+          <div className="flex justify-center pl-14 pointer-events-none">
             <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase">
               Adjust Sitting Time
             </span>
