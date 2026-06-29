@@ -9,6 +9,7 @@ import { generateSlug } from "@/utils/generateSlug";
 import { verifyAdmin } from "@/lib/verifyAdmin";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function POST(req) {
     try {
@@ -158,18 +159,12 @@ export async function POST(req) {
     }
 }
 
-// Global in-memory cache for product GET requests (development & production)
-global.productCache = global.productCache || null;
-global.productCacheTime = global.productCacheTime || 0;
-const CACHE_TTL = 60000; // 1 minute (reduced from 5 minutes for faster updates)
+// Global in-memory cache disabled for real-time updates
+// When admin updates products, changes should be immediately visible on client
+const CACHE_TTL = 0; // Cache disabled
 
 export async function GET() {
     try {
-        const now = Date.now();
-        if (global.productCache && (now - global.productCacheTime < CACHE_TTL)) {
-            return NextResponse.json(global.productCache, { status: 200 });
-        }
-
         let data;
         await connectDB();
         const products = await Product.find(
@@ -183,9 +178,14 @@ export async function GET() {
             products,
         };
 
-        global.productCache = data;
-        global.productCacheTime = now;
-        return NextResponse.json(data, { status: 200 });
+        const response = NextResponse.json(data, { status: 200 });
+        
+        // Add no-cache headers for real-time updates
+        response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+        response.headers.set("Pragma", "no-cache");
+        response.headers.set("Expires", "0");
+        
+        return response;
     } catch (error) {
         console.log(error);
         return NextResponse.json(

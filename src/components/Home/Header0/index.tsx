@@ -67,7 +67,10 @@ export default function Header0() {
   const prefetchProducts = async () => {
     try {
       if (typeof window !== "undefined" && !sessionStorage.getItem("astride_nav_products_cache")) {
-        const res = await fetch("/api/product");
+        const res = await fetch("/api/product?t=" + Date.now(), {
+          cache: "no-store",
+          headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
+        });
         const data = await res.json();
         if (data?.success) {
           sessionStorage.setItem("astride_nav_products_cache", JSON.stringify(data.products));

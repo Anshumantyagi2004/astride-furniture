@@ -166,7 +166,10 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
         if (cached) {
           productsData = JSON.parse(cached);
         } else {
-          const res = await fetch("/api/product");
+          const res = await fetch("/api/product?t=" + Date.now(), {
+            cache: "no-store",
+            headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
+          });
           const json = await res.json();
           if (json.success) {
             productsData = json.products;

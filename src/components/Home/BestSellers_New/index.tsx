@@ -269,7 +269,10 @@ export default function BestSellersSection_New() {
 
       // 2. Fetch fresh products from the API in the background
       try {
-        const res = await fetch("/api/product");
+        const res = await fetch("/api/product?t=" + Date.now(), {
+          cache: "no-store",
+          headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
+        });
         const data = await res.json();
         if (data.success && data.products && data.products.length > 0) {
           const mappedProducts = data.products.map((prod: any, idx: number) => {

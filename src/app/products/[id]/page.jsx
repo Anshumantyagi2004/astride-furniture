@@ -3,6 +3,10 @@ import DetailPage from '@/components/detailPage/detailPage';
 import connectDB from "@/config/connectDB";
 import Product from "@/models/Product";
 
+// Force dynamic rendering to always fetch fresh product data from database
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function generateMetadata({ params }) {
     const { id } = await params;
     try {

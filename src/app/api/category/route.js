@@ -68,7 +68,8 @@ export async function POST(req) {
             metaDescription,
         });
 
-        categoryCache = null; // Clear cache after creating a new category
+        // Cache invalidation not needed since cache is disabled
+        categoryCache = null;
 
         return NextResponse.json(
             { success: true, message: "Category created successfully", category, },
@@ -83,18 +84,13 @@ export async function POST(req) {
     }
 }
 
-// Global in-memory cache for category GET requests (development & production)
+// Global in-memory cache disabled for real-time updates
+// When admin updates categories, changes should be immediately visible
 let categoryCache = null;
-let categoryCacheTime = 0;
-const CATEGORY_CACHE_TTL = 5000; // 5 seconds (reduced from 30 for faster updates)
+const CATEGORY_CACHE_TTL = 0; // Cache disabled for real-time data
 
 export async function GET() {
     try {
-        const now = Date.now();
-        if (categoryCache && (now - categoryCacheTime < CATEGORY_CACHE_TTL)) {
-            return NextResponse.json(categoryCache, { status: 200 });
-        }
-
         await connectDB();
         const categories = await Category.find().sort({ createdAt: -1 });
 
@@ -104,9 +100,14 @@ export async function GET() {
             categories,
         };
 
-        categoryCache = data;
-        categoryCacheTime = now;
-        return NextResponse.json(data, { status: 200 });
+        const response = NextResponse.json(data, { status: 200 });
+        
+        // Add no-cache headers for real-time updates
+        response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+        response.headers.set("Pragma", "no-cache");
+        response.headers.set("Expires", "0");
+        
+        return response;
     } catch (error) {
         console.log(error);
         return NextResponse.json(

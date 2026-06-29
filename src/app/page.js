@@ -1,5 +1,9 @@
 import dynamic from 'next/dynamic';
 
+// Force dynamic rendering to always fetch fresh product data
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Static imports — loaded normally
 import CircularChairs from "@/components/Home/CircularChairs";
 import Category from "@/components/Home/Category";

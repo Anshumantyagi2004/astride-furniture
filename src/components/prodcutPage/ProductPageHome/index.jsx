@@ -171,7 +171,10 @@ export default function ProductPageHome() {
     async function fetchCategories() {
       try {
         // Fetch with cache busting timestamp
-        const res = await fetch(`/api/category?t=${Date.now()}`);
+        const res = await fetch(`/api/category?t=${Date.now()}`, {
+          cache: "no-store",
+          headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
+        });
         const data = await res.json();
         if (data.success && data.categories && data.categories.length > 0) {
           // Build tabs: "All Products" + category names
@@ -274,8 +277,11 @@ export default function ProductPageHome() {
 
       // 2. Fetch fresh data in the background
       try {
-        // Add cache busting with timestamp
-        const res = await fetch(`/api/product?t=${Date.now()}`);
+        // Add cache busting with timestamp and no-store headers
+        const res = await fetch(`/api/product?t=${Date.now()}`, {
+          cache: "no-store",
+          headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
+        });
         const data = await res.json();
         if (data.success && data.products && data.products.length > 0) {
           const mappedProducts = data.products.map((prod) => {
