@@ -160,3 +160,15 @@ h6 {
 .animate-marquee {
   animation: marquee 25s linear infinite;
 }
+
+/* Hide scrollbar utility styles */
+.scrollbar-none::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
+  display: none !important;
+}
+
+.scrollbar-none,
+.scrollbar-hide {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
