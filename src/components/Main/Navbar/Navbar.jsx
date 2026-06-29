@@ -186,14 +186,15 @@ export default function Navbar() {
 
         if (catData?.success) {
           const mappedCats = catData.categories.map(cat => {
-            if (cat.name === "Executive Chair") {
+            // Normalize name: collapse multiple spaces, trim
+            const cleanName = cat.name.replace(/\s+/g, ' ').trim();
+            if (cleanName.toUpperCase().includes("EXECUTIVE")) {
               return { ...cat, name: "Office Chair" };
             }
-            const catUpper = cat.name.toUpperCase();
-            if (catUpper.includes("BAR") || catUpper.includes("STOOL") || catUpper.includes("CAFE")) {
+            if (cleanName.toUpperCase().includes("BAR") || cleanName.toUpperCase().includes("STOOL") || cleanName.toUpperCase().includes("CAFE")) {
               return { ...cat, name: "Bar Stools & Cafe Chair" };
             }
-            return cat;
+            return { ...cat, name: cleanName };
           });
           setCategories(mappedCats);
         }
@@ -237,7 +238,7 @@ export default function Navbar() {
   const getNormalizedCategoryName = (p) => {
     if (!p.category) return "";
     const rawCat = typeof p.category === 'object' ? (p.category.name || "") : String(p.category);
-    const dbCategory = rawCat.toUpperCase();
+    const dbCategory = rawCat.replace(/\s+/g, ' ').trim().toUpperCase();
     if (!dbCategory) return "";
     if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) return "Gaming Chair";
     if (dbCategory.includes("EXECUTIVE")) return "Office Chair";
@@ -245,7 +246,7 @@ export default function Navbar() {
     if (dbCategory.includes("STUDY")) return "Study Chair";
     if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) return "Bar Stools & Cafe Chair";
     if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) return "Office Chair";
-    return rawCat;
+    return rawCat.replace(/\s+/g, ' ').trim();
   };
 
   // Build a map of normalized name → category _id for fast lookup
@@ -258,13 +259,6 @@ export default function Navbar() {
   let displayChairs = [];
   if (activeMenu && products.length > 0) {
     const activeCatId = catIdByName[activeMenu];
-    console.log('[NAV DEBUG] activeMenu:', activeMenu, '| activeCatId:', activeCatId);
-    console.log('[NAV DEBUG] categoryList:', categoryList.map(c => ({name: c.name, _id: String(c._id)})));
-    console.log('[NAV DEBUG] first 3 product categories:', products.slice(0,3).map(p => ({
-      name: p.productName,
-      catId: typeof p.category === 'object' ? String(p.category._id) : String(p.category),
-      catName: typeof p.category === 'object' ? p.category.name : p.category
-    })));
     displayChairs = products
       .filter(p => {
         if (!p.category) return false;
