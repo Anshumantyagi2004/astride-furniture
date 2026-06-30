@@ -792,7 +792,7 @@ export default function DetailPageCard({ product }: { product: any }) {
               {product?.categoryId !== "6a182e652d3460990337fb44" && (
                 <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
                   <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">
-                    Armrest height
+                    Armrest height {String(product?.categoryId)}
                   </span>
                   <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">
                     6" – 10"
