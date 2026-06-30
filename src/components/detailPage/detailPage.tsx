@@ -62,6 +62,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
             discount: `-${discPercent}%`,
             image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
             category: category,
+            categoryId: prod.category?._id || prod.category,
             backSupport: prod.backSupport || "High Back",
             height: prod.height || "5'7\" - 6'6\"",
             hours: prod.hours || "8+ Hours",
