@@ -271,8 +271,8 @@ export default function DetailPageCard({ product }: { product: any }) {
                     key={idx}
                     onClick={() => handleThumbnailClick(img.url)}
                     className={`relative w-[72px] h-[72px] bg-white border-[2.5px] rounded-[14px] p-2 flex items-center justify-center transition-all duration-200 shrink-0 hover:-translate-y-1 ${isActive
-                        ? 'border-[#8B5CF6] shadow-[3px_3px_0_#8B5CF6] -rotate-2'
-                        : 'border-[#131313] shadow-[3px_3px_0_rgba(19,19,19,0.85)]'
+                      ? 'border-[#8B5CF6] shadow-[3px_3px_0_#8B5CF6] -rotate-2'
+                      : 'border-[#131313] shadow-[3px_3px_0_rgba(19,19,19,0.85)]'
                       }`}
                   >
                     <Image
@@ -414,8 +414,8 @@ export default function DetailPageCard({ product }: { product: any }) {
                     }}
                     style={{ backgroundColor: colorHex }}
                     className={`w-[32px] h-[32px] rounded-full border-[2.5px] border-[#131313] relative transition-transform duration-150 hover:scale-[1.12] focus:outline-none ${isSelected
-                        ? 'ring-4 ring-offset-2 ring-transparent before:absolute before:-inset-[5px] before:rounded-full before:border-[2px] before:border-dashed before:border-[#8B5CF6]'
-                        : ''
+                      ? 'ring-4 ring-offset-2 ring-transparent before:absolute before:-inset-[5px] before:rounded-full before:border-[2px] before:border-dashed before:border-[#8B5CF6]'
+                      : ''
                       }`}
                     title={colorName}
                     aria-label={colorName}
@@ -773,11 +773,16 @@ export default function DetailPageCard({ product }: { product: any }) {
                 <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Seat height</span>
                 <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">18" – 22"</b>
               </div>
-              {product?.id !== "6a226ca842af57599805070b" && (
+              {product?.category?._id !== "6a182e652d3460990337fb44" && (
                 <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
-                  <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Armrest height</span>
-                  <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">6" – 10"</b>
+                  <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">
+                    Armrest height
+                  </span>
+                  <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">
+                    6" – 10"
+                  </b>
                 </div>
+
               )}
               <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
                 <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Weight capacity</span>
