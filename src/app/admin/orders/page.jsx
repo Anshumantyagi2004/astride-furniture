@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Sidebar from "@/components/Admin/Sidebar";
-import { 
-    User, 
-    MapPin, 
-    Phone, 
-    Mail, 
-    Calendar, 
-    CreditCard, 
-    Trash2, 
+import {
+    User,
+    MapPin,
+    Phone,
+    Mail,
+    Calendar,
+    CreditCard,
+    Trash2,
     ShoppingBag,
     Loader2
 } from "lucide-react";
@@ -37,7 +37,7 @@ export default function Page() {
 
     const handleDeleteOrder = async (id) => {
         if (!confirm("Are you sure you want to delete this order?")) return;
-        
+
         try {
             setDeletingId(id);
             const { data } = await axios.delete(`/api/order?id=${id}`);
@@ -58,7 +58,7 @@ export default function Page() {
             const { data } = await axios.put(`/api/order?id=${id}`, { status: newStatus });
             if (data.success) {
                 toast.success("Order status updated successfully");
-                setOrders(orders.map(order => 
+                setOrders(orders.map(order =>
                     order._id === id ? { ...order, status: newStatus } : order
                 ));
             }
@@ -138,13 +138,13 @@ export default function Page() {
 
                                     {/* Order Card Content Grid */}
                                     <div className="p-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
-                                        
+
                                         {/* Customer Shipping Details */}
                                         <div className="lg:col-span-5 space-y-6">
                                             <h3 className="text-lg font-black text-neutral-400 uppercase tracking-widest mb-4 border-b border-neutral-100 pb-2">
                                                 Shipping Details
                                             </h3>
-                                            
+
                                             <div className="space-y-5">
                                                 <div className="flex items-start gap-4">
                                                     <User size={22} className="text-neutral-400 mt-1 shrink-0" />
@@ -193,7 +193,7 @@ export default function Page() {
                                                     <span>Subtotal</span>
                                                     <span className="font-bold text-neutral-900 text-lg">₹{order.pricing?.subtotal?.toLocaleString()}</span>
                                                 </div>
-                                                
+
                                                 <div className="flex justify-between items-center text-base font-semibold text-neutral-600">
                                                     <span>Shipping Charge</span>
                                                     <span className="font-bold text-neutral-900 text-lg">₹{order.pricing?.shippingCharge?.toLocaleString()}</span>
@@ -224,11 +224,16 @@ export default function Page() {
                                                             <option value="Pending">Pending</option>
                                                             <option value="Confirmed">Confirmed</option>
                                                             <option value="Processing / Packing">Processing / Packing</option>
-                                                             <option value="Dispatched">Dispatched</option>
+                                                            <option value="Dispatched">Dispatched</option>
                                                             <option value="Shipped">Shipped</option>
                                                             <option value="Out for Delivery">Out for Delivery</option>
                                                             <option value="Delivered">Delivered</option>
                                                             <option value="Cancelled">Cancelled</option>
+                                                            <option value="Return Requested">Return Requested</option>
+                                                            <option value="Return Approved">Return Approved</option>
+                                                            <option value="Return Rejected">Return Rejected</option>
+                                                            <option value="Refund Initiated">Refund Initiated</option>
+                                                            <option value="Refunded">Refunded</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -243,14 +248,14 @@ export default function Page() {
 
                                             <div className="space-y-4 max-h-[350px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-neutral-200">
                                                 {order.products?.map((product, index) => (
-                                                    <div 
-                                                        key={product._id || product.productId} 
+                                                    <div
+                                                        key={product._id || product.productId}
                                                         className="flex items-start gap-4 bg-neutral-50 p-4 rounded-2xl border border-neutral-100"
                                                     >
                                                         <div className="relative w-20 h-20 bg-white rounded-xl overflow-hidden shrink-0 border border-neutral-150 flex items-center justify-center">
-                                                            <img 
-                                                                src={product.image} 
-                                                                alt="" 
+                                                            <img
+                                                                src={product.image}
+                                                                alt=""
                                                                 className="w-16 h-16 object-contain p-0.5 mix-blend-multiply"
                                                             />
                                                         </div>
