@@ -4,15 +4,15 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const sections = [
-  { id: 'intro', title: '1. Introduction', content: 'Welcome to Astride. By accessing or using our website, you agree to comply with and be bound by the following terms and conditions.' },
+  { id: 'intro', title: '1. Introduction', content: 'Welcome to ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED]. By accessing or using our website, you agree to comply with and be bound by the following terms and conditions.' },
   { id: 'use', title: '2. Use of Website', content: 'You agree to use this website only for lawful purposes and in a way that does not infringe the rights of others or restrict their use.' },
-  { id: 'product', title: '3. Product Information', content: 'We strive to ensure that all product details, pricing, and images are accurate. However, Astride reserves the right to modify or update information at any time without prior notice.' },
+  { id: 'product', title: '3. Product Information', content: 'We strive to ensure that all product details, pricing, and images are accurate. However, ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] reserves the right to modify or update information at any time without prior notice.' },
   { id: 'orders', title: '4. Orders & Payments', content: 'All orders placed through the website are subject to acceptance and availability. We reserve the right to cancel or refuse any order at our discretion.' },
-  { id: 'shipping', title: '5. Shipping & Delivery', content: 'Delivery timelines are estimates and may vary depending on location and external factors. Astride is not liable for delays caused by courier or unforeseen circumstances.' },
+  { id: 'shipping', title: '5. Shipping & Delivery', content: 'Delivery timelines are estimates and may vary depending on location and external factors. ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] is not liable for delays caused by courier or unforeseen circumstances.' },
   { id: 'returns', title: '6. Returns & Replacement', content: 'Products are eligible for replacement only in case of damaged, defective, or incorrect items, as per our Return & Refund Policy.' },
-  { id: 'accounts', title: '7. User Accounts', content: 'You are responsible for maintaining the confidentiality of your account and password. Astride is not responsible for unauthorized access.' },
-  { id: 'intellectual', title: '8. Intellectual Property', content: 'All content on this website including text, images, logos, and design is the property of Astride and may not be used without permission.' },
-  { id: 'liability', title: '9. Limitation of Liability', content: 'Astride shall not be held liable for any indirect or consequential damages arising from the use of our website or products.' },
+  { id: 'accounts', title: '7. User Accounts', content: 'You are responsible for maintaining the confidentiality of your account and password. ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] is not responsible for unauthorized access.' },
+  { id: 'intellectual', title: '8. Intellectual Property', content: 'All content on this website including text, images, logos, and design is the property of ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] and may not be used without permission.' },
+  { id: 'liability', title: '9. Limitation of Liability', content: 'ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] shall not be held liable for any indirect or consequential damages arising from the use of our website or products.' },
   { id: 'changes', title: '10. Changes to Terms', content: 'We reserve the right to update these terms at any time. Continued use of the website means you accept the updated terms.' }
 ];
 
@@ -35,7 +35,7 @@ export default function TermsConditionsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-4"
           >
-            Astride Agreement
+            ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] Agreement
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
@@ -49,9 +49,9 @@ export default function TermsConditionsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-zinc-400 text-sm max-w-xl mx-auto mt-4 leading-relaxed font-light"
+            className="text-zinc-400 text-sm max-w-3xl mx-auto mt-4 leading-relaxed font-light"
           >
-            Please read these terms carefully before using Astride services.
+            Please read these terms carefully before using ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] services.
           </motion.p>
         </div>
       </div>

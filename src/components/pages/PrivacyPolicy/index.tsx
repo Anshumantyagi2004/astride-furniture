@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const sections = [
-  { id: 'definitions', title: '1. Definitions', content: 'Definitions used in this policy, including Data, Cookies, Astride, and User.' },
+  { id: 'definitions', title: '1. Definitions', content: 'Definitions used in this policy, including Data, Cookies, ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED], and User.' },
   { id: 'data-collected', title: '2. Data Collected', content: 'Categories of Data collected: Name, Email Address, Address, PIN code, Debit/Credit card details, password, occupation, interests, and similar details.' },
   { id: 'manner-collection', title: '3. Manner of Collection', content: 'Collected directly when given to us by you, or automatically recorded pursuant to your visit to the Website.' },
   { id: 'shared-by-you', title: '4. Manner Shared by You', content: 'For instance, when you contact us, register to receive products/services/newsletters, complete surveys, or enter promotions.' },
@@ -14,12 +14,12 @@ const sections = [
   { id: 'security', title: '8. Keeping Data Secure', content: 'Technical and organisational measures are utilized to safeguard your Data on secure servers.' },
   { id: 'retention', title: '9. Retention of Personal Data', content: 'Retained as long as necessary to provide access, comply with legal obligations, and resolve disputes.' },
   { id: 'your-rights', title: '10. Your Rights', content: 'Right to review, correct, update, or withdraw consent regarding personal data provided to us.' },
-  { id: 'security-data', title: '11. Security of Personal Data', content: 'Astride uses standard security technologies and procedures to protect your Data from unauthorized access.' },
+  { id: 'security-data', title: '11. Security of Personal Data', content: 'ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] uses standard security technologies and procedures to protect your Data from unauthorized access.' },
   { id: 'third-party-links', title: '12. Links to Other Websites', content: 'Our website may contain links to third-party websites; we are not responsible for their privacy practices.' },
   { id: 'non-personal-info', title: '13. Non-Personal Information', content: 'Collection and use of non-personal information such as browser type and aggregated data to improve services.' },
   { id: 'cookies', title: '14. Cookies', content: 'This website may place cookies on your computer to improve your experience. You may disable cookies through browser settings.' },
   { id: 'general', title: '15. General', content: 'If any provision of this Privacy Policy is found invalid or unenforceable, the remaining provisions remain valid.' },
-  { id: 'changes', title: '16. Changes to this Privacy Statement', content: 'Astride reserves the right to change this Privacy Policy at any time. Changes will be posted on this website.' }
+  { id: 'changes', title: '16. Changes to this Privacy Statement', content: 'ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] reserves the right to change this Privacy Policy at any time. Changes will be posted on this website.' }
 ];
 
 export default function PrivacyPolicyPage() {
@@ -41,7 +41,7 @@ export default function PrivacyPolicyPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-4"
           >
-            Astride Private Limited
+            ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED]
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
             transition={{ delay: 0.2 }}
             className="text-zinc-400 text-sm max-w-xl mx-auto mt-4 leading-relaxed font-light"
           >
-            Your privacy is important to us. Astride Private Limited (“Astride”, “we” or “us”) takes the privacy of your personal information seriously.
+            Your privacy is important to us. ASTRIDE [MBTC INTRAFURNISH PRIVATE LIMITED] takes the privacy of your personal information seriously.
           </motion.p>
         </div>
       </div>

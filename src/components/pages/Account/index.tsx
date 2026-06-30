@@ -5,12 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { 
-  User, 
-  ShoppingBag, 
-  Heart, 
-  Mail, 
-  Phone, 
+import {
+  User,
+  ShoppingBag,
+  Heart,
+  Mail,
+  Phone,
   Edit,
   Trash2,
   ShoppingCart,
@@ -112,7 +112,7 @@ const MOCK_WISHLIST: WishlistItem[] = [
 export default function AccountPage({ activeTab }: AccountPageProps) {
   const router = useRouter();
 
-    const handleLogout = async () => {
+  const handleLogout = async () => {
     try {
       await axios.post("/api/auth/logout");
     } catch (error) {
@@ -122,7 +122,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
     localStorage.removeItem("astride_wishlist");
     router.push("/login");
   };
-  
+
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<UserProfile>(DEFAULT_PROFILE);
@@ -199,7 +199,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
     }));
   };
 
-    const handleSaveProfile = async (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const token = sessionStorage.getItem("auth_token");
@@ -258,13 +258,13 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
 
   return (
     <div className="min-h-screen bg-[#f1f3f5] text-slate-800 pt-6 pb-16 md:pt-10 md:pb-24 px-4 md:px-8 select-none relative overflow-hidden" style={{ fontFamily: '"Inter", sans-serif' }}>
-      
+
       {/* Subtle monochrome ambient glow */}
       <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] rounded-full bg-slate-400/5 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-[-10%] w-[600px] h-[600px] rounded-full bg-slate-300/5 blur-[120px] pointer-events-none" />
 
       <div className="max-w-[1300px] mx-auto relative z-10">
-        
+
         {/* Dashboard Title Header with Slate Lettering */}
         <div className="flex flex-col gap-1 mb-6">
           <p className="text-slate-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">Dashboard</p>
@@ -274,18 +274,18 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* ── Sidebar Navigation ── */}
           <aside className="lg:col-span-4 xl:col-span-3 w-full flex flex-col gap-6">
-            
+
             {/* User Hello Header card with modern clean look */}
             <div className="bg-white border border-slate-200/60 rounded-3xl p-6 flex items-center gap-4 shadow-[0_15px_40px_rgba(0,0,0,0.02)] relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-24 h-24 bg-slate-100 rounded-full blur-xl pointer-events-none transition-all group-hover:scale-125" />
-              
+
               <div className="relative w-14 h-14 rounded-full overflow-hidden border border-slate-300 bg-slate-100 shrink-0 flex items-center justify-center text-slate-700">
                 <User size={24} strokeWidth={2} />
               </div>
-              
+
               <div className="min-w-0">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5 font-bold">Astride Member</p>
                 <h3 className="text-base font-extrabold text-slate-800 leading-tight truncate">{profile.name}</h3>
@@ -297,16 +297,15 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
               {sidebarItems.map((item) => {
                 const IconComponent = item.icon;
                 const isActive = activeTab === item.id;
-                
+
                 return (
                   <button
                     key={item.id}
                     onClick={() => router.push(item.path)}
-                    className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 relative overflow-hidden group ${
-                      isActive
+                    className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 relative overflow-hidden group ${isActive
                         ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
                         : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-                    }`}
+                      }`}
                   >
                     <IconComponent size={16} strokeWidth={2.5} />
                     <span className="flex-1 text-left">{item.label}</span>
@@ -330,7 +329,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
 
           {/* ── Main Content Area ── */}
           <main className="lg:col-span-8 xl:col-span-9 w-full">
-            
+
             {/* Save success toast alert */}
             {saveSuccess && (
               <div className="mb-6 p-4 bg-slate-900 border border-slate-800 text-white text-xs font-bold uppercase tracking-wider rounded-2xl flex items-center gap-3 shadow-md animate-fade-in">
@@ -341,7 +340,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
 
             {/* Content card */}
             <div className="bg-white border border-slate-200/60 rounded-[32px] p-6 md:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
-              
+
               {/* MY ACCOUNTS TAB */}
               {activeTab === "account" && (
                 <div className="animate-fade-in">
@@ -373,7 +372,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
 
                     {/* Inputs Grid */}
                     <div className="grid grid-cols-1 gap-y-8">
-                      
+
                       {/* Name */}
                       <div className="flex flex-col gap-3">
                         <label className="text-xs font-bold uppercase tracking-widest text-slate-800">FULL NAME</label>
@@ -463,7 +462,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                     <div className="space-y-6">
                       {orders.map((order) => (
                         <div key={order._id} className="border border-slate-200/80 rounded-2xl overflow-hidden bg-slate-50/10 hover:border-slate-300 transition-all">
-                          
+
                           {/* Order Card Header */}
                           <div className="bg-slate-50/80 px-5 md:px-6 py-5 border-b border-slate-200/60 flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4">
                             <div className="flex w-full md:w-auto items-center gap-8 md:gap-8">
@@ -477,11 +476,10 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                               </div>
                               <div className="flex-1 md:flex-none">
                                 <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Method</p>
-                                <span className={`inline-flex px-3.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider ${
-                                  (order.paymentMethod || "COD") === "COD" 
-                                    ? "bg-amber-50 text-amber-600 border border-amber-200/50" 
+                                <span className={`inline-flex px-3.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider ${(order.paymentMethod || "COD") === "COD"
+                                    ? "bg-amber-50 text-amber-600 border border-amber-200/50"
                                     : "bg-blue-50 text-blue-600 border border-blue-200/50"
-                                }`}>
+                                  }`}>
                                   {order.paymentMethod === "Razorpay" ? "Online" : (order.paymentMethod || "COD")}
                                 </span>
                               </div>
@@ -494,7 +492,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
 
                           {/* Order Card Items & Status */}
                           <div className="p-5 md:p-6 flex flex-col xl:flex-row justify-between items-start gap-8">
-                            
+
                             <div className="space-y-4 flex-1 w-full">
                               {order.products.map((item, idx) => (
                                 <div
@@ -574,6 +572,14 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                       <>
                                         <Truck size={16} className="text-indigo-500" />
                                         <span className="text-[11px] font-black text-indigo-500 uppercase tracking-wider">Out for Delivery</span>
+                                      </>
+                                    );
+                                  }
+                                  if (statusStr === "dispatched") {
+                                    return (
+                                      <>
+                                        <Truck size={16} className="text-blue-500" />
+                                        <span className="text-[11px] font-black text-blue-500 uppercase tracking-wider">Dispatched</span>
                                       </>
                                     );
                                   }
@@ -665,7 +671,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                     <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                       {wishlist.map((item) => (
                         <div key={item.id} className="border border-slate-200/60 rounded-2xl p-3 sm:p-5 bg-slate-50/10 relative flex flex-col justify-between hover:border-slate-350 transition-all group hover:shadow-md">
-                          
+
                           {/* Trash button */}
                           <button
                             onClick={() => handleRemoveWishlist(item.id)}
@@ -696,9 +702,9 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                 {item.rating}
                               </div>
                             </div>
-                            
+
                             <h4 className="font-extrabold text-slate-800 text-[11px] sm:text-xs mb-1 sm:mb-1.5 truncate">{item.name}</h4>
-                            
+
                             <div className="flex items-baseline gap-1.5 sm:gap-2 mb-3 sm:mb-4">
                               <span className="text-xs sm:text-sm font-black text-slate-900 font-extrabold">₹{item.price.toLocaleString()}</span>
                               <span className="text-[9px] sm:text-[10px] text-slate-400 line-through">₹{item.originalPrice.toLocaleString()}</span>
