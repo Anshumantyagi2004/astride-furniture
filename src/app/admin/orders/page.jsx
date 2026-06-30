@@ -224,6 +224,7 @@ export default function Page() {
                                                             <option value="Pending">Pending</option>
                                                             <option value="Confirmed">Confirmed</option>
                                                             <option value="Processing / Packing">Processing / Packing</option>
+                                                             <option value="Dispatched">Dispatched</option>
                                                             <option value="Shipped">Shipped</option>
                                                             <option value="Out for Delivery">Out for Delivery</option>
                                                             <option value="Delivered">Delivered</option>

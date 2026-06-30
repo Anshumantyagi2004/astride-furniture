@@ -38,6 +38,8 @@ export default function ShippingPolicyPage() {
 
       {/* ── CONTENT CONTAINER ── */}
       <div className="max-w-3xl mx-auto px-6 mt-16 space-y-8">
+        
+        {/* General Info */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -51,11 +53,57 @@ export default function ShippingPolicyPage() {
             Delivery timelines are estimates and may vary depending on location and external factors.
           </p>
           <p className="text-zinc-600 text-base leading-relaxed font-light">
-            Astride[MBTC INTRAFURNISH PRIVATE LIMITED]  is not liable for delays caused by courier services or unforeseen circumstances beyond our control.
+            Astride[MBTC INTRAFURNISH PRIVATE LIMITED] is not liable for delays caused by courier services or unforeseen circumstances beyond our control.
           </p>
         </motion.div>
 
-        {/* Contact Section */}
+        {/* ── TRANSIT TIMES TABLE ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-white border border-zinc-200/60 rounded-3xl p-6 sm:p-8 hover:border-zinc-800 transition-all duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.01)]"
+        >
+          <h3 className="text-xl font-bold text-zinc-900 uppercase tracking-tight mb-6">
+            Estimated Transit Times
+          </h3>
+          
+          {/* Mobile optimized overflow container */}
+          <div className="w-full overflow-x-auto rounded-2xl border border-zinc-100">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-zinc-50 border-b border-zinc-100">
+                  <th className="px-4 sm:px-6 py-4 text-[10px] sm:text-xs font-bold text-zinc-500 uppercase tracking-wider">
+                    Location / City Type
+                  </th>
+                  <th className="px-4 sm:px-6 py-4 text-[10px] sm:text-xs font-bold text-zinc-500 uppercase tracking-wider">
+                    Estimated Delivery Time
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                <tr className="hover:bg-zinc-50/50 transition-colors">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-zinc-900">
+                    Metropolitan Cities
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-zinc-600">
+                    5 - 7 Days
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50/50 transition-colors">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium text-zinc-900">
+                    Urban Cities (Tier 2/3)
+                  </td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-zinc-600">
+                    7 - 12 Days
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+
+        {/* ── CONTACT SECTION ── */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
