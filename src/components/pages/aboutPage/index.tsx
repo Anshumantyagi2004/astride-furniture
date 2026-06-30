@@ -278,14 +278,14 @@ export default function AboutPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-6">Ready?</p>
+          <p className="text-zinc-200 text-xs font-bold uppercase tracking-[0.3em] mb-6">Ready?</p>
           <h2
             className="text-white text-5xl sm:text-7xl lg:text-8xl font-extrabold uppercase leading-none tracking-tight mb-8"
           >
             Find Your<br />
             <span className="text-transparent [-webkit-text-stroke:2px_white]">Perfect Seat</span>
           </h2>
-          <p className="text-zinc-400 text-base max-w-lg mx-auto mb-10 leading-relaxed">
+          <p className="text-zinc-100 text-base max-w-lg mx-auto mb-10 leading-relaxed">
             Explore our full collection of premium ergonomic chairs — each one engineered to make your day better.
           </p>
           <a

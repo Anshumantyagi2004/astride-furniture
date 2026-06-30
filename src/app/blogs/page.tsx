@@ -1,15 +1,15 @@
 "use client";
 
-import { Playfair_Display } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
 import BlogCard from "@/components/pages/Blog/BlogCard";
 import { blogs } from "@/data/blog";
-const playfair = Playfair_Display({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["600", "700", "800"],
 });
 
 const banner = "/blogs/desktop_banner.webp";
@@ -60,9 +60,9 @@ export default function BlogsPage() {
             initial={{ opacity: 0, y: isMobile ? 20 : 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: isMobile ? 0.6 : 1 }}
-            className={`${playfair.className} text-white text-4xl sm:text-5xl md:text-8xl font-semibold tracking-tight`}
+            className={`${plusJakarta.className} text-white text-4xl sm:text-5xl md:text-8xl font-extrabold uppercase tracking-wider`}
           >
-            Our Blog
+            OUR BLOG
           </motion.h1>
 
           {!isMobile && (

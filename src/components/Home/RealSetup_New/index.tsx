@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import Link from "next/link";
 
 const setups = [
   {
@@ -72,8 +73,8 @@ export default function RealSetup_New() {
         </div>
 
         {/* Explore More - Now on the same row */}
-        <a
-          href="#"
+        <Link
+          href="/products"
           className="flex items-center gap-1 md:gap-2 text-[10px] md:text-[12px] font-bold tracking-[0.14em] uppercase text-[#131313] hover:text-[#8B5CF6] transition-colors whitespace-nowrap mb-1 md:mb-2"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
@@ -81,7 +82,7 @@ export default function RealSetup_New() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3 md:w-4 md:h-4">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
-        </a>
+        </Link>
       </div>
 
       {/* Scrollable Gallery + Arrows */}

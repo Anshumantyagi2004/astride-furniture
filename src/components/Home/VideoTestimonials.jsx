@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
-// 1. OPTIMIZATION: Import 'm' and 'LazyMotion' instead of the heavy 'motion'
+// 1. ADDED useEffect to imports
+import { useState, useEffect } from "react";
 import { m, LazyMotion, domAnimation, AnimatePresence } from "framer-motion";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { FaYoutube, FaInstagram, FaPlay, FaStar, FaArrowRight } from "react-icons/fa6";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Autoplay } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -104,13 +104,8 @@ function StarRating({ count }) {
     );
 }
 
-// ------------------------------------------------------------------
-// FEATURED (large left) card
-// ------------------------------------------------------------------
-// 2. OPTIMIZATION: Added `isPriority` prop to handle lazy loading
 function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
     return (
-        // 3. OPTIMIZATION: Changed motion.div to m.div
         <m.div
             key={video.id}
             initial={{ opacity: 0, x: -40 }}
@@ -120,7 +115,6 @@ function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
             className="relative rounded-2xl overflow-hidden w-full h-full min-h-[420px] lg:h-[510px] flex flex-col justify-end group cursor-pointer max-md:!shadow-none max-md:!transform-none"
             style={{ boxShadow: `0 24px 48px -10px ${video.accentFrom}40` }}
         >
-            {/* Glow ring */}
             <div
                 className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10"
                 style={{
@@ -128,7 +122,6 @@ function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
                 }}
             />
 
-            {/* Thumbnail / iframe */}
             <div className="absolute inset-0">
                 {isPlaying ? (
                     <iframe
@@ -139,22 +132,21 @@ function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
                     />
                 ) : (
                     <div className="w-full h-full relative flex items-center justify-center bg-black">
-                        {/* Blurred background image */}
                         <img
                             src={video.thumbnail}
                             alt=""
                             className="absolute inset-0 w-full h-full object-cover filter blur-[15px] opacity-40 scale-110 pointer-events-none max-md:hidden"
-                            loading={isPriority ? "eager" : "lazy"} // Dynamic loading
+                            loading={isPriority ? "eager" : "lazy"}
+                            decoding="async" 
                         />
-                        {/* Sharp centered image */}
                         <img
                             src={video.thumbnail}
                             alt={video.author}
                             className="relative h-full w-auto object-contain transition-transform duration-700 group-hover:scale-102 z-10"
-                            loading={isPriority ? "eager" : "lazy"} // Only eager load the first one
-                            fetchPriority={isPriority ? "high" : "auto"} // Release network choke
+                            loading={isPriority ? "eager" : "lazy"}
+                            fetchPriority={isPriority ? "high" : "auto"}
+                            decoding="async"
                         />
-                        {/* Overlays */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 z-10 pointer-events-none" />
                         <div
                             className="absolute inset-0 opacity-20 z-10 pointer-events-none"
@@ -166,7 +158,6 @@ function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
                 )}
             </div>
 
-            {/* Top badges */}
             {!isPlaying && (
                 <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
                     <PlatformBadge platform={video.platform} />
@@ -183,7 +174,6 @@ function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
                 </div>
             )}
 
-            {/* Play button */}
             {!isPlaying && (
                 <button
                     onClick={onPlay}
@@ -200,14 +190,12 @@ function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
                         }}
                     >
                         <FaPlay size={18} className="text-white translate-x-0.5" />
-                        {/* Pulse rings */}
                         <span className="absolute inset-0 rounded-full animate-ping opacity-25"
                             style={{ background: `linear-gradient(135deg, ${video.accentFrom}, ${video.accentTo})` }} />
                     </m.div>
                 </button>
             )}
 
-            {/* Bottom info */}
             {!isPlaying && (
                 <div className="relative z-20 p-5">
                     <StarRating count={video.rating} />
@@ -223,9 +211,6 @@ function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
     );
 }
 
-// ------------------------------------------------------------------
-// SIDE card (compact)
-// ------------------------------------------------------------------
 function SideCard({ video, onClick, index }) {
     return (
         <m.div
@@ -242,13 +227,11 @@ function SideCard({ video, onClick, index }) {
             }}
             onClick={onClick}
         >
-            {/* Glow ring */}
             <div
                 className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none z-10"
                 style={{ boxShadow: `inset 0 0 0 1px rgba(255, 255, 255, 0.15)` }}
             />
 
-            {/* Ambient Dynamic BG Glows */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div 
                     className="absolute -left-12 -top-12 w-36 h-36 rounded-full blur-3xl opacity-10 group-hover:opacity-25 transition-all duration-500"
@@ -260,9 +243,7 @@ function SideCard({ video, onClick, index }) {
                 />
             </div>
 
-            {/* Content */}
             <div className="relative z-20 h-full flex items-center gap-3.5 px-4 py-3">
-                {/* Play btn */}
                 <div
                     className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
                     style={{
@@ -273,7 +254,6 @@ function SideCard({ video, onClick, index }) {
                     <FaPlay size={11} className="text-white translate-x-px" />
                 </div>
 
-                {/* Text */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                         <PlatformBadge platform={video.platform} />
@@ -286,7 +266,6 @@ function SideCard({ video, onClick, index }) {
                     </div>
                 </div>
 
-                {/* Arrow */}
                 <div
                     className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0"
                     style={{ background: `${video.accentFrom}20`, border: `1px solid ${video.accentFrom}40` }}
@@ -298,12 +277,30 @@ function SideCard({ video, onClick, index }) {
     );
 }
 
-// ------------------------------------------------------------------
-// MAIN COMPONENT
-// ------------------------------------------------------------------
 export default function VideoTestimonials() {
     const [selectedId, setSelectedId] = useState(videos[0].id);
     const [playingId, setPlayingId] = useState(null);
+    const [swiperInstance, setSwiperInstance] = useState(null);
+
+    // 2. ADDED DESKTOP AUTOPLAY LOGIC
+    // This effect handles auto-cycling the selected video on desktop screens.
+    useEffect(() => {
+        // If a video is playing, or if we are on a mobile screen (where Swiper handles it), do nothing.
+        if (playingId !== null || (typeof window !== "undefined" && window.innerWidth < 1024)) {
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setSelectedId((currentId) => {
+                const currentIndex = videos.findIndex(v => v.id === currentId);
+                const nextIndex = (currentIndex + 1) % videos.length;
+                return videos[nextIndex].id;
+            });
+        }, 3500); // 3.5 seconds to match the mobile swiper delay
+
+        // Cleanup interval on unmount or when playingId changes
+        return () => clearInterval(interval);
+    }, [playingId, selectedId]); // Depend on selectedId so manual clicks reset the timer properly
 
     const featured = videos.find(v => v.id === selectedId) || videos[0];
     const sideVideos = videos.filter(v => v.id !== selectedId);
@@ -314,13 +311,11 @@ export default function VideoTestimonials() {
     };
 
     return (
-        // 4. OPTIMIZATION: Wrap the whole section in LazyMotion to defer animation parsing
         <LazyMotion features={domAnimation}>
             <section
                 className={`relative w-full pt-2 pb-0 lg:pt-3 lg:pb-14 overflow-hidden ${sans.className}`}
                 style={{ backgroundColor: "#0d0d0d" }}
             >
-                {/* Ambient gradient orbs */}
                 <div className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full blur-[100px] opacity-15 pointer-events-none"
                     style={{ background: "radial-gradient(circle, #8B5CF6, transparent 70%)" }} />
                 <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full blur-[80px] opacity-10 pointer-events-none"
@@ -328,13 +323,12 @@ export default function VideoTestimonials() {
 
                 <div className="relative max-w-[1150px] mx-auto px-5 md:px-8">
 
-                    {/* ── HEADER ── */}
                     <m.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "200px" }}
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                        className="mb-8"
+                        className="mb-3"
                     >
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
@@ -353,7 +347,6 @@ export default function VideoTestimonials() {
                                 </p>
                             </div>
 
-                            {/* Stats strip */}
                             <div className="flex items-center gap-5 shrink-0">
                                 {[
                                     { label: "Reviews", value: "4,200+" },
@@ -381,31 +374,46 @@ export default function VideoTestimonials() {
                     {/* MOBILE LAYOUT (lg:hidden) */}
                     <div className="block lg:hidden w-full pb-0">
                         <Swiper
-                            modules={[Pagination]}
+                            onSwiper={setSwiperInstance}
+                            modules={[Pagination, Autoplay]}
                             pagination={{ clickable: true }}
+                            loop={true}
+                            autoplay={{
+                                delay: 3500,
+                                disableOnInteraction: false,
+                            }}
                             spaceBetween={16}
                             slidesPerView={1}
                             className="video-swiper w-full"
-                            onSlideChange={() => setPlayingId(null)}
+                            onSlideChange={(swiper) => {
+                                setPlayingId(null); 
+                                if (swiper.autoplay && !swiper.autoplay.running) {
+                                    swiper.autoplay.start(); 
+                                }
+                            }}
                         >
                             {videos.map((v, index) => (
                                 <SwiperSlide key={v.id}>
                                     <div className="h-[430px] w-full">
                                         <FeaturedCard
                                             video={v}
-                                            onPlay={() => setPlayingId(v.id)}
+                                            onPlay={() => {
+                                                setPlayingId(v.id);
+                                                if (swiperInstance && swiperInstance.autoplay) {
+                                                    swiperInstance.autoplay.stop();
+                                                }
+                                            }}
                                             isPlaying={playingId === v.id}
-                                            isPriority={index === 0} // ONLY load the first mobile slide immediately
+                                            isPriority={index === 0} 
                                         />
                                     </div>
                                 </SwiperSlide>
                             ))}
                         </Swiper>
                         
-                        {/* Bottom CTA strip for mobile */}
                         <div className="mt-4">
                             <a
-                                href="https://www.youtube.com/results?search_query=astride"
+                                href="https://www.youtube.com/@astride.furniture"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center justify-between gap-3 px-5 py-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 group"
@@ -428,7 +436,6 @@ export default function VideoTestimonials() {
 
                     {/* DESKTOP LAYOUT (lg:grid) */}
                     <div className="hidden lg:grid grid-cols-[1fr_1.05fr] gap-4 items-stretch">
-                        {/* LEFT: Featured card */}
                         <div className="relative w-full h-full min-h-[420px] lg:h-[510px]">
                             <AnimatePresence mode="wait">
                                 <FeaturedCard
@@ -436,12 +443,11 @@ export default function VideoTestimonials() {
                                     video={featured}
                                     onPlay={() => setPlayingId(featured.id)}
                                     isPlaying={playingId === featured.id}
-                                    isPriority={true} // Desktop featured image should always load immediately
+                                    isPriority={true}
                                 />
                             </AnimatePresence>
                         </div>
 
-                        {/* RIGHT: 3 side cards stacked */}
                         <div className="flex flex-col gap-3">
                             {sideVideos.map((v, i) => (
                                 <SideCard
@@ -452,13 +458,12 @@ export default function VideoTestimonials() {
                                 />
                             ))}
 
-                            {/* Bottom CTA strip */}
                             <m.a
                                 initial={{ opacity: 0, y: 15 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "200px" }}
                                 transition={{ duration: 0.5, delay: 0.4 }}
-                                href="https://www.youtube.com/results?search_query=astride"
+                                href="https://www.youtube.com/@astride.furniture"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center justify-between gap-3 px-5 py-3 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 group"

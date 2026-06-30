@@ -40,6 +40,23 @@ const faqData: FAQItem[] = [
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
+  React.useEffect(() => {
+    const handleScroll = () => {
+      if (typeof window !== 'undefined' && window.location.hash === '#faq') {
+        setTimeout(() => {
+          const el = document.getElementById('faq');
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    };
+
+    handleScroll();
+    window.addEventListener('hashchange', handleScroll);
+    return () => window.removeEventListener('hashchange', handleScroll);
+  }, []);
+
   const toggleItem = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
   };
