@@ -180,7 +180,7 @@ export default function StatsSection_New() {
                 "--glow-opacity-mobile": GLOW_CONFIG.amazon.mobileIntensity,
                 "--glow-blur-desktop": GLOW_CONFIG.amazon.desktopSpread,
                 "--glow-opacity-desktop": GLOW_CONFIG.amazon.desktopIntensity,
-              }}
+              } as React.CSSProperties}
               className="flex items-center relative px-2 py-1"
             >
               <div 
@@ -209,7 +209,7 @@ export default function StatsSection_New() {
                 "--glow-opacity-mobile": GLOW_CONFIG.flipkart.mobileIntensity,
                 "--glow-blur-desktop": GLOW_CONFIG.flipkart.desktopSpread,
                 "--glow-opacity-desktop": GLOW_CONFIG.flipkart.desktopIntensity,
-              }}
+              } as React.CSSProperties}
               className="flex items-center relative px-2 py-1"
             >
               <div 
