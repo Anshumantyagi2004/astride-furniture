@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     }
 
     // 4. Verify the admin hasn't already marked it as dispatched/shipped
-    const nonCancellableStatuses = ["Dispatched", "Shipped", "Out for Delivery", "Delivered", "Cancelled"];
+    const nonCancellableStatuses = ["Dispatched", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Return Requested", "Return Approved", "Return Rejected", "Refund Initiated", "Refunded"];
     if (nonCancellableStatuses.includes(order.status)) {
       return NextResponse.json({ success: false, message: `Cannot cancel an order that is ${order.status}` }, { status: 400 });
     }
