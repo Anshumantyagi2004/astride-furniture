@@ -15,7 +15,7 @@ export default function CancellationPolicyPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-4"
           >
-            Astride
+            ASTRIDE[MBTC INTRAFURNISH PRIVATE LIMITED] 
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 25 }}

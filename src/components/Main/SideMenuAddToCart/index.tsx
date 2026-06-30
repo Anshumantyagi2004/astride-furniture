@@ -124,7 +124,7 @@ export default function SideMenuAddToCart() {
       {/* Sidebar Panel — pure CSS slide */}
       <div
         className={`fixed top-0 right-0 bottom-0 md:top-4 md:right-4 md:bottom-4 w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+          isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-[calc(100%+24px)]'
         }`}
         style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
       >
