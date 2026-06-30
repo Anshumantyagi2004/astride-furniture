@@ -15,7 +15,7 @@ export default function ShippingPolicyPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-4"
           >
-            Astride
+            Astride[MBTC INTRAFURNISH PRIVATE LIMITED] 
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
@@ -51,7 +51,7 @@ export default function ShippingPolicyPage() {
             Delivery timelines are estimates and may vary depending on location and external factors.
           </p>
           <p className="text-zinc-600 text-base leading-relaxed font-light">
-            Astride is not liable for delays caused by courier services or unforeseen circumstances beyond our control.
+            Astride[MBTC INTRAFURNISH PRIVATE LIMITED]  is not liable for delays caused by courier services or unforeseen circumstances beyond our control.
           </p>
         </motion.div>
 
