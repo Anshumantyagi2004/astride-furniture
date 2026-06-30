@@ -67,7 +67,7 @@ export default function Footer() {
                                 { 
                                     Icon: FaYoutube, 
                                     label: "YouTube", 
-                                    href: "https://www.youtube.com/channel/UC1_lDDANHKxaPZgz8aLp5IA" 
+                                    href: "https://www.youtube.com/@astride.furniture" 
                                 },
                             ].map(({ Icon, label, href }, index) => (
                                 <a
