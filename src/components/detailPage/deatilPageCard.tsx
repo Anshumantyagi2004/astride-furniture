@@ -22,6 +22,21 @@ const COLOR_MAP: Record<string, string> = {
 };
 
 export default function DetailPageCard({ product }: { product: any }) {
+//   // Grab the category name safely
+// // 1. Use 'let' so we can override it for testing
+// let activeCategoryId = product?.categoryId || product?.category?._id;
+// const activeCategoryName = product?.category?.name || product?.category;
+
+
+// // TESTING FEATURE FOR LOCALHOST 
+// // Uncomment the line below to manually force the Bar Stool ID
+
+// activeCategoryId = "6a182e652d3460990337fb44"; 
+
+// // 2. Log the variables to the console
+// console.log("Active Category ID:", activeCategoryId);
+// console.log("Active Category Name:", activeCategoryName);
+
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState('Red');
   const [activeImage, setActiveImage] = useState<string>('');
@@ -773,7 +788,8 @@ export default function DetailPageCard({ product }: { product: any }) {
                 <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Seat height</span>
                 <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">18" – 22"</b>
               </div>
-              {product?.category?._id !== "6a182e652d3460990337fb44" && (
+              {/* Safely extract category ID, handling both populated object or string/ObjectId, and coerce to string */}
+              {String(product?.category?._id || product?.category || "") !== "6a182e652d3460990337fb44" && (
                 <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
                   <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">
                     Armrest height
@@ -782,9 +798,10 @@ export default function DetailPageCard({ product }: { product: any }) {
                     6" – 10"
                   </b>
                 </div>
-
               )}
+
               <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
+                
                 <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Weight capacity</span>
                 <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">135 kg</b>
               </div>
