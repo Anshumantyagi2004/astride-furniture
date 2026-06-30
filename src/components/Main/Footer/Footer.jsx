@@ -125,16 +125,17 @@ export default function Footer() {
                                         key={index}
                                         href="/#faq"
                                         onClick={(e) => {
-                                            e.preventDefault();
-                                            // If already on homepage, just scroll
+                                            // If already on homepage, prevent default and smooth scroll
                                             if (pathname === '/') {
+                                                e.preventDefault();
                                                 const el = document.getElementById('faq');
                                                 if (el) {
                                                     el.scrollIntoView({ behavior: 'smooth' });
                                                 }
                                             } else {
-                                                // Navigate to homepage with hash
-                                                router.push('/#faq');
+                                                // On other pages, we force a full navigation so it correctly jumps to the ID
+                                                e.preventDefault();
+                                                window.location.href = '/#faq';
                                             }
                                         }}
                                         className="block text-[#bdbdbd] text-[14px] py-[5px] transition-all duration-200 hover:text-white hover:translate-x-1 font-sans font-medium"
