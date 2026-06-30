@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from "next/image";
 
 // ==========================================
@@ -30,28 +30,104 @@ const LOGO_CONFIG = {
 // ==========================================
 const GLOW_CONFIG = {
   amazon: {
-    mobileSpread: "20px",       
-    mobileIntensity: "0.27",    
+    mobileSpread: "15px",       
+    mobileIntensity: "0.25",    
 
     desktopSpread: "20px",      
     desktopIntensity: "0.27",   
   },
   flipkart: {
-    mobileSpread: "24px",       
-    mobileIntensity: "0.25",    
+    mobileSpread: "29px",       
+    mobileIntensity: "0.57",    
 
     desktopSpread: "36px",      
     desktopIntensity: "0.75",   
   }
 };
 
+// ==========================================
+// LIGHTWEIGHT COUNT-UP COMPONENT (CPU Optimized via Refs)
+// ==========================================
+function AnimatedCounter({ value, play }) {
+  const spanRef = useRef(null);
+  
+  // Determine if it's a decimal (e.g., 4.8) or a whole number (e.g., 75000)
+  const isDecimal = value.includes('.');
+  const targetNumber = parseFloat(value.replace(/,/g, ''));
+
+  useEffect(() => {
+    // Only run if triggered and the span exists
+    if (!play || !spanRef.current) return;
+
+    let startTime = 0;
+    const duration = 2000; // 2 seconds animation
+
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = timestamp - startTime;
+      const ratio = Math.min(progress / duration, 1);
+
+      // Easing function (easeOutExpo) for a smooth slow-down at the end
+      const easeRatio = ratio === 1 ? 1 : 1 - Math.pow(2, -10 * ratio);
+      
+      // Calculate current frame's number
+      const currentNumber = targetNumber * easeRatio;
+
+      // Update the DOM element directly, bypassing React state!
+      spanRef.current.textContent = currentNumber.toLocaleString('en-US', {
+        minimumFractionDigits: isDecimal ? 1 : 0,
+        maximumFractionDigits: isDecimal ? 1 : 0,
+      });
+
+      // Continue animation if not finished
+      if (ratio < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    const req = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(req);
+  }, [play, targetNumber, isDecimal]);
+
+  // Set the initial starting value based on type
+  return <span ref={spanRef}>{isDecimal ? "0.0" : "0"}</span>;
+}
+
+// ==========================================
+// MAIN COMPONENT
+// ==========================================
 export default function StatsSection_New() {
+  const [isVisible, setIsVisible] = useState(false);
+  const gridRef = useRef(null);
+
   const stats = [
     { num: "75,000", symbol: "+", label: "Orders delivered", symbolSize: "text-[32px] sm:text-[40px] md:text-[52px] lg:text-[62px]", translate: "translate-y-[-8px] sm:translate-y-[-10px]" },
     { num: "50,000", symbol: "+", label: "Happy customers", symbolSize: "text-[32px] sm:text-[40px] md:text-[52px] lg:text-[62px]", translate: "translate-y-[-8px] sm:translate-y-[-10px]" },
     { num: "12",     symbol: "+", label: "Years experience", symbolSize: "text-[32px] sm:text-[40px] md:text-[52px] lg:text-[62px]", translate: "translate-y-[-8px] sm:translate-y-[-10px]" },
     { num: "4.8",   symbol: "★", label: "Customer rating", symbolSize: "text-[18px] sm:text-[23px] md:text-[32px] lg:text-[38px]", translate: "translate-y-[1px] md:translate-y-[2px]" },
   ];
+
+  // Intersection Observer to detect when the stats are visible on screen
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          // Disconnect immediately after triggering to save CPU on mobile
+          if (gridRef.current) observer.unobserve(gridRef.current);
+        }
+      },
+      { threshold: 0.2 } // Triggers when 20% of the grid is visible
+    );
+
+    if (gridRef.current) {
+      observer.observe(gridRef.current);
+    }
+
+    return () => {
+      if (gridRef.current) observer.unobserve(gridRef.current);
+    };
+  }, []);
 
   return (
     <section className="bg-[#0F172B] border-y-[3px] border-[#131313] pt-3 pb-4 md:pt-[40px] md:pb-[45px] lg:pt-[50px] lg:pb-[50px]">
@@ -63,14 +139,16 @@ export default function StatsSection_New() {
         </h2>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-4">
+        <div ref={gridRef} className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-4">
           {stats.map((item, index) => (
             <div
               key={index}
               className="rounded-[20px] md:rounded-[24px] border-[2px] md:border-[2.5px] border-[#131313] bg-white px-2 py-5 md:px-4 md:py-8 text-center shadow-[4px_4px_0_#131313] md:shadow-[6px_6px_0_#131313]"
             >
               <b className="flex items-center justify-center leading-none font-black text-[#131313] gap-[2px]">
-                <span className="text-[22px] sm:text-[28px] md:text-[34px] lg:text-[40px]">{item.num}</span>
+                <span className="text-[22px] sm:text-[28px] md:text-[34px] lg:text-[40px]">
+                  <AnimatedCounter value={item.num} play={isVisible} />
+                </span>
                 <span className={`leading-none select-none transform ${item.symbolSize} ${item.translate}`}>{item.symbol}</span>
               </b>
 
@@ -101,10 +179,9 @@ export default function StatsSection_New() {
                 "--glow-opacity-mobile": GLOW_CONFIG.amazon.mobileIntensity,
                 "--glow-blur-desktop": GLOW_CONFIG.amazon.desktopSpread,
                 "--glow-opacity-desktop": GLOW_CONFIG.amazon.desktopIntensity,
-              } as React.CSSProperties}
+              }}
               className="flex items-center relative px-2 py-1"
             >
-              {/* Added will-change-filter and translate-Z composite overrides to completely eliminate mobile flickering anomalies */}
               <div 
                 className="absolute inset-0 bg-white pointer-events-none z-0 rounded-full [filter:blur(var(--glow-blur-mobile))] [opacity:var(--glow-opacity-mobile)] md:[filter:blur(var(--glow-blur-desktop))] md:[opacity:var(--glow-opacity-desktop)] [will-change:filter] [transform:translateZ(0)]" 
               />
@@ -131,10 +208,9 @@ export default function StatsSection_New() {
                 "--glow-opacity-mobile": GLOW_CONFIG.flipkart.mobileIntensity,
                 "--glow-blur-desktop": GLOW_CONFIG.flipkart.desktopSpread,
                 "--glow-opacity-desktop": GLOW_CONFIG.flipkart.desktopIntensity,
-              } as React.CSSProperties}
+              }}
               className="flex items-center relative px-2 py-1"
             >
-              {/* Added identical hardware-acceleration prompts on the neighboring backdrop for frame consistency */}
               <div 
                 className="absolute inset-0 bg-white pointer-events-none z-0 rounded-md [filter:blur(var(--glow-blur-mobile))] [opacity:var(--glow-opacity-mobile)] md:[filter:blur(var(--glow-blur-desktop))] md:[opacity:var(--glow-opacity-desktop)] [will-change:filter] [transform:translateZ(0)]" 
               />
