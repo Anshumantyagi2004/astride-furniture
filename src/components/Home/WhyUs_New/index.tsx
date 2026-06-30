@@ -49,7 +49,7 @@ const GLOW_CONFIG = {
 // LIGHTWEIGHT COUNT-UP COMPONENT (CPU Optimized via Refs)
 // ==========================================
 function AnimatedCounter({ value, play }) {
-  const spanRef = useRef(null);
+  const spanRef = useRef<HTMLSpanElement>(null);
   
   // Determine if it's a decimal (e.g., 4.8) or a whole number (e.g., 75000)
   const isDecimal = value.includes('.');
@@ -57,12 +57,13 @@ function AnimatedCounter({ value, play }) {
 
   useEffect(() => {
     // Only run if triggered and the span exists
-    if (!play || !spanRef.current) return;
+    const element = spanRef.current;
+    if (!play || !element) return;
 
     let startTime = 0;
     const duration = 2000; // 2 seconds animation
 
-    const animate = (timestamp) => {
+    const animate = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const progress = timestamp - startTime;
       const ratio = Math.min(progress / duration, 1);
@@ -74,7 +75,7 @@ function AnimatedCounter({ value, play }) {
       const currentNumber = targetNumber * easeRatio;
 
       // Update the DOM element directly, bypassing React state!
-      spanRef.current.textContent = currentNumber.toLocaleString('en-US', {
+      element.textContent = currentNumber.toLocaleString('en-US', {
         minimumFractionDigits: isDecimal ? 1 : 0,
         maximumFractionDigits: isDecimal ? 1 : 0,
       });
