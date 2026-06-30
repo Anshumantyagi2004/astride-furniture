@@ -40,6 +40,9 @@ export default function RootLayout({ children }) {
           name="google-site-verification"
           content="oo7Se9amQ-_Nfvln61Rt4HRmrRKaSecpc_wTTyBFTfk"
         />
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="24892c29-995b-4c38-baa1-308094691027"></script>
+
+        
 
         <link
           rel="preload"

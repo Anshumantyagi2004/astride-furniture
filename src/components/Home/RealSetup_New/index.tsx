@@ -29,10 +29,6 @@ const setups = [
     img: "/Real_people_real_Setup/19.webp",
     tag: "#CozyVibes",
   },
-  {
-    img: "/Real_people_real_Setup/20.webp",
-    tag: "#HomeOffice",
-  },
 ];
 
 export default function RealSetup_New() {
@@ -105,24 +101,14 @@ export default function RealSetup_New() {
           </svg>
         </button>
 
-        {/* Style to center the Swiper slides when they do not fill the desktop width */}
-        <style dangerouslySetInnerHTML={{__html: `
-          @media (min-width: 1024px) {
-            .setup-swiper .swiper-wrapper {
-              justify-content: center;
-            }
-          }
-        `}} />
-
         {/* Swiper Auto-Scrolling Strip */}
         <Swiper
-          key={isMobile ? "mobile" : "desktop"}
           modules={[Autoplay, Navigation]}
-          loop={isMobile}
-          autoplay={isMobile ? {
+          loop={true}
+          autoplay={{
             delay: 2500,
             disableOnInteraction: false,
-          } : false}
+          }}
           navigation={{
             prevEl: ".setup-prev",
             nextEl: ".setup-next",
@@ -131,7 +117,6 @@ export default function RealSetup_New() {
             0: { slidesPerView: 2, spaceBetween: 10 },
             640: { slidesPerView: 3, spaceBetween: 16 },
             1024: { slidesPerView: 4, spaceBetween: 32 },
-            1280: { slidesPerView: 5, spaceBetween: 40 },
           }}
           className="w-full py-1 setup-swiper"
         >
