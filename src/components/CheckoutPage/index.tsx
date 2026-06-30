@@ -483,9 +483,9 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="space-y-3 pt-3 pb-4">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Payment Method</label>
+                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Select Payment Method</label>
                   <div className="grid grid-cols-2 gap-4">
-                    <button
+                    {/* <button
                       type="button"
                       onClick={() => setPaymentMethod("COD")}
                       className={`py-3 px-4 rounded-xl border text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${
@@ -495,7 +495,7 @@ export default function CheckoutPage() {
                       }`}
                     >
                       Cash on Delivery
-                    </button>
+                    </button> */}
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("Razorpay")}

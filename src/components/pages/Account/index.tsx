@@ -720,7 +720,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                 </button>
                                 
                                 {/* NEW Cancel Button (Hides automatically if status is Dispatched/Shipped/etc) */}
-                                {!["Dispatched", "Shipped", "Out for Delivery", "Delivered", "Cancelled"].includes(order.status || "Pending") && (
+                                {!["Dispatched", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Return Requested", "Return Approved", "Return Rejected", "Refund Initiated", "Refunded"].includes(order.status || "Pending") && (
                                   <button
                                     onClick={() => handleCancelOrder(order._id)}
                                     className="flex-1 px-5 py-2.5 bg-rose-50 text-rose-600 border border-rose-200/50 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-rose-100 transition-all shadow-sm active:scale-95"
