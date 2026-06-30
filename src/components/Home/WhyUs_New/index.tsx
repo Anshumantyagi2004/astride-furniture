@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from "next/image";
+// 1. Import CountUp directly
+import { CountUp } from 'countup.js';
 
 // ==========================================
 // CONFIGURATION INTERFACE FOR PLATFORM LOGOS
@@ -46,51 +48,41 @@ const GLOW_CONFIG = {
 };
 
 // ==========================================
-// LIGHTWEIGHT COUNT-UP COMPONENT (CPU Optimized via Refs)
+// COUNTUP.JS COMPONENT (Optimized via Refs)
 // ==========================================
-function AnimatedCounter({ value, play }) {
-  const spanRef = useRef<HTMLSpanElement>(null);
-  
-  // Determine if it's a decimal (e.g., 4.8) or a whole number (e.g., 75000)
+interface AnimatedCounterProps {
+  value: string;
+  play: boolean;
+}
+
+function AnimatedCounter({ value, play }: AnimatedCounterProps) {
+  const spanRef = useRef<HTMLSpanElement | null>(null);
+  const countUpRef = useRef<CountUp | null>(null);
+
+  // Parse the value
   const isDecimal = value.includes('.');
   const targetNumber = parseFloat(value.replace(/,/g, ''));
 
   useEffect(() => {
-    // Only run if triggered and the span exists
-    const element = spanRef.current;
-    if (!play || !element) return;
+    if (!spanRef.current) return;
 
-    let startTime = 0;
-    const duration = 2000; // 2 seconds animation
-
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = timestamp - startTime;
-      const ratio = Math.min(progress / duration, 1);
-
-      // Easing function (easeOutExpo) for a smooth slow-down at the end
-      const easeRatio = ratio === 1 ? 1 : 1 - Math.pow(2, -10 * ratio);
-      
-      // Calculate current frame's number
-      const currentNumber = targetNumber * easeRatio;
-
-      // Update the DOM element directly, bypassing React state!
-      element.textContent = currentNumber.toLocaleString('en-US', {
-        minimumFractionDigits: isDecimal ? 1 : 0,
-        maximumFractionDigits: isDecimal ? 1 : 0,
+    // Initialize CountUp instance once
+    if (!countUpRef.current) {
+      countUpRef.current = new CountUp(spanRef.current, targetNumber, {
+        decimalPlaces: isDecimal ? 1 : 0,
+        duration: 2, // 2 seconds
+        useEasing: true,
+        separator: ',',
       });
+    }
 
-      // Continue animation if not finished
-      if (ratio < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    const req = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(req);
+    // Trigger the animation when 'play' becomes true
+    if (play && countUpRef.current && !countUpRef.current.error) {
+      countUpRef.current.start();
+    }
   }, [play, targetNumber, isDecimal]);
 
-  // Set the initial starting value based on type
+  // Initial render state
   return <span ref={spanRef}>{isDecimal ? "0.0" : "0"}</span>;
 }
 
@@ -114,11 +106,11 @@ export default function StatsSection_New() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          // Disconnect immediately after triggering to save CPU on mobile
+          // Disconnect immediately to save CPU
           if (gridRef.current) observer.unobserve(gridRef.current);
         }
       },
-      { threshold: 0.2 } // Triggers when 20% of the grid is visible
+      { threshold: 0.2 } 
     );
 
     if (gridRef.current) {

@@ -1,9 +1,20 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 const Loader = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    // Return empty space with same dimensions to avoid layout shifts during hydration
+    return <div style={{ width: '60px', height: '60px' }} />;
+  }
+
   return (
     <StyledWrapper>
       <div className="spinner">
@@ -23,13 +34,12 @@ const Loader = () => {
 const StyledWrapper = styled.div`
   .spinner {
     position: relative;
-    width: 60px;
+    width: 105px;
     height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 50%;
-    margin-left: -75px;
+    margin: 0 auto;
   }
 
   .spinner span {
@@ -44,42 +54,42 @@ const StyledWrapper = styled.div`
   }
 
   .spinner span:nth-child(1) {
-    --left: 80px;
+    --left: 70px;
     animation-delay: 0.125s;
   }
 
   .spinner span:nth-child(2) {
-    --left: 70px;
+    --left: 60px;
     animation-delay: 0.3s;
   }
 
   .spinner span:nth-child(3) {
-    left: 60px;
+    left: 50px;
     animation-delay: 0.425s;
   }
 
   .spinner span:nth-child(4) {
     animation-delay: 0.54s;
-    left: 50px;
+    left: 40px;
   }
 
   .spinner span:nth-child(5) {
     animation-delay: 0.665s;
-    left: 40px;
+    left: 30px;
   }
 
   .spinner span:nth-child(6) {
     animation-delay: 0.79s;
-    left: 30px;
+    left: 20px;
   }
 
   .spinner span:nth-child(7) {
     animation-delay: 0.915s;
-    left: 20px;
+    left: 10px;
   }
 
   .spinner span:nth-child(8) {
-    left: 10px;
+    left: 0px;
   }
 
   @keyframes dominos {

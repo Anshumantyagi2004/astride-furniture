@@ -25,6 +25,14 @@ const setups = [
     img: "/Real_people_real_Setup/18.webp",
     tag: "#MinimalDesk",
   },
+  {
+    img: "/Real_people_real_Setup/19.webp",
+    tag: "#CozyVibes",
+  },
+  {
+    img: "/Real_people_real_Setup/20.webp",
+    tag: "#HomeOffice",
+  },
 ];
 
 export default function RealSetup_New() {
