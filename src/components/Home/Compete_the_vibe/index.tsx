@@ -285,15 +285,27 @@ export default function CompeteTheVibe() {
           </Link>
         </div>
 
-        <div className="block md:hidden w-full pb-0 px-1">
+        <div className="w-full pb-0 px-1">
           <Swiper
             modules={[Autoplay]}
-            spaceBetween={12}
-            slidesPerView={2}
             loop={true}
             autoplay={{
               delay: 2500,
               disableOnInteraction: false,
+            }}
+            breakpoints={{
+              0: {
+                slidesPerView: 2,
+                spaceBetween: 12,
+              },
+              768: {
+                slidesPerView: 3,
+                spaceBetween: 24,
+              },
+              1024: {
+                slidesPerView: 4,
+                spaceBetween: 30,
+              }
             }}
             className="w-full !overflow-visible"
           >
@@ -303,12 +315,6 @@ export default function CompeteTheVibe() {
               </SwiperSlide>
             ))}
           </Swiper>
-        </div>
-
-        <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]">
-          {products.map((product) => (
-            <VibeProductCard key={product.id} product={product} />
-          ))}
         </div>
       </div>
     </section>
