@@ -647,6 +647,46 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                       </>
                                     );
                                   }
+                                  if (statusStr === "return requested") {
+                                    return (
+                                      <>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse" />
+                                        <span className="text-[11px] font-black text-orange-500 uppercase tracking-wider">Return Requested</span>
+                                      </>
+                                    );
+                                  }
+                                  if (statusStr === "return approved") {
+                                    return (
+                                      <>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                                        <span className="text-[11px] font-black text-emerald-500 uppercase tracking-wider">Return Approved</span>
+                                      </>
+                                    );
+                                  }
+                                  if (statusStr === "return rejected") {
+                                    return (
+                                      <>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-rose-600" />
+                                        <span className="text-[11px] font-black text-rose-600 uppercase tracking-wider">Return Rejected</span>
+                                      </>
+                                    );
+                                  }
+                                  if (statusStr === "refund initiated") {
+                                    return (
+                                      <>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+                                        <span className="text-[11px] font-black text-blue-500 uppercase tracking-wider">Refund Initiated</span>
+                                      </>
+                                    );
+                                  }
+                                  if (statusStr === "refunded") {
+                                    return (
+                                      <>
+                                        <CheckCircle size={16} className="text-emerald-600" />
+                                        <span className="text-[11px] font-black text-emerald-600 uppercase tracking-wider">Refunded</span>
+                                      </>
+                                    );
+                                  }
                                   // Fallback for custom or unrecognized status
                                   return (
                                     <>
