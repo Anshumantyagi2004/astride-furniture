@@ -123,6 +123,8 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
     router.push("/login");
   };
 
+ 
+
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<UserProfile>(DEFAULT_PROFILE);
@@ -130,6 +132,34 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
   const [wishlist, setWishlist] = useState<WishlistItem[]>(MOCK_WISHLIST);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const handleCancelOrder = async (orderId: string) => {
+    if (!confirm("Are you sure you want to cancel this order?")) return;
+    
+    try {
+      const token = sessionStorage.getItem("auth_token");
+      const { data } = await axios.post(
+        "/api/my-orders/cancel",
+        { orderId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      if (data.success) {
+        alert("Order cancelled successfully");
+        // Re-fetch the orders to instantly update the UI 
+        const fetchOrdersRes = await axios.get("/api/my-orders", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (fetchOrdersRes.data.success) {
+          setOrders(fetchOrdersRes.data.orders);
+        }
+      } else {
+        alert(data.message || "Failed to cancel order");
+      }
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Failed to cancel order");
+    }
+  };
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -172,6 +202,8 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
 
     fetchUserProfile();
     fetchUserOrders();
+
+
 
     const savedWishlist = localStorage.getItem("astride_wishlist");
     if (savedWishlist) {
@@ -303,8 +335,8 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                     key={item.id}
                     onClick={() => router.push(item.path)}
                     className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 relative overflow-hidden group ${isActive
-                        ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
-                        : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                      ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+                      : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                       }`}
                   >
                     <IconComponent size={16} strokeWidth={2.5} />
@@ -477,8 +509,8 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                               <div className="flex-1 md:flex-none">
                                 <p className="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-widest mb-1">Method</p>
                                 <span className={`inline-flex px-3.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider ${(order.paymentMethod || "COD") === "COD"
-                                    ? "bg-amber-50 text-amber-600 border border-amber-200/50"
-                                    : "bg-blue-50 text-blue-600 border border-blue-200/50"
+                                  ? "bg-amber-50 text-amber-600 border border-amber-200/50"
+                                  : "bg-blue-50 text-blue-600 border border-blue-200/50"
                                   }`}>
                                   {order.paymentMethod === "Razorpay" ? "Online" : (order.paymentMethod || "COD")}
                                 </span>
@@ -607,6 +639,14 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                       </>
                                     );
                                   }
+                                  if (statusStr === "cancelled") {
+                                    return (
+                                      <>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-rose-600" />
+                                        <span className="text-[11px] font-black text-rose-600 uppercase tracking-wider">Cancelled</span>
+                                      </>
+                                    );
+                                  }
                                   // Fallback for custom or unrecognized status
                                   return (
                                     <>
@@ -618,9 +658,10 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                               </div>
 
                               <div className="flex flex-row md:flex-col items-stretch justify-end gap-3 w-full mt-2">
+                                {/* Existing Reorder Button */}
                                 <button
                                   onClick={() => {
-                                    order.products.forEach(item => {
+                                    order.products.forEach((item: any) => {
                                       const cartEvent = new CustomEvent("add-to-cart", {
                                         detail: {
                                           id: item.productId,
@@ -637,6 +678,16 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                 >
                                   Reorder
                                 </button>
+                                
+                                {/* NEW Cancel Button (Hides automatically if status is Dispatched/Shipped/etc) */}
+                                {!["Dispatched", "Shipped", "Out for Delivery", "Delivered", "Cancelled"].includes(order.status || "Pending") && (
+                                  <button
+                                    onClick={() => handleCancelOrder(order._id)}
+                                    className="flex-1 px-5 py-2.5 bg-rose-50 text-rose-600 border border-rose-200/50 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-rose-100 transition-all shadow-sm active:scale-95"
+                                  >
+                                    Cancel Order
+                                  </button>
+                                )}
                               </div>
                             </div>
 
