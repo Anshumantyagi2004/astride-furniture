@@ -29,6 +29,10 @@ const setups = [
     img: "/Real_people_real_Setup/19.webp",
     tag: "#CozyVibes",
   },
+  {
+    img: "/Real_people_real_Setup/20.webp",
+    tag: "#HomeOffice",
+  },
 ];
 
 export default function RealSetup_New() {
@@ -116,7 +120,7 @@ export default function RealSetup_New() {
           breakpoints={{
             0: { slidesPerView: 2, spaceBetween: 10 },
             640: { slidesPerView: 3, spaceBetween: 16 },
-            1024: { slidesPerView: 4, spaceBetween: 32 },
+            1024: { slidesPerView: 5, spaceBetween: 32 },
           }}
           className="w-full py-1 setup-swiper"
         >
