@@ -21,7 +21,7 @@ export default function CheckoutPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<"COD" | "Razorpay">("COD");
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "Razorpay" | "">("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Form State
@@ -148,6 +148,11 @@ export default function CheckoutPage() {
       if (Object.values(newErrors).some(err => err !== "")) {
         // Scroll to top so user sees the errors
         window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
+      if (!paymentMethod) {
+        alert("Please select a payment method before proceeding.");
         return;
       }
 
