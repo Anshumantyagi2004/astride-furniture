@@ -138,8 +138,8 @@ export default function Category() {
                                 (category, index) => (
                                     <Link key={index} href={`/products?category=${encodeURIComponent(category.name)}`} className="w-full block">
                                         <motion.div
-                                        initial={{ opacity: 0, y: 40 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
+                                        initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+                                        whileInView={isMobile ? false : { opacity: 1, y: 0 }}
                                         transition={{
                                             duration: 0.2,
                                             delay: index * 0.02,
