@@ -154,6 +154,7 @@ const handleImageChange = async (index, e) => {
                                     type: "image/webp",
                                 }
                             );
+                            webpFile.originalSize = file.size; // Store original size
 
                             resolve(webpFile);
                         },
@@ -194,7 +195,11 @@ const handleImageChange = async (index, e) => {
         updated[index].images = [...updated[index].images, ...webpFiles];
         updated[index].previews = [
             ...updated[index].previews,
-            ...webpFiles.map((file) => URL.createObjectURL(file))
+            ...webpFiles.map((file) => ({
+                url: URL.createObjectURL(file),
+                originalSize: file.originalSize,
+                newSize: file.size,
+            }))
         ];
         setColorVariants(updated);
 
@@ -686,27 +691,41 @@ const handleImageChange = async (index, e) => {
                                     {/* PREVIEW */}
                                     {variant.previews.length > 0 && (
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            {variant.previews.map((image, i) => (
+                                            {variant.previews.map((image, i) => {
+                                                const isObj = typeof image === "object";
+                                                const srcUrl = isObj ? image.url : image;
+                                                const origSize = isObj && image.originalSize ? (image.originalSize / 1024 / 1024).toFixed(2) + " MB" : null;
+                                                const newSize = isObj && image.newSize ? (image.newSize / 1024).toFixed(1) + " KB" : null;
+
+                                                return (
                                                 <div
                                                     key={i}
-                                                    className="relative h-32 rounded-xl overflow-hidden border"
+                                                    className="relative h-32 rounded-xl overflow-hidden border group"
                                                 >
                                                     <Image
-                                                        src={image}
+                                                        src={srcUrl}
                                                         alt="Preview"
                                                         fill
                                                         unoptimized
                                                         className="object-cover"
                                                     />
+                                                    
+                                                    {origSize && newSize && (
+                                                        <div className="absolute top-0 left-0 bg-black/70 backdrop-blur-sm p-2 rounded-br-lg text-[10px] font-mono leading-tight shadow-md border-r border-b border-white/10 z-10">
+                                                            <div className="text-gray-300">Original: {origSize}</div>
+                                                            <div className="text-[#34d399] font-bold mt-0.5">WEBP: {newSize}</div>
+                                                        </div>
+                                                    )}
+
                                                     <button
                                                         type="button"
                                                         onClick={() => removeVariantImage(index, i)}
-                                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+                                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-90 hover:opacity-100 shadow-md z-20"
                                                     >
                                                         <X size={14} />
                                                     </button>
                                                 </div>
-                                            ))}
+                                            )})}
                                         </div>
                                     )}
                                 </div>
