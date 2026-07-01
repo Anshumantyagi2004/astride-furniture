@@ -8,13 +8,13 @@ import { Autoplay } from "swiper/modules";
 import { motion, AnimatePresence } from "framer-motion";
 import "swiper/css";
 
-// Replaced % with vw/dvh to allow pure transform animations without layout thrashing
 function getPosition(index: number, visibleCount: number, maxCount: number, isMobile: boolean) {
   const isVisible = index < visibleCount;
   const effectiveTotal = isVisible ? visibleCount : maxCount;
 
+  // Emphasize remaining items when there are very few left
   if (effectiveTotal === 1) return { left: "50vw", top: "45dvh", scale: isMobile ? 0.9 : 1.1, zIndex: 100 };
-
+  
   if (effectiveTotal === 2) {
     return {
       left: index === 0 ? (isMobile ? "30vw" : "35vw") : (isMobile ? "70vw" : "65vw"),
@@ -23,28 +23,50 @@ function getPosition(index: number, visibleCount: number, maxCount: number, isMo
       zIndex: 100 - index,
     };
   }
-
+  
   if (effectiveTotal === 3) {
     if (isMobile) {
       if (index === 0) return { left: "20vw", top: "45dvh", scale: 0.65, zIndex: 90 };
       if (index === 1) return { left: "50vw", top: "45dvh", scale: 0.75, zIndex: 100 };
       if (index === 2) return { left: "80vw", top: "45dvh", scale: 0.65, zIndex: 90 };
     } else {
-      if (index === 0) return { left: "50vw", top: "60dvh", scale: 0.95, zIndex: 100 };
-      if (index === 1) return { left: "25vw", top: "35dvh", scale: 0.8, zIndex: 90 };
-      if (index === 2) return { left: "75vw", top: "35dvh", scale: 0.8, zIndex: 90 };
+      if (index === 0) return { left: "50vw", top: "55dvh", scale: 0.95, zIndex: 100 };
+      if (index === 1) return { left: "30vw", top: "35dvh", scale: 0.8, zIndex: 90 };
+      if (index === 2) return { left: "70vw", top: "35dvh", scale: 0.8, zIndex: 90 };
     }
   }
 
-  const columns = isMobile ? 4 : 5;
+  // --- NEW GRID MATH: 6 columns on Desktop, 5 columns on Mobile ---
+  const columns = isMobile ? 5 : 6;
   const row = Math.floor(index / columns);
   const col = index % columns;
-  const itemsInRow = Math.min(columns, effectiveTotal - row * columns);
-  const colOffset = (columns - itemsInRow) / 2;
 
-  const left = isMobile ? `${12.5 + (col + colOffset) * 25}vw` : `${15 + (col + colOffset) * 17.5}vw`; 
-  const top = isMobile ? `${20 + row * 20}dvh` : `${20 + row * 30}dvh`;
-  const scale = isMobile ? 0.55 : 0.475;
+  const totalRows = Math.ceil(effectiveTotal / columns);
+  const itemsInRow = Math.min(columns, effectiveTotal - row * columns);
+  const colOffset = (columns - itemsInRow) / 2; // Centers the bottom row if it's not full
+
+  // X Axis (left)
+  const colWidth = isMobile ? 20 : 16.66; // 100vw divided by columns
+  const startX = isMobile ? 10 : 8.33;    // Half of colWidth to center the first item in its bounds
+  const left = `${startX + (col + colOffset) * colWidth}vw`;
+
+  // Y Axis (top) - Self-centering based on how many rows exist
+  const rowSpacing = isMobile ? 14 : 16; 
+  const totalGridHeight = (totalRows - 1) * rowSpacing;
+  
+  // Center the entire grid around 45dvh
+  let startY = 45 - (totalGridHeight / 2);
+  
+  // Guardrail: Don't let it push into the top nav if there are massive amounts of rows
+  if (startY < 12) startY = 12;
+
+  const top = `${startY + row * rowSpacing}dvh`;
+
+  // Shrink the scale slightly if we have 5+ rows to prevent overlapping
+  let scale = isMobile ? 0.42 : 0.45;
+  if (totalRows > 4) {
+    scale = isMobile ? 0.35 : 0.38; 
+  }
 
   return { left, top, scale, zIndex: 100 - index };
 }
@@ -56,18 +78,14 @@ const ChairCard = memo(({ chair, left, top, scale, zIndex, isVisible, index }: {
 
   return (
     <div
-      // 1. Anchor securely to top-left to establish a consistent origin
       className="absolute top-0 left-0 w-[150px] h-[150px] md:w-[250px] md:h-[250px]"
       style={{
-        // 2. Drive all positional movement exclusively via GPU-accelerated translate3d
-        // calc() perfectly centers the element on its coordinate by subtracting 50% of its OWN width/height
         transform: `translate3d(calc(${left} - 50%), calc(${top} - 50%), 0) scale(${isVisible ? scale : 0.85})`,
         opacity: isVisible ? 1 : 0,
         zIndex,
         pointerEvents: isVisible ? "auto" : "none",
-        // 3. Strictly limit transitions to transform and opacity. No left/top transitions.
         transition: "transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-        willChange: "transform, opacity" // Extra hint for mobile browser optimization
+        willChange: "transform, opacity"
       }}
     >
       <Link href={detailUrl} className="relative block w-full h-full cursor-pointer hover:scale-105 transition-transform duration-300">
@@ -177,12 +195,20 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     fetchProducts();
   }, []);
 
+  // Split ALL available chairs evenly across the 3 moving rows
   const { row1, row2, row3 } = useMemo(() => {
     if (chairs.length === 0) return { row1: [], row2: [], row3: [] };
+    
+    const third = Math.ceil(chairs.length / 3);
+    const p1 = chairs.slice(0, third);
+    const p2 = chairs.slice(third, third * 2);
+    const p3 = chairs.slice(third * 2);
+
+    // Duplicate chunks to ensure Swiper can loop seamlessly without empty gaps
     return {
-      row1: chairs.length >= 5 ? [...chairs.slice(0, 5), ...chairs.slice(0, 5)] : [...chairs, ...chairs],
-      row2: chairs.length >= 10 ? [...chairs.slice(5, 10), ...chairs.slice(5, 10)] : [...chairs, ...chairs],
-      row3: chairs.length >= 10 ? [...chairs.slice(10), ...chairs.slice(10)] : [...chairs, ...chairs],
+      row1: [...p1, ...p1, ...p1], 
+      row2: [...p2, ...p2, ...p2],
+      row3: [...p3, ...p3, ...p3],
     };
   }, [chairs]);
 
@@ -229,7 +255,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                 </div>
                 
                 <div className="w-full overflow-hidden">
-                  <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 5} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
+                  <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 6} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                     {row1.map((chair, idx) => (
                       <SwiperSlide key={`r1-${idx}`} className="flex justify-center items-center">
                         <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.06)]" />
@@ -239,7 +265,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                 </div>
 
                 <div className="w-full overflow-hidden">
-                  <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 5} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false, reverseDirection: true }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
+                  <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 6} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false, reverseDirection: true }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                     {row2.map((chair, idx) => (
                       <SwiperSlide key={`r2-${idx}`} className="flex justify-center items-center">
                         <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.06)]" />
@@ -249,7 +275,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                 </div>
 
                 <div className="w-full overflow-hidden">
-                  <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 5} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
+                  <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 6} spaceBetween={15} loop={true} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                     {row3.map((chair, idx) => (
                       <SwiperSlide key={`r3-${idx}`} className="flex justify-center items-center">
                         <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.06)]" />
