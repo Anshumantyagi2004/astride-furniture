@@ -214,8 +214,9 @@ function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
 function SideCard({ video, onClick, index, isMobile }) {
     return (
         <m.div
+            key={isMobile ? `m-side-${video.id}` : `d-side-${video.id}`}
             initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
-            whileInView={isMobile ? undefined : { opacity: 1, x: 0 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "1000px" }}
             transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ 
@@ -332,8 +333,9 @@ export default function VideoTestimonials() {
                 <div className="relative max-w-[1150px] mx-auto px-5 md:px-8">
 
                     <m.div
+                        key={isMobile ? 'm-header' : 'd-header'}
                         initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "1000px" }}
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                         className="mb-3"
@@ -468,8 +470,9 @@ export default function VideoTestimonials() {
                             ))}
 
                             <m.a
+                                key={isMobile ? 'm-yt' : 'd-yt'}
                                 initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-                                whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+                                whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "1000px" }}
                                 transition={{ duration: 0.5, delay: 0.4 }}
                                 href="https://www.youtube.com/@astride.furniture"
