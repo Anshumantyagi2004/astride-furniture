@@ -190,7 +190,7 @@ export default function BestSeller() {
       <div className="max-w-[1440px] mx-auto">
         
         {/* Header Area */}
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-5 px-2">
+        <div className="mb-5 flex flex-col items-start md:flex-row md:items-end md:justify-between gap-5 px-0 md:px-2">
           <div>
             <h2 className={`mt-0 text-[32px] font-black leading-tight text-[#131313] md:text-[42px] lg:text-[48px] ${sans.className}`}>
               Best{" "}
