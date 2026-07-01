@@ -182,12 +182,22 @@ export default function Page() {
                 reader.onload = (event) => {
                     const img = new window.Image();
                     img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        const MAX_SIZE = 1200;
+                        if (width > height && width > MAX_SIZE) {
+                            height = Math.round((height * MAX_SIZE) / width);
+                            width = MAX_SIZE;
+                        } else if (height > MAX_SIZE) {
+                            width = Math.round((width * MAX_SIZE) / height);
+                            height = MAX_SIZE;
+                        }
                         const canvas = document.createElement("canvas");
-                        canvas.width = img.width;
-                        canvas.height = img.height;
+                        canvas.width = width;
+                        canvas.height = height;
                         const ctx = canvas.getContext("2d");
                         if (!ctx) { resolve(file); return; }
-                        ctx.drawImage(img, 0, 0);
+                        ctx.drawImage(img, 0, 0, width, height);
                         canvas.toBlob((blob) => {
                             if (!blob) { resolve(file); return; }
                             const webpFile = new File([blob], `${file.name.replace(/\\.[^/.]+$/, "")}.webp`, { type: "image/webp" });
