@@ -46,7 +46,7 @@ export default function CheckoutPage() {
     pinCode: "",
   });
 
-  const shippingCost = 1;
+  const shippingCost = 0;
 
   useEffect(() => {
     setIsMounted(true);
