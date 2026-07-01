@@ -12,60 +12,63 @@ function getPosition(index: number, visibleCount: number, maxCount: number, isMo
   const isVisible = index < visibleCount;
   const effectiveTotal = isVisible ? visibleCount : maxCount;
 
-  // Emphasize remaining items when there are very few left
-  if (effectiveTotal === 1) return { left: "50vw", top: "45dvh", scale: isMobile ? 0.9 : 1.1, zIndex: 100 };
+  // --- FINAL STAGE PRESENTATION (1-3 Chairs Left) ---
+  if (effectiveTotal === 1) {
+    return { left: "50vw", top: "38dvh", scale: isMobile ? 1.0 : 1.2, zIndex: 100 };
+  }
   
   if (effectiveTotal === 2) {
     return {
-      left: index === 0 ? (isMobile ? "30vw" : "35vw") : (isMobile ? "70vw" : "65vw"),
-      top: "45dvh",
-      scale: isMobile ? 0.75 : 0.9,
+      left: index === 0 ? (isMobile ? "30vw" : "38vw") : (isMobile ? "70vw" : "62vw"),
+      top: "38dvh",
+      scale: isMobile ? 0.8 : 1.0,
       zIndex: 100 - index,
     };
   }
   
   if (effectiveTotal === 3) {
-    if (isMobile) {
-      if (index === 0) return { left: "20vw", top: "45dvh", scale: 0.65, zIndex: 90 };
-      if (index === 1) return { left: "50vw", top: "45dvh", scale: 0.75, zIndex: 100 };
-      if (index === 2) return { left: "80vw", top: "45dvh", scale: 0.65, zIndex: 90 };
-    } else {
-      if (index === 0) return { left: "50vw", top: "55dvh", scale: 0.95, zIndex: 100 };
-      if (index === 1) return { left: "30vw", top: "35dvh", scale: 0.8, zIndex: 90 };
-      if (index === 2) return { left: "70vw", top: "35dvh", scale: 0.8, zIndex: 90 };
-    }
+    return {
+      left: index === 0 ? (isMobile ? "20vw" : "32vw") : index === 1 ? "50vw" : (isMobile ? "80vw" : "68vw"),
+      top: "38dvh",
+      // Middle chair is slightly larger and in front
+      scale: index === 1 ? (isMobile ? 0.85 : 1.1) : (isMobile ? 0.65 : 0.85),
+      zIndex: index === 1 ? 100 : 90,
+    };
   }
 
-  // --- NEW GRID MATH: 6 columns on Desktop, 5 columns on Mobile ---
+  // --- STATIC GRID MATH (4+ Chairs) ---
+  // Fix: Base ALL layout calculations on 'maxCount' instead of 'effectiveTotal'. 
+  // This locks the grid positions in place so they NEVER jump when a row finishes.
   const columns = isMobile ? 5 : 6;
   const row = Math.floor(index / columns);
   const col = index % columns;
 
-  const totalRows = Math.ceil(effectiveTotal / columns);
-  const itemsInRow = Math.min(columns, effectiveTotal - row * columns);
-  const colOffset = (columns - itemsInRow) / 2; // Centers the bottom row if it's not full
+  const totalRows = Math.ceil(maxCount / columns);
+  const itemsInRow = Math.min(columns, maxCount - row * columns);
+  const colOffset = (columns - itemsInRow) / 2;
 
   // X Axis (left)
-  const colWidth = isMobile ? 20 : 16.66; // 100vw divided by columns
-  const startX = isMobile ? 10 : 8.33;    // Half of colWidth to center the first item in its bounds
+  const colWidth = isMobile ? 20 : 16.66;
+  const startX = isMobile ? 10 : 8.33; 
   const left = `${startX + (col + colOffset) * colWidth}vw`;
 
-  // Y Axis (top) - Self-centering based on how many rows exist
-  const rowSpacing = isMobile ? 14 : 16; 
+  // Y Axis (top) 
+  // Fix: Tighter row spacing and higher start point to ensure it NEVER drops behind the slider
+  const rowSpacing = isMobile ? 11 : 14; 
   const totalGridHeight = (totalRows - 1) * rowSpacing;
   
-  // Center the entire grid around 45dvh
-  let startY = 45 - (totalGridHeight / 2);
+  // Center around 38dvh (higher than true center to account for the bottom slider area)
+  let startY = 38 - (totalGridHeight / 2);
   
-  // Guardrail: Don't let it push into the top nav if there are massive amounts of rows
+  // Guardrail so we don't clip into the top header
   if (startY < 12) startY = 12;
 
   const top = `${startY + row * rowSpacing}dvh`;
 
-  // Shrink the scale slightly if we have 5+ rows to prevent overlapping
-  let scale = isMobile ? 0.42 : 0.45;
+  // Fix: Noticeably increased scales for both desktop and mobile
+  let scale = isMobile ? 0.52 : 0.6; 
   if (totalRows > 4) {
-    scale = isMobile ? 0.35 : 0.38; 
+    scale = isMobile ? 0.45 : 0.52; 
   }
 
   return { left, top, scale, zIndex: 100 - index };
@@ -195,7 +198,6 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     fetchProducts();
   }, []);
 
-  // Split ALL available chairs evenly across the 3 moving rows
   const { row1, row2, row3 } = useMemo(() => {
     if (chairs.length === 0) return { row1: [], row2: [], row3: [] };
     
@@ -204,7 +206,6 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
     const p2 = chairs.slice(third, third * 2);
     const p3 = chairs.slice(third * 2);
 
-    // Duplicate chunks to ensure Swiper can loop seamlessly without empty gaps
     return {
       row1: [...p1, ...p1, ...p1], 
       row2: [...p2, ...p2, ...p2],
