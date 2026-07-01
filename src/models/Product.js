@@ -112,6 +112,19 @@ const productSchema = new mongoose.Schema(
                 },
             },
         ],
+        // CHAIR ADJUSTABILITY SPECIFICATIONS
+        chairSpecs: [
+            {
+                key: {
+                    type: String,
+                    trim: true,
+                },
+                value: {
+                    type: String,
+                    trim: true,
+                },
+            },
+        ],
 
         // SEO
         metaTitle: {

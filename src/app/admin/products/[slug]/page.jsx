@@ -48,6 +48,12 @@ export default function Page() {
     ]);
     const [metaTitle, setMetaTitle] = useState("");
     const [metaDescription, setMetaDescription] = useState("");
+    const [chairSpecs, setChairSpecs] = useState([
+        { key: "Seat height", value: "18\" - 22\"" },
+        { key: "Armrest height", value: "6\" - 10\"" },
+        { key: "Weight capacity", value: "135 kg" },
+        { key: "Recline lock", value: "4 positions" }
+    ]);
 
     const editorConfig = useMemo(() => {
         return { readonly: false, height: 350, };
@@ -76,6 +82,12 @@ export default function Page() {
                     setVideoLinks(product.videoLinks?.length ? product.videoLinks : [""]);
                     setSpecifications(product.specifications
                         ?.length ? product.specifications : [{ key: "", value: "", },
+                    ]);
+                    setChairSpecs(product.chairSpecs?.length ? product.chairSpecs : [
+                        { key: "Seat height", value: "18\" - 22\"" },
+                        { key: "Armrest height", value: "6\" - 10\"" },
+                        { key: "Weight capacity", value: "135 kg" },
+                        { key: "Recline lock", value: "4 positions" }
                     ]);
                     setColorVariants(
                         product.colorVariants?.length
@@ -281,6 +293,28 @@ export default function Page() {
         setVideoLinks(updated);
     };
 
+    // CHAIR SPECS
+    const addChairSpecification = () => {
+        const lastSpec = chairSpecs[chairSpecs.length - 1];
+        if (lastSpec && (!lastSpec.key.trim() || !lastSpec.value.trim())) {
+            toast.error("Please fill previous chair specification first");
+            return;
+        }
+        setChairSpecs([...chairSpecs, { key: "", value: "" }]);
+    };
+
+    const removeChairSpecification = (index) => {
+        const updated = [...chairSpecs];
+        updated.splice(index, 1);
+        setChairSpecs(updated);
+    };
+
+    const handleChairSpecChange = (index, field, value) => {
+        const updated = [...chairSpecs];
+        updated[index][field] = value;
+        setChairSpecs(updated);
+    };
+
     // SPECIFICATIONS
     const addSpecification = () => {
         const last = specifications[specifications.length - 1];
@@ -329,6 +363,7 @@ export default function Page() {
             formData.append("metaDescription", metaDescription);
             formData.append("videoLinks", JSON.stringify(videoLinks));
             formData.append("specifications", JSON.stringify(specifications));
+            formData.append("chairSpecs", JSON.stringify(chairSpecs));
             const colorData = colorVariants.map(
                 (variant) => ({
                     colorName: variant.colorName,
@@ -624,6 +659,54 @@ export default function Page() {
                                     </div>
                                 )
                                 )}
+                            </div>
+                        </div>
+
+                        {/* CHAIR SPECIFICATIONS */}
+                        <div>
+                            <div className="flex items-center justify-between mb-4 mt-8">
+                                <label className="text-sm font-semibold text-gray-700">
+                                    Chair Adjustability Specifications
+                                </label>
+
+                                <button type="button" onClick={addChairSpecification}
+                                    className="bg-black text-white px-4 py-2 rounded-md flex items-center gap-2"
+                                >
+                                    <Plus size={16} />
+                                    Add Spec
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                {chairSpecs.map((spec, index) => (
+                                    <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <input
+                                            type="text"
+                                            value={spec.key}
+                                            onChange={(e) => handleChairSpecChange(index, "key", e.target.value)}
+                                            placeholder="Seat height"
+                                            className="border border-gray-400 rounded-lg py-2 px-4 outline-none focus:ring-1 focus:ring-black text-black"
+                                        />
+
+                                        <div className="flex gap-3">
+                                            <input
+                                                type="text"
+                                                value={spec.value}
+                                                onChange={(e) => handleChairSpecChange(index, "value", e.target.value)}
+                                                placeholder='18" - 22"'
+                                                className="flex-1 border border-gray-400 rounded-lg py-2 px-4 outline-none focus:ring-1 focus:ring-black text-black"
+                                            />
+
+                                            <button type="button" onClick={() => removeChairSpecification(index)}
+                                                className="bg-red-100 hover:bg-red-200 text-red-600 px-3 rounded-md"
+                                            >
+                                                <Trash2
+                                                    size={18}
+                                                />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 

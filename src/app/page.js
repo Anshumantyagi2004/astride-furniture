@@ -53,7 +53,7 @@ export default function Home() {
        {/* <Header3 /> */}
        
          <Header6_New/>  
-        <BestSeller/>
+      <BestSeller/>
       <Category />
       <Marquee4_New/>
        <FavouriteCategories />

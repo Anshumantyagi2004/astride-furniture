@@ -118,6 +118,10 @@ export async function PUT(req, { params }) {
             formData.get("specifications") || "[]"
         );
 
+        const chairSpecs = JSON.parse(
+            formData.get("chairSpecs") || "[]"
+        );
+
         const colorVariantsData = JSON.parse(
             formData.get("colorVariants") || "[]"
         );
@@ -185,6 +189,7 @@ export async function PUT(req, { params }) {
         product.keyfeatures = keyfeatures ?? product.keyfeatures;
         product.application = application ?? product.application;
         product.whychoose = whychoose ?? product.whychoose;
+        product.chairSpecs = (chairSpecs && chairSpecs.length) ? chairSpecs : product.chairSpecs;
         product.videoLinks = (videoLinks && videoLinks.length) ? videoLinks : product.videoLinks;
         product.specifications = (specifications && specifications.length) ? specifications : product.specifications;
 
