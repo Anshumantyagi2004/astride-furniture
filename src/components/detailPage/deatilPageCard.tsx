@@ -491,20 +491,8 @@ export default function DetailPageCard({ product }: { product: any }) {
             </div>
             <div className="w-[1.5px] bg-[#e5e5e5] shrink-0 my-2" />
             {/* 30 Day Returns */}
-            <div className="flex-1 min-w-0 flex flex-col lg:flex-row items-center justify-center gap-1.5 px-1.5 py-2.5">
-              <div className="w-[34px] h-[34px] rounded-[9px] bg-[#fdf4ff] border-[1.5px] border-[#131313] flex items-center justify-center shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-[18px] h-[18px]" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" stroke="#9333ea" strokeWidth="1.8" />
-                  <path d="M3 3v5h5" stroke="#9333ea" strokeWidth="1.8" />
-                  <path d="M12 7v5l4 2" stroke="#9333ea" strokeWidth="1.8" />
-                </svg>
-              </div>
-              <div className="min-w-0 text-center lg:text-left">
-                <p className="text-[9px] font-extrabold uppercase tracking-[0.04em] text-[#131313] leading-tight">30 Day Returns</p>
-                <p className="text-[8px] text-[#888] font-medium leading-none mt-0.5">No questions</p>
-              </div>
-            </div>
-            <div className="w-[1.5px] bg-[#e5e5e5] shrink-0 my-2" />
+            
+           
             {/* 2 Year Warranty */}
             <div className="flex-1 min-w-0 flex flex-col lg:flex-row items-center justify-center gap-1.5 px-1.5 py-2.5">
               <div className="w-[34px] h-[34px] rounded-[9px] bg-[#fff7ed] border-[1.5px] border-[#131313] flex items-center justify-center shrink-0">
