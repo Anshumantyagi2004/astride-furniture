@@ -593,12 +593,16 @@ export default function DetailPageCard({ product }: { product: any }) {
                 <div className="px-5 pb-6 text-[#444] text-[14.5px]">
                   <table className="w-full border-collapse mt-1.5">
                     <tbody>
-                      {(product.specifications && product.specifications.length > 0 ? product.specifications : [
+                      {[...(product.specifications && product.specifications.length > 0 ? product.specifications : [
                         { name: 'Seat height', value: '18" – 22", gas-lift adjustable' },
                         { name: 'Armrest height', value: '6" – 10", 4D adjustable' },
                         { name: 'Weight capacity', value: 'Up to 135 kg' },
                         { name: 'Assembly', value: '10–15 mins, tools included' }
-                      ]).map((spec: any, idx: number) => (
+                      ])].sort((a: any, b: any) => {
+                        const nameA = (a.name || a.key || '').toLowerCase();
+                        const nameB = (b.name || b.key || '').toLowerCase();
+                        return nameA.localeCompare(nameB);
+                      }).map((spec: any, idx: number) => (
                         <tr key={idx}>
                           <td className="py-2.5 px-1 border-b-[1.5px] border-dashed border-[#d8cdb4] font-bold uppercase text-[12px] tracking-[0.08em] text-[#666] w-[46%]">{spec.name || spec.key}</td>
                           <td className="py-2.5 px-1 border-b-[1.5px] border-dashed border-[#d8cdb4] text-[14px]">{spec.value}</td>
