@@ -605,7 +605,7 @@ export default function DetailPageCard({ product }: { product: any }) {
                       }).map((spec: any, idx: number) => (
                         <tr key={idx}>
                           <td className="py-2.5 px-1 border-b-[1.5px] border-dashed border-[#d8cdb4] font-bold uppercase text-[12px] tracking-[0.08em] text-[#666] w-[46%]">{spec.name || spec.key}</td>
-                          <td className="py-2.5 px-1 border-b-[1.5px] border-dashed border-[#d8cdb4] text-[14px]">{spec.value}</td>
+                          <td className="py-2.5 px-1 border-b-[1.5px] border-dashed border-[#d8cdb4] text-[14px] capitalize">{spec.value}</td>
                         </tr>
                       ))}
                     </tbody>
