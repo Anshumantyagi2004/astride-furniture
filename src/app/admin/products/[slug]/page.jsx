@@ -200,7 +200,8 @@ export default function Page() {
                         ctx.drawImage(img, 0, 0, width, height);
                         canvas.toBlob((blob) => {
                             if (!blob) { resolve(file); return; }
-                            const webpFile = new File([blob], `${file.name.replace(/\\.[^/.]+$/, "")}.webp`, { type: "image/webp" });
+                            const webpFile = new File([blob], `${file.name.replace(/\.[^/.]+$/, "")}.webp`, { type: "image/webp" });
+                            webpFile.originalSize = file.size; // Store original size
                             resolve(webpFile);
                         }, "image/webp", 0.85);
                     };
@@ -219,7 +220,11 @@ export default function Page() {
             updated[index].images = [...updated[index].images, ...webpFiles];
             updated[index].previews = [
                 ...updated[index].previews,
-                ...webpFiles.map((file) => URL.createObjectURL(file))
+                ...webpFiles.map((file) => ({
+                    url: URL.createObjectURL(file),
+                    originalSize: file.originalSize,
+                    newSize: file.size,
+                }))
             ];
 
             setColorVariants(updated);
@@ -231,11 +236,12 @@ export default function Page() {
 
     const removeVariantImage = (variantIndex, imageIndex) => {
         const updated = [...colorVariants];
-        const previewUrl = updated[variantIndex].previews[imageIndex];
+        const previewItem = updated[variantIndex].previews[imageIndex];
+        const previewUrl = typeof previewItem === "object" ? previewItem.url : previewItem;
 
         updated[variantIndex].previews.splice(imageIndex, 1);
 
-        if (previewUrl.startsWith("blob:")) {
+        if (previewUrl && previewUrl.startsWith("blob:")) {
             const existingCount = updated[variantIndex].existingImages?.length || 0;
             const newFileIndex = imageIndex - existingCount;
             if (newFileIndex >= 0) {
@@ -701,18 +707,31 @@ export default function Page() {
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
 
                                         {variant.previews.map(
-                                            (image, imageIndex) => (
+                                            (image, imageIndex) => {
+                                                const isObj = typeof image === "object";
+                                                const srcUrl = isObj ? image.url : image;
+                                                const origSize = isObj && image.originalSize ? (image.originalSize / 1024 / 1024).toFixed(2) + " MB" : null;
+                                                const newSize = isObj && image.newSize ? (image.newSize / 1024).toFixed(1) + " KB" : null;
+
+                                                return (
                                                 <div
                                                     key={imageIndex}
-                                                    className="relative h-40 rounded-xl overflow-hidden border"
+                                                    className="relative h-40 rounded-xl overflow-hidden border group"
                                                 >
                                                     <Image
-                                                        src={image}
+                                                        src={srcUrl}
                                                         alt="Preview"
                                                         fill
                                                         unoptimized
                                                         className="object-cover"
                                                     />
+
+                                                    {origSize && newSize && (
+                                                        <div className="absolute top-0 left-0 bg-black/70 backdrop-blur-sm p-2 rounded-br-lg text-[10px] font-mono leading-tight shadow-md border-r border-b border-white/10 z-10">
+                                                            <div className="text-gray-300">Original: {origSize}</div>
+                                                            <div className="text-[#34d399] font-bold mt-0.5">WEBP: {newSize}</div>
+                                                        </div>
+                                                    )}
 
                                                     <button
                                                         type="button"
@@ -722,12 +741,12 @@ export default function Page() {
                                                                 imageIndex
                                                             )
                                                         }
-                                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+                                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-90 hover:opacity-100 shadow-md z-20"
                                                     >
                                                         <Trash2 size={14} />
                                                     </button>
                                                 </div>
-                                            )
+                                            )}
                                         )}
                                     </div>
                                 </div>
