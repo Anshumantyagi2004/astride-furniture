@@ -260,7 +260,8 @@ const handleImageChange = async (index, e) => {
             { key: "", value: "", },
         ]);
     };
-            const lastSpec = chairSpecs[chairSpecs.length - 1];
+    const addChairSpecification = () => {
+        const lastSpec = chairSpecs[chairSpecs.length - 1];
         if (lastSpec && (!lastSpec.key.trim() || !lastSpec.value.trim())) {
             toast.error("Please fill previous chair specification first");
             return;
