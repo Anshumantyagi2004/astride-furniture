@@ -70,8 +70,9 @@ export default function WhyUs() {
 
                 {/* HEADER */}
                 <motion.div
+                    key={isMobile ? 'm-why-header' : 'd-why-header'}
                     initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }}
-                    whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                     viewport={{ once: true, margin: "200px" }}
                     className="text-center max-w-3xl mx-auto mb-5 max-md:!opacity-100 max-md:!transform-none"
@@ -127,9 +128,9 @@ export default function WhyUs() {
                 <div className="hidden md:grid grid-cols-2 xl:grid-cols-4 gap-5">
                     {features.map((item, index) => (
                         <motion.div
-                            key={index}
+                            key={isMobile ? `m-feat-${index}` : `d-feat-${index}`}
                             initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-                            whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.08 }}
                             viewport={{ once: true, margin: "200px" }}
                             whileHover={{ y: -8 }}
