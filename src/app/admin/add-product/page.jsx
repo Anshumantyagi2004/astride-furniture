@@ -42,6 +42,13 @@ export default function Page() {
     const [categories, setCategories] = useState([]);
     const [metaTitle, setMetaTitle] = useState("");
     const [metaDescription, setMetaDescription] = useState("");
+    // CHAIR SPECS
+    const [chairSpecs, setChairSpecs] = useState([
+        { key: "Seat height", value: "18\" - 22\"" },
+        { key: "Armrest height", value: "6\" - 10\"" },
+        { key: "Weight capacity", value: "135 kg" },
+        { key: "Recline lock", value: "4 positions" }
+    ]);
 
     // SPECS
     const [specifications, setSpecifications] = useState([
@@ -253,6 +260,23 @@ const handleImageChange = async (index, e) => {
             { key: "", value: "", },
         ]);
     };
+            const lastSpec = chairSpecs[chairSpecs.length - 1];
+        if (lastSpec && (!lastSpec.key.trim() || !lastSpec.value.trim())) {
+            toast.error("Please fill previous chair specification first");
+            return;
+        }
+        setChairSpecs([...chairSpecs, { key: "", value: "" }]);
+    };
+    const removeChairSpecification = (index) => {
+        const updated = [...chairSpecs];
+        updated.splice(index, 1);
+        setChairSpecs(updated);
+    };
+    const handleChairSpecChange = (index, field, value) => {
+        const updated = [...chairSpecs];
+        updated[index][field] = value;
+        setChairSpecs(updated);
+    };
 
     const removeSpecification = (index) => {
         const updated = [...specifications];
@@ -272,6 +296,8 @@ const handleImageChange = async (index, e) => {
         try {
             setLoading(true);
             const formData = new FormData();
+            formData.append("chairSpecs", JSON.stringify(chairSpecs));
+
             formData.append("productName", productName);
             formData.append("shortDescription", shortDescription);
             formData.append("longDescription", longDescription);
@@ -301,6 +327,13 @@ const handleImageChange = async (index, e) => {
                     );
                 });
             });
+
+            setChairSpecs([
+                { key: "Seat height", value: "18\" - 22\"" },
+                { key: "Armrest height", value: "6\" - 10\"" },
+                { key: "Weight capacity", value: "135 kg" },
+                { key: "Recline lock", value: "4 positions" }
+            ]);
 
             const { data } = await axios.post("/api/product", formData);
             if (data.success) {

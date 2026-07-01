@@ -776,31 +776,30 @@ export default function DetailPageCard({ product }: { product: any }) {
             </h3>
 
             <div className="mt-4">
-              <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
-                <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Seat height</span>
-                <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">18" – 22"</b>
-              </div>
-              {/* Safely check against categoryId passed from parent */}
-              {product?.categoryId !== "6a182e652d3460990337fb44" && (
-                <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
+              {/* If product has chairSpecs, render them; otherwise fallback to the defaults */}
+              {(product?.chairSpecs && product.chairSpecs.length > 0
+                ? product.chairSpecs
+                : [
+                    { key: "Seat height", value: "18\" – 22\"" },
+                    ...(product?.categoryId !== "6a182e652d3460990337fb44"
+                      ? [{ key: "Armrest height", value: "6\" – 10\"" }]
+                      : []),
+                    { key: "Weight capacity", value: "135 kg" },
+                    { key: "Recline lock", value: "4 positions" }
+                  ]
+              ).map((spec: any, idx: number, arr: any[]) => (
+                <div 
+                  key={idx} 
+                  className={`flex justify-between items-center py-4 ${idx < arr.length - 1 ? 'border-b-[1.5px] border-dashed border-[#3a3a3a]' : ''}`}
+                >
                   <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">
-                    Armrest height 
+                    {spec.key}
                   </span>
                   <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">
-                    6" – 10"
+                    {spec.value}
                   </b>
                 </div>
-              )}
-
-              <div className="flex justify-between items-center py-4 border-b-[1.5px] border-dashed border-[#3a3a3a]">
-                
-                <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Weight capacity</span>
-                <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">135 kg</b>
-              </div>
-              <div className="flex justify-between items-center py-4">
-                <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">Recline lock</span>
-                <b className="font-bold text-[21px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">4 positions</b>
-              </div>
+              ))}
             </div>
             <div className="mt-6 flex justify-center drop-shadow-[0_0_60px_rgba(255,255,255,1)] drop-shadow-[0_0_20px_rgba(255,255,255,0.9)]">
               <Image src={product.image || "/Png1/chair12_ErgoFit.webp"} alt="Adjustability" width={240} height={230} className="object-contain max-h-[230px]" />

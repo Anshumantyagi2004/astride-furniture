@@ -77,6 +77,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
             keyfeatures: prod.keyfeatures,
             application: prod.application,
             whychoose: prod.whychoose,
+            chairSpecs: prod.chairSpecs,
             specifications: prod.specifications
           };
           setProduct(mapped);

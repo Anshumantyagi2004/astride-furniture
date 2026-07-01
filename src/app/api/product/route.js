@@ -39,6 +39,8 @@ export async function POST(req) {
         const whychoose = formData.get("whychoose");
         const videoLinks = JSON.parse(formData.get("videoLinks") || "[]");
         const specifications = JSON.parse(formData.get("specifications") || "[]");
+        const chairSpecs = JSON.parse(formData.get("chairSpecs") || "[]");
+
         const colorVariantsData = JSON.parse(
             formData.get("colorVariants") || "[]"
         );
@@ -122,6 +124,8 @@ export async function POST(req) {
         const metaTitle = metaTitleInput || `${productName} | Your Company`;
         const metaDescription = metaDescriptionInput || `Buy ${productName} at best price from our company. Discover premium quality products with trusted service.`;
 
+        
+
         // CREATE PRODUCT
         const product = await Product.create({
             productName,
@@ -137,6 +141,7 @@ export async function POST(req) {
             colorVariants: uploadedColorVariants,
             videoLinks,
             specifications,
+            chairSpecs, // <--- Add this line
             metaTitle,
             metaDescription,
         });
