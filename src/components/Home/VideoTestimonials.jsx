@@ -211,11 +211,11 @@ function FeaturedCard({ video, onPlay, isPlaying, isPriority = false }) {
     );
 }
 
-function SideCard({ video, onClick, index }) {
+function SideCard({ video, onClick, index, isMobile }) {
     return (
         <m.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
+            whileInView={isMobile ? undefined : { opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "1000px" }}
             transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ 
@@ -281,6 +281,14 @@ export default function VideoTestimonials() {
     const [selectedId, setSelectedId] = useState(videos[0].id);
     const [playingId, setPlayingId] = useState(null);
     const [swiperInstance, setSwiperInstance] = useState(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
     // 2. ADDED DESKTOP AUTOPLAY LOGIC
     // This effect handles auto-cycling the selected video on desktop screens.
@@ -324,8 +332,8 @@ export default function VideoTestimonials() {
                 <div className="relative max-w-[1150px] mx-auto px-5 md:px-8">
 
                     <m.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+                        initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "1000px" }}
                         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                         className="mb-3"
@@ -454,13 +462,14 @@ export default function VideoTestimonials() {
                                     key={v.id}
                                     video={v}
                                     index={i}
+                                    isMobile={isMobile}
                                     onClick={() => handleSelectSideCard(v.id)}
                                 />
                             ))}
 
                             <m.a
-                                initial={{ opacity: 0, y: 15 }}
-                                whileInView={{ opacity: 1, y: 0 }}
+                                initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+                                whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "1000px" }}
                                 transition={{ duration: 0.5, delay: 0.4 }}
                                 href="https://www.youtube.com/@astride.furniture"

@@ -13,6 +13,14 @@ const sans = Plus_Jakarta_Sans({
 export default function Newletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,8 +45,8 @@ export default function Newletter() {
         <motion.div 
           // Added "hidden md:block" right here:
           className="hidden md:block w-[clamp(180px,35vw,350px)] h-[clamp(180px,35vh,300px)] relative"
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ 
+          initial={isMobile ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
+          whileInView={isMobile ? undefined : { 
             opacity: 1,
             scale: [0.96, 1.04, 0.96]
           }}
@@ -64,8 +72,8 @@ export default function Newletter() {
         {/* Content Section */}
         <motion.div 
           className="flex-1 flex flex-col justify-center text-center md:text-left"
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+          whileInView={isMobile ? undefined : { opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "200px" }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
