@@ -82,6 +82,7 @@ export async function PUT(req, { params }) {
         const formData = await req.formData();
 
         const productName = formData.get("productName");
+         const customSlug = formData.get("slug");
 
         // ADD THESE TWO:
         const metaTitleInput = formData.get("metaTitle");
@@ -176,9 +177,29 @@ export async function PUT(req, { params }) {
 
         product.colorVariants = uploadedColorVariants;
 
+        // UPDATE SLUG LOGIC
+        if (customSlug) {
+            const formattedSlug = generateSlug(customSlug);
+            const duplicateSlug = await Product.findOne({
+                slug: formattedSlug,
+                _id: { $ne: product._id } // Don't match against itself
+            });
+            
+            if (duplicateSlug) {
+                return NextResponse.json(
+                    { success: false, message: "This slug is already in use by another product." },
+                    { status: 400 }
+                );
+            }
+            product.slug = formattedSlug;
+        } else if (productName) {
+            // If they didn't provide a custom slug, but they changed the name, regenerate the slug
+            product.slug = generateSlug(productName);
+        }
+
+        // UPDATE NAME LOGIC
         if (productName) {
             product.productName = productName;
-            product.slug = generateSlug(productName);
         }
 
         product.category = category ?? product.category;

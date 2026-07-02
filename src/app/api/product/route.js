@@ -25,6 +25,7 @@ export async function POST(req) {
 
         // FIELDS
         const productName = formData.get("productName");
+          const customSlug = formData.get("slug");
 
         const category = formData.get("category");
         // ADD THESE TWO:
@@ -72,9 +73,13 @@ export async function POST(req) {
         }
 
         // GENERATE SLUG
-        let slug = generateSlug(productName);
-        const existingProduct = await Product.findOne({ slug, });
-        if (existingProduct) { slug = `${slug}-${crypto.randomBytes(2).toString("hex")}`; }
+        let slug = customSlug ? generateSlug(customSlug) : generateSlug(productName);
+        const existingProduct = await Product.findOne({ slug });
+        
+        if (existingProduct) { 
+            slug = `${slug}-${crypto.randomBytes(2).toString("hex")}`; 
+        }
+        
 
         // UPLOAD IMAGES
         const uploadedColorVariants = [];

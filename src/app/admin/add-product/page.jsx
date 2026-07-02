@@ -21,6 +21,7 @@ const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 export default function Page() {
     // PRODUCT DATA
     const [productName, setProductName] = useState("");
+    const [customSlug, setCustomSlug] = useState("");
     const [loading, setLoading] = useState(false);
     const [shortDescription, setShortDescription] = useState("");
     const [longDescription, setLongDescription] = useState("");
@@ -300,6 +301,7 @@ const handleImageChange = async (index, e) => {
             formData.append("chairSpecs", JSON.stringify(chairSpecs));
 
             formData.append("productName", productName);
+            if (customSlug) formData.append("slug", customSlug);
             formData.append("shortDescription", shortDescription);
             formData.append("longDescription", longDescription);
             formData.append("keyfeatures", keyfeatures);
@@ -428,6 +430,22 @@ const handleImageChange = async (index, e) => {
                                         onChange={(e) => setProductName(e.target.value)}
                                         placeholder="Enter product name"
                                         className="w-full border border-gray-400 rounded-lg py-2 pl-12 pr-4 outline-none focus:ring-1 focus:ring-black text-black"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* CUSTOM SLUG INPUT */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Custom Slug (Optional)
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={customSlug}
+                                        onChange={(e) => setCustomSlug(e.target.value)}
+                                        placeholder="Leave blank to auto-generate from name"
+                                        className="w-full border border-gray-400 rounded-lg py-2 px-4 outline-none focus:ring-1 focus:ring-black text-black"
                                     />
                                 </div>
                             </div>
