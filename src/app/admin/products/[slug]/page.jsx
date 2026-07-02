@@ -26,6 +26,7 @@ export default function Page() {
     const [updating, setUpdating] = useState(false);
     const [categories, setCategories] = useState([]);
     const [productName, setProductName] = useState("");
+    const [slugValue, setSlugValue] = useState("");
     const [shortDescription, setShortDescription,] = useState("");
     const [longDescription, setLongDescription,] = useState("");
     const [keyfeatures, setKeyfeatures] = useState("");
@@ -69,6 +70,7 @@ export default function Page() {
                 if (data.success) {
                     const product = data.product;
                     setProductName(product.productName);
+                    setSlugValue(product.slug || "");
                     setShortDescription(product.shortDescription);
                     setLongDescription(product.longDescription);
                     setKeyfeatures(product.keyfeatures || "");
@@ -351,6 +353,7 @@ export default function Page() {
             setUpdating(true);
             const formData = new FormData();
             formData.append("productName", productName);
+            if (slugValue) formData.append("slug", slugValue);
             formData.append("shortDescription", shortDescription);
             formData.append("longDescription", longDescription);
             formData.append("keyfeatures", keyfeatures);
@@ -443,6 +446,22 @@ export default function Page() {
                                         onChange={(e) => setProductName(e.target.value)}
                                         placeholder="Enter product name"
                                         className="w-full border border-gray-400 rounded-lg py-2 pl-12 pr-4 outline-none focus:ring-1 focus:ring-black text-black"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* CUSTOM SLUG INPUT */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Product Slug
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={slugValue}
+                                        onChange={(e) => setSlugValue(e.target.value)}
+                                        placeholder="Product slug"
+                                        className="w-full border border-gray-400 rounded-lg py-2 px-4 outline-none focus:ring-1 focus:ring-black text-black"
                                     />
                                 </div>
                             </div>
