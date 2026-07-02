@@ -795,7 +795,7 @@ export default function DetailPageCard({ product }: { product: any }) {
                   <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">
                     {spec.key}
                   </span>
-                  <b className="font-bold text-[12px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">
+                  <b className="font-bold text-[15px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">
                     {spec.value}
                   </b>
                 </div>
