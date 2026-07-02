@@ -3,6 +3,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import { ChevronRight } from "lucide-react";
 
 import ProductPageCard from '../ProductPageCard';
 
@@ -420,30 +422,48 @@ export default function ProductPageHome() {
         {/* ── Category Tabs ── */}
         <div className="relative mb-4 md:mb-8">
           
-          {/* MOBILE UI (From FavouriteCategories) */}
-          <div className="w-full mx-auto md:hidden bg-gray-100 rounded-[24px] border border-gray-200/50 p-2 mb-4">
-            <div className="flex flex-wrap gap-1.5 items-center justify-center w-full">
-              {tabs.map((tab) => {
-                const isActive = selectedCategory === tab;
-                return (
-                  <button
-                    key={tab}
-                    onClick={() => {
-                      setSelectedCategory(tab);
-                      if (tab === "All Products") router.push("/products");
-                      else router.push(`/products?category=${encodeURIComponent(tab)}`);
-                    }}
-                    className="relative px-3.5 py-2 rounded-full text-[11px] font-bold transition-colors duration-300 focus:outline-none shrink-0"
-                  >
-                    {isActive && (
-                      <div className="absolute inset-0 bg-[#161316] rounded-full shadow-sm" />
-                    )}
-                    <span className={`relative z-10 transition-colors duration-300 ${isActive ? "text-white" : "text-gray-500"}`}>
-                      {tab}
-                    </span>
-                  </button>
-                );
-              })}
+          {/* MOBILE UI — Swipeable single row with bounce hint */}
+          <div className="md:hidden">
+            {/* Bouncing swipe hint above capsule, right-aligned */}
+            <motion.div
+              className="flex justify-end pr-2 mb-1"
+              animate={{ x: [0, 8, 0] }}
+              transition={{ duration: 1, ease: "easeInOut", repeat: Infinity, repeatDelay: 0.5 }}
+            >
+              <span className="flex items-center gap-0.5 text-[10px] text-gray-400 font-semibold">
+                swipe <ChevronRight size={14} className="text-gray-400" strokeWidth={2.5} />
+              </span>
+            </motion.div>
+
+            {/* Swipeable single row capsule */}
+            <div className="-mx-4 bg-gray-100 rounded-[20px] border border-gray-200/50 p-2 mb-4">
+              <div className="flex overflow-x-auto gap-1 w-full scrollbar-hide px-2">
+                {tabs.map((tab) => {
+                  const isActive = selectedCategory === tab;
+                  return (
+                    <button
+                      key={tab}
+                      onClick={() => {
+                        setSelectedCategory(tab);
+                        if (tab === "All Products") router.push("/products");
+                        else router.push(`/products?category=${encodeURIComponent(tab)}`);
+                      }}
+                      className="relative px-3.5 py-2 rounded-full text-[11px] font-bold transition-colors duration-300 focus:outline-none shrink-0"
+                    >
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeCategoryBgProductPage"
+                          className="absolute inset-0 bg-[#161316] rounded-full shadow-sm"
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                      <span className={`relative z-10 transition-colors duration-300 ${isActive ? "text-white" : "text-gray-500"}`}>
+                        {tab}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
