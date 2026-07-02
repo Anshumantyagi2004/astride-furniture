@@ -3,7 +3,7 @@
 import React, { useState, useEffect, memo, useCallback, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart } from "lucide-react";
+import { Heart, ChevronRight } from "lucide-react";
 import { BsCartPlus } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -181,6 +181,7 @@ export default function FavouriteCategories() {
     const [loading, setLoading] = useState(true);
     const [wishlisted, setWishlisted] = useState({});
 
+
     useEffect(() => {
         const saved = localStorage.getItem("astride_wishlist");
         if (saved) {
@@ -300,12 +301,50 @@ export default function FavouriteCategories() {
                     </div>
                 </div>
 
+                {/* Swipe hint — bouncing arrow ABOVE capsule, right side, mobile only */}
+                <motion.div
+                    className="sm:hidden flex justify-end pr-2 mb-1"
+                    animate={{ x: [0, 8, 0] }}
+                    transition={{ duration: 1, ease: "easeInOut", repeat: Infinity, repeatDelay: 0.5 }}
+                >
+                    <span className="flex items-center gap-0.5 text-[10px] text-gray-400 font-semibold">
+                        swipe <ChevronRight size={14} className="text-gray-400" strokeWidth={2.5} />
+                    </span>
+                </motion.div>
+
                 {/* MOBILE RESPONSIVE TWO-ROW TUNED TAB SELECTOR */}
-                <div className="w-full max-w-3xl mx-auto mt-4 bg-gray-100 rounded-[24px] sm:rounded-full border border-gray-200/50 p-2 sm:p-1.5">
+                {/* On mobile: break out of px-6 with -mx-4 so it stretches near-edge; desktop stays centred with max-w-3xl */}
+                <div className="-mx-4 sm:mx-auto sm:max-w-3xl bg-gray-100 rounded-[20px] sm:rounded-full border border-gray-200/50 p-2 sm:p-1.5">
                     
-                    {/* Mobile Only Structured View (Row 1 & Row 2 Centered Framework) */}
-                    <div className="flex flex-col gap-1.5 sm:hidden items-center justify-center w-full">
-                        {/* Row #1 */}
+                    {/* MOBILE SWIPEABLE SINGLE ROW — NEW */}
+                    <div className="sm:hidden relative">
+                        <div
+                            className="flex overflow-x-auto gap-1 w-full scrollbar-hide px-2"
+                        >
+                            {TABS.map((category) => (
+                                <button
+                                    key={category}
+                                    type="button"
+                                    onClick={() => setActiveCategory(category)}
+                                    className="relative px-3.5 py-2 rounded-full text-[11px] font-bold transition-colors duration-300 focus:outline-none shrink-0"
+                                >
+                                    {activeCategory === category && (
+                                        <motion.div
+                                            layoutId="activeCategoryBgMobileSwipe"
+                                            className="absolute inset-0 bg-[#161316] rounded-full shadow-sm"
+                                            transition={tabAnimationConfig}
+                                        />
+                                    )}
+                                    <span className={`relative z-10 transition-colors duration-300 ${activeCategory === category ? "text-white" : "text-gray-500"}`}>
+                                        {category}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* CLIENT PREFERRED OLD MOBILE TWO-ROW LAYOUT — KEPT FOR REFERENCE */}
+                    {/* <div className="flex flex-col gap-1.5 sm:hidden items-center justify-center w-full">
                         <div className="flex items-center justify-center gap-1 w-full overflow-x-visible">
                             {MOBILE_ROW_ONE.map((category) => (
                                 <button
@@ -328,7 +367,6 @@ export default function FavouriteCategories() {
                             ))}
                         </div>
 
-                        {/* Row #2 */}
                         <div className="flex items-center justify-center gap-1 w-full overflow-x-visible">
                             {MOBILE_ROW_TWO.map((category) => (
                                 <button
@@ -350,7 +388,7 @@ export default function FavouriteCategories() {
                                 </button>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Desktop View Layout (Standard Single Flex Strip) */}
                     <div className="hidden sm:flex sm:flex-row items-center justify-center gap-2 sm:gap-3 w-full">
