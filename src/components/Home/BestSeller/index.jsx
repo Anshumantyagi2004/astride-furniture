@@ -67,6 +67,7 @@ const BestSellerCard = ({ product }) => {
               fill
               className="object-contain drop-shadow-lg p-2" 
               sizes="(max-width: 768px) 100vw, 25vw"
+              loading="lazy"
             />
           </div>
 

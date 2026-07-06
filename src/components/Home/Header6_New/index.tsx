@@ -133,7 +133,8 @@ export default function Header6_New() {
                   alt={mode.alt}
                   fill
                   className="object-cover object-center group-hover:scale-108 transition-transform duration-600 ease-out select-none outline-none"
-                  unoptimized
+                  loading="lazy"
+                  
                 />
                 {/* Layered gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/95 from-5% via-black/30 via-45% to-transparent pointer-events-none" />
