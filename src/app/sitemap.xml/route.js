@@ -26,6 +26,36 @@ export async function GET() {
     const baseUrl = "https://astride.in";
     const products = await getProducts();
 
+    const staticPages = [
+        { path: "/", priority: "1.0", changefreq: "weekly" },
+        { path: "/products", priority: "0.9", changefreq: "weekly" },
+        { path: "/about", priority: "0.8", changefreq: "yearly" },
+        { path: "/contact", priority: "0.8", changefreq: "yearly" },
+        { path: "/blogs", priority: "0.8", changefreq: "weekly" },
+        { path: "/cart", priority: "0.5", changefreq: "yearly" },
+        { path: "/wishlist", priority: "0.5", changefreq: "yearly" },
+        { path: "/find-chair", priority: "0.8", changefreq: "yearly" },
+        { path: "/privacy-policy", priority: "0.5", changefreq: "yearly" },
+        { path: "/refund-policy", priority: "0.5", changefreq: "yearly" },
+        { path: "/return-policy", priority: "0.5", changefreq: "yearly" },
+        { path: "/shipping-policy", priority: "0.5", changefreq: "yearly" },
+        { path: "/terms-conditions", priority: "0.5", changefreq: "yearly" },
+        { path: "/bulk-orders", priority: "0.8", changefreq: "monthly" },
+        { path: "/cancellation-policy", priority: "0.5", changefreq: "yearly" },
+    ];
+
+    const staticUrls = staticPages
+        .map(
+            (page) => `
+    <url>
+        <loc>${baseUrl}${page.path}</loc>
+        <lastmod>${new Date().toISOString()}</lastmod>
+        <changefreq>${page.changefreq}</changefreq>
+        <priority>${page.priority}</priority>
+    </url>`
+        )
+        .join("");
+
     const productUrls = products
         .map(
             (product) => `
@@ -40,6 +70,7 @@ export async function GET() {
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${staticUrls}
 ${productUrls}
 </urlset>`;
 
