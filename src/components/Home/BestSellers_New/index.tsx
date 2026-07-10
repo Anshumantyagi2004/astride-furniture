@@ -251,6 +251,17 @@ export default function BestSellersSection_New() {
   const [loading, setLoading] = useState(true);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { margin: "0px" });
+  const [swiperInstance, setSwiperInstance] = useState<any>(null);
+
+  useEffect(() => {
+    if (swiperInstance && swiperInstance.autoplay) {
+      if (isInView) {
+        swiperInstance.autoplay.start();
+      } else {
+        swiperInstance.autoplay.stop();
+      }
+    }
+  }, [isInView, swiperInstance]);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -398,6 +409,7 @@ export default function BestSellersSection_New() {
                 }
               `}</style>
               <Swiper
+                onSwiper={setSwiperInstance}
                 modules={[Autoplay, Grid]}
                 grid={{
                   rows: 2,
@@ -405,10 +417,10 @@ export default function BestSellersSection_New() {
                 }}
                 slidesPerView={2}
                 spaceBetween={12}
-                autoplay={isInView ? {
+                autoplay={{
                   delay: 2500,
                   disableOnInteraction: false,
-                } : false}
+                }}
                 className="best-swiper w-full"
               >
                 {productsList.map((product) => (

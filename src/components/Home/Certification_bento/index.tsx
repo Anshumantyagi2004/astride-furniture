@@ -514,6 +514,17 @@ CertCard.displayName = "CertCard";
 const CertificationsBento = () => {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { margin: "0px" });
+  const [swiperInstance, setSwiperInstance] = useState<any>(null);
+
+  useEffect(() => {
+    if (swiperInstance && swiperInstance.autoplay) {
+      if (isInView) {
+        swiperInstance.autoplay.start();
+      } else {
+        swiperInstance.autoplay.stop();
+      }
+    }
+  }, [isInView, swiperInstance]);
 
   return (
     <section ref={sectionRef} className="w-full pt-8 pb-8 px-5 md:px-8 lg:px-16 overflow-hidden" style={{ backgroundColor: "#1a1a1a" }}>
@@ -528,7 +539,7 @@ const CertificationsBento = () => {
         .cert-swiper.swiper {
           overflow: hidden !important;
           padding-bottom: 40px !important;
-        }
+          }
         .cert-swiper .swiper-pagination {
           bottom: 5px !important;
         }
@@ -556,9 +567,10 @@ const CertificationsBento = () => {
         {/* RESPONSIVE CAROUSEL */}
         <div className="w-full pb-10">
           <Swiper
+            onSwiper={setSwiperInstance}
             modules={SWIPER_MODULES}
             pagination={SWIPER_PAGINATION_CONFIG}
-            autoplay={isInView ? SWIPER_AUTOPLAY_CONFIG : false}
+            autoplay={SWIPER_AUTOPLAY_CONFIG}
             loop={true}
             spaceBetween={24}
             slidesPerView={1}
