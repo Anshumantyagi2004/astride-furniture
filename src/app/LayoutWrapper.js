@@ -9,6 +9,23 @@ export default function LayoutWrapper({ children }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
 
+  // Silently strip Google Merchant auto-tagging query parameter (?srsltid=...) from URL bar
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const url = new URL(window.location.href);
+        if (url.searchParams.has("srsltid")) {
+          url.searchParams.delete("srsltid");
+          const newSearch = url.searchParams.toString();
+          const cleanURL = url.pathname + (newSearch ? `?${newSearch}` : "");
+          window.history.replaceState(window.history.state, "", cleanURL);
+        }
+      } catch (e) {
+        console.error("Error cleaning URL parameter:", e);
+      }
+    }
+  }, [pathname]);
+
   useEffect(() => {
     if (isAdmin) return;
 

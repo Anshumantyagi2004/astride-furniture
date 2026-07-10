@@ -413,4 +413,6 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
 }
 
 // Preload the GLB model in module scope so it starts loading instantly when the bundle is resolved
-useGLTF.preload('/3D_asset_glb/a3.glb');
+if (typeof window !== 'undefined') {
+    useGLTF.preload('/3D_asset_glb/a3.glb');
+}
