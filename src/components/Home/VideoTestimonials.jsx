@@ -1,8 +1,8 @@
 "use client";
 
 // 1. ADDED useEffect to imports
-import { useState, useEffect } from "react";
-import { m, LazyMotion, domAnimation, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { m, LazyMotion, domAnimation, AnimatePresence, useInView } from "framer-motion";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { FaYoutube, FaInstagram, FaPlay, FaStar, FaArrowRight } from "react-icons/fa6";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -281,6 +281,8 @@ function SideCard({ video, onClick, index, isMobile }) {
 export default function VideoTestimonials() {
     const [selectedId, setSelectedId] = useState(videos[0].id);
     const [playingId, setPlayingId] = useState(null);
+    const sectionRef = useRef(null);
+    const isInView = useInView(sectionRef, { margin: "0px" });
     const [swiperInstance, setSwiperInstance] = useState(null);
     const [isMobile, setIsMobile] = useState(false);
 
@@ -294,8 +296,8 @@ export default function VideoTestimonials() {
     // 2. ADDED DESKTOP AUTOPLAY LOGIC
     // This effect handles auto-cycling the selected video on desktop screens.
     useEffect(() => {
-        // If a video is playing, or if we are on a mobile screen (where Swiper handles it), do nothing.
-        if (playingId !== null || (typeof window !== "undefined" && window.innerWidth < 1024)) {
+        // If the section is not in view, a video is playing, or we are on a mobile screen, do nothing.
+        if (!isInView || playingId !== null || (typeof window !== "undefined" && window.innerWidth < 1024)) {
             return;
         }
 
@@ -307,9 +309,9 @@ export default function VideoTestimonials() {
             });
         }, 3500); // 3.5 seconds to match the mobile swiper delay
 
-        // Cleanup interval on unmount or when playingId changes
+        // Cleanup interval on unmount, or when playingId/isInView changes
         return () => clearInterval(interval);
-    }, [playingId, selectedId]); // Depend on selectedId so manual clicks reset the timer properly
+    }, [playingId, selectedId, isInView]); // Depend on selectedId so manual clicks reset the timer properly
 
     const featured = videos.find(v => v.id === selectedId) || videos[0];
     const sideVideos = videos.filter(v => v.id !== selectedId);
@@ -322,6 +324,7 @@ export default function VideoTestimonials() {
     return (
         <LazyMotion features={domAnimation}>
             <section
+                ref={sectionRef}
                 className={`relative w-full pt-2 pb-0 lg:pt-3 lg:pb-14 overflow-hidden ${sans.className}`}
                 style={{ backgroundColor: "#0d0d0d" }}
             >

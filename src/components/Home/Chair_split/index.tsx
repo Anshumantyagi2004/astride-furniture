@@ -1,8 +1,9 @@
+// src/components/Home/Chair_split/index.tsx
 'use client';
 
 import { useRef } from 'react';
 import Image from 'next/image';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import ChairErizo from '../../../../public/Png1/chair8_ERIZO.webp';
 
@@ -12,7 +13,6 @@ const sans = Plus_Jakarta_Sans({
     variable: '--font-sans',
 });
 
-// Hoisted static lists out of the runtime loop to eliminate garbage collection memory spikes
 const FEATURES_LIST = [
     "Precision-Engineered Seat Base",
     "Breathable Premium Mesh",
@@ -34,41 +34,44 @@ const gradientStyle = {
 export default function Chair_split() {
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Track scroll progress of the entire container (Restored completely)
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end end"]
     });
 
-    // Sticky pane shifts from left to right (Restored completely)
-    const stickyPaneX = useTransform(scrollYProgress, [0.25, 0.9], ["5%", "95%"]);
+    // OPTIMIZATION: Smooth the raw scroll progress to prevent jitter/jank
+    const smoothProgress = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
 
-    // Chair animations with original values (Restored completely)
-    const centerChairX = useTransform(scrollYProgress, [0.25, 0.9], ["-8vw", "0vw"]);
-    const centerChairScale = useTransform(scrollYProgress, [0.25, 0.9], [1.08, 0.95]);
+    // Use smoothProgress instead of scrollYProgress
+    const stickyPaneX = useTransform(smoothProgress, [0.25, 0.9], ["5%", "95%"]);
 
-    const leftChairX = useTransform(scrollYProgress, [0.25, 0.9], ["0vw", "-12vw"]);
-    const leftChairOpacity = useTransform(scrollYProgress, [0, 0.25, 0.4, 1], [0, 0, 0.95, 0.95]);
-    const leftChairScale = useTransform(scrollYProgress, [0.25, 0.9], [0.75, 0.84]);
+    const centerChairX = useTransform(smoothProgress, [0.25, 0.9], ["-8vw", "0vw"]);
+    const centerChairScale = useTransform(smoothProgress, [0.25, 0.9], [1.08, 0.95]);
 
-    const rightChairX = useTransform(scrollYProgress, [0.25, 0.9], ["0vw", "12vw"]);
-    const rightChairOpacity = useTransform(scrollYProgress, [0, 0.25, 0.4, 1], [0, 0, 0.95, 0.95]);
-    const rightChairScale = useTransform(scrollYProgress, [0.25, 0.9], [0.75, 1.06]);
+    const leftChairX = useTransform(smoothProgress, [0.25, 0.9], ["0vw", "-12vw"]);
+    const leftChairOpacity = useTransform(smoothProgress, [0, 0.25, 0.4, 1], [0, 0, 0.95, 0.95]);
+    const leftChairScale = useTransform(smoothProgress, [0.25, 0.9], [0.75, 0.84]);
 
-    const sizeIndicatorOpacity = useTransform(scrollYProgress, [0.3, 0.9], [0, 1]);
+    const rightChairX = useTransform(smoothProgress, [0.25, 0.9], ["0vw", "12vw"]);
+    const rightChairOpacity = useTransform(smoothProgress, [0, 0.25, 0.4, 1], [0, 0, 0.95, 0.95]);
+    const rightChairScale = useTransform(smoothProgress, [0.25, 0.9], [0.75, 1.06]);
+
+    const sizeIndicatorOpacity = useTransform(smoothProgress, [0.3, 0.9], [0, 1]);
 
     return (
         <div
             ref={containerRef}
             className={`hidden md:block relative w-full h-[155vh] bg-black text-white -mt-24 md:-mt-36 ${sans.className}`}
         >
-            {/* ── STICKY SHOWCASE PANE ── */}
             <div className="sticky top-0 w-full h-[100vh] overflow-hidden z-10 select-none pointer-events-none">
                 <motion.div
-                    style={{ x: stickyPaneX, z: 0 }} // Changed transformZ to z for TypeScript compatibility
-                    className="w-full md:w-1/2 h-full flex items-center justify-center relative pointer-events-auto"
+                    style={{ x: stickyPaneX, z: 0 }}
+                    className="w-full md:w-1/2 h-full flex items-center justify-center relative pointer-events-auto will-change-transform" // Added will-change
                 >
-                    {/* Left Chair (SMALL SIZE) */}
                     <motion.div
                         style={{ x: leftChairX, opacity: leftChairOpacity, scale: leftChairScale, zIndex: 10, z: 0 }}
                         className="absolute will-change-transform"
@@ -81,7 +84,6 @@ export default function Chair_split() {
                         </div>
                     </motion.div>
 
-                    {/* Center Chair (STANDARD POSITION) */}
                     <motion.div
                         style={{ x: centerChairX, scale: centerChairScale, zIndex: 20, z: 0 }}
                         className="absolute will-change-transform"
@@ -94,7 +96,6 @@ export default function Chair_split() {
                         </div>
                     </motion.div>
 
-                    {/* Right Chair (EXTENDED HEIGHT) */}
                     <motion.div
                         style={{ x: rightChairX, opacity: rightChairOpacity, scale: rightChairScale, zIndex: 10, z: 0 }}
                         className="absolute will-change-transform"
@@ -109,9 +110,6 @@ export default function Chair_split() {
                 </motion.div>
             </div>
 
-            {/* ── SCROLLING INFORMATION PANELS (Restored layout positioning completely) ── */}
-
-            {/* Section 1: Positioned on the Right */}
             <div className="absolute top-0 right-[4vw] w-full md:w-[46%] min-h-screen flex flex-col justify-center pl-2 pr-6 md:pl-4 md:pr-8 py-4 z-20 pointer-events-none">
                 <div className="flex flex-col gap-5 pointer-events-auto">
                     <h2 className="text-[54px] lg:text-[72px] xl:text-[80px] font-black uppercase leading-[1.0] tracking-[-0.02em] text-white">
@@ -138,7 +136,6 @@ export default function Chair_split() {
                 </div>
             </div>
 
-            {/* Section 2: Positioned on the Left */}
             <div className="absolute top-[55vh] left-[4vw] w-full md:w-[46%] min-h-screen flex flex-col justify-center pr-2 pl-6 md:pr-4 md:pl-8 py-4 z-20 pointer-events-none">
                 <div className="flex flex-col gap-5 pointer-events-auto">
                     <h2 className="text-[54px] lg:text-[72px] xl:text-[80px] font-black uppercase leading-[1.0] tracking-[-0.02em] text-white">

@@ -134,8 +134,8 @@ export default function RealSetup_New() {
                   src={setup.img}
                   alt={setup.tag}
                   fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  unoptimized
                 />
 
                 {/* Gradient overlay at bottom */}

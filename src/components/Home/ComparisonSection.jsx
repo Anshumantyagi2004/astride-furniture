@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay, EffectFade } from "swiper/modules";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Check, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
 import "swiper/css";
@@ -64,11 +64,13 @@ function Icon({ val }) {
 
 export default function ComparisonSection() {
     const swiperRef = useRef(null);
+    const sectionRef = useRef(null);
+    const isInView = useInView(sectionRef, { margin: "0px" });
     // ✅ Mobile optimization: Disable motion animations on mobile
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
     return (
-        <section className="w-full pt-8 pb-4 bg-[#F8F7F5] overflow-hidden">
+        <section ref={sectionRef} className="w-full pt-8 pb-4 bg-[#F8F7F5] overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
 
                 {/* Header Row */}
@@ -123,7 +125,7 @@ export default function ComparisonSection() {
                         renderBullet: (_, className) =>
                             `<span class="${className}" style="width:28px;height:4px;border-radius:9999px;background:#1C1A17;opacity:0.18;display:inline-block;transition:all 0.3s;margin:0 3px;"></span>`,
                     }}
-                    autoplay={{ delay: 4500, disableOnInteraction: false }}
+                    autoplay={isInView ? { delay: 4500, disableOnInteraction: false } : false}
                     grabCursor
                     loop
                     className="!pb-12 [&_.swiper-pagination-bullet-active]:!opacity-100 [&_.swiper-pagination-bullet-active]:!w-[44px]"
