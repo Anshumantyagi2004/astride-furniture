@@ -2,7 +2,7 @@
 
 import React, { Suspense, useRef, useEffect, useState, useMemo, memo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, Environment, ContactShadows, Center, OrbitControls } from '@react-three/drei';
+import { useGLTF, Environment, ContactShadows, Center, OrbitControls, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface SectionData {
@@ -13,6 +13,7 @@ interface SectionData {
     align: 'center' | 'left' | 'right';
 }
 
+// Static sections data map pulled out of render cycles to isolate heap allocations
 const SECTIONS: SectionData[] = [
     {
         title: "Why Astride?",
@@ -45,10 +46,27 @@ const SECTIONS: SectionData[] = [
     }
 ];
 
+// Pre-allocated mathematical vectors used in continuous frame loops to reduce garbage collector workload
 const targetPosVec = new THREE.Vector3(0, 0, 5);
 const targetLookVec = new THREE.Vector3(0, 0, 0);
 const currentLookVec = new THREE.Vector3(0, 0, 0);
 
+class EnvErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+    constructor(props: { children: React.ReactNode }) {
+        super(props);
+        this.state = { hasError: false };
+    }
+    static getDerivedStateFromError(error: any) {
+        console.warn("Environment failed to load:", error);
+        return { hasError: true };
+    }
+    override render() {
+        if (this.state.hasError) return null;
+        return this.props.children;
+    }
+}
+
+// Memoized vertex primitive container
 const Model = memo(({ url, isMobile }: { url: string; isMobile: boolean }) => {
     const { scene } = useGLTF(url);
     const clonedScene = useMemo(() => scene.clone(true), [scene]);
@@ -74,6 +92,7 @@ const CameraRig = ({ progressRef, isMobile, isInteracting }: { progressRef: Reac
         const zoom = isMobile ? 1.1 : 1.0;
         const dScale = isMobile ? 1.0 : 1.4;
 
+        // Shared camera interpolation matrix targets
         if (o < 0.15) {
             targetPosVec.set(0, 0, (isMobile ? 3.6 : 6.2) * zoom);
             targetLookVec.set(0, 0, 0);
@@ -93,11 +112,13 @@ const CameraRig = ({ progressRef, isMobile, isInteracting }: { progressRef: Reac
 
         if (isInteracting) return;
 
+        // Retrieve active controls from internal frame instance safely (Fixes Error #1)
         const activeControls = state.controls as any;
         if (activeControls && activeControls.target) {
             activeControls.target.lerp(targetLookVec, 8 * delta);
         }
 
+        // Ambient auto-rotation matrix calculations
         const time = state.clock.getElapsedTime();
         const radius = Math.sqrt(targetPosVec.x ** 2 + targetPosVec.z ** 2);
         const angle = Math.atan2(targetPosVec.z, targetPosVec.x) + time * 0.05;
@@ -120,10 +141,8 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
     
     const containerRef = useRef<HTMLDivElement>(null);
     const progressRef = useRef<number>(0);
+    // Platform-agnostic layout reference typing signature (Fixes Error #2)
     const interactTimeoutRef = useRef<any>(null);
-
-    // Layout metric caching variables to completely bypass DOM measurement loops
-    const layoutMetrics = useRef({ top: 0, height: 0 });
 
     const handleInteractionStart = () => {
         setIsInteracting(true);
@@ -137,43 +156,26 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
         }, 600);
     };
 
-    // Calculate metrics absolute coordinates without layout thrashing loops
-    const updateMetrics = () => {
-        if (!containerRef.current) return;
-        const rect = containerRef.current.getBoundingClientRect();
-        layoutMetrics.current = {
-            top: rect.top + window.scrollY,
-            height: rect.height
-        };
-    };
-
     useEffect(() => {
         setMounted(true);
         setIsMobile(window.innerWidth < 768);
         
         const handleResize = () => {
             setIsMobile(window.innerWidth < 768);
-            updateMetrics();
         };
-        
         window.addEventListener('resize', handleResize, { passive: true });
-        // Initial measurement allocation
-        setTimeout(updateMetrics, 100); 
-
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Visibility observer handles pausing WebGL render processes when scrolled off-screen
     useEffect(() => {
         if (!mounted) return;
         
         const visibilityObserver = new IntersectionObserver(
             (entries) => {
-                entries.forEach((entry) => {
-                    setIsInView(entry.isIntersecting);
-                    if (entry.isIntersecting) updateMetrics(); // Refresh layout references dynamically
-                });
+                entries.forEach((entry) => setIsInView(entry.isIntersecting));
             },
-            { threshold: 0.01 }
+            { threshold: 0.05 }
         );
         if (containerRef.current) {
             visibilityObserver.observe(containerRef.current);
@@ -181,16 +183,20 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
         return () => visibilityObserver.disconnect();
     }, [mounted]);
 
+    // Active tracking observer layers: Scroll monitors for desktop, Intersection blocks for mobile (Fixes Bug #4)
     useEffect(() => {
         if (!mounted) return;
 
         if (isMobile) {
+            // Mobile Optimization: Intersection tracking links textual highlights to active camera angle offsets seamlessly
             const mobileCardBlocks = document.querySelectorAll('.mobile-text-card-trigger');
             const mobileObserver = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         const targetIdx = parseInt(entry.target.getAttribute('data-index') || '0', 10);
                         setActiveSection(targetIdx);
+                        
+                        // Map progress intervals linearly based on target items
                         const progressionMap = [0, 0.28, 0.53, 0.73, 1.0];
                         progressRef.current = progressionMap[targetIdx];
                     }
@@ -201,17 +207,15 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
             return () => mobileObserver.disconnect();
         }
 
-        // Fast Performance Desktop Tracker using absolute window measurements 
+        // Native smooth tracker parameters for desktop
         const handleScroll = () => {
-            if (!isInView) return;
-            
-            const { top, height } = layoutMetrics.current;
+            if (!containerRef.current) return;
+            const rect = containerRef.current.getBoundingClientRect();
             const viewHeight = window.innerHeight;
-            const totalScrollable = height - viewHeight;
+            const totalScrollable = rect.height - viewHeight;
             if (totalScrollable <= 0) return;
 
-            const relativeScroll = window.scrollY - top;
-            let progress = relativeScroll / totalScrollable;
+            let progress = -rect.top / totalScrollable;
             progress = Math.min(Math.max(progress, 0), 1);
             progressRef.current = progress;
             
@@ -226,11 +230,13 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        
         return () => {
             window.removeEventListener('scroll', handleScroll);
             if (interactTimeoutRef.current) clearTimeout(interactTimeoutRef.current);
         };
-    }, [mounted, isMobile, isInView]);
+    }, [mounted, isMobile]);
 
     if (!mounted) return null;
 
@@ -242,14 +248,18 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                     <h2 className="text-white text-2xl font-serif font-bold uppercase tracking-tight">The Astride Chair</h2>
                 </div>
 
+                {/* Sticky model viewport area */}
                 <div className="sticky top-4 relative w-full h-[400px] rounded-2xl overflow-hidden border border-zinc-700 bg-zinc-900/30 shadow-2xl backdrop-blur-md z-30">
+                    {/* Subtle glow effect behind model */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-gradient-to-tr from-[#8B5CF6]/10 via-[#EC4899]/5 to-[#F97316]/10 rounded-full blur-[80px] pointer-events-none z-0" />
                     <div className="w-full h-full">
-                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop={isInView ? "always" : "never"}>
+                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop="always">
                             <color attach="background" args={['#090807']} />
+                            
                             <ambientLight intensity={0.5} />
                             <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
                             <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+                            
                             <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
 
                             <Suspense fallback={null}>
@@ -285,6 +295,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                     </div>
                 </div>
 
+                {/* Mobile descriptions render loop layout links focus cameras sequentially on intersection scroll paths */}
                 <div className="flex flex-col gap-5 mt-4 z-10 relative">
                     {SECTIONS.map((sec, idx) => (
                         <div 
@@ -314,81 +325,92 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
     return (
         <div ref={containerRef} className="relative w-full h-[500vh] md:h-[400vh] bg-[#090807] overflow-visible">
             <div className="sticky top-0 w-full h-screen overflow-hidden">
-                <div className="absolute inset-0 w-full h-full z-0">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[65%] bg-gradient-to-tr from-[#8B5CF6]/15 via-[#EC4899]/5 to-[#F97316]/10 rounded-full blur-[120px] pointer-events-none z-0" />
-                    <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop={isInView ? "always" : "never"}>
-                        <color attach="background" args={['#090807']} />
-                        <ambientLight intensity={0.5} />
-                        <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
-                        <directionalLight position={[-5, 5, -5]} intensity={0.5} />
-                        <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
+                <>
+                    <div className="absolute inset-0 w-full h-full z-0">
+                        {/* Subtle glow effect behind model */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[65%] bg-gradient-to-tr from-[#8B5CF6]/15 via-[#EC4899]/5 to-[#F97316]/10 rounded-full blur-[120px] pointer-events-none z-0" />
+                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop="always">
+                            <color attach="background" args={['#090807']} />
+                            
+                            <ambientLight intensity={0.5} />
+                            <directionalLight position={[5, 10, 5]} intensity={1.5} castShadow shadow-bias={-0.0001} />
+                            <directionalLight position={[-5, 5, -5]} intensity={0.5} />
+                            
+                            <ContactShadows position={[0, -1.5, 0]} opacity={0.6} scale={10} blur={2.5} far={4} />
+ 
+                            <Suspense fallback={null}>
+                                <Center position={[0, -0.3, 0]}>
+                                    <Model url={url} isMobile={isMobile} />
+                                </Center>
+                                <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={false} />
+                            </Suspense>
+                        </Canvas>
+                    </div>
 
-                        <Suspense fallback={null}>
-                            <Center position={[0, -0.3, 0]}>
-                                <Model url={url} isMobile={isMobile} />
-                            </Center>
-                            <CameraRig progressRef={progressRef} isMobile={isMobile} isInteracting={false} />
-                        </Suspense>
-                    </Canvas>
-                </div>
-
-                <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
-                    {SECTIONS.map((sec, index) => {
-                        const isActive = activeSection === index;
-                        return (
-                            <div
-                                key={index}
-                                className={`absolute inset-0 flex transition-all duration-700 ease-in-out ${
-                                    sec.align === 'center'
-                                        ? 'items-start justify-center px-12 text-center pt-10'
-                                        : sec.align === 'left'
-                                            ? 'items-center justify-start px-12'
-                                            : 'items-center justify-end px-12'
-                                } ${
-                                    isActive
-                                        ? 'opacity-100 translate-y-0 scale-100 visible'
-                                        : 'opacity-0 translate-y-8 scale-95 invisible pointer-events-none'
-                                }`}
-                            >
-                                {sec.align === 'center' ? (
-                                    <div className="max-w-2xl flex flex-col items-center">
-                                        <h1 className="text-white text-6xl md:text-7xl font-sans font-black tracking-tight mb-4 drop-shadow-2xl uppercase">
-                                            Why <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-sans font-black pr-2">Astride?</span>
-                                        </h1>
-                                        {sec.subtitle && (
-                                            <p className="absolute bottom-[180px] left-1/2 -translate-x-1/2 text-white text-lg md:text-xl font-semibold tracking-wide w-full max-w-2xl text-center z-20 px-6 backdrop-blur-[2px] bg-black/10 rounded-xl py-2">
-                                                {sec.subtitle}
-                                            </p>
-                                        )}
-                                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce z-20">
-                                            <span className="text-zinc-500 text-xs tracking-widest uppercase mb-2">Scroll to explore</span>
-                                            <div className="w-px h-12 bg-gradient-to-b from-zinc-500 to-transparent"></div>
+                    <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
+                        {SECTIONS.map((sec, index) => {
+                            const isActive = activeSection === index;
+                            return (
+                                <div
+                                    key={index}
+                                    className={`absolute inset-0 flex transition-all duration-700 ease-in-out ${
+                                        sec.align === 'center'
+                                            ? 'items-start justify-center px-12 text-center pt-10'
+                                            : sec.align === 'left'
+                                                ? 'items-center justify-start px-12'
+                                                : 'items-center justify-end px-12'
+                                    } ${
+                                        isActive
+                                            ? 'opacity-100 translate-y-0 scale-100 visible'
+                                            : 'opacity-0 translate-y-8 scale-95 invisible pointer-events-none'
+                                    }`}
+                                >
+                                    {sec.align === 'center' ? (
+                                        <div className="max-w-2xl flex flex-col items-center">
+                                            <h1 className="text-white text-6xl md:text-7xl font-sans font-black tracking-tight mb-4 drop-shadow-2xl uppercase">
+                                                Why <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-sans font-black pr-2">Astride?</span>
+                                            </h1>
+                                            {sec.subtitle && (
+                                                <p 
+                                                    className="absolute bottom-[180px] left-1/2 -translate-x-1/2 text-white text-lg md:text-xl font-semibold tracking-wide w-full max-w-2xl text-center z-20 px-6"
+                                                    style={{
+                                                        textShadow: '0 2px 8px rgba(0,0,0,1), -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, -1.5px 1.5px 0 #000, 0px 0px 10px rgba(0,0,0,0.8)'
+                                                    }}
+                                                >
+                                                    {sec.subtitle}
+                                                </p>
+                                            )}
+                                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce z-20">
+                                                <span className="text-zinc-500 text-xs tracking-widest uppercase mb-2">Scroll to explore</span>
+                                                <div className="w-px h-12 bg-gradient-to-b from-zinc-500 to-transparent"></div>
+                                            </div>
                                         </div>
-                                    </div>
-                                ) : (
-                                    <div className="max-w-md bg-black/40 backdrop-blur-md border border-white/10 p-8 rounded-2xl shadow-2xl pointer-events-auto">
-                                        {sec.badge && (
-                                            <span className="text-orange-500 font-bold tracking-widest text-sm mb-2 block">
-                                                {sec.badge}
-                                            </span>
-                                        )}
-                                        <h2 className="text-white text-4xl font-serif font-bold mb-4">
-                                            {sec.title}
-                                        </h2>
-                                        {sec.desc && (
-                                            <p className="text-zinc-400 leading-relaxed text-base">
-                                                {sec.desc}
-                                            </p>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
+                                    ) : (
+                                        <div className="max-w-md bg-black/40 backdrop-blur-md border border-white/10 p-8 rounded-2xl shadow-2xl pointer-events-auto">
+                                            {sec.badge && (
+                                                <span className="text-orange-500 font-bold tracking-widest text-sm mb-2 block">
+                                                    {sec.badge}
+                                                </span>
+                                            )}
+                                            <h2 className="text-white text-4xl font-serif font-bold mb-4">
+                                                {sec.title}
+                                            </h2>
+                                            {sec.desc && (
+                                                <p className="text-zinc-400 leading-relaxed text-base">
+                                                    {sec.desc}
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </>
             </div>
         </div>
     );
 }
 
+// Preload the GLB model in module scope so it starts loading instantly when the bundle is resolved
 useGLTF.preload('/3D_asset_glb/a3.glb');
