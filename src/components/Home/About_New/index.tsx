@@ -95,7 +95,7 @@ export default function AboutSection_New() {
               className="about-img-frame md:rotate-[2deg] bg-gradient-to-br from-[#A78BFA] to-[#EC4899] p-[18px]"
             >
               <Image
-                src="https://astride-furniture.vercel.app/Product/AlphaBrown_8.webp"
+                src="/Product/AlphaBrown_8.webp"
                 alt="Astride Alpha chair"
                 width={700}
                 height={700}
