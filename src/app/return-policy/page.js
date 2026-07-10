@@ -9,8 +9,8 @@ const ReturnPolicyPage = dynamic(() => import('@/components/pages/ReturnPolicy')
 });
 
 export const metadata = {
-  title: 'Return Policy — Astride Furniture',
-  description: 'Guidelines on product return eligibility and replacement request timeline (48 hours).',
+  title: "ASTRIDE® Return Policy | Easy Returns for Office Chairs & Furniture",
+  description: "Read the ASTRIDE® Return Policy to understand return eligibility, conditions, timelines, replacement options, and customer support for office chairs, gaming chairs, bar stools, and office furniture purchases.",
 };
 
 export default function ReturnPolicy() {

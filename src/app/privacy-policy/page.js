@@ -9,8 +9,8 @@ const PrivacyPolicyPage = dynamic(() => import('@/components/pages/PrivacyPolicy
 });
 
 export const metadata = {
-  title: 'Privacy Policy — Astride Furniture',
-  description: 'Privacy Policy of Astride Furniture detailing how we collect, store, and safeguard your personal data.',
+  title: "ASTRIDE® Privacy Policy | Data Protection & Customer Privacy",
+  description: "Read the ASTRIDE® Privacy Policy to learn how we collect, use, store, and protect your personal information when you browse our website, purchase office furniture, or contact our customer support team.",
 };
 
 export default function PrivacyPolicy() {

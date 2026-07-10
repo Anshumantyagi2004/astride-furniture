@@ -9,9 +9,10 @@ const ShippingPolicyPage = dynamic(() => import('@/components/pages/shippingPoli
 });
 
 export const metadata = {
-  title: 'Shipping Policy — Astride Furniture',
-  description: 'Timeline estimates and guidelines regarding order shipping and delivery.',
+  title: "ASTRIDE® Shipping Policy | Delivery Information for Office Furniture",
+  description: "Read the ASTRIDE® Shipping Policy for details on order processing, shipping timelines, delivery methods, tracking, service areas, and important information for office chairs, gaming chairs, bar stools, and office furniture orders.",
 };
+
 
 export default function ShippingPolicy() {
   return <ShippingPolicyPage />;

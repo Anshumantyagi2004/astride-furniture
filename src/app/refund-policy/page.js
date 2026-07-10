@@ -9,8 +9,8 @@ const RefundPolicyPage = dynamic(() => import('@/components/pages/refundPolicy')
 });
 
 export const metadata = {
-  title: 'Refund Policy — Astride Furniture',
-  description: 'Policy detailing our strict replacements-only guidelines for damaged or incorrect purchases.',
+  title: "ASTRIDE® Refund Policy | Returns, Refunds & Replacement Guidelines",
+  description: "Read the ASTRIDE® Refund Policy for information on returns, refunds, replacements, eligibility, processing timelines, and customer support for office chairs, gaming chairs, bar stools, and office furniture purchases.",
 };
 
 export default function RefundPolicy() {

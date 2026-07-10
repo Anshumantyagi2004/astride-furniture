@@ -9,8 +9,8 @@ const CancellationPolicyPage = dynamic(() => import('@/components/pages/cancella
 });
 
 export const metadata = {
-  title: 'Cancellation Policy — Astride Furniture',
-  description: 'Policy outlining the 24-hour order cancellation window and procedures.',
+  title: "ASTRIDE® Cancellation Policy | Order Cancellation & Refund Information",
+  description: "Read the ASTRIDE® Cancellation Policy to understand order cancellation terms, eligibility, refund processing, modifications, and important guidelines for office chairs, gaming chairs, bar stools, and office furniture purchases.",
 };
 
 export default function CancellationPolicy() {
