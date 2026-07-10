@@ -4,9 +4,10 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 import BlogCard from "@/components/pages/Blog/BlogCard";
-import { blogs } from "@/data/blog";
+
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["600", "700", "800"],
@@ -16,6 +17,8 @@ const banner = "/blogs/desktop_banner.webp";
 
 export default function BlogsPage() {
   const [isMobile, setIsMobile] = useState(false);
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -29,6 +32,21 @@ export default function BlogsPage() {
       else mq.removeListener(handler as any);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const { data } = await axios.get("/api/blog");
+        if (data.success) setBlogs(data.blogs);
+      } catch (err) {
+        console.error("Failed to load blogs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlogs();
+  }, []);
+
   return (
     <>
       {/* Hero Section */}
@@ -106,11 +124,33 @@ export default function BlogsPage() {
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-            {blogs.map((blog) => (
-              <BlogCard key={blog.id} {...blog} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center items-center py-24">
+              <div className="w-8 h-8 border-4 border-neutral-200 border-t-neutral-800 rounded-full animate-spin" />
+            </div>
+          ) : blogs.length === 0 ? (
+            <p className="text-center text-neutral-400 py-24 text-lg">No blog posts yet.</p>
+          ) : (
+            <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+              {blogs.map((blog) => (
+                <BlogCard
+                  key={blog._id}
+                  slug={blog.slug}
+                  image={blog.thumbnail}
+                  title={blog.title}
+                  shortContent={blog.metaDescription || ""}
+                  category={blog.category || "Workspace"}
+                  date={new Date(blog.date || blog.createdAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "2-digit",
+                    year: "numeric",
+                  })}
+                  author={blog.author || "Astride Team"}
+                  readTime={blog.readTime || "5 min read"}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </>
