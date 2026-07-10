@@ -9,8 +9,8 @@ const TermsConditionsPage = dynamic(() => import('@/components/pages/termsCondit
 });
 
 export const metadata = {
-  title: 'Terms & Conditions — Astride Furniture',
-  description: 'Terms and conditions governing the use of Astride Furniture website and purchases.',
+  title: "ASTRIDE® Terms & Conditions | Website Use, Orders & Purchase Policies",
+  description: "Read the ASTRIDE® Terms & Conditions to understand website usage, product purchases, payments, warranties, order policies, intellectual property, and customer responsibilities when shopping with ASTRIDE®.",
 };
 
 export default function TermsConditions() {

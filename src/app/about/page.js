@@ -9,9 +9,10 @@ const AboutPage = dynamic(() => import('@/components/pages/aboutPage'), {
 });
 
 export const metadata = {
-  title: 'About Us — Astride Furniture',
-  description: 'Learn about Astride — our story, values, and the team behind India\'s most ergonomic seating brand.',
+  title: "About ASTRIDE® | Leading Office Chair & Office Furniture Manufacturer in India",
+  description: "Learn about ASTRIDE®, a trusted office furniture and ergonomic chair manufacturer in India. We specialize in premium office chairs, gaming chairs, executive seating, bar stools, and workspace solutions designed for comfort, quality, and long-lasting performance.",
 };
+
 
 export default function About() {
   return <AboutPage />;
