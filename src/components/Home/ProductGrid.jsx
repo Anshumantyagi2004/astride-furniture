@@ -102,7 +102,7 @@ export default function ShopTheLook() {
                             whileHover={{
                                 y: -6,
                             }}
-                            className={`group relative overflow-visible rounded-[30px] bg-white border border-[#E7DDD5] hover:border-[#FF6D29] transition-all duration-500 hover:shadow-[0_20px_50px_rgba(255,109,41,0.12)] hover:z-50 ${product.className}`}>
+                            className={`group relative overflow-visible rounded-[30px] bg-white border border-[#E7DDD5] hover:border-[#FF6D29] transition-all duration-500 hover:z-50 before:absolute before:inset-0 before:z-[-1] before:rounded-[30px] before:shadow-[0_20px_50px_rgba(255,109,41,0.12)] before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100 ${product.className}`}>
                             <Image
                                 src={product.image}
                                 alt={product.title}

@@ -85,7 +85,7 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => router.push(`/products/${product.slug || product.id}`)}
-            className="group relative rounded-[24px] overflow-hidden bg-white border border-gray-200/60 transition-all duration-300 md:hover:border-slate-300/80 shadow-none md:hover:shadow-[0_12px_30px_rgba(15,23,42,0.06)] md:shadow-sm min-w-0 w-full cursor-pointer font-sans"
+            className="group relative rounded-[24px] bg-white border border-gray-200/60 transition-all duration-300 md:hover:border-slate-300/80 md:shadow-sm min-w-0 w-full cursor-pointer font-sans before:absolute before:inset-0 before:z-[-1] before:rounded-[24px] before:shadow-[0_12px_30px_rgba(15,23,42,0.06)] before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100"
         >
             {/* Action Buttons */}
             <div className="hidden md:flex absolute top-4 right-4 z-20 flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
@@ -166,7 +166,7 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
             </div>
 
             {/* Animated Underlines */}
-            <div className="hidden md:block absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+            <div className="hidden md:block absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-b-[24px]" />
         </motion.div>
     );
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -127,6 +128,7 @@ const fallbackProducts = [
 
 function BestsellerCard({ product }: { product: any }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
@@ -135,20 +137,25 @@ function BestsellerCard({ product }: { product: any }) {
     : [product.image];
 
   useEffect(() => {
-    if (images.length > 1) {
+    if (isHovered && images.length > 1) {
       setCurrentImageIndex(0);
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
-      }, 2000);
+      }, 1500);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
+      setCurrentImageIndex(0);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [images.length]);
+  }, [isHovered, images.length]);
 
   return (
     <article
       onClick={() => router.push(`/products/${product.slug || product.id}`)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className="group relative flex flex-col overflow-visible rounded-[18px] sm:rounded-[28px] border-[2px] sm:border-[2.5px] border-[#131313] bg-white shadow-[4px_4px_0_#131313] sm:shadow-[6px_6px_0_#131313] transition-all duration-300 hover:-translate-y-2 hover:shadow-[6px_8px_0_rgba(19,19,19,0.9)] sm:hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)] cursor-pointer"
     >
       {/* Sticker */}
@@ -242,6 +249,8 @@ function BestsellerCard({ product }: { product: any }) {
 export default function BestSellersSection_New() {
   const [productsList, setProductsList] = useState<any[]>(fallbackProducts);
   const [loading, setLoading] = useState(true);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { margin: "0px" });
 
   useEffect(() => {
     async function fetchProducts() {
@@ -337,7 +346,7 @@ export default function BestSellersSection_New() {
   }, []);
 
   return (
-    <section id="shop" className="pt-2 pb-[10px] md:pt-3 md:pb-[15px] lg:pt-4 lg:pb-[20px] overflow-hidden">
+    <section id="shop" ref={sectionRef} className="pt-2 pb-[10px] md:pt-3 md:pb-[15px] lg:pt-4 lg:pb-[20px] overflow-hidden">
       <div className="mx-auto max-w-[1440px] px-3 md:px-8 lg:px-12">
         {/* Section Header UPDATED: Now vertically stacking, with pill/button in the same flex row */}
         <div className="mb-4 flex flex-col gap-2 px-1 md:px-0">
@@ -396,10 +405,10 @@ export default function BestSellersSection_New() {
                 }}
                 slidesPerView={2}
                 spaceBetween={12}
-                autoplay={{
+                autoplay={isInView ? {
                   delay: 2500,
                   disableOnInteraction: false,
-                }}
+                } : false}
                 className="best-swiper w-full"
               >
                 {productsList.map((product) => (

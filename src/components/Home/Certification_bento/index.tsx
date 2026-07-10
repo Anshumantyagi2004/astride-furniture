@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, memo } from 'react';
-import { motion, Variants } from 'framer-motion';
+import React, { useState, useEffect, memo, useRef } from 'react';
+import { motion, Variants, useInView } from 'framer-motion';
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import {
@@ -512,8 +512,11 @@ CertCard.displayName = "CertCard";
 // MAIN BENTO COMPONENT MODULE
 // ==========================================
 const CertificationsBento = () => {
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { margin: "0px" });
+
   return (
-    <section className="w-full pt-8 pb-8 px-5 md:px-8 lg:px-16 overflow-hidden" style={{ backgroundColor: "#1a1a1a" }}>
+    <section ref={sectionRef} className="w-full pt-8 pb-8 px-5 md:px-8 lg:px-16 overflow-hidden" style={{ backgroundColor: "#1a1a1a" }}>
       <style jsx global>{`
         .cert-swiper .swiper-pagination-bullet {
           background: rgba(255, 255, 255, 0.3) !important;
@@ -555,7 +558,7 @@ const CertificationsBento = () => {
           <Swiper
             modules={SWIPER_MODULES}
             pagination={SWIPER_PAGINATION_CONFIG}
-            autoplay={SWIPER_AUTOPLAY_CONFIG}
+            autoplay={isInView ? SWIPER_AUTOPLAY_CONFIG : false}
             loop={true}
             spaceBetween={24}
             slidesPerView={1}
