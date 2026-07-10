@@ -1,10 +1,10 @@
 "use client";
 
 import { use, useRef, useState, useEffect } from "react";
-import { blogs } from "@/data/blog";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import axios from "axios";
 import {
   motion,
   useScroll,
@@ -26,18 +26,32 @@ export default function BlogDetailsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
-  const blog = blogs.find(
-    (item) => item.slug === slug
-  );
+  const [blog, setBlog] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  if (!blog) {
-    notFound();
-  }
-
   useEffect(() => {
     setMounted(true);
+    
+    // Fetch single blog from the API
+    const getBlogData = async () => {
+      try {
+        const { data } = await axios.get(`/api/blog?slug=${slug}`);
+        if (data.success) {
+          setBlog(data.blog);
+        } else {
+          setBlog(null);
+        }
+      } catch (err) {
+        console.error("Failed to load blog:", err);
+        setBlog(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getBlogData();
+
     if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(max-width: 767px)');
     const handler = (e: MediaQueryList | MediaQueryListEvent) => setIsMobile((e as any).matches);
@@ -48,7 +62,7 @@ export default function BlogDetailsPage({
       if (mq.removeEventListener) mq.removeEventListener('change', handler as any);
       else mq.removeListener(handler as any);
     };
-  }, []);
+  }, [slug]);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -64,11 +78,23 @@ export default function BlogDetailsPage({
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
   const heroScale = useTransform(scrollY, [0, 500], [1, 1.1]);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFDFD]">
+        <div className="w-8 h-8 border-4 border-zinc-300 border-t-zinc-950 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!blog) {
+    notFound();
+  }
+
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
         title: blog.title,
-        text: blog.shortContent,
+        text: blog.metaDescription || blog.title,
         url: window.location.href,
       }).catch(console.error);
     } else {
@@ -76,10 +102,6 @@ export default function BlogDetailsPage({
       toast.success("Article link copied to clipboard!");
     }
   };
-
-  const paragraphs = blog.longContent.trim().split("\n\n");
-  const firstParagraph = paragraphs[0];
-  const restParagraphs = paragraphs.slice(1);
 
   return (
     <main ref={containerRef} className="min-h-screen bg-[#FDFDFD] text-neutral-800 font-sans selection:bg-indigo-500 selection:text-white">
@@ -100,7 +122,7 @@ export default function BlogDetailsPage({
           }}
         >
           <Image
-            src={blog.image}
+            src="/blogs/desktop_banner.webp"
             alt={blog.title}
             fill
             priority
@@ -121,7 +143,7 @@ export default function BlogDetailsPage({
           >
             <span className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-white/10 text-white/90 backdrop-blur-md border border-white/20 text-xs md:text-sm font-bold tracking-widest uppercase">
               <BookOpen size={16} />
-              {blog.category}
+              {blog.category || "Workspace"}
             </span>
 
             <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-white tracking-tighter leading-[1.1] max-w-5xl">
@@ -133,17 +155,23 @@ export default function BlogDetailsPage({
                 <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/20 flex items-center justify-center">
                   <User size={16} className="text-white" />
                 </div>
-                <span className="text-white/90 text-sm md:text-base">{blog.author}</span>
+                <span className="text-white/90 text-sm md:text-base">{blog.author || "Astride Team"}</span>
               </div>
               <span className="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block"></span>
               <div className="flex items-center gap-2">
                 <Clock size={18} />
-                <span className="text-sm md:text-base">{blog.readTime} read</span>
+                <span className="text-sm md:text-base">{blog.readTime || "5 min read"} read</span>
               </div>
               <span className="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block"></span>
               <div className="flex items-center gap-2">
                 <Calendar size={18} />
-                <span className="text-sm md:text-base">{blog.date}</span>
+                <span className="text-sm md:text-base">
+                  {new Date(blog.date || blog.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                  })}
+                </span>
               </div>
             </div>
           </motion.div>
@@ -162,15 +190,24 @@ export default function BlogDetailsPage({
                 <button onClick={handleShare} className="w-12 h-12 rounded-full bg-white border border-neutral-100 flex items-center justify-center text-neutral-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all duration-300 shadow-sm hover:shadow-md">
                   <LinkIcon size={20} />
                 </button>
-                <button className="w-12 h-12 rounded-full bg-white border border-neutral-100 flex items-center justify-center text-neutral-600 hover:text-blue-700 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                </button>
               </div>
             </div>
           </div>
 
           {/* Center Content */}
           <div className="lg:col-span-8 space-y-12">
+            {/* Specific Post Image */}
+            <div className="relative w-full h-[300px] md:h-[500px] rounded-3xl overflow-hidden shadow-lg border border-neutral-100">
+              <Image
+                src={blog.thumbnail}
+                alt={blog.title}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+
             {/* Introduction / Short Content */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -181,46 +218,22 @@ export default function BlogDetailsPage({
             >
               <div className="absolute -left-6 md:-left-10 top-0 bottom-0 w-1 bg-indigo-500 rounded-full" />
               <p className="text-xl md:text-2xl leading-relaxed text-neutral-600 font-medium italic text-balance">
-                "{blog.shortContent}"
+                "{blog.metaDescription}"
               </p>
             </motion.div>
 
-            {/* Content Body */}
-            <div className="prose prose-lg md:prose-xl prose-neutral max-w-none space-y-10">
-              {/* First paragraph with drop cap */}
-              {firstParagraph && (
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.8 }}
-                  className="text-lg md:text-xl leading-loose text-neutral-700 first-letter:float-left first-letter:text-6xl first-letter:md:text-7xl first-letter:font-black first-letter:text-indigo-600 first-letter:mr-4 first-letter:mt-1 first-letter:leading-none text-justify"
-                >
-                  {firstParagraph}
-                </motion.p>
-              )}
-
-              {/* Rest of the paragraphs */}
-              {restParagraphs.map((paragraph, index) => (
-                <motion.p
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.8 }}
-                  className="text-lg md:text-xl leading-loose text-neutral-700 text-justify"
-                >
-                  {paragraph}
-                </motion.p>
-              ))}
-            </div>
+            {/* Content Body (Jodit Editor Rich Text HTML) */}
+            <article 
+              className="prose prose-neutral max-w-none text-lg md:text-xl leading-relaxed space-y-6"
+              dangerouslySetInnerHTML={{ __html: blog.content }}
+            />
 
             {/* Bottom Meta & Tags */}
             <div className="pt-16 pb-8 border-t border-neutral-200/60 mt-16 flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="flex flex-col gap-2 w-full md:w-auto">
                 <span className="text-xs text-neutral-400 font-bold uppercase tracking-widest">Tagged In</span>
                 <span className="inline-block px-4 py-2 bg-neutral-100 text-neutral-800 rounded-lg text-sm font-bold uppercase tracking-wider w-max hover:bg-neutral-200 transition-colors cursor-pointer">
-                  {blog.category}
+                  {blog.category || "Workspace"}
                 </span>
               </div>
 
@@ -231,14 +244,11 @@ export default function BlogDetailsPage({
                   <button onClick={handleShare} className="p-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 hover:text-indigo-600">
                     <Share2 size={18} />
                   </button>
-                  <button className="p-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 hover:text-blue-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                  </button>
                 </div>
               </div>
             </div>
 
-            {/* Next Article Teaser / Author Bio Box */}
+            {/* Author Bio Box */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -252,9 +262,9 @@ export default function BlogDetailsPage({
               </div>
               <div className="flex-1 text-center md:text-left z-10">
                 <h4 className="text-sm font-bold text-indigo-300 uppercase tracking-widest mb-2">Written By</h4>
-                <h3 className="text-2xl font-bold mb-3">{blog.author}</h3>
+                <h3 className="text-2xl font-bold mb-3">{blog.author || "Astride Team"}</h3>
                 <p className="text-white/60 text-base leading-relaxed">
-                  A passionate writer exploring the realms of {blog.category.toLowerCase()} and modern trends. Capturing thoughts and sharing them with the world.
+                  A passionate writer exploring the realms of {(blog.category || "workspace").toLowerCase()} and modern trends. Capturing thoughts and sharing them with the world.
                 </p>
               </div>
             </motion.div>

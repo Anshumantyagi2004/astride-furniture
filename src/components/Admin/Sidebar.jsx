@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from "next/link";
+import { FileText } from "lucide-react";
 import {
     LayoutDashboard,
     FolderPlus,
@@ -86,14 +87,20 @@ export default function Sidebar() {
                     <MessageSquare size={20} />
                     Contacts
                 </Link>
+                <Link href="/admin/blogs"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#00badb] hover:text-white transition-all duration-300 text-gray-700 font-medium"
+                >
+                    <FileText size={20} />
+                    Blogs
+                </Link>
             </nav>
 
-            <div className='p-4'>
-                <button onClick={handleLogout} className=" flex items-center gap-3 w-full text-left bg-red-100 text-red-600 px-4 py-2 rounded-lg shadow hover:bg-red-200 transition mt-auto">
-                    <LogOut size={20} />
-                    Logout
-                </button>
-            </div>
+                <div className='p-4'>
+                    <button onClick={handleLogout} className=" flex items-center gap-3 w-full text-left bg-red-100 text-red-600 px-4 py-2 rounded-lg shadow hover:bg-red-200 transition mt-auto">
+                        <LogOut size={20} />
+                        Logout
+                    </button>
+                </div>
         </aside>
     )
 }
