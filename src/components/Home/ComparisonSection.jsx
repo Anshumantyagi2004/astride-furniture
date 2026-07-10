@@ -69,6 +69,18 @@ export default function ComparisonSection() {
     // ✅ Mobile optimization: Disable motion animations on mobile
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
+    const [swiperInstance, setSwiperInstance] = useState(null);
+
+    useEffect(() => {
+        if (swiperInstance && swiperInstance.autoplay) {
+            if (isInView) {
+                swiperInstance.autoplay.start();
+            } else {
+                swiperInstance.autoplay.stop();
+            }
+        }
+    }, [isInView, swiperInstance]);
+
     return (
         <section ref={sectionRef} className="w-full pt-8 pb-4 bg-[#F8F7F5] overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
@@ -118,14 +130,17 @@ export default function ComparisonSection() {
 
                 {/* Swiper */}
                 <Swiper
-                    onSwiper={(swiper) => (swiperRef.current = swiper)}
+                    onSwiper={(swiper) => {
+                        swiperRef.current = swiper;
+                        setSwiperInstance(swiper);
+                    }}
                     modules={[Pagination, Autoplay]}
                     pagination={{
                         clickable: true,
                         renderBullet: (_, className) =>
                             `<span class="${className}" style="width:28px;height:4px;border-radius:9999px;background:#1C1A17;opacity:0.18;display:inline-block;transition:all 0.3s;margin:0 3px;"></span>`,
                     }}
-                    autoplay={isInView ? { delay: 4500, disableOnInteraction: false } : false}
+                    autoplay={{ delay: 4500, disableOnInteraction: false }}
                     grabCursor
                     loop
                     className="!pb-12 [&_.swiper-pagination-bullet-active]:!opacity-100 [&_.swiper-pagination-bullet-active]:!w-[44px]"

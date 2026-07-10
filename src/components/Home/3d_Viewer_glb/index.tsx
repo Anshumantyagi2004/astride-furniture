@@ -253,7 +253,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                     {/* Subtle glow effect behind model */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-gradient-to-tr from-[#8B5CF6]/10 via-[#EC4899]/5 to-[#F97316]/10 rounded-full blur-[80px] pointer-events-none z-0" />
                     <div className="w-full h-full">
-                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop="always">
+                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop={isInView ? "always" : "never"}>
                             <color attach="background" args={['#090807']} />
                             
                             <ambientLight intensity={0.5} />
@@ -329,7 +329,7 @@ export default function ModelViewer({ url = '/3D_asset_glb/a3.glb' }: { url?: st
                     <div className="absolute inset-0 w-full h-full z-0">
                         {/* Subtle glow effect behind model */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65%] h-[65%] bg-gradient-to-tr from-[#8B5CF6]/15 via-[#EC4899]/5 to-[#F97316]/10 rounded-full blur-[120px] pointer-events-none z-0" />
-                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop="always">
+                        <Canvas shadows camera={{ position: [0, 0, 5], fov: 45 }} frameloop={isInView ? "always" : "never"}>
                             <color attach="background" args={['#090807']} />
                             
                             <ambientLight intensity={0.5} />
