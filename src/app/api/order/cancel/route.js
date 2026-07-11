@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
 import Order from "@/models/order/Order";
+import { sendTelegramCancelNotification } from "@/lib/sendTelegramNotification";
 
 export const runtime = "nodejs";
 
@@ -56,6 +57,9 @@ export async function POST(req) {
     order.status = "Cancelled";
     order.cancelledByUser = true;
     await order.save();
+
+    // Fire-and-forget Telegram alert — does NOT block the response
+    sendTelegramCancelNotification(order.toObject ? order.toObject() : order);
 
     return NextResponse.json({
       success: true,
