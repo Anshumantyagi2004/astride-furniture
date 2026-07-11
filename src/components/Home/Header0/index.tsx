@@ -123,6 +123,7 @@ export default function Header0() {
                   src={slide.src}
                   alt={slide.alt}
                   fill
+                  unoptimized
                   className="object-cover object-center"
                   priority={idx === 0}
                 />
