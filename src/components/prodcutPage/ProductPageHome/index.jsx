@@ -102,11 +102,20 @@ const PRODUCTS = [
   },
 ];
 
-export default function ProductPageHome() {
+export default function ProductPageHome({ preloadedProducts = [], preloadedCategories = [] }) {
   const router = useRouter();
-  const [productsList, setProductsList] = useState([]);
-  const [tabs, setTabs] = useState(["All Products"]); // Start with just "All Products"
-  const [loading, setLoading] = useState(true);
+  const [productsList, setProductsList] = useState(() => {
+    return preloadedProducts.length > 0 ? preloadedProducts : [];
+  });
+  const [tabs, setTabs] = useState(() => {
+    if (preloadedCategories.length > 0) {
+      return ["All Products", ...preloadedCategories.map((cat) => cat.name)];
+    }
+    return ["All Products"];
+  });
+  const [loading, setLoading] = useState(() => {
+    return preloadedProducts.length === 0;
+  });
   const [selectedCategory, setSelectedCategory] = useState("All Products");
   const [selectedBackSupport, setSelectedBackSupport] = useState(null);
   const [selectedHours, setSelectedHours] = useState(null);
@@ -170,6 +179,7 @@ export default function ProductPageHome() {
 
   // Fetch categories dynamically from API
   useEffect(() => {
+    if (preloadedCategories.length > 0) return;
     async function fetchCategories() {
       try {
         // Fetch with cache busting timestamp
@@ -193,7 +203,7 @@ export default function ProductPageHome() {
     // Refetch every 10 seconds to catch new categories
     const interval = setInterval(fetchCategories, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [preloadedCategories]);
 
   useEffect(() => {
     const saved = localStorage.getItem("astride_wishlist");
@@ -212,6 +222,7 @@ export default function ProductPageHome() {
   }, [productsList]);
 
   useEffect(() => {
+    if (preloadedProducts.length > 0) return;
     async function fetchProducts() {
       // 1. Load from cache immediately if present
       try {
