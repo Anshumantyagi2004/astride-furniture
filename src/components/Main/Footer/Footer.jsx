@@ -116,7 +116,7 @@ export default function Footer() {
                             { name: "Blog", link: "/blogs" },
                             { name: "Contact Us", link: "/contact" },
                             { name: "FAQs", link: "/#faq" },
-                            { name: "Track Order", link: "/account/orders" },
+                            { name: "Track Order", link: "/track-order" },
                         ].map((item, index) => {
                             // Special handling for FAQs: ensure smooth scroll to homepage #faq
                             if (item.name === 'FAQs') {
