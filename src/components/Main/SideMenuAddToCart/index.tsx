@@ -158,13 +158,12 @@ export default function SideMenuAddToCart() {
             cartItems.map((item) => (
               <div key={item.id} className="flex gap-4 border-b border-neutral-100/50 pb-5 items-start relative group">
                 {/* Image */}
-                <div className="relative w-20 h-20 bg-neutral-50 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-neutral-100">
+                <div className="relative w-20 h-20 bg-neutral-50 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-neutral-100 p-1">
                   <Image 
                     src={item.image} 
                     alt={item.name}
-                    width={80}
-                    height={80}
-                    className="object-contain p-2 mix-blend-multiply"
+                    fill
+                    className="object-contain mix-blend-multiply"
                     loading="lazy"
                   />
                 </div>
