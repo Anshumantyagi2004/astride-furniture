@@ -16,8 +16,8 @@ const sans = Plus_Jakarta_Sans({
 });
 
 export const metadata = {
-  title: "ASTRIDE® Office Furniture Manufacturer| Ergonomic Office Chairs, Gaming Chairs & Workstations",
-  description: "Discover ASTRIDE® premium office furniture manufacturer including ergonomic office chairs, gaming chairs, executive chairs, visitor chairs, bar stools, workstations, and office seating solutions.",
+  title: "ASTRIDE® Office Chair Manufacturer| Ergonomic Office Chairs, Gaming Chairs & Workstations",
+  description: "Discover ASTRIDE® premium office Chair manufacturer including ergonomic office chairs, gaming chairs, executive chairs, visitor chairs, bar stools, workstations, and office seating solutions.",
   icons: {
     icon: [
       { url: "/favicon.ico" },
