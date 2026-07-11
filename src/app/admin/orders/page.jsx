@@ -136,6 +136,12 @@ export default function Page() {
                                         </button>
                                     </div>
 
+                                    {order.cancelledByUser && (
+                                        <div className="bg-red-50 border-b border-red-100 px-8 py-3 text-red-700 text-sm font-bold flex items-center gap-2">
+                                            <span>⚠️ Cancelled by the user</span>
+                                        </div>
+                                    )}
+
                                     {/* Order Card Content Grid */}
                                     <div className="p-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
 
@@ -221,17 +227,18 @@ export default function Page() {
                                                             onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
                                                             className="w-full bg-white border border-neutral-200 text-sm font-bold rounded-xl px-3.5 py-2.5 text-neutral-800 focus:outline-none focus:ring-2 focus:ring-black cursor-pointer shadow-sm"
                                                         >
-                                                            <option value="Pending">Pending</option>
-                                                            <option value="Confirmed">Confirmed</option>
-                                                            <option value="Processing / Packing">Processing / Packing</option>
-                                                            <option value="Dispatched">Dispatched</option>
-                                                            <option value="Shipped">Shipped</option>
-                                                            <option value="Out for Delivery">Out for Delivery</option>
-                                                            <option value="Delivered">Delivered</option>
+                                                            <option value="Pending" disabled={order.cancelledByUser}>Pending</option>
+                                                            <option value="Confirmed" disabled={order.cancelledByUser}>Confirmed</option>
+                                                            <option value="Processing / Packing" disabled={order.cancelledByUser}>Processing / Packing</option>
+                                                            <option value="Dispatched" disabled={order.cancelledByUser}>Dispatched</option>
+                                                            <option value="Out for Delivery" disabled={order.cancelledByUser}>Out for Delivery</option>
+                                                            <option value="Delivered" disabled={order.cancelledByUser}>Delivered</option>
                                                             <option value="Cancelled">Cancelled</option>
-                                                            <option value="Return Requested">Return Requested</option>
-                                                            <option value="Return Approved">Return Approved</option>
-                                                            <option value="Return Rejected">Return Rejected</option>
+                                                            <option disabled>──────────</option>
+                                                            <option value="Return Requested" disabled={order.cancelledByUser}>Return Requested</option>
+                                                            <option value="Return Approved" disabled={order.cancelledByUser}>Return Approved</option>
+                                                            <option value="Return Rejected" disabled={order.cancelledByUser}>Return Rejected</option>
+                                                            <option disabled>──────────</option>
                                                             <option value="Refund Initiated">Refund Initiated</option>
                                                             <option value="Refunded">Refunded</option>
                                                         </select>

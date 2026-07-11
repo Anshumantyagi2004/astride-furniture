@@ -156,52 +156,33 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Fetch user from API using JWT token
+      // Fetch user from API using JWT token if available
       const token = sessionStorage.getItem("auth_token");
-      if (!token) {
-        alert("Please log in first to place an order");
-        return;
-      }
-      
-      let user: any = null;
-      try {
-        const userRes = await fetch("/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        if (!userRes.ok) {
-          console.error("User profile fetch failed with status:", userRes.status);
-          const errorData = await userRes.json();
-          console.error("Error response:", errorData);
-          alert("Failed to load user information. Please log in again.");
-          return;
+      let userId: string | null = null;
+      if (token) {
+        try {
+          const userRes = await fetch("/api/user/profile", {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            if (userData.success && userData.user) {
+              userId = userData.user._id;
+            }
+          }
+        } catch (error) {
+          console.error("Failed to fetch user profile, proceeding as guest:", error);
         }
-        
-        const userData = await userRes.json();
-        if (userData.success && userData.user) {
-          user = userData.user;
-        } else {
-          console.error("Invalid user data response:", userData);
-          alert("Failed to load user information. Please try again.");
-          return;
-        }
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-        alert("Network error. Please try again.");
-        return;
       }
 
-      if (!user || !user._id) {
-        console.error("User validation failed:", user);
-        alert("Failed to load user information. Please try again.");
-        return;
-      }
+     
       
       setIsProcessing(true);
       
       const totalAmount = subtotal + shippingCost;
       const orderData = {
-        userId: user._id,
+        userId: userId,
         shippingInfo: { ...formData, state: formData.stateName },
         products: cartItems.map((item) => {
           // Robustly extract the raw MongoDB ObjectId from any cart item format:
@@ -565,12 +546,12 @@ export default function CheckoutPage() {
                         >
                           ✕
                         </button>
-                        <div className="relative w-20 h-20 bg-white rounded-xl flex items-center justify-center shrink-0 border border-neutral-100 shadow-sm">
+                        <div className="relative w-20 h-20 bg-white rounded-xl flex items-center justify-center shrink-0 border border-neutral-100 shadow-sm p-1">
                           <Image 
                             src={item.image} 
                             alt={item.name} 
                             fill
-                            className="object-contain p-2 mix-blend-multiply"
+                            className="object-contain mix-blend-multiply"
                           />
                         </div>
                         <div className="flex-1 min-w-0 pr-4">
@@ -654,10 +635,10 @@ export default function CheckoutPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
               <Link 
-                href="/account/orders"
+                href="/track-order"
                 className="flex-1 py-3.5 bg-neutral-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all text-center shadow-md active:scale-95"
               >
-                View Orders
+                Track Order
               </Link>
               <Link 
                 href="/products"

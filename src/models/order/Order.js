@@ -5,7 +5,7 @@ const orderSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
 
     shippingInfo: {
@@ -72,6 +72,11 @@ const orderSchema = new mongoose.Schema(
       enum: ["Pending", "Confirmed", "Processing", "Processing / Packing","Dispatched","Shipped", "Out for Delivery", "Delivered", "Cancelled", "Return Requested", "Return Approved", "Return Rejected", 
     "Refund Initiated", "Refunded"],
       default: "Confirmed",
+    },
+
+    cancelledByUser: {
+      type: Boolean,
+      default: false,
     },
 
   },
