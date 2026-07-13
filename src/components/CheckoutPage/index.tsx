@@ -365,7 +365,20 @@ export default function CheckoutPage() {
           {/* LEFT: Shipping Information */}
           <div className="flex-1">
             <div className="bg-white rounded-3xl p-8 md:p-10 shadow-[0_20px_40px_rgba(0,0,0,0.04),_0_5px_15px_rgba(0,0,0,0.01)] border border-neutral-100">
-              <h2 className="text-xl font-bold text-neutral-900 mb-6">Shipping Information</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-neutral-900">Shipping Information</h2>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
+                >
+                  Login
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                    <polyline points="10 17 15 12 10 7" />
+                    <line x1="15" y1="12" x2="3" y2="12" />
+                  </svg>
+                </Link>
+              </div>
               
               <form className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
