@@ -270,7 +270,7 @@ export default function Page() {
             </div>
 
             {/* FORGOT */}
-            {isLogin && (
+            {/* {isLogin && (
               <div className="flex justify-end">
                 <button
                   type="button"
@@ -279,7 +279,7 @@ export default function Page() {
                   Forgot Password?
                 </button>
               </div>
-            )}
+            )} */}
 
             {/* BUTTON */}
             <motion.button
