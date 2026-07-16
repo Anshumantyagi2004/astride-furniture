@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -37,7 +38,9 @@ const itemVariants: Variants = {
 };
 
 export default function Header0() {
+  const router = useRouter();
   const [showFinder, setShowFinder] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   useEffect(() => {
     const handleUrlCheck = () => {
@@ -81,6 +84,12 @@ export default function Header0() {
     }
   };
 
+  const handleBannerClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsNavigating(true);
+    router.push("/products");
+  };
+
   if (showFinder) {
     return (
       <section id="circular-chairs" className="relative w-full h-[70vh] min-h-[520px] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
@@ -101,6 +110,19 @@ export default function Header0() {
 
   return (
     <section id="circular-chairs" className="relative w-full h-auto aspect-square md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
+      
+      {/* Premium overlay loader */}
+      {isNavigating && (
+        <div className="absolute inset-0 z-50 bg-[#080808]/75 backdrop-blur-md flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 border-4 border-white/20 border-t-[#C8F135] rounded-full animate-spin"></div>
+            <span className="text-white/70 text-xs font-black tracking-[0.25em] uppercase animate-pulse select-none">
+              Loading Astride Setup
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* DESKTOP BANNER CAROUSEL (md and up) */}
       <div className="hidden md:block w-full h-full">
         <Swiper
@@ -116,6 +138,7 @@ export default function Header0() {
               {/* Background Image (Entirely Clickable Link to Products) */}
               <Link 
                 href="/products" 
+                onClick={handleBannerClick}
                 onMouseEnter={prefetchProducts}
                 className="absolute inset-0 z-0 cursor-pointer block"
               >
@@ -147,6 +170,7 @@ export default function Header0() {
             <SwiperSlide key={idx} className="relative w-full h-full">
               <Link 
                 href="/products" 
+                onClick={handleBannerClick}
                 onMouseEnter={prefetchProducts}
                 className="absolute inset-0 z-0 cursor-pointer block"
               >
