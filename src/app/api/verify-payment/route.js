@@ -3,6 +3,7 @@ import crypto from "crypto";
 import connectDB from "@/config/connectDB";
 import Order from "@/models/order/Order";
 import { sendTelegramOrderNotification } from "@/lib/sendTelegramNotification";
+import { sendBrandbnaloNotification } from "@/lib/sendBrandbnaloNotification";
 
 // Force Node.js runtime — crypto and mongoose are incompatible with Edge runtime
 export const runtime = "nodejs";
@@ -51,6 +52,7 @@ export async function POST(req) {
 
     // Fire-and-forget Telegram notification — does NOT block the response
     sendTelegramOrderNotification(finalOrder.toObject ? finalOrder.toObject() : finalOrder, "Razorpay");
+    sendBrandbnaloNotification(finalOrder.toObject ? finalOrder.toObject() : finalOrder, "Razorpay");
 
     return NextResponse.json({
       success: true,
