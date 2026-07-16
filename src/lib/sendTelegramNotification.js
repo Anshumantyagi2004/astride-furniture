@@ -143,3 +143,89 @@ export async function sendTelegramCancelNotification(order) {
     console.error("Telegram cancel notification error:", err);
   }
 }
+
+/**
+ * Sends a contact form / enquiry notification to Telegram.
+ * @param {object} contact - The contact object
+ */
+export async function sendTelegramContactNotification(contact) {
+  try {
+    const message =
+      `✉️ <b>NEW CONTACT/ENQUIRY SUBMISSION</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `👤 <b>Sender Details</b>\n` +
+      `• Name: ${escapeHTML(contact.fullName)}\n` +
+      `• Email: ${escapeHTML(contact.email)}\n` +
+      `• Phone: ${escapeHTML(contact.phone || "N/A")}\n` +
+      `• Company: ${escapeHTML(contact.companyName || "N/A")}\n\n` +
+      `📍 <b>Location</b>\n` +
+      `• City: ${escapeHTML(contact.city)}\n` +
+      `• State: ${escapeHTML(contact.state)}\n\n` +
+      `💬 <b>Message</b>\n` +
+      `<i>${escapeHTML(contact.message)}</i>\n` +
+      `\n━━━━━━━━━━━━━━━━━━━━━━\n` +
+      `🕐 ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST`;
+
+    const response = await fetch(
+      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: message,
+          parse_mode: "HTML",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const err = await response.text();
+      console.error("Telegram contact notification failed:", err);
+    }
+  } catch (err) {
+    console.error("Telegram contact notification error:", err);
+  }
+}
+
+/**
+ * Sends a corporate enquiry notification to Telegram.
+ * @param {object} enquiry - The enquiry object
+ */
+export async function sendTelegramCorporateEnquiryNotification(enquiry) {
+  try {
+    const message =
+      `🏢 <b>NEW CORPORATE ENQUIRY SUBMISSION</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `👤 <b>Sender Details</b>\n` +
+      `• Name: ${escapeHTML(enquiry.fullName)}\n` +
+      `• Email: ${escapeHTML(enquiry.email)}\n` +
+      `• Phone: ${escapeHTML(enquiry.phone || "N/A")}\n` +
+      `• Company: ${escapeHTML(enquiry.companyName)}\n\n` +
+      `📦 <b>Request Details</b>\n` +
+      `• Quantity: ${enquiry.quantity}\n` +
+      `• Location: ${escapeHTML(enquiry.location)}\n` +
+      `\n━━━━━━━━━━━━━━━━━━━━━━\n` +
+      `🕐 ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST`;
+
+    const response = await fetch(
+      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: message,
+          parse_mode: "HTML",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const err = await response.text();
+      console.error("Telegram corporate enquiry notification failed:", err);
+    }
+  } catch (err) {
+    console.error("Telegram corporate enquiry notification error:", err);
+  }
+}

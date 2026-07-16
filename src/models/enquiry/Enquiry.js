@@ -7,7 +7,7 @@ const EnquirySchema = new mongoose.Schema(
     },
     companyName: {
       type: String,
-      required: [true, "Company name is required"],
+      required: false,
     },
     quantity: {
       type: Number,
@@ -19,7 +19,7 @@ const EnquirySchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      default: "",
+      required: [true, "Phone number is required"],
     },
     location: {
       type: String,
@@ -33,4 +33,5 @@ const EnquirySchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+delete mongoose.models.Enquiry;
 export default mongoose.models.Enquiry || mongoose.model("Enquiry", EnquirySchema);
