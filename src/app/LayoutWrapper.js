@@ -1,9 +1,10 @@
 "use client";
 
-// Intercept fetch to deduplicate parallel API calls to product & category endpoints
+// Intercept fetch to deduplicate parallel API calls and cache results for 5 minutes
 if (typeof window !== "undefined" && !window.fetch.__deduped) {
   const originalFetch = window.fetch;
   const pendingRequests = new Map();
+  const resolvedCache = new Map();
 
   window.fetch = function (input, init) {
     const method = (init && init.method) || "GET";
@@ -26,14 +27,24 @@ if (typeof window !== "undefined" && !window.fetch.__deduped) {
     if (isProductApi || isCategoryApi) {
       const cleanUrl = urlString.split("?")[0];
 
+      if (resolvedCache.has(cleanUrl)) {
+        return Promise.resolve(resolvedCache.get(cleanUrl).clone());
+      }
+
       if (pendingRequests.has(cleanUrl)) {
         return pendingRequests.get(cleanUrl).then((res) => res.clone());
       }
 
       const promise = originalFetch.apply(this, arguments)
         .then((response) => {
-          // Remove from pending list immediately so future requests get a fresh stream
           pendingRequests.delete(cleanUrl);
+          if (response.ok) {
+            const responseClone = response.clone();
+            resolvedCache.set(cleanUrl, responseClone);
+            setTimeout(() => {
+              resolvedCache.delete(cleanUrl);
+            }, 300000); // cache for 5 minutes
+          }
           return response;
         })
         .catch((err) => {
