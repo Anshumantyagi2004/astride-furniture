@@ -114,14 +114,21 @@ export default function LayoutWrapper({ children }) {
   useEffect(() => {
     if (isAdmin) return;
 
+    let timeoutId;
+
     const handleScroll = () => {
-      sessionStorage.setItem("scrollPosition_" + pathname, window.scrollY.toString());
+      if (timeoutId) clearTimeout(timeoutId);
+
+      timeoutId = setTimeout(() => {
+        sessionStorage.setItem("scrollPosition_" + pathname, window.scrollY.toString());
+      }, 150); // 150ms debounce
     };
 
     window.addEventListener("scroll", handleScroll);
     
     // Save position before route changes / component unmounts
     return () => {
+      if (timeoutId) clearTimeout(timeoutId);
       sessionStorage.setItem("scrollPosition_" + pathname, window.scrollY.toString());
       window.removeEventListener("scroll", handleScroll);
     };
