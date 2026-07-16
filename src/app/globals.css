@@ -6,12 +6,7 @@
 
 html, body {
   max-width: 100vw;
-  overflow-x: hidden; /* clip causes iOS Safari white flash during overscroll */
-}
-
-html {
-  /* Prevents white flash during iOS overscroll bounce at top of page */
-  background-color: #080808;
+  overflow-x: clip;
 }
 
 body {

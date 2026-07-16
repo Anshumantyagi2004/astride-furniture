@@ -87,6 +87,17 @@ export default function LayoutWrapper({ children }) {
     }
   }, [pathname]);
 
+  // iOS overscroll bounce background fix — page-specific
+  // Sets the html element background to match each page's top color
+  // so iOS Safari shows the correct color during rubber-band bounce at top
+  useEffect(() => {
+    if (pathname === "/") {
+      document.documentElement.style.backgroundColor = "#080808";
+    } else {
+      document.documentElement.style.backgroundColor = "#ffffff";
+    }
+  }, [pathname]);
+
   useEffect(() => {
     if (isAdmin) return;
 
