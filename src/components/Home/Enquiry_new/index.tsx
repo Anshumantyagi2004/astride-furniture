@@ -108,7 +108,7 @@ export default function Enquiry_New() {
   });
 
   const validateField = (name: string, value: string) => {
-    if (name !== "phone" && !value.trim()) return "Required field";
+    if (name !== "companyName" && !value.trim()) return "Required field";
 
     if (name === "email") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -314,7 +314,7 @@ export default function Enquiry_New() {
 
                   <div className="flex flex-col">
                     <label className="mb-2 block text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#131313]">
-                      Company*
+                      Company
                     </label>
                     <input
                       name="companyName"
@@ -359,7 +359,7 @@ export default function Enquiry_New() {
 
                   <div className="flex flex-col">
                     <label className="mb-2 block text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#131313]">
-                      Phone
+                      Phone*
                     </label>
                     <input
                       type="text"

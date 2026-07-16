@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
 import Contact from "@/models/contact/Contact";
 import { verifyAdmin } from "@/lib/verifyAdmin";
+import { sendTelegramContactNotification } from "@/lib/sendTelegramNotification";
+import { sendBrandbnaloContactNotification } from "@/lib/sendBrandbnaloNotification";
 
 // 1. Submit a Contact Form (POST)
 export async function POST(req) {
@@ -26,6 +28,12 @@ export async function POST(req) {
       city,
       message,
     });
+
+    // Fire-and-forget Telegram notification — does NOT block response
+    sendTelegramContactNotification(contact.toObject ? contact.toObject() : contact);
+    
+    // Fire-and-forget Brandbnalo notification
+    sendBrandbnaloContactNotification(contact.toObject ? contact.toObject() : contact);
 
     return NextResponse.json({
       success: true,

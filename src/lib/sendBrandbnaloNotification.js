@@ -69,3 +69,77 @@ export async function sendBrandbnaloNotification(order, paymentType) {
     console.error("Brandbnalo notification error:", err);
   }
 }
+
+/**
+ * Sends contact form details to brandbnalo
+ * @param {object} contact
+ */
+export async function sendBrandbnaloContactNotification(contact) {
+  try {
+    const message = 
+      `<b>NEW CONTACT FORM SUBMISSION</b><br><br>` +
+      `<b>COMPANY NAME:</b> ${contact.companyName || "N/A"}<br>` +
+      `<b>MESSAGE:</b><br>${contact.message}`;
+
+    const payload = {
+      supplierToken: "7311164111",
+      platform: "Website Contact Page",
+      platformEmail: "algoknightcode@gmail.com",
+      name: contact.fullName || "N/A",
+      phone: contact.phone || "N/A",
+      email: contact.email || "N/A",
+      product: "Contact Form / General Enquiry",
+      place: `${contact.city || ""}, ${contact.state || ""}`,
+      message: message
+    };
+
+    const response = await fetch("https://brandbnalo.com/api/form/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      console.error("Brandbnalo contact notification failed:", await response.text());
+    }
+  } catch (err) {
+    console.error("Brandbnalo contact notification error:", err);
+  }
+}
+
+/**
+ * Sends corporate enquiry details to brandbnalo
+ * @param {object} enquiry
+ */
+export async function sendBrandbnaloEnquiryNotification(enquiry) {
+  try {
+    const message = 
+      `<b>NEW CORPORATE ENQUIRY SUBMISSION</b><br><br>` +
+      `<b>COMPANY NAME:</b> ${enquiry.companyName || "N/A"}<br>` +
+      `<b>NO. OF CHAIRS:</b> ${enquiry.quantity}<br>`;
+
+    const payload = {
+      supplierToken: "7311164111",
+      platform: "Website Contact Page",
+      platformEmail: "algoknightcode@gmail.com",
+      name: enquiry.fullName || "N/A",
+      phone: enquiry.phone || "N/A",
+      email: enquiry.email || "N/A",
+      product: "Corporate Enquiry (Bulk Order)",
+      place: enquiry.location || "N/A",
+      message: message
+    };
+
+    const response = await fetch("https://brandbnalo.com/api/form/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      console.error("Brandbnalo enquiry notification failed:", await response.text());
+    }
+  } catch (err) {
+    console.error("Brandbnalo enquiry notification error:", err);
+  }
+}

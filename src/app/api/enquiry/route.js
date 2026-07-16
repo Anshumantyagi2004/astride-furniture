@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
 import Enquiry from "@/models/enquiry/Enquiry";
 import { verifyAdmin } from "@/lib/verifyAdmin";
+import { sendTelegramCorporateEnquiryNotification } from "@/lib/sendTelegramNotification";
+import { sendBrandbnaloEnquiryNotification } from "@/lib/sendBrandbnaloNotification";
 
 // Handle POST request to submit a new corporate enquiry
 export async function POST(req) {
@@ -12,7 +14,7 @@ export async function POST(req) {
     const { fullName, companyName, quantity, email, phone, location } = body;
 
     // Validate required fields
-    if (!fullName || !companyName || !quantity || !email || !location) {
+    if (!fullName || !quantity || !email || !location || !phone) {
       return NextResponse.json(
         { success: false, message: "Missing required fields" },
         { status: 400 }
@@ -21,12 +23,18 @@ export async function POST(req) {
 
     const enquiry = await Enquiry.create({
       fullName,
-      companyName,
+      companyName: companyName || "",
       quantity: Number(quantity),
       email,
-      phone: phone || "",
+      phone,
       location,
     });
+
+    // Fire-and-forget Telegram notification — does NOT block response
+    sendTelegramCorporateEnquiryNotification(enquiry.toObject ? enquiry.toObject() : enquiry);
+
+    // Fire-and-forget Brandbnalo notification
+    sendBrandbnaloEnquiryNotification(enquiry.toObject ? enquiry.toObject() : enquiry);
 
     return NextResponse.json({
       success: true,
