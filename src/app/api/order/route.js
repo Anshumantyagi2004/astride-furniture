@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
 import Order from "@/models/order/Order";
 import { sendTelegramOrderNotification } from "@/lib/sendTelegramNotification";
+import { sendBrandbnaloNotification } from "@/lib/sendBrandbnaloNotification";
 import { verifyAdmin } from "@/lib/verifyAdmin";
 
 // Force Node.js runtime — mongoose and env vars (TELEGRAM_BOT_TOKEN) require Node runtime
@@ -16,6 +17,7 @@ export async function POST(req) {
 
     // Fire-and-forget Telegram notification — does NOT block the response
     sendTelegramOrderNotification(order.toObject ? order.toObject() : order, body.paymentMethod || "COD");
+    sendBrandbnaloNotification(order.toObject ? order.toObject() : order, body.paymentMethod || "COD");
 
     return NextResponse.json({
       success: true,
