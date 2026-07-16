@@ -3,13 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus_Jakarta_Sans } from "next/font/google";
-
-const sans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-sans",
-});
 
 const BestSellerCard = ({ product }) => {
   const router = useRouter();
@@ -186,14 +179,14 @@ export default function BestSeller() {
 
   return (
     <section 
-      className={`w-full bg-white pt-2 pb-6 md:pt-4 md:pb-8 px-6 md:px-12 lg:px-20 ${sans.className}`} 
+      className="w-full bg-white pt-2 pb-6 md:pt-4 md:pb-8 px-6 md:px-12 lg:px-20 font-sans" 
     >
       <div className="max-w-[1440px] mx-auto">
         
         {/* Header Area */}
         <div className="mb-5 flex flex-col items-start md:flex-row md:items-end md:justify-between gap-5 px-0 md:px-2">
           <div>
-            <h2 className={`mt-0 text-[32px] font-black leading-tight text-[#131313] md:text-[42px] lg:text-[48px] ${sans.className}`}>
+            <h2 className="mt-0 text-[32px] font-black leading-tight text-[#131313] md:text-[42px] lg:text-[48px] font-sans">
               Best{" "}
               <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold">
                 sellers.
@@ -203,7 +196,7 @@ export default function BestSeller() {
 
           <Link
             href="/products"
-            className={`inline-flex items-center gap-2 rounded-full bg-[#131313] px-6 py-3 font-bold text-white transition duration-300 hover:-translate-y-1 hover:bg-[#1F1F1F] hover:shadow-xl ${sans.className}`}
+            className="inline-flex items-center gap-2 rounded-full bg-[#131313] px-6 py-3 font-bold text-white transition duration-300 hover:-translate-y-1 hover:bg-[#1F1F1F] hover:shadow-xl font-sans"
           >
             Browse all products 
             <span className="text-lg">→</span>
