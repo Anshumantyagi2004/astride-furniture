@@ -4,13 +4,6 @@ import { useState, useEffect, useRef, useMemo, MouseEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Plus_Jakarta_Sans } from "next/font/google";
-
-const sans = Plus_Jakarta_Sans({
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700", "800"],
-    variable: "--font-sans",
-});
 
 interface SeriesChair {
     name: string;
@@ -279,7 +272,7 @@ export default function Navbar3() {
     return (
         <>
             {/* Top Bar */}
-            <div className={`bg-slate-900 text-white text-[13px] font-medium py-[9px] ${sans.className}`}>
+            <div className="bg-slate-900 text-white text-[13px] font-medium py-[9px] font-sans">
                 <div className="max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex items-center justify-between gap-4">
                     <a
                         href="tel:+917311164111"
@@ -314,7 +307,7 @@ export default function Navbar3() {
 
             {/* Header */}
             <header
-                className={`sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b-2 border-slate-900 ${sans.className}`}
+                className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b-2 border-slate-900 font-sans"
                 onMouseLeave={() => setActiveMenu(null)}
             >
                 <div className="max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-[14px] flex items-center justify-between gap-6 relative">

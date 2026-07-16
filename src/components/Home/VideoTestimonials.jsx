@@ -3,19 +3,12 @@
 // 1. ADDED useEffect to imports
 import { useState, useEffect, useRef } from "react";
 import { m, LazyMotion, domAnimation, AnimatePresence, useInView } from "framer-motion";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import { FaYoutube, FaInstagram, FaPlay, FaStar, FaArrowRight } from "react-icons/fa6";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
-
-const sans = Plus_Jakarta_Sans({
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700", "800"],
-    variable: "--font-sans",
-});
 
 const videos = [
     {
@@ -325,7 +318,7 @@ export default function VideoTestimonials() {
         <LazyMotion features={domAnimation}>
             <section
                 ref={sectionRef}
-                className={`relative w-full pt-2 pb-0 lg:pt-3 lg:pb-14 overflow-hidden ${sans.className}`}
+                className="relative w-full pt-2 pb-0 lg:pt-3 lg:pb-14 overflow-hidden font-sans"
                 style={{ backgroundColor: "#0d0d0d" }}
             >
                 <div className="absolute top-0 left-1/4 w-[400px] h-[400px] rounded-full blur-[100px] opacity-15 pointer-events-none"
