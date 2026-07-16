@@ -1,5 +1,55 @@
 "use client";
 
+// Intercept fetch to deduplicate parallel API calls to product & category endpoints
+if (typeof window !== "undefined" && !window.fetch.__deduped) {
+  const originalFetch = window.fetch;
+  const pendingRequests = new Map();
+
+  window.fetch = function (input, init) {
+    const method = (init && init.method) || "GET";
+    if (method.toUpperCase() !== "GET") {
+      return originalFetch.apply(this, arguments);
+    }
+
+    let urlString = "";
+    if (typeof input === "string") {
+      urlString = input;
+    } else if (input instanceof URL) {
+      urlString = input.href;
+    } else if (input && typeof input === "object" && input.url) {
+      urlString = input.url;
+    }
+
+    const isProductApi = urlString.includes("/api/product");
+    const isCategoryApi = urlString.includes("/api/category");
+
+    if (isProductApi || isCategoryApi) {
+      const cleanUrl = urlString.split("?")[0];
+
+      if (pendingRequests.has(cleanUrl)) {
+        return pendingRequests.get(cleanUrl).then((res) => res.clone());
+      }
+
+      const promise = originalFetch.apply(this, arguments)
+        .then((response) => {
+          // Remove from pending list immediately so future requests get a fresh stream
+          pendingRequests.delete(cleanUrl);
+          return response;
+        })
+        .catch((err) => {
+          pendingRequests.delete(cleanUrl);
+          throw err;
+        });
+
+      pendingRequests.set(cleanUrl, promise);
+      return promise.then((res) => res.clone());
+    }
+
+    return originalFetch.apply(this, arguments);
+  };
+  window.fetch.__deduped = true;
+}
+
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Navbar3 from "@/components/Home/Navbar3";
