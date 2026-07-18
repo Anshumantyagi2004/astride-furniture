@@ -75,7 +75,7 @@ function ChairCard({ chair, products, priorityLoad }) {
             className={`group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden transition-all duration-300 block h-full w-full cursor-pointer md:hover:border-zinc-400 md:hover:-translate-y-3 md:hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] ${sans.className}`}
         >
             {/* HOVER GLOW (Desktop Only) */}
-            <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+            <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 
             {/* IMAGE CONTAINER */}
             <div className="relative h-[300px] md:h-[420px] flex items-center justify-center p-6">

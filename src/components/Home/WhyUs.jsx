@@ -137,7 +137,7 @@ export default function WhyUs() {
                             className="group relative rounded-[28px] border border-slate-200/70 bg-white p-8 flex flex-row items-center gap-4 md:block overflow-hidden transition-all duration-400 hover:border-slate-300 hover:shadow-[0_16px_48px_rgba(15,23,42,0.06)] cursor-default max-md:!opacity-100 max-md:!transform-none"
                         >
                             {/* CARD GLASSY TOP HIGHLIGHT */}
-                            <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
+                            <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-white/0 via-white to-white/0" />
 
                             {/* TOP NUMBER */}
                             <span className="absolute top-7 right-8 text-5xl font-black text-slate-100 group-hover:text-slate-200 transition-colors duration-500 select-none leading-none hidden md:block font-sans">
