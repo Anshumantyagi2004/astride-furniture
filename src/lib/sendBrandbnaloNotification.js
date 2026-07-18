@@ -1,3 +1,7 @@
+import connectDB from "@/config/connectDB";
+import Product from "@/models/Product";
+import Category from "@/models/Category";
+
 /**
  * Sends order details to the brandbnalo.com API submission endpoint
  * @param {object} order - The order object
@@ -9,23 +13,51 @@ export async function sendBrandbnaloNotification(order, paymentType) {
     const products = order.products || [];
     const pricing = order.pricing || {};
 
+    // Connect to database to retrieve category information
+    await connectDB();
+
+    // Enrich each product with its category name from database
+    const enrichedProducts = await Promise.all(
+      products.map(async (p) => {
+        let categoryName = "N/A";
+        if (p.productId) {
+          try {
+            const productDoc = await Product.findById(p.productId).populate("category");
+            if (productDoc && productDoc.category) {
+              categoryName = productDoc.category.name || "N/A";
+            }
+          } catch (err) {
+            console.error("Error fetching product details for brandbnalo mail:", err);
+          }
+        }
+        return {
+          ...p,
+          category: categoryName,
+        };
+      })
+    );
+
     // 1. Gather all product names
     const productNames = products.map(p => p.productName).join(", ") || "No products";
 
     // 2. Format place / address
     const place = `${shipping.address || ""}, ${shipping.city || ""}, ${shipping.state || ""} - ${shipping.pinCode || ""}`;
 
-    // 3. Format the detailed message listing
-    const productDetailsText = products
-      .map(
-        (p) =>
+    // 3. Format the detailed message listing with Category and Link included
+    const productDetailsText = enrichedProducts
+      .map((p) => {
+        const productLink = `https://astride.in/products/${p.slug || p.productId}`;
+        return (
           `• <b>Product:</b> ${p.productName}<br>` +
+          `  - <b>Category:</b> ${p.category}<br>` +
           `  - <b>Product ID:</b> ${p.productId || "N/A"}<br>` +
           `  - <b>Color:</b> ${p.color || "N/A"}<br>` +
           `  - <b>Quantity:</b> ${p.quantity}<br>` +
           `  - <b>Unit Price:</b> ₹${(p.price || 0).toLocaleString("en-IN")}<br>` +
-          `  - <b>Total Price:</b> ₹${((p.price || 0) * (p.quantity || 1)).toLocaleString("en-IN")}`
-      )
+          `  - <b>Total Price:</b> ₹${((p.price || 0) * (p.quantity || 1)).toLocaleString("en-IN")}<br>` +
+          `  - <b>Product Link:</b> <a href="${productLink}" target="_blank">Click here to view</a>`
+        );
+      })
       .join("<br><br>");
 
     const totalAmount = pricing.total || (pricing.subtotal || 0) + (pricing.shippingCharge || 0);

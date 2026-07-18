@@ -120,9 +120,9 @@ export default function CheckoutPage() {
     setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
   }, []);
 
-  const removeItem = useCallback((id: string | number) => {
+  const removeItem = useCallback((id: string | number, color?: string) => {
     setCartItems(prev => {
-      const updated = prev.filter(item => item.id !== id);
+      const updated = prev.filter(item => !(item.id === id && (item.color || "") === (color || "")));
       localStorage.setItem('astride_cart', JSON.stringify(updated));
       return updated;
     });
@@ -551,9 +551,9 @@ export default function CheckoutPage() {
                 <div className="space-y-6">
                   <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-neutral-200">
                     {cartItems.map((item) => (
-                      <div key={item.id} className="relative flex gap-4 items-center bg-neutral-50 p-3 rounded-2xl border border-neutral-100">
+                      <div key={`${item.id}-${item.color || ""}`} className="relative flex gap-4 items-center bg-neutral-50 p-3 rounded-2xl border border-neutral-100">
                         <button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(item.id, item.color)}
                           aria-label="Remove item"
                           className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full bg-neutral-200 hover:bg-red-100 hover:text-red-500 text-neutral-500 transition-all duration-200 text-[10px] font-black leading-none"
                         >

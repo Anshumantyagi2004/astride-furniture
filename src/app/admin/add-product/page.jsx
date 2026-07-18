@@ -111,11 +111,7 @@ const handleImageChange = async (index, e) => {
     const convertToWebP = (file) => {
         return new Promise((resolve, reject) => {
 
-            // Skip conversion if already WebP
-            if (file.type === "image/webp") {
-                resolve(file);
-                return;
-            }
+
 
             const reader = new FileReader();
 
@@ -205,7 +201,7 @@ const handleImageChange = async (index, e) => {
             ...updated[index].previews,
             ...webpFiles.map((file) => ({
                 url: URL.createObjectURL(file),
-                originalSize: file.originalSize,
+                originalSize: file.originalSize || file.size,
                 newSize: file.size,
             }))
         ];
