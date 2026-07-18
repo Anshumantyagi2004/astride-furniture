@@ -137,7 +137,7 @@ export default function Header6_New() {
                   
                 />
                 {/* Layered gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 from-5% via-black/30 via-45% to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 from-5% via-black/30 via-45% to-black/0 pointer-events-none" />
               </div>
 
               {/* Accent badge top-right */}

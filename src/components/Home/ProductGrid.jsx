@@ -110,7 +110,7 @@ export default function ShopTheLook() {
                                 className="object-cover rounded-[30px] group-hover:scale-105 transition-all duration-700"
                             />
 
-                            <div className="absolute inset-0 rounded-[30px] bg-gradient-to-t from-[#161316]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                            <div className="absolute inset-0 rounded-[30px] bg-gradient-to-t from-[#161316]/40 via-[#161316]/0 to-[#161316]/0 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
 
                             <div className="absolute z-[999]" style={{ top: product.top, left: product.left, }}>
                                 <div className="relative group/dot">

@@ -43,7 +43,7 @@ export default function Reviews_New() {
       style={{
         backgroundColor: "#F5EFE6",
         backgroundImage:
-          "linear-gradient(#d6c9b8 1px, transparent 1px), linear-gradient(90deg, #d6c9b8 1px, transparent 1px)",
+          "linear-gradient(#d6c9b8 1px, #F5EFE6 1px), linear-gradient(90deg, #d6c9b8 1px, #F5EFE6 1px)",
         backgroundSize: "32px 32px",
       }}
     >
