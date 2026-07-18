@@ -57,7 +57,11 @@ export default function SideMenuAddToCart() {
     const handleAddToCart = (e: Event) => {
       const newItem = (e as CustomEvent<CartItem>).detail;
       setCartItems((prev) => {
-        const idx = prev.findIndex(i => i.id.toString() === newItem.id.toString());
+        // Match by BOTH id AND color — same product in different colors = separate cart entries
+        const idx = prev.findIndex(i =>
+          i.id.toString() === newItem.id.toString() &&
+          (i.color || "") === (newItem.color || "")
+        );
         const updated = idx > -1
           ? prev.map((i, n) => n === idx ? { ...i, quantity: i.quantity + (newItem.quantity || 1) } : i)
           : [...prev, { ...newItem, quantity: newItem.quantity || 1 }];
@@ -77,23 +81,23 @@ export default function SideMenuAddToCart() {
     };
   }, [isMounted, syncCartState]);
 
-  const handleUpdateQuantity = useCallback((id: string | number, delta: number) => {
+  const handleUpdateQuantity = useCallback((id: string | number, color: string | undefined, delta: number) => {
     startTransition(() => {
       setCartItems((prev) => {
-        const item = prev.find(i => i.id === id);
+        const item = prev.find(i => i.id === id && (i.color || "") === (color || ""));
         const updated = item?.quantity === 1 && delta === -1
-          ? prev.filter(i => i.id !== id)
-          : prev.map(i => i.id === id ? { ...i, quantity: Math.max(1, i.quantity + delta) } : i);
+          ? prev.filter(i => !(i.id === id && (i.color || "") === (color || "")))
+          : prev.map(i => i.id === id && (i.color || "") === (color || "") ? { ...i, quantity: Math.max(1, i.quantity + delta) } : i);
         syncCartState(updated);
         return updated;
       });
     });
   }, [syncCartState]);
 
-  const handleRemoveItem = useCallback((id: string | number) => {
+  const handleRemoveItem = useCallback((id: string | number, color: string | undefined) => {
     startTransition(() => {
       setCartItems((prev) => {
-        const updated = prev.filter(i => i.id !== id);
+        const updated = prev.filter(i => !(i.id === id && (i.color || "") === (color || "")));
         syncCartState(updated);
         return updated;
       });
@@ -156,7 +160,7 @@ export default function SideMenuAddToCart() {
             </div>
           ) : (
             cartItems.map((item) => (
-              <div key={item.id} className="flex gap-4 border-b border-neutral-100/50 pb-5 items-start relative group">
+              <div key={`${item.id}-${item.color || ""}`} className="flex gap-4 border-b border-neutral-100/50 pb-5 items-start relative group">
                 {/* Image */}
                 <div className="relative w-20 h-20 bg-neutral-50 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-neutral-100 p-1">
                   <Image 
@@ -195,7 +199,7 @@ export default function SideMenuAddToCart() {
                   <div className="flex justify-between items-center mt-3">
                     <div className="flex items-center gap-1 bg-neutral-50 rounded-lg p-0.5 border border-neutral-200/50">
                       <button 
-                        onClick={() => handleUpdateQuantity(item.id, -1)}
+                        onClick={() => handleUpdateQuantity(item.id, item.color, -1)}
                         className="w-6 h-6 flex items-center justify-center text-neutral-500 hover:text-black rounded transition-colors"
                       >
                         <Minus size={11} strokeWidth={2.5} />
@@ -204,7 +208,7 @@ export default function SideMenuAddToCart() {
                         {item.quantity}
                       </span>
                       <button 
-                        onClick={() => handleUpdateQuantity(item.id, 1)}
+                        onClick={() => handleUpdateQuantity(item.id, item.color, 1)}
                         className="w-6 h-6 flex items-center justify-center text-neutral-500 hover:text-black rounded transition-colors"
                       >
                         <Plus size={11} strokeWidth={2.5} />
@@ -212,7 +216,7 @@ export default function SideMenuAddToCart() {
                     </div>
 
                     <button 
-                      onClick={() => handleRemoveItem(item.id)}
+                      onClick={() => handleRemoveItem(item.id, item.color)}
                       className="w-7 h-7 rounded-lg hover:bg-neutral-100 flex items-center justify-center text-neutral-400 hover:text-red-500 transition-all border border-neutral-100"
                     >
                       <X size={12} strokeWidth={2.5} />

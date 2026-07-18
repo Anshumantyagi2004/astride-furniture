@@ -79,6 +79,7 @@ interface WishlistItem {
   image: string;
   slug?: string;
   rating: number;
+  color?: string;
 }
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -262,6 +263,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
         price: item.price,
         image: item.image,
         slug: item.slug,
+        color: item.color,
         quantity: 1
       }
     });
@@ -708,7 +710,9 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                           name: item.productName,
                                           price: item.price,
                                           image: item.image,
-                                          quantity: item.quantity
+                                          quantity: item.quantity,
+                                          color: item.color,
+                                          slug: item.slug
                                         }
                                       });
                                       window.dispatchEvent(cartEvent);

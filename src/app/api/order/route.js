@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connectDB";
 import Order from "@/models/order/Order";
+import Product from "@/models/Product";
+import Category from "@/models/Category";
 import { sendTelegramOrderNotification } from "@/lib/sendTelegramNotification";
 import { sendBrandbnaloNotification } from "@/lib/sendBrandbnaloNotification";
 import { verifyAdmin } from "@/lib/verifyAdmin";
@@ -43,13 +45,39 @@ export async function GET() {
   try {
     await connectDB();
 
-    const orders = await Order.find().sort({
-      createdAt: -1,
+    // Populate products.productId and its category to fetch the category name
+    const orders = await Order.find()
+      .populate({
+        path: "products.productId",
+        populate: {
+          path: "category",
+        },
+      })
+      .sort({
+        createdAt: -1,
+      });
+
+    // Map orders to keep the exact same JSON structure, adding category name flat
+    const formattedOrders = orders.map((order) => {
+      const orderObj = order.toObject();
+      orderObj.products = orderObj.products.map((p) => {
+        let categoryName = p.category;
+        if (p.productId && typeof p.productId === "object") {
+          categoryName = p.productId.category?.name || categoryName;
+          // Restore productId to its string representation to prevent breaking frontend code
+          p.productId = p.productId._id.toString();
+        }
+        return {
+          ...p,
+          category: categoryName || "N/A",
+        };
+      });
+      return orderObj;
     });
 
     return NextResponse.json({
       success: true,
-      orders,
+      orders: formattedOrders,
     });
   } catch (error) {
     return NextResponse.json(

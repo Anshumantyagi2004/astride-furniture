@@ -20,6 +20,7 @@ interface WishlistItem {
   image: string;
   slug?: string;
   rating: number;
+  color?: string;
 }
 
 export default function WishlistPage() {
@@ -59,6 +60,7 @@ export default function WishlistPage() {
         price: item.price,
         image: item.image,
         slug: item.slug,
+        color: item.color,
         quantity: 1
       }
     });

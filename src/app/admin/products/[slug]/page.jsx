@@ -187,10 +187,7 @@ export default function Page() {
 
         const convertToWebP = (file) => {
             return new Promise((resolve, reject) => {
-                if (file.type === "image/webp") {
-                    resolve(file);
-                    return;
-                }
+
 
                 const reader = new FileReader();
                 reader.onload = (event) => {
@@ -236,7 +233,7 @@ export default function Page() {
                 ...updated[index].previews,
                 ...webpFiles.map((file) => ({
                     url: URL.createObjectURL(file),
-                    originalSize: file.originalSize,
+                    originalSize: file.originalSize || file.size,
                     newSize: file.size,
                 }))
             ];

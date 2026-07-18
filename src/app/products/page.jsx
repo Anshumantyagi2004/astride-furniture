@@ -11,7 +11,8 @@ export const revalidate = 0;
 
 // Dynamic metadata generator based on category query param and database values
 export async function generateMetadata({ searchParams }) {
-  const categoryName = searchParams?.category;
+  const resolvedSearchParams = await searchParams;
+  const categoryName = resolvedSearchParams?.category;
 
   if (categoryName) {
     try {

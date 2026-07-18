@@ -84,7 +84,9 @@ export default function DetailPageCard({ product }: { product: any }) {
         originalPrice: product.originalPrice || product.price * 2,
         discount: discountVal.replace("-", ""),
         image: activeImage || product.image,
-        rating: product.rating || 4.7
+        rating: product.rating || 4.7,
+        color: selectedColor,
+        slug: product.slug
       });
       setIsWishlisted(true);
     }
