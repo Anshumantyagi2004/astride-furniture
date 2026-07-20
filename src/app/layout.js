@@ -48,8 +48,17 @@ export default function RootLayout({ children }) {
         />
         <script defer src="https://cloud.umami.is/script.js" data-website-id="24892c29-995b-4c38-baa1-308094691027"></script>
 
-        
-
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(c,l,a,r,i,t,y){
+                  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", "xp9s24y2or");
+            `,
+          }}
+        />
         <link
           rel="preload"
           href="/3D_asset_glb/a3.glb"
