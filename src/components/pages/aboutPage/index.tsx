@@ -7,7 +7,7 @@ import { Timeline } from '@/components/ui/timeline';
 import bannerImage from './about_image.png';
 
 const stats = [
-  { value: '2018', label: 'Founded' },
+  { value: '2015', label: 'Founded' },
   { value: '50K+', label: 'Happy Customers' },
   { value: '12+', label: 'Countries Served' },
   { value: '40+', label: 'Products Designed' },
@@ -147,7 +147,7 @@ export default function AboutPage() {
             transition={{ duration: 0.7, delay: 0.15 }}
           >
             <p className="text-zinc-600 text-base sm:text-lg leading-relaxed mb-5">
-              Astride was born in a small workshop in New Delhi in 2018. We were tired of choosing between chairs that looked good and chairs that felt good. So we built our own.
+              Astride was born in a small workshop in New Delhi in 2015. We were tired of choosing between chairs that looked good and chairs that felt good. So we built our own.
             </p>
             <p className="text-zinc-600 text-base sm:text-lg leading-relaxed">
               Today, we're a team of engineers, designers, and ergonomics researchers united by one belief: the best chair is one you stop thinking about — because it simply disappears beneath you.
@@ -201,7 +201,7 @@ export default function AboutPage() {
         subtitle={<div className="h-4" />}
         data={[
           {
-            title: "2018",
+            title: "2015",
             content: (
               <div className="space-y-4">
                 <h4 className="text-2xl sm:text-3xl font-bold text-zinc-900 uppercase tracking-tight">The Workshop Begins</h4>
