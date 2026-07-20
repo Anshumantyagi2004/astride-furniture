@@ -315,7 +315,7 @@ const CertCard = memo(({
   };
 
   return (
-    <div className="w-full relative min-h-[640px] sm:min-h-[580px] flex flex-col" style={{ perspective: "1000px" }}>
+    <div className="w-full relative h-[640px] sm:h-[580px] flex flex-col" style={{ perspective: "1000px" }}>
       <div 
         style={{
           width: "100%",

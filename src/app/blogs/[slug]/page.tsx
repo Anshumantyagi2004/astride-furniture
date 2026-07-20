@@ -112,7 +112,7 @@ export default function BlogDetailsPage({
       />
 
       {/* Hero Section with Parallax */}
-      <section className="relative h-[60vh] md:h-[80vh] min-h-[400px] md:min-h-[600px] w-full overflow-hidden bg-black flex items-end">
+      <section className="relative h-[60vh] md:h-[80vh] min-h-[400px] md:min-h-[600px] w-full overflow-hidden bg-zinc-100 flex items-end">
         <motion.div 
           className="absolute inset-0 z-0"
           style={{ 
@@ -122,15 +122,13 @@ export default function BlogDetailsPage({
           }}
         >
           <Image
-            src="/blogs/desktop_banner.webp"
+            src="/Png1/about_2.webp"
             alt={blog.title}
             fill
             priority
             sizes="(max-width: 768px) 100vw, 100vw"
             className="object-cover opacity-100"
           />
-          {/* Subtle bottom gradient only for text readability */}
-          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         </motion.div>
 
         {/* Title Block */}
@@ -141,29 +139,29 @@ export default function BlogDetailsPage({
             transition={{ duration: 0.8, delay: 0.2 }}
             className="flex flex-col items-center text-center space-y-4 md:space-y-8"
           >
-            <span className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-white/10 text-white/90 backdrop-blur-md border border-white/20 text-xs md:text-sm font-bold tracking-widest uppercase">
+            <span className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-zinc-900/10 text-zinc-900 backdrop-blur-md border border-zinc-900/20 text-xs md:text-sm font-bold tracking-widest uppercase">
               <BookOpen size={16} />
               {blog.category || "Workspace"}
             </span>
 
-            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-white tracking-tighter leading-[1.1] max-w-5xl">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-zinc-900 tracking-tighter leading-[1.1] max-w-5xl">
               {blog.title}
             </h1>
 
-            <div className="flex flex-col sm:flex-wrap sm:items-center sm:justify-center gap-3 sm:gap-x-8 sm:gap-y-4 text-white/70 text-xs sm:text-base md:text-lg font-medium pt-2 md:pt-4">
+            <div className="flex flex-col sm:flex-wrap sm:items-center sm:justify-center gap-3 sm:gap-x-8 sm:gap-y-4 text-zinc-700 text-xs sm:text-base md:text-lg font-medium pt-2 md:pt-4">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <User size={16} className="text-white" />
+                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-zinc-900/10 flex items-center justify-center">
+                  <User size={16} className="text-zinc-800" />
                 </div>
-                <span className="text-white/90 text-sm md:text-base">{blog.author || "Astride Team"}</span>
+                <span className="text-zinc-900 font-semibold text-sm md:text-base">{blog.author || "Astride Team"}</span>
               </div>
-              <span className="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block"></span>
-              <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 hidden sm:block"></span>
+              <div className="flex items-center gap-2 text-zinc-800 font-semibold">
                 <Clock size={18} />
-                <span className="text-sm md:text-base">{blog.readTime || "5 min read"} read</span>
+                <span className="text-sm md:text-base">{blog.readTime ? (blog.readTime.includes("read") ? blog.readTime : `${blog.readTime} read`) : "5 min read"}</span>
               </div>
-              <span className="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block"></span>
-              <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 hidden sm:block"></span>
+              <div className="flex items-center gap-2 text-zinc-800 font-semibold">
                 <Calendar size={18} />
                 <span className="text-sm md:text-base">
                   {new Date(blog.date || blog.createdAt).toLocaleDateString("en-US", {

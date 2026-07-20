@@ -50,17 +50,7 @@ export default function BlogsPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative h-[350px] md:h-[500px] w-full overflow-hidden">
-        <Image
-          src={banner}
-          alt="Blog Banner"
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, 100vw"
-          className="object-cover object-center scale-105"
-        />
-
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+      <section className="relative h-[350px] md:h-[500px] w-full overflow-hidden bg-zinc-950">
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center text-center px-4">
           {!isMobile && (
