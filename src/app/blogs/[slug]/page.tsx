@@ -121,10 +121,7 @@ export default function BlogDetailsPage({
             transition={{ duration: 0.8, delay: 0.2 }}
             className="flex flex-col items-center text-center space-y-4 md:space-y-8"
           >
-            <span className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-zinc-900/10 text-zinc-900 backdrop-blur-md border border-zinc-900/20 text-xs md:text-sm font-bold tracking-widest uppercase">
-              <BookOpen size={16} />
-              {blog.category || "Workspace"}
-            </span>
+
 
             <div className="relative px-6 py-4 md:px-12 md:py-8 rounded-3xl bg-white/40 backdrop-blur-md border border-white/60 shadow-[0_0_50px_rgba(255,255,255,0.8)]">
               <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold text-zinc-900 tracking-tighter leading-[1.1] max-w-5xl">
