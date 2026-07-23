@@ -51,16 +51,6 @@ export default function BlogCard({
           />
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-
-          <div className="absolute left-4 md:left-5 top-4 md:top-5 rounded-full bg-white/15 px-3 md:px-4 py-1.5 md:py-2 text-xs text-white backdrop-blur-md">
-            {date}
-          </div>
-
-          <div className="absolute bottom-4 md:bottom-5 left-4 md:left-5">
-            <span className="rounded-full bg-white px-3 md:px-4 py-1.5 md:py-2 text-xs font-semibold uppercase tracking-wider text-neutral-800">
-              {category}
-            </span>
-          </div>
         </div>
 
         <div className="flex flex-1 flex-col p-5 md:p-7">

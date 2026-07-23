@@ -11,14 +11,9 @@ import {
   useTransform,
 } from "framer-motion";
 import { 
-  Calendar, 
-  Clock, 
   User, 
-  Share2, 
-  BookOpen,
-  Link as LinkIcon
+  BookOpen
 } from "lucide-react";
-import toast from "react-hot-toast";
 
 export default function BlogDetailsPage({
   params,
@@ -90,19 +85,6 @@ export default function BlogDetailsPage({
     notFound();
   }
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: blog.title,
-        text: blog.metaDescription || blog.title,
-        url: window.location.href,
-      }).catch(console.error);
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success("Article link copied to clipboard!");
-    }
-  };
-
   return (
     <main ref={containerRef} className="min-h-screen bg-[#FDFDFD] text-neutral-800 font-sans selection:bg-indigo-500 selection:text-white">
       {/* Reading Progress Indicator - Minimal Top Bar */}
@@ -144,56 +126,23 @@ export default function BlogDetailsPage({
               {blog.category || "Workspace"}
             </span>
 
-            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-zinc-900 tracking-tighter leading-[1.1] max-w-5xl">
+            <h1 
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold text-zinc-900 tracking-tighter leading-[1.1] max-w-5xl"
+              style={{ WebkitTextStroke: "1px white" }}
+            >
               {blog.title}
             </h1>
 
-            <div className="flex flex-col sm:flex-wrap sm:items-center sm:justify-center gap-3 sm:gap-x-8 sm:gap-y-4 text-zinc-700 text-xs sm:text-base md:text-lg font-medium pt-2 md:pt-4">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-zinc-900/10 flex items-center justify-center">
-                  <User size={16} className="text-zinc-800" />
-                </div>
-                <span className="text-zinc-900 font-semibold text-sm md:text-base">{blog.author || "Astride Team"}</span>
-              </div>
-              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 hidden sm:block"></span>
-              <div className="flex items-center gap-2 text-zinc-800 font-semibold">
-                <Clock size={18} />
-                <span className="text-sm md:text-base">{blog.readTime ? (blog.readTime.includes("read") ? blog.readTime : `${blog.readTime} read`) : "5 min read"}</span>
-              </div>
-              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 hidden sm:block"></span>
-              <div className="flex items-center gap-2 text-zinc-800 font-semibold">
-                <Calendar size={18} />
-                <span className="text-sm md:text-base">
-                  {new Date(blog.date || blog.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                  })}
-                </span>
-              </div>
-            </div>
+            {/* Metadata section removed */}
           </motion.div>
         </div>
       </section>
 
       {/* Main Content Layout */}
       <section className="relative z-20 bg-[#FDFDFD] rounded-t-[3rem] md:rounded-t-[4rem] -mt-10 md:-mt-16 pt-16 md:pt-24 pb-32 px-6 shadow-[0_-20px_50px_rgba(0,0,0,0.1)]">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
-          
-          {/* Left Sidebar - Social Share (Sticky) */}
-          <div className="hidden lg:block lg:col-span-2">
-            <div className="sticky top-32 flex flex-col gap-6">
-              <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest pl-2">Share</span>
-              <div className="flex flex-col gap-3">
-                <button onClick={handleShare} className="w-12 h-12 rounded-full bg-white border border-neutral-100 flex items-center justify-center text-neutral-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all duration-300 shadow-sm hover:shadow-md">
-                  <LinkIcon size={20} />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Center Content */}
-          <div className="lg:col-span-8 space-y-12">
+        <div className="max-w-7xl mx-auto">
+          {/* Main Content */}
+          <div className="space-y-12">
             {/* Specific Post Image */}
             <div className="relative w-full h-[300px] md:h-[500px] rounded-3xl overflow-hidden shadow-lg border border-neutral-100">
               <Image
@@ -222,27 +171,17 @@ export default function BlogDetailsPage({
 
             {/* Content Body (Jodit Editor Rich Text HTML) */}
             <article 
-              className="prose prose-neutral max-w-none text-lg md:text-xl leading-relaxed space-y-6"
+              className="w-full text-neutral-800 text-lg md:text-xl leading-relaxed"
               dangerouslySetInnerHTML={{ __html: blog.content }}
             />
 
             {/* Bottom Meta & Tags */}
-            <div className="pt-16 pb-8 border-t border-neutral-200/60 mt-16 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="pt-16 pb-8 border-t border-neutral-200/60 mt-16 flex items-center justify-between gap-8">
               <div className="flex flex-col gap-2 w-full md:w-auto">
                 <span className="text-xs text-neutral-400 font-bold uppercase tracking-widest">Tagged In</span>
                 <span className="inline-block px-4 py-2 bg-neutral-100 text-neutral-800 rounded-lg text-sm font-bold uppercase tracking-wider w-max hover:bg-neutral-200 transition-colors cursor-pointer">
                   {blog.category || "Workspace"}
                 </span>
-              </div>
-
-              {/* Mobile Share (Visible only on small screens) */}
-              <div className="flex lg:hidden w-full md:w-auto items-center justify-between gap-4 p-4 rounded-2xl bg-neutral-50 border border-neutral-100">
-                <span className="text-sm font-bold text-neutral-600 uppercase tracking-widest">Share:</span>
-                <div className="flex items-center gap-2">
-                  <button onClick={handleShare} className="p-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 hover:text-indigo-600">
-                    <Share2 size={18} />
-                  </button>
-                </div>
               </div>
             </div>
 
