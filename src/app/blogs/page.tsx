@@ -130,11 +130,22 @@ export default function BlogsPage() {
                   title={blog.title}
                   shortContent={blog.metaDescription || ""}
                   category={blog.category || "Workspace"}
-                  date={`Published: ${new Date(blog.createdAt || blog.date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}`}
+                  date={(() => {
+                    const created = blog.createdAt ? new Date(blog.createdAt) : (blog.date ? new Date(blog.date) : null);
+                    const updated = blog.updatedAt ? new Date(blog.updatedAt) : null;
+                    const isUpdated = updated && created && (updated.getTime() - created.getTime() > 60000);
+                    const targetDate = isUpdated ? updated : created;
+
+                    if (!targetDate) return "";
+
+                    const formattedDate = targetDate.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
+
+                    return isUpdated ? `Updated: ${formattedDate}` : `Published: ${formattedDate}`;
+                  })()}
                   author={blog.author || "Astride Team"}
                   readTime={blog.readTime || "5 min read"}
                 />
