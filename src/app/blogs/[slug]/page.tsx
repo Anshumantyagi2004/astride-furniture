@@ -126,12 +126,11 @@ export default function BlogDetailsPage({
               {blog.category || "Workspace"}
             </span>
 
-            <h1 
-              className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold text-zinc-900 tracking-tighter leading-[1.1] max-w-5xl"
-              style={{ WebkitTextStroke: "1px white" }}
-            >
-              {blog.title}
-            </h1>
+            <div className="relative px-6 py-4 md:px-12 md:py-8 rounded-3xl bg-white/40 backdrop-blur-md border border-white/60 shadow-[0_0_50px_rgba(255,255,255,0.8)]">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold text-zinc-900 tracking-tighter leading-[1.1] max-w-5xl">
+                {blog.title}
+              </h1>
+            </div>
 
             {/* Metadata section removed */}
           </motion.div>
@@ -144,14 +143,14 @@ export default function BlogDetailsPage({
           {/* Main Content */}
           <div className="space-y-12">
             {/* Specific Post Image */}
-            <div className="relative w-full h-[300px] md:h-[500px] rounded-3xl overflow-hidden shadow-lg border border-neutral-100">
+            <div className="relative w-full rounded-3xl overflow-hidden shadow-lg border border-neutral-100 bg-neutral-100 flex items-center justify-center p-2 md:p-4">
               <Image
                 src={blog.thumbnail}
                 alt={blog.title}
-                fill
+                width={1200}
+                height={675}
                 priority
-                sizes="(max-width: 768px) 100vw, 100vw"
-                className="object-cover"
+                className="w-full h-auto max-h-[600px] object-contain rounded-2xl"
               />
             </div>
 
@@ -175,36 +174,7 @@ export default function BlogDetailsPage({
               dangerouslySetInnerHTML={{ __html: blog.content }}
             />
 
-            {/* Bottom Meta & Tags */}
-            <div className="pt-16 pb-8 border-t border-neutral-200/60 mt-16 flex items-center justify-between gap-8">
-              <div className="flex flex-col gap-2 w-full md:w-auto">
-                <span className="text-xs text-neutral-400 font-bold uppercase tracking-widest">Tagged In</span>
-                <span className="inline-block px-4 py-2 bg-neutral-100 text-neutral-800 rounded-lg text-sm font-bold uppercase tracking-wider w-max hover:bg-neutral-200 transition-colors cursor-pointer">
-                  {blog.category || "Workspace"}
-                </span>
-              </div>
-            </div>
 
-            {/* Author Bio Box */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-neutral-900 rounded-[2rem] p-8 md:p-10 text-white flex flex-col md:flex-row items-center gap-8 shadow-2xl relative overflow-hidden group"
-            >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-indigo-500/30 transition-all duration-700" />
-              
-              <div className="w-24 h-24 rounded-full bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
-                <User size={40} className="text-white/80" />
-              </div>
-              <div className="flex-1 text-center md:text-left z-10">
-                <h4 className="text-sm font-bold text-indigo-300 uppercase tracking-widest mb-2">Written By</h4>
-                <h3 className="text-2xl font-bold mb-3">{blog.author || "Astride Team"}</h3>
-                <p className="text-white/60 text-base leading-relaxed">
-                  A passionate writer exploring the realms of {(blog.category || "workspace").toLowerCase()} and modern trends. Capturing thoughts and sharing them with the world.
-                </p>
-              </div>
-            </motion.div>
 
           </div>
         </div>
