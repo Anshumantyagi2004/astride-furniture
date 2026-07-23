@@ -57,8 +57,6 @@ export default function BlogCard({
           <div className="mb-3 md:mb-4 flex flex-wrap items-center gap-2 text-xs md:text-sm text-neutral-500">
             <span className="line-clamp-1">{author}</span>
             <span>•</span>
-            <span className="line-clamp-1">{readTime}</span>
-            <span>•</span>
             <span className="line-clamp-1">{date}</span>
           </div>
 
