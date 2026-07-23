@@ -130,11 +130,11 @@ export default function BlogsPage() {
                   title={blog.title}
                   shortContent={blog.metaDescription || ""}
                   category={blog.category || "Workspace"}
-                  date={new Date(blog.date || blog.createdAt).toLocaleDateString("en-US", {
+                  date={`Published: ${new Date(blog.createdAt || blog.date).toLocaleDateString("en-US", {
                     month: "short",
-                    day: "2-digit",
+                    day: "numeric",
                     year: "numeric",
-                  })}
+                  })}`}
                   author={blog.author || "Astride Team"}
                   readTime={blog.readTime || "5 min read"}
                 />
