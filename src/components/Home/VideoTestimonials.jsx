@@ -280,7 +280,7 @@ export default function VideoTestimonials() {
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        const checkMobile = () => setIsMobile(window.innerWidth < 1024);
         checkMobile();
         window.addEventListener("resize", checkMobile);
         return () => window.removeEventListener("resize", checkMobile);
@@ -409,7 +409,7 @@ export default function VideoTestimonials() {
                                                     swiperInstance.autoplay.stop();
                                                 }
                                             }}
-                                            isPlaying={playingId === v.id}
+                                            isPlaying={isMobile && playingId === v.id}
                                             isPriority={index === 0} 
                                         />
                                     </div>
@@ -448,7 +448,7 @@ export default function VideoTestimonials() {
                                     key={featured.id}
                                     video={featured}
                                     onPlay={() => setPlayingId(featured.id)}
-                                    isPlaying={playingId === featured.id}
+                                    isPlaying={!isMobile && playingId === featured.id}
                                     isPriority={true}
                                 />
                             </AnimatePresence>
