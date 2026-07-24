@@ -4,7 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-html, body {
+html,
+body {
   max-width: 100vw;
   overflow-x: clip;
 }
@@ -139,9 +140,11 @@ h6 {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
@@ -151,6 +154,7 @@ h6 {
   0% {
     transform: translateX(0%);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -168,6 +172,51 @@ h6 {
 
 .scrollbar-none,
 .scrollbar-hide {
-  -ms-overflow-style: none !important; /* IE and Edge */
-  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE and Edge */
+  scrollbar-width: none !important;
+  /* Firefox */
+}
+
+.jodit-wysiwyg ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.jodit-wysiwyg ol {
+  list-style: decimal;
+  padding-left: 20px;
+}
+
+.jodit-wysiwyg ul ul {
+  list-style: circle;
+}
+
+.jodit-wysiwyg ul ul ul {
+  list-style: square;
+}
+
+/* Global styling for Jodit content */
+.jodit-content {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.jodit-content ul {
+  list-style-type: disc;
+  /* or circle, square */
+  margin-left: 20px;
+  padding-left: 20px;
+}
+
+.jodit-content ol {
+  list-style-type: decimal;
+  margin-left: 20px;
+  padding-left: 20px;
+}
+
+.jodit-content li {
+  margin: 5px 0;
 }

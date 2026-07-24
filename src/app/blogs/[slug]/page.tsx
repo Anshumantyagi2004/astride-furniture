@@ -123,8 +123,8 @@ export default function BlogDetailsPage({
           >
 
 
-            <div className="relative px-6 py-4 md:px-12 md:py-8 rounded-3xl bg-white/40 backdrop-blur-md border border-white/60 shadow-[0_0_50px_rgba(255,255,255,0.8)]">
-              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold text-zinc-900 tracking-tighter leading-[1.1] max-w-5xl">
+            <div className="relative px-6 py-4 md:px-12 md:py-16 rounded-3xl bg-white/20 backdrop-blur-xs border border-white/60 shadow-[0_0_50px_rgba(255,255,255,0.8)]">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-[85px] font-bold text-zinc-900 tracking-tighter leading-[1.1] max-w-5xl">
                 {blog.title}
               </h1>
             </div>
@@ -167,7 +167,7 @@ export default function BlogDetailsPage({
 
             {/* Content Body (Jodit Editor Rich Text HTML) */}
             <article 
-              className="w-full text-neutral-800 text-lg md:text-xl leading-relaxed"
+              className="w-full text-neutral-800 text-lg md:text-xl leading-relaxed jodit-content"
               dangerouslySetInnerHTML={{ __html: blog.content }}
             />
 
