@@ -78,7 +78,7 @@ export default function Sidebar() {
                     className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#00badb] hover:text-white transition-all duration-300 text-gray-700 font-medium"
                 >
                     <Headphones size={20} />
-                    Inquiries
+                    Bulk Inquiries
                 </Link>
 
                 <Link href="/admin/contacts"

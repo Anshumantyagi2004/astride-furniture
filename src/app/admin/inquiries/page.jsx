@@ -103,7 +103,7 @@ export default function Page() {
                     <div className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-black text-[#131313] tracking-tight uppercase">
-                                Inquiries Management
+                                Bulk Inquiries
                             </h1>
                             <p className="text-sm md:text-base text-neutral-500 font-medium mt-1">
                                 Monitor and review all submitted corporate bulk order enquiries.
