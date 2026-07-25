@@ -28,9 +28,9 @@ import Header6_New from '@/components/Home/Header6_New';
 import StatsSection_New from '@/components/Home/WhyUs_New';
 // Lazy loaded — below-the-fold/heavy components
 const Reviews = dynamic(() => import('@/components/Home/Reviews'));
-const Reviews_New = dynamic(() => import('@/components/Home/Reviews_New'), { ssr: false });
-const RealSetup_New = dynamic(() => import('@/components/Home/RealSetup_New'), { ssr: false });
-const VideoTestimonials = dynamic(() => import('@/components/Home/VideoTestimonials'), { ssr: false });
+const Reviews_New = dynamic(() => import('@/components/Home/Reviews_New'));
+const RealSetup_New = dynamic(() => import('@/components/Home/RealSetup_New'));
+const VideoTestimonials = dynamic(() => import('@/components/Home/VideoTestimonials'));
 
 import Enquiry_New from '@/components/Home/Enquiry_new';
 import AboutSection_New from '@/components/Home/About_New';
