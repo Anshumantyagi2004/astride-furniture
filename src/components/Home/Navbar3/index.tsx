@@ -281,9 +281,7 @@ export default function Navbar3() {
                         {"Tollfree "}<span className="text-lime-500 font-bold">7311164111</span>{" — Call now!"}
                     </a>
 
-                    <div className="hidden md:block text-slate-300 text-[12px] tracking-wider uppercase font-semibold">
-                        GST: <span className="font-bold text-white">07AALCM4232E1ZN</span>
-                    </div>
+
 
                     <nav className="flex items-center gap-[16px] md:gap-[22px]">
                         <Link href="/bulk-orders" className="hidden sm:inline hover:text-lime-500 transition-colors">

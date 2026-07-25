@@ -110,15 +110,28 @@ export default function Page() {
                                 >
                                     {/* Order Card Header */}
                                     <div className="border-b border-neutral-100 bg-neutral-50/50 px-8 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-                                            <span className="text-base font-bold text-neutral-500 uppercase tracking-wider">
-                                                Order ID: <span className="text-neutral-900 select-all font-mono font-extrabold text-lg">{order._id}</span>
-                                            </span>
-                                            <span className="w-2 h-2 rounded-full bg-neutral-300 hidden sm:block"></span>
-                                            <div className="flex items-center gap-2 text-base text-neutral-600 font-semibold">
-                                                <Calendar size={18} className="text-neutral-400" />
-                                                <span>{new Date(order.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })} at {new Date(order.createdAt).toLocaleTimeString()}</span>
+                                        <div className="flex flex-col gap-1.5">
+                                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                                                <span className="text-base font-bold text-neutral-500 uppercase tracking-wider">
+                                                    Order ID: <span className="text-neutral-900 select-all font-mono font-extrabold text-lg">{order._id}</span>
+                                                </span>
+                                                <span className="w-2 h-2 rounded-full bg-neutral-300 hidden sm:block"></span>
+                                                <div className="flex items-center gap-2 text-base text-neutral-600 font-semibold">
+                                                    <Calendar size={18} className="text-neutral-400" />
+                                                    <span>{new Date(order.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })} at {new Date(order.createdAt).toLocaleTimeString()}</span>
+                                                </div>
                                             </div>
+
+                                            {order.razorpayOrderId && (
+                                                <div className="text-xs text-neutral-500 font-medium">
+                                                    Razorpay Order ID: <span className="font-mono font-bold text-neutral-900 select-all">{order.razorpayOrderId}</span>
+                                                </div>
+                                            )}
+                                            {order.razorpayPaymentId && (
+                                                <div className="text-xs text-neutral-500 font-medium">
+                                                    Razorpay Payment ID: <span className="font-mono font-bold text-neutral-900 select-all">{order.razorpayPaymentId}</span>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <button
@@ -214,7 +227,7 @@ export default function Page() {
 
                                                 <div className="pt-4 space-y-4">
                                                     <div className="flex items-center justify-between gap-2">
-                                                        <div className="inline-flex items-center gap-2 bg-neutral-100 px-4 py-2 rounded-xl border border-neutral-200">
+                                                        <div className="inline-flex items-center gap-2 bg-neutral-100 px-4 py-2 rounded-xl border border-neutral-200 w-fit">
                                                             <CreditCard size={16} className="text-neutral-600" />
                                                             <span className="text-xs font-black text-neutral-700 uppercase tracking-wider">Method: {order.paymentMethod || "COD"}</span>
                                                         </div>
