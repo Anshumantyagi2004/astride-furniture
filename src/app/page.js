@@ -26,22 +26,20 @@ import Marquee4_New from '@/components/Home/Marquee4_New';
 import Header5_New from '@/components/Home/Header5_New';
 import Header6_New from '@/components/Home/Header6_New';
 import StatsSection_New from '@/components/Home/WhyUs_New';
-import Reviews_New from '@/components/Home/Reviews_New';
+// Lazy loaded — below-the-fold/heavy components
+const Reviews = dynamic(() => import('@/components/Home/Reviews'));
+const Reviews_New = dynamic(() => import('@/components/Home/Reviews_New'), { ssr: false });
+const RealSetup_New = dynamic(() => import('@/components/Home/RealSetup_New'), { ssr: false });
+const VideoTestimonials = dynamic(() => import('@/components/Home/VideoTestimonials'), { ssr: false });
+
 import Enquiry_New from '@/components/Home/Enquiry_new';
 import AboutSection_New from '@/components/Home/About_New';
 import BestSellersSection_New from '@/components/Home/BestSellers_New';
-import RealSetup_New from '@/components/Home/RealSetup_New';
 import AstrideOffers from '@/components/Home/AstrideOffers';
 import CompeteTheVibe from '@/components/Home/Compete_the_vibe';
-import Navbar from '@/components/Main/Navbar/Navbar';
 import CertificationsBento from '@/components/Home/Certification_bento';
 import Marquee5_New from '@/components/Home/Marquee5_New';
 import Marquee6_New from '@/components/Home/Marquee6_New/Index';
-// Lazy loaded — only the heaviest animation-heavy component
-// Reviews: uses GSAP + ScrollTrigger (large bundle)
-const Reviews = dynamic(() => import('@/components/Home/Reviews'));
-
-import VideoTestimonials from '@/components/Home/VideoTestimonials';
 import PreloadModelViewer from '@/components/Home/PreloadModelViewer';
 
 export default function Home() {
