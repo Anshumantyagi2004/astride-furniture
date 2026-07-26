@@ -127,7 +127,7 @@ export default function Header6_New() {
               style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.08)" }}
             >
               {/* Image filling entire card */}
-              <div className="absolute inset-0 w-full h-full overflow-hidden outline-none">
+              <div className="relative w-full h-full overflow-hidden outline-none">
                 <Image
                   src={mode.img}
                   alt={mode.alt}
