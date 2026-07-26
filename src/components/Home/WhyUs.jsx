@@ -97,7 +97,7 @@ export default function WhyUs() {
                         modules={[Autoplay]}
                         spaceBetween={12}
                         slidesPerView={2}
-                        loop={true}
+                        loop={features.length >= 6}
                         autoplay={{
                             delay: 1500,
                             disableOnInteraction: false,

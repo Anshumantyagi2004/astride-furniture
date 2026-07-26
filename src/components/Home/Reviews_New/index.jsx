@@ -68,7 +68,7 @@ export default function Reviews_New() {
             modules={[Autoplay, Pagination]}
             spaceBetween={16}
             slidesPerView={1}
-            loop={true}
+            loop={reviews.length >= 6}
             autoplay={{
               delay: 2500,
               disableOnInteraction: false,

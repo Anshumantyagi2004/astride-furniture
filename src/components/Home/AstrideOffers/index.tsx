@@ -128,7 +128,7 @@ export default function AstrideOffers() {
                   modules={[Autoplay]}
                   spaceBetween={0}
                   slidesPerView={1}
-                  loop={productsList.length > 2}
+                  loop={productsList.length >= 6}
                   autoplay={{
                     delay: 1500,
                     disableOnInteraction: false,
