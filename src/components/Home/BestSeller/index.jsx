@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useProducts } from "@/context/ProductsContext";
 
 const BestSellerCard = ({ product }) => {
   const router = useRouter();
@@ -107,75 +108,55 @@ const BestSellerCard = ({ product }) => {
 };
 
 export default function BestSeller() {
+  const { products: rawProducts, loading } = useProducts();
   const [bestsellers, setBestsellers] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchProducts() {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/product?t=" + Date.now(), {
-          cache: "no-store",
-          headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
-        });
-        const data = await res.json();
-        if (data.success && data.products && data.products.length > 0) {
-          const mappedProducts = data.products.map((prod) => {
-            const discPercent = prod.oldPrice && prod.realPrice
-                ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
-                : 60;
-            
-            let normalizedCategory = "Office";
-            const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
-            if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) normalizedCategory = "Gaming";
-            else if (dbCategory.includes("STUDY")) normalizedCategory = "Study";
-            else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) normalizedCategory = "Bar";
+    if (!rawProducts || rawProducts.length === 0) return;
+    const mappedProducts = rawProducts.map((prod) => {
+      const discPercent = prod.oldPrice && prod.realPrice
+          ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
+          : 60;
+      
+      let normalizedCategory = "Office";
+      const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
+      if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) normalizedCategory = "Gaming";
+      else if (dbCategory.includes("STUDY")) normalizedCategory = "Study";
+      else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) normalizedCategory = "Bar";
 
-            const blackVariant = prod.colorVariants?.find((v) => v.colorName?.toLowerCase() === "black");
-            const blackImage = blackVariant?.images?.[0]?.url;
+      const blackVariant = prod.colorVariants?.find((v) => v.colorName?.toLowerCase() === "black");
+      const blackImage = blackVariant?.images?.[0]?.url;
 
-            const fallbackVariant = prod.colorVariants?.find((v) => v.images && v.images.length > 0);
-            const fallbackImage = fallbackVariant?.images?.[0]?.url;
+      const fallbackVariant = prod.colorVariants?.find((v) => v.images && v.images.length > 0);
+      const fallbackImage = fallbackVariant?.images?.[0]?.url;
 
-            const defaultVariant = blackVariant || fallbackVariant;
-            const allImages = defaultVariant?.images?.map((img) => img.url) || [];
+      const defaultVariant = blackVariant || fallbackVariant;
+      const allImages = defaultVariant?.images?.map((img) => img.url) || [];
 
-            return {
-                id: prod._id,
-                slug: prod.slug,
-                name: prod.productName,
-                price: prod.realPrice,
-                originalPrice: prod.oldPrice,
-                discount: `-${discPercent}%`,
-                image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
-                allImages: Array.from(new Set(allImages)),
-                category: normalizedCategory,
-                description: prod.shortDescription || "Elevate your setup with a perfect blend of elegance and functionality."
-            };
-          });
-          
-          // Filter products to strictly pick 4 that have multiple images
-          const multipleImageProducts = mappedProducts.filter(p => p.allImages.length > 1);
-          
-          // If we don't have 4 with multiple images, fill the rest with whatever is available
-          const finalBestsellers = [...multipleImageProducts];
-          for (let p of mappedProducts) {
-              if (finalBestsellers.length >= 4) break;
-              if (!finalBestsellers.find(exist => exist.id === p.id)) {
-                  finalBestsellers.push(p);
-              }
-          }
-          
-          setBestsellers(finalBestsellers.slice(0, 4));
+      return {
+          id: prod._id,
+          slug: prod.slug,
+          name: prod.productName,
+          price: prod.realPrice,
+          originalPrice: prod.oldPrice,
+          discount: `-${discPercent}%`,
+          image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+          allImages: Array.from(new Set(allImages)),
+          category: normalizedCategory,
+          description: prod.shortDescription || "Elevate your setup with a perfect blend of elegance and functionality."
+      };
+    });
+    
+    const multipleImageProducts = mappedProducts.filter(p => p.allImages.length > 1);
+    const finalBestsellers = [...multipleImageProducts];
+    for (let p of mappedProducts) {
+        if (finalBestsellers.length >= 4) break;
+        if (!finalBestsellers.find(exist => exist.id === p.id)) {
+            finalBestsellers.push(p);
         }
-      } catch (err) {
-        console.error("Error fetching products:", err);
-      } finally {
-        setLoading(false);
-      }
     }
-    fetchProducts();
-  }, []);
+    setBestsellers(finalBestsellers.slice(0, 4));
+  }, [rawProducts]);
 
   return (
     <section 

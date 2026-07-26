@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import { ProductsProvider } from '@/context/ProductsContext';
 
 import Header0 from '@/components/Home/Header0';
 import Header6_New from '@/components/Home/Header6_New';
@@ -32,34 +33,36 @@ const VideoTestimonials = dynamic(() => import('@/components/Home/VideoTestimoni
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
-      <Header0 />
-      <Header6_New />
-      <BestSeller />
-      <Category />
-      <Marquee4_New />
-      <FavouriteCategories />
-      <Marquee2Hover />
-      <Chair_split />
-      <AstrideOffers />
-      <Marquee5_New />
-      <BentoCategories />
-      <PreloadModelViewer />
-      <BestSellersSection_New />
-      <CertificationsBento />
-      <ChairSection />
-      <Header2 />
-      <AboutSection_New />
-      <CompeteTheVibe />
-      <WhyUs />
-      <StatsSection_New />
-      <Reviews_New />
-      <RealSetup_New />
-      <Marquee6_New />
-      <VideoTestimonials />
-      <Enquiry_New />
-      <Newletter />
-      <FAQ />
-    </main>
+    <ProductsProvider>
+      <main className="min-h-screen">
+        <Header0 />
+        <Header6_New />
+        <BestSeller />
+        <Category />
+        <Marquee4_New />
+        <FavouriteCategories />
+        <Marquee2Hover />
+        <Chair_split />
+        <AstrideOffers />
+        <Marquee5_New />
+        <BentoCategories />
+        <PreloadModelViewer />
+        <BestSellersSection_New />
+        <CertificationsBento />
+        <ChairSection />
+        <Header2 />
+        <AboutSection_New />
+        <CompeteTheVibe />
+        <WhyUs />
+        <StatsSection_New />
+        <Reviews_New />
+        <RealSetup_New />
+        <Marquee6_New />
+        <VideoTestimonials />
+        <Enquiry_New />
+        <Newletter />
+        <FAQ />
+      </main>
+    </ProductsProvider>
   );
 }
