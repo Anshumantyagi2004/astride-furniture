@@ -74,7 +74,7 @@ export default function CategorySlider() {
           delay: isMobile ? 1500 : 2000,
           disableOnInteraction: false,
         }}
-        loop={true}
+        loop={categories.length >= 12}
         speed={isMobile ? 1000 : 3500}
         breakpoints={{
           0: {

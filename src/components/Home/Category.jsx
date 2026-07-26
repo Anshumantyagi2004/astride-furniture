@@ -92,7 +92,7 @@ export default function Category() {
                                 modules={[Autoplay]}
                                 spaceBetween={12}
                                 slidesPerView={2}
-                                loop={true}
+                                loop={categories.length >= 4}
                                 autoplay={{
                                     delay: isMobile ? 2000 : 1500,
                                     disableOnInteraction: true,

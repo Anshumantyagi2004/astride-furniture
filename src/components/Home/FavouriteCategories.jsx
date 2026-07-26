@@ -419,7 +419,7 @@ export default function FavouriteCategories() {
                                         grabCursor={true}
                                         slidesPerView={2}
                                         spaceBetween={12}
-                                        loop={activeProducts.length > 2}
+                                        loop={activeProducts.length >= 4}
                                         autoplay={{
                                             delay: 2500,
                                             disableOnInteraction: false,

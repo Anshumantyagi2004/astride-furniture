@@ -36,7 +36,7 @@ export default function ClientLogoSlider() {
                 <Swiper
                     modules={[Autoplay]}
                     slidesPerView={2}
-                    loop={true}
+                    loop={clients.length >= 12}
                     speed={isMobile ? 1500 : 3500}
                     autoplay={{
                         delay: 0,
