@@ -256,7 +256,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                 </div>
                 
                 <div className="w-full overflow-hidden">
-                  <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 6} spaceBetween={15} loop={row1.length >= (isMobile ? 8 : 12)} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
+                  <Swiper modules={[Autoplay]} slidesPerView={4} breakpoints={{ 768: { slidesPerView: 6 } }} spaceBetween={15} loop={row1.length >= 8} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                     {row1.map((chair, idx) => (
                       <SwiperSlide key={`r1-${idx}`} className="flex justify-center items-center">
                         <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.06)]" />
@@ -266,7 +266,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                 </div>
 
                 <div className="w-full overflow-hidden">
-                  <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 6} spaceBetween={15} loop={row2.length >= (isMobile ? 8 : 12)} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false, reverseDirection: true }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
+                  <Swiper modules={[Autoplay]} slidesPerView={4} breakpoints={{ 768: { slidesPerView: 6 } }} spaceBetween={15} loop={row2.length >= 8} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false, reverseDirection: true }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                     {row2.map((chair, idx) => (
                       <SwiperSlide key={`r2-${idx}`} className="flex justify-center items-center">
                         <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.06)]" />
@@ -276,7 +276,7 @@ export default function ChairFinder({ onBack }: ChairFinderProps) {
                 </div>
 
                 <div className="w-full overflow-hidden">
-                  <Swiper modules={[Autoplay]} slidesPerView={isMobile ? 4 : 6} spaceBetween={15} loop={row3.length >= (isMobile ? 8 : 12)} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
+                  <Swiper modules={[Autoplay]} slidesPerView={4} breakpoints={{ 768: { slidesPerView: 6 } }} spaceBetween={15} loop={row3.length >= 8} speed={5000} autoplay={{ delay: 0, disableOnInteraction: false }} allowTouchMove={false} className="pointer-events-none [&_.swiper-wrapper]:!ease-linear">
                     {row3.map((chair, idx) => (
                       <SwiperSlide key={`r3-${idx}`} className="flex justify-center items-center">
                         <Image src={chair.src} alt={chair.name} width={180} height={180} className="w-[80px] h-[80px] md:w-[130px] md:h-[130px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.06)]" />
