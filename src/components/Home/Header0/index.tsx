@@ -133,7 +133,7 @@ export default function Header0() {
                 href="/products" 
                 onClick={handleBannerClick}
                 onMouseEnter={prefetchProducts}
-                className="absolute inset-0 z-0 cursor-pointer block"
+                className="relative inset-0 z-0 cursor-pointer block w-full h-full"
               >
                 <Image
                   src={slide.src}
@@ -165,7 +165,7 @@ export default function Header0() {
                 href="/products" 
                 onClick={handleBannerClick}
                 onMouseEnter={prefetchProducts}
-                className="absolute inset-0 z-0 cursor-pointer block"
+                className="relative inset-0 z-0 cursor-pointer block w-full h-full"
               >
                 <Image
                   src={slide.src}

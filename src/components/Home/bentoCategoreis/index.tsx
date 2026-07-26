@@ -150,15 +150,17 @@ export default function BentoCategories() {
 
                   {/* 4. IMAGE SCALE CONTROLLER */}
                   <div className={`${category.imageClass} ${category.mobileImageScale || ''} transition-transform duration-300`}>
-                    <Image 
-                      src={category.image} 
-                      alt={category.title} 
-                      fill
-                      className="object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.06)]"
-                      sizes="(max-width: 768px) 50vw, 33vw"
-                      priority={index === 0} 
-                      loading={index === 0 ? "eager" : "lazy"}
-                    />
+                    <div className="relative w-full h-full">
+                      <Image 
+                        src={category.image} 
+                        alt={category.title} 
+                        fill
+                        className="object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.06)]"
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                        priority={index === 0} 
+                        loading={index === 0 ? "eager" : "lazy"}
+                      />
+                    </div>
                   </div>
                 </Link>
               </SwiperSlide>
@@ -191,14 +193,16 @@ export default function BentoCategories() {
               </div>
 
               <div className={`${category.imageClass}`}>
-                <Image 
-                  src={category.image} 
-                  alt={category.title} 
-                  fill
-                  className="object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.06)]"
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                  priority={index < 2} 
-                />
+                <div className="relative w-full h-full">
+                  <Image 
+                    src={category.image} 
+                    alt={category.title} 
+                    fill
+                    className="object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.06)]"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                    priority={index < 2} 
+                  />
+                </div>
               </div>
             </Link>
           ))}

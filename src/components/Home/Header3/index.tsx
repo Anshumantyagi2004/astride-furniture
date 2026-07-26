@@ -62,7 +62,7 @@ export default function Header3() {
               </div>
 
               {/* Image Container */}
-              <div className="absolute inset-0 w-full h-full z-0">
+              <div className="relative inset-0 w-full h-full z-0">
                 <Image
                   src={card.image}
                   alt={card.title}

@@ -123,11 +123,12 @@ export default function AstrideOffers() {
               {/* MOBILE SWIPER VIEW (md:hidden) */}
               <div className="block md:hidden w-full pb-6">
                 <Swiper
+                  key={`mobile-deals-${productsList.length}`}
                   onSwiper={setSwiperRef}
                   modules={[Autoplay]}
                   spaceBetween={0}
                   slidesPerView={1}
-                  loop={productsList.length >= 2}
+                  loop={productsList.length > 2}
                   autoplay={{
                     delay: 1500,
                     disableOnInteraction: false,
