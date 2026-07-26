@@ -13,8 +13,16 @@ const ProductsContext = createContext<ProductsContextType>({
 });
 
 export function ProductsProvider({ children }: { children: ReactNode }) {
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<any[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = sessionStorage.getItem("astride_nav_products_cache");
+        if (cached) return JSON.parse(cached);
+      } catch (e) {}
+    }
+    return [];
+  });
+  const [loading, setLoading] = useState<boolean>(() => products.length === 0);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -23,6 +31,11 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         const data = await res.json();
         if (data?.success && data.products) {
           setProducts(data.products);
+          if (typeof window !== "undefined") {
+            try {
+              sessionStorage.setItem("astride_nav_products_cache", JSON.stringify(data.products));
+            } catch (e) {}
+          }
         }
       } catch (err) {
         console.error("ProductsContext: Failed to fetch products", err);

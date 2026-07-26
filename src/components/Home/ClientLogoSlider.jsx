@@ -16,6 +16,9 @@ const clients = [
     "/Clients/8.webp",
 ];
 
+// Duplicate clients list to ensure Swiper continuous marquee (delay: 0) has sufficient loop slides on Desktop (slidesPerView: 6)
+const duplicatedClients = [...clients, ...clients];
+
 export default function ClientLogoSlider() {
     // ✅ Mobile optimization: Disable motion animations on mobile
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -36,7 +39,7 @@ export default function ClientLogoSlider() {
                 <Swiper
                     modules={[Autoplay]}
                     slidesPerView={2}
-                    loop={clients.length >= 12}
+                    loop={true}
                     speed={isMobile ? 1500 : 3500}
                     autoplay={{
                         delay: 0,
@@ -59,7 +62,7 @@ export default function ClientLogoSlider() {
                     className="client-swiper py-10!"
                 >
 
-                    {clients.map((client, index) => (
+                    {duplicatedClients.map((client, index) => (
                         <SwiperSlide key={index}>
                             <motion.div
                                 whileHover={!isMobile ? {

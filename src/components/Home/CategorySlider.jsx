@@ -7,35 +7,16 @@ import { motion } from "framer-motion";
 import "swiper/css";
 
 const categories = [
-  {
-    name: "Chair",
-    image: "/cat.jpg",
-  },
-  {
-    name: "Table",
-    image: "/cat.jpg",
-  },
-  {
-    name: "Sofa",
-    image: "/cat.jpg",
-  },
-  {
-    name: "Lamp",
-    image: "/cat.jpg",
-  },
-  {
-    name: "Office",
-    image: "/cat.jpg",
-  },
-  {
-    name: "Gaming",
-    image: "/cat.jpg",
-  },
-  {
-    name: "Bedroom",
-    image: "/cat.jpg",
-  },
+  { name: "Chair", image: "/cat.jpg" },
+  { name: "Table", image: "/cat.jpg" },
+  { name: "Sofa", image: "/cat.jpg" },
+  { name: "Lamp", image: "/cat.jpg" },
+  { name: "Office", image: "/cat.jpg" },
+  { name: "Gaming", image: "/cat.jpg" },
+  { name: "Bedroom", image: "/cat.jpg" },
 ];
+
+const duplicatedCategories = [...categories, ...categories];
 
 export default function CategorySlider() {
   // ✅ Mobile optimization: Faster speed on mobile, disable autoplay duration on mobile
@@ -74,7 +55,7 @@ export default function CategorySlider() {
           delay: isMobile ? 1500 : 2000,
           disableOnInteraction: false,
         }}
-        loop={categories.length >= 12}
+        loop={true}
         speed={isMobile ? 1000 : 3500}
         breakpoints={{
           0: {
@@ -96,7 +77,7 @@ export default function CategorySlider() {
         }}
         className="px-4 py-10!"
       >
-        {categories.map((category, index) => (
+        {duplicatedCategories.map((category, index) => (
           <SwiperSlide key={index}>
 
             <motion.div

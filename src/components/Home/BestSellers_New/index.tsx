@@ -381,6 +381,7 @@ export default function BestSellersSection_New() {
                 }
               `}</style>
               <Swiper
+                key={`bestsellers-swiper-${productsList.length}`}
                 onSwiper={setSwiperInstance}
                 modules={[Autoplay, Grid]}
                 grid={{
