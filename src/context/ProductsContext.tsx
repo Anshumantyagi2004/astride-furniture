@@ -13,18 +13,17 @@ const ProductsContext = createContext<ProductsContextType>({
 });
 
 export function ProductsProvider({ children }: { children: ReactNode }) {
-  const [products, setProducts] = useState<any[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const cached = sessionStorage.getItem("astride_nav_products_cache");
-        if (cached) return JSON.parse(cached);
-      } catch (e) {}
-    }
-    return [];
-  });
-  const [loading, setLoading] = useState<boolean>(() => products.length === 0);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    try {
+      const cached = sessionStorage.getItem("astride_nav_products_cache");
+      if (cached) {
+        setProducts(JSON.parse(cached));
+        setLoading(false);
+      }
+    } catch (e) {}
     async function fetchProducts() {
       try {
         const res = await fetch("/api/product");

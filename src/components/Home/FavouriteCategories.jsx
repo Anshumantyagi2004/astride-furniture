@@ -49,8 +49,11 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
     const [isHovered, setIsHovered] = useState(false);
     const timerRef = useRef(null);
     const router = useRouter();
-    // ✅ Mobile optimization: Disable image carousel on mobile
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 768);
+    }, []);
 
     const images = product.allImages && product.allImages.length > 0 
         ? product.allImages 
@@ -173,13 +176,76 @@ const FavouriteCard = memo(({ product, index, isWishlisted, onToggleWishlist }) 
 });
 FavouriteCard.displayName = "FavouriteCard";
 
+const STATIC_FAVOURITES = [
+    {
+        id: "fav-1",
+        slug: "chair6c-rapid-black",
+        name: "Rapid Black Cafe",
+        price: 6999,
+        originalPrice: 11999,
+        discount: "-41%",
+        image: "/Png1/chair6c_Rapid Black .webp",
+        allImages: ["/Png1/chair6c_Rapid Black .webp"],
+        category: "Bar Stools & Cafe Chair",
+        rating: 4.8
+    },
+    {
+        id: "fav-2",
+        slug: "chair11-octave",
+        name: "Octave Gaming Pro",
+        price: 14499,
+        originalPrice: 22999,
+        discount: "-37%",
+        image: "/Png1/chair11_octave.webp",
+        allImages: ["/Png1/chair11_octave.webp"],
+        category: "Gaming Chair",
+        rating: 4.9
+    },
+    {
+        id: "fav-3",
+        slug: "chair12-ergofit",
+        name: "ErgoFit Executive",
+        price: 18990,
+        originalPrice: 29990,
+        discount: "-36%",
+        image: "/Png1/chair12_ErgoFit.webp",
+        allImages: ["/Png1/chair12_ErgoFit.webp"],
+        category: "Office Chair",
+        rating: 5.0
+    },
+    {
+        id: "fav-4",
+        slug: "chair7-delton",
+        name: "Delton Staff",
+        price: 8999,
+        originalPrice: 14999,
+        discount: "-40%",
+        image: "/Png1/Chair7_Delton.webp",
+        allImages: ["/Png1/Chair7_Delton.webp"],
+        category: "Staff Chair",
+        rating: 4.7
+    },
+    {
+        id: "fav-5",
+        slug: "chair5-airsense",
+        name: "AIRSENSE Task",
+        price: 9999,
+        originalPrice: 15999,
+        discount: "-37%",
+        image: "/Png1/chair5_AIRSENSE.webp",
+        allImages: ["/Png1/chair5_AIRSENSE.webp"],
+        category: "Study Chair",
+        rating: 4.8
+    }
+];
+
 // ==========================================
 // CORE LAYOUT COMPONENT
 // ==========================================
 export default function FavouriteCategories() {
     const { products: rawProducts, loading } = useProducts();
     const [activeCategory, setActiveCategory] = useState("Bar Stools & Cafe Chair");
-    const [productsList, setProductsList] = useState([]);
+    const [productsList, setProductsList] = useState(STATIC_FAVOURITES);
     const [wishlisted, setWishlisted] = useState({});
 
 
@@ -266,7 +332,15 @@ export default function FavouriteCategories() {
                 capacity: prod.capacity || "150 kg",
             };
         });
-        setProductsList(mappedProducts);
+
+        // Merge with static fallbacks so categories never render completely empty
+        const merged = [...mappedProducts];
+        for (const fb of STATIC_FAVOURITES) {
+            if (!merged.some(p => p.category === fb.category)) {
+                merged.push(fb);
+            }
+        }
+        setProductsList(merged);
     }, [rawProducts]);
 
     const activeProducts = productsList.filter(p => p.category === activeCategory);
