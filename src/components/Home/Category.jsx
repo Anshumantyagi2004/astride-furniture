@@ -89,10 +89,11 @@ export default function Category() {
                         {/* MOBILE SCROLL VIEW (Swiper) */}
                         <div className="block sm:hidden w-full">
                             <Swiper
+                                key={`category-mobile-${categories.length}`}
                                 modules={[Autoplay]}
                                 spaceBetween={12}
                                 slidesPerView={2}
-                                loop={categories.length >= 4}
+                                loop={categories.length > 4}
                                 autoplay={{
                                     delay: isMobile ? 2000 : 1500,
                                     disableOnInteraction: true,

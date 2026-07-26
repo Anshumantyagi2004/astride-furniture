@@ -416,10 +416,11 @@ export default function FavouriteCategories() {
                             <div className="block md:hidden w-full">
                                 {activeProducts.length > 0 ? (
                                     <Swiper
+                                        key={`fav-mobile-${activeCategory}-${activeProducts.length}`}
                                         grabCursor={true}
                                         slidesPerView={2}
                                         spaceBetween={12}
-                                        loop={activeProducts.length >= 4}
+                                        loop={activeProducts.length > 4}
                                         autoplay={{
                                             delay: 2500,
                                             disableOnInteraction: false,
