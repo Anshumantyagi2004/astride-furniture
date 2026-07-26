@@ -7,78 +7,63 @@ import Link from 'next/link';
 import Loader from '../../ui/loader';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
+import { useProducts } from '@/context/ProductsContext';
 
 import 'swiper/css';
 
 export default function AstrideOffers() {
+  const { products: rawProducts } = useProducts();
   const [productsList, setProductsList] = useState<any[]>([]);
   const [bannerSrc, setBannerSrc] = useState('/Png1/chair12_ErgoFit.webp');
   const [swiperRef, setSwiperRef] = useState<any>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const res = await fetch("/api/product?t=" + Date.now(), {
-          cache: "no-store",
-          headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
-        });
-        const data = await res.json();
-        if (data.success && data.products && data.products.length > 0) {
-          // Filter to only products with multiple images
-          const filtered = data.products.filter((prod: any) => {
-            const colorImages = prod.colorVariants?.reduce((acc: string[], variant: any) => {
-              if (variant.images) {
-                return [...acc, ...variant.images.map((img: any) => img.url)];
-              }
-              return acc;
-            }, []) || [];
-            const rootImages = prod.images ? prod.images.map((img: any) => img.url || img) : [];
-            const allImages = Array.from(new Set([...rootImages, ...colorImages]));
-            return allImages.length > 1; // Products which have multiple images
-          });
+    if (!rawProducts || rawProducts.length === 0) return;
 
-          const mappedProducts = filtered.map((prod: any, idx: number) => {
-            const blackVariant = prod.colorVariants?.find((v: any) => v.colorName?.toLowerCase() === "black");
-            const blackImage = blackVariant?.images?.[0]?.url;
-            const fallbackImage = prod.colorVariants?.find((v: any) => v.images && v.images.length > 0)?.images?.[0]?.url;
-            const fallbackRoot = prod.images?.[0]?.url || prod.images?.[0];
-            const mainImage = blackImage || fallbackImage || fallbackRoot || "/Png1/chair12_ErgoFit.webp";
-            const originalPrice = prod.oldPrice || (prod.realPrice ? Math.floor(prod.realPrice * 1.5) : 29990);
-            const dealPrice = prod.realPrice || 18990;
-            const savings = originalPrice - dealPrice;
-            const discountPercentage = Math.round((savings / originalPrice) * 100);
-            const colorImages = prod.colorVariants?.reduce((acc: string[], variant: any) => {
-              if (variant.images) {
-                return [...acc, ...variant.images.map((img: any) => img.url)];
-              }
-              return acc;
-            }, []) || [];
-            const rootImages = prod.images ? prod.images.map((img: any) => img.url || img) : [];
-            const allImages = Array.from(new Set([mainImage, ...rootImages, ...colorImages])).filter(Boolean);
+    const filtered = rawProducts.filter((prod: any) => {
+      const colorImages = prod.colorVariants?.reduce((acc: string[], variant: any) => {
+        if (variant.images) return [...acc, ...variant.images.map((img: any) => img.url)];
+        return acc;
+      }, []) || [];
+      const rootImages = prod.images ? prod.images.map((img: any) => img.url || img) : [];
+      const allImages = Array.from(new Set([...rootImages, ...colorImages]));
+      return allImages.length > 1;
+    });
 
-            return {
-              id: prod._id || idx.toString(),
-              slug: prod.slug,
-              name: prod.productName,
-              description: prod.description || "Ergonomic workspace seating solution with dynamic support.",
-              originalPrice,
-              dealPrice,
-              savings,
-              discountPercentage,
-              images: allImages.length > 0 ? allImages : [mainImage],
-              tag: idx % 3 === 0 ? "Top seller" : (idx % 4 === 0 ? "Selling Fast" : null)
-            };
-          });
+    const mappedProducts = filtered.map((prod: any, idx: number) => {
+      const blackVariant = prod.colorVariants?.find((v: any) => v.colorName?.toLowerCase() === "black");
+      const blackImage = blackVariant?.images?.[0]?.url;
+      const fallbackImage = prod.colorVariants?.find((v: any) => v.images && v.images.length > 0)?.images?.[0]?.url;
+      const fallbackRoot = prod.images?.[0]?.url || prod.images?.[0];
+      const mainImage = blackImage || fallbackImage || fallbackRoot || "/Png1/chair12_ErgoFit.webp";
+      const originalPrice = prod.oldPrice || (prod.realPrice ? Math.floor(prod.realPrice * 1.5) : 29990);
+      const dealPrice = prod.realPrice || 18990;
+      const savings = originalPrice - dealPrice;
+      const discountPercentage = Math.round((savings / originalPrice) * 100);
+      const colorImages = prod.colorVariants?.reduce((acc: string[], variant: any) => {
+        if (variant.images) return [...acc, ...variant.images.map((img: any) => img.url)];
+        return acc;
+      }, []) || [];
+      const rootImages = prod.images ? prod.images.map((img: any) => img.url || img) : [];
+      const allImages = Array.from(new Set([mainImage, ...rootImages, ...colorImages])).filter(Boolean);
 
-          setProductsList(mappedProducts.slice(0, 10));
-        }
-      } catch (err) {
-        console.error("Error fetching products:", err);
-      }
-    }
-    fetchProducts();
-  }, []);
+      return {
+        id: prod._id || idx.toString(),
+        slug: prod.slug,
+        name: prod.productName,
+        description: prod.description || "Ergonomic workspace seating solution with dynamic support.",
+        originalPrice,
+        dealPrice,
+        savings,
+        discountPercentage,
+        images: allImages.length > 0 ? allImages : [mainImage],
+        tag: idx % 3 === 0 ? "Top seller" : (idx % 4 === 0 ? "Selling Fast" : null)
+      };
+    });
+
+    setProductsList(mappedProducts.slice(0, 10));
+  }, [rawProducts]);
 
   const scrollRight = () => {
     if (swiperRef && window.innerWidth < 768) {

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { useProducts } from "@/context/ProductsContext";
 
 // Swiper Imports
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -133,25 +134,7 @@ function ChairCard({ chair, products, priorityLoad }) {
 }
 
 export default function ChairSection() {
-    const [products, setProducts] = useState([]);
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const res = await fetch("/api/product?t=" + Date.now(), {
-                  cache: "no-store",
-                  headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
-                });
-                const data = await res.json();
-                if (data?.success) {
-                    setProducts(data.products);
-                }
-            } catch (err) {
-                console.error("Error fetching products in ChairSection:", err);
-            }
-        };
-        fetchProducts();
-    }, []);
+    const { products, loading } = useProducts();
 
     return (
         <section className={`relative overflow-hidden bg-[#f1f3f5] pb-10 pt-6 border-t border-t-white ${sans.className}`}>

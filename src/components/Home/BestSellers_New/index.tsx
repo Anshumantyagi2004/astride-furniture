@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Grid } from "swiper/modules";
+import { useProducts } from "@/context/ProductsContext";
 
 import "swiper/css";
 import "swiper/css/grid";
@@ -247,8 +248,8 @@ function BestsellerCard({ product }: { product: any }) {
 }
 
 export default function BestSellersSection_New() {
+  const { products: rawProducts, loading } = useProducts();
   const [productsList, setProductsList] = useState<any[]>(fallbackProducts);
-  const [loading, setLoading] = useState(true);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { margin: "0px" });
   const [swiperInstance, setSwiperInstance] = useState<any>(null);
@@ -264,97 +265,66 @@ export default function BestSellersSection_New() {
   }, [isInView, swiperInstance]);
 
   useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const cached = sessionStorage.getItem("astride_bestsellers_cache");
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          if (parsed && parsed.length > 0) {
-            setProductsList(parsed);
-            setLoading(false);
-          }
-        }
-      } catch (e) {
-        console.error("Failed to parse cached bestsellers:", e);
+    if (!rawProducts || rawProducts.length === 0) return;
+
+    const mappedProducts = rawProducts.map((prod: any, idx: number) => {
+      const discPercent = prod.oldPrice && prod.realPrice
+        ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
+        : 60;
+      
+      let normalizedCategory = "Gaming Chair";
+      const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
+      if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
+        normalizedCategory = "Gaming Chair";
+      } else if (dbCategory.includes("EXECUTIVE")) {
+        normalizedCategory = "Office Chair";
+      } else if (dbCategory.includes("STAFF")) {
+        normalizedCategory = "Staff Chair";
+      } else if (dbCategory.includes("STUDY")) {
+        normalizedCategory = "Study Chair";
+      } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) {
+        normalizedCategory = "Bar Stool";
+      } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
+        normalizedCategory = "Office Chair";
       }
 
-      try {
-        const res = await fetch("/api/product?t=" + Date.now(), {
-          cache: "no-store",
-          headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
-        });
-        const data = await res.json();
-        if (data.success && data.products && data.products.length > 0) {
-          const mappedProducts = data.products.map((prod: any, idx: number) => {
-            const discPercent = prod.oldPrice && prod.realPrice
-              ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
-              : 60;
-            
-            let normalizedCategory = "Gaming Chair";
-            const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
-            if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
-              normalizedCategory = "Gaming Chair";
-            } else if (dbCategory.includes("EXECUTIVE")) {
-              normalizedCategory = "Office Chair";
-            } else if (dbCategory.includes("STAFF")) {
-              normalizedCategory = "Staff Chair";
-            } else if (dbCategory.includes("STUDY")) {
-              normalizedCategory = "Study Chair";
-            } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) {
-              normalizedCategory = "Bar Stool";
-            } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
-              normalizedCategory = "Office Chair";
-            }
+      const blackVariant = prod.colorVariants?.find((v: any) => v.colorName?.toLowerCase() === "black");
+      const blackImage = blackVariant?.images?.[0]?.url;
 
-            const blackVariant = prod.colorVariants?.find((v: any) => v.colorName?.toLowerCase() === "black");
-            const blackImage = blackVariant?.images?.[0]?.url;
+      const fallbackVariant = prod.colorVariants?.find((v: any) => v.images && v.images.length > 0);
+      const fallbackImage = fallbackVariant?.images?.[0]?.url;
 
-            const fallbackVariant = prod.colorVariants?.find((v: any) => v.images && v.images.length > 0);
-            const fallbackImage = fallbackVariant?.images?.[0]?.url;
+      const defaultVariant = blackVariant || fallbackVariant;
+      const allImages = defaultVariant?.images?.map((img: any) => img.url) || [];
 
-            const defaultVariant = blackVariant || fallbackVariant;
-            const allImages = defaultVariant?.images?.map((img: any) => img.url) || [];
+      const stickers = ["hot rn 🔥", "staff fave", "", "new drop", "", "boss mode", "limited", "selling fast"];
+      const sticker = stickers[idx % stickers.length] || "";
+      const hot = sticker === "hot rn 🔥" || sticker === "boss mode" || sticker === "selling fast";
 
-            const stickers = ["hot rn 🔥", "staff fave", "", "new drop", "", "boss mode", "limited", "selling fast"];
-            const sticker = stickers[idx % stickers.length] || "";
-            const hot = sticker === "hot rn 🔥" || sticker === "boss mode" || sticker === "selling fast";
+      return {
+        id: prod._id,
+        slug: prod.slug,
+        sticker,
+        hot,
+        category: normalizedCategory,
+        name: prod.productName,
+        image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+        allImages: Array.from(new Set(allImages)),
+        oldPrice: `₹${(prod.oldPrice || (prod.realPrice * 2.5)).toLocaleString("en-IN")}`,
+        price: `₹${(prod.realPrice || 9999).toLocaleString("en-IN")}`,
+        rawPrice: prod.realPrice,
+        rawOriginalPrice: prod.oldPrice,
+      };
+    });
 
-            return {
-              id: prod._id,
-              slug: prod.slug,
-              sticker,
-              hot,
-              category: normalizedCategory,
-              name: prod.productName,
-              image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
-              allImages: Array.from(new Set(allImages)),
-              oldPrice: `₹${(prod.oldPrice || (prod.realPrice * 2.5)).toLocaleString("en-IN")}`,
-              price: `₹${(prod.realPrice || 9999).toLocaleString("en-IN")}`,
-              rawPrice: prod.realPrice,
-              rawOriginalPrice: prod.oldPrice,
-            };
-          });
-
-          const withMultipleImages = mappedProducts.filter((p: any) => p.allImages && p.allImages.length > 1);
-          
-          let finalProducts = [...withMultipleImages];
-          if (finalProducts.length < 8) {
-            const singleImageProducts = mappedProducts.filter((p: any) => !p.allImages || p.allImages.length <= 1);
-            finalProducts = [...finalProducts, ...singleImageProducts];
-          }
-          
-          const resultList = finalProducts.slice(0, 8);
-          setProductsList(resultList);
-          sessionStorage.setItem("astride_bestsellers_cache", JSON.stringify(resultList));
-        }
-      } catch (err) {
-        console.error("Error fetching products:", err);
-      } finally {
-        setLoading(false);
-      }
+    const withMultipleImages = mappedProducts.filter((p: any) => p.allImages && p.allImages.length > 1);
+    let finalProducts = [...withMultipleImages];
+    if (finalProducts.length < 8) {
+      const singleImageProducts = mappedProducts.filter((p: any) => !p.allImages || p.allImages.length <= 1);
+      finalProducts = [...finalProducts, ...singleImageProducts];
     }
-    fetchProducts();
-  }, []);
+    setProductsList(finalProducts.slice(0, 8));
+  }, [rawProducts]);
 
   return (
     <section id="shop" ref={sectionRef} className="pt-2 pb-[10px] md:pt-3 md:pb-[15px] lg:pt-4 lg:pb-[20px] overflow-hidden">

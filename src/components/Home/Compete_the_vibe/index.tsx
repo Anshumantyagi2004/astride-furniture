@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
+import { useProducts } from "@/context/ProductsContext";
 import "swiper/css";
 
 const sans = Plus_Jakarta_Sans({
@@ -187,80 +188,51 @@ function VibeProductCard({ product }: { product: any }) {
 }
 
 export default function CompeteTheVibe() {
+  const { products: rawProducts } = useProducts();
   const [products, setProducts] = useState<any[]>(STATIC_FALLBACKS);
 
   useEffect(() => {
-    let isMounted = true; // Cleanup flag to prevent memory leaks on unmount
+    if (!rawProducts || rawProducts.length === 0) return;
 
-    async function fetchVibeProducts() {
-      try {
-        const res = await fetch("/api/product");
-        const data = await res.json();
+    const officeProducts = rawProducts
+      .filter((prod: any) => {
+        const catName = typeof prod.category === "string"
+          ? prod.category.toLowerCase()
+          : (prod.category?.name || "").toLowerCase();
+        return catName.includes("office");
+      })
+      .slice(0, 6);
 
-        if (data.success && data.products?.length > 0 && isMounted) {
-          
-          // 1. Filter efficiently: Look only for "Office" category and limit to max 6 immediately.
-          const officeProducts = data.products
-            .filter((prod: any) => {
-              const catName = typeof prod.category === "string" 
-                ? prod.category.toLowerCase() 
-                : (prod.category?.name || "").toLowerCase();
-              return catName.includes("office");
-            })
-            .slice(0, 6); // Max 6 boundary applied before heavy mapping
-
-          if (officeProducts.length > 0) {
-            const mapped = officeProducts.map((prod: any, idx: number) => {
-              const normalizedCategory = prod.category?.name || (typeof prod.category === "string" ? prod.category : "Office Chair");
-              
-              // 2. Performance: Limit how many image variations we extract into memory to cap DOM dots.
-              const allUrls = new Set<string>();
-              if (prod.images?.length) prod.images.forEach((img: any) => allUrls.add(img.url || img));
-              
-              // Only pull up to 4 variant images to save RAM
-              let variantCount = 0;
-              for (const variant of (prod.colorVariants || [])) {
-                if (variantCount >= 4) break; 
-                if (variant.images?.length) {
-                   allUrls.add(variant.images[0].url);
-                   variantCount++;
-                }
-              }
-
-              const allImages = Array.from(allUrls).slice(0, 3); // Hard cap at 5 images per card
-              const defaultImage = allImages[0] || "/Png1/chair12_ErgoFit.webp";
-              const stickerChoice = STICKERS[idx % STICKERS.length];
-
-              return {
-                id: prod._id,
-                slug: prod.slug,
-                name: prod.productName,
-                category: normalizedCategory,
-                image: defaultImage,
-                allImages,
-                oldPrice: `₹${(prod.oldPrice || prod.realPrice * 2).toLocaleString()}`,
-                price: `₹${prod.realPrice.toLocaleString()}`,
-                rawPrice: prod.realPrice,
-                sticker: stickerChoice.text,
-                stickerBg: stickerChoice.bg
-              };
-            });
-
-            // 3. Fallback filler logic if we found fewer than 6, though mapping naturally scales to whatever is found up to 6.
-            setProducts(mapped);
-          }
+    if (officeProducts.length > 0) {
+      const mapped = officeProducts.map((prod: any, idx: number) => {
+        const normalizedCategory = prod.category?.name || (typeof prod.category === "string" ? prod.category : "Office Chair");
+        const allUrls = new Set<string>();
+        if (prod.images?.length) prod.images.forEach((img: any) => allUrls.add(img.url || img));
+        let variantCount = 0;
+        for (const variant of (prod.colorVariants || [])) {
+          if (variantCount >= 4) break;
+          if (variant.images?.length) { allUrls.add(variant.images[0].url); variantCount++; }
         }
-      } catch (e) {
-        console.error("Error fetching recommended vibe products:", e);
-      }
+        const allImages = Array.from(allUrls).slice(0, 3);
+        const defaultImage = allImages[0] || "/Png1/chair12_ErgoFit.webp";
+        const stickerChoice = STICKERS[idx % STICKERS.length];
+        return {
+          id: prod._id,
+          slug: prod.slug,
+          name: prod.productName,
+          category: normalizedCategory,
+          image: defaultImage,
+          allImages,
+          oldPrice: `₹${(prod.oldPrice || prod.realPrice * 2).toLocaleString()}`,
+          price: `₹${prod.realPrice.toLocaleString()}`,
+          rawPrice: prod.realPrice,
+          sticker: stickerChoice.text,
+          stickerBg: stickerChoice.bg
+        };
+      });
+      setProducts(mapped);
     }
-
-    fetchVibeProducts();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  }, [rawProducts]);
 
   return (
     <section className={`pt-2 pb-0 md:pt-3 md:pb-6 bg-white ${sans.className}`}>

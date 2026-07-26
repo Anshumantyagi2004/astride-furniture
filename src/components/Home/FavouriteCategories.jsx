@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { useProducts } from "@/context/ProductsContext";
 
 import "swiper/css";
 
@@ -176,9 +177,9 @@ FavouriteCard.displayName = "FavouriteCard";
 // CORE LAYOUT COMPONENT
 // ==========================================
 export default function FavouriteCategories() {
+    const { products: rawProducts, loading } = useProducts();
     const [activeCategory, setActiveCategory] = useState("Bar Stools & Cafe Chair");
     const [productsList, setProductsList] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [wishlisted, setWishlisted] = useState({});
 
 
@@ -218,73 +219,55 @@ export default function FavouriteCategories() {
     }, [productsList]);
 
     useEffect(() => {
-        async function fetchProducts() {
-            try {
-                setLoading(true);
-                const res = await fetch("/api/product?t=" + Date.now(), {
-                  cache: "no-store",
-                  headers: { "Cache-Control": "no-store, no-cache, must-revalidate" }
-                });
-                const data = await res.json();
-                if (data.success && data.products && data.products.length > 0) {
-                    const mappedProducts = data.products.map((prod) => {
-                        const discPercent = prod.oldPrice && prod.realPrice
-                            ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
-                            : 60;
-                        
-                        let normalizedCategory = "Gaming Chair";
-                        const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
-                        if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
-                            normalizedCategory = "Gaming Chair";
-                        } else if (dbCategory.includes("EXECUTIVE")) {
-                            normalizedCategory = "Office Chair";
-                        } else if (dbCategory.includes("STAFF")) {
-                            normalizedCategory = "Staff Chair";
-                        } else if (dbCategory.includes("STUDY")) {
-                            normalizedCategory = "Study Chair";
-                        } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) {
-                            normalizedCategory = "Bar Stools & Cafe Chair";
-                        } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
-                            normalizedCategory = "Office Chair";
-                        }
-
-                        const blackVariant = prod.colorVariants?.find((v) => v.colorName?.toLowerCase() === "black");
-                        const blackImage = blackVariant?.images?.[0]?.url;
-
-                        const fallbackVariant = prod.colorVariants?.find((v) => v.images && v.images.length > 0);
-                        const fallbackImage = fallbackVariant?.images?.[0]?.url;
-
-                        const defaultVariant = blackVariant || fallbackVariant;
-                        const allImages = defaultVariant?.images?.map((img) => img.url) || [];
-
-                        return {
-                            id: prod._id,
-                            slug: prod.slug,
-                            name: prod.productName,
-                            price: prod.realPrice,
-                            originalPrice: prod.oldPrice,
-                            discount: `-${discPercent}%`,
-                            image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
-                            allImages: Array.from(new Set(allImages)),
-                            category: normalizedCategory,
-                            backSupport: prod.backSupport || "High Back",
-                            height: prod.height || "5'7\" - 6'6\"",
-                            hours: prod.hours || "8+ Hours",
-                            colors: prod.colors || ["#0f172a"],
-                            rating: prod.rating || 4.7,
-                            capacity: prod.capacity || "150 kg",
-                        };
-                    });
-                    setProductsList(mappedProducts);
-                }
-            } catch (err) {
-                console.error("Error fetching products:", err);
-            } finally {
-                setLoading(false);
+        if (!rawProducts || rawProducts.length === 0) return;
+        const mappedProducts = rawProducts.map((prod) => {
+            const discPercent = prod.oldPrice && prod.realPrice
+                ? Math.round((1 - (prod.realPrice / prod.oldPrice)) * 100)
+                : 60;
+            
+            let normalizedCategory = "Gaming Chair";
+            const dbCategory = prod.category && prod.category.name ? prod.category.name.toUpperCase() : "";
+            if (dbCategory.includes("GAMING") || dbCategory.includes("GAME")) {
+                normalizedCategory = "Gaming Chair";
+            } else if (dbCategory.includes("EXECUTIVE")) {
+                normalizedCategory = "Office Chair";
+            } else if (dbCategory.includes("STAFF")) {
+                normalizedCategory = "Staff Chair";
+            } else if (dbCategory.includes("STUDY")) {
+                normalizedCategory = "Study Chair";
+            } else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL") || dbCategory.includes("CAFE")) {
+                normalizedCategory = "Bar Stools & Cafe Chair";
+            } else if (dbCategory.includes("OFFICE") || dbCategory.includes("TASK") || dbCategory.includes("ERGO")) {
+                normalizedCategory = "Office Chair";
             }
-        }
-        fetchProducts();
-    }, []);
+
+            const blackVariant = prod.colorVariants?.find((v) => v.colorName?.toLowerCase() === "black");
+            const blackImage = blackVariant?.images?.[0]?.url;
+            const fallbackVariant = prod.colorVariants?.find((v) => v.images && v.images.length > 0);
+            const fallbackImage = fallbackVariant?.images?.[0]?.url;
+            const defaultVariant = blackVariant || fallbackVariant;
+            const allImages = defaultVariant?.images?.map((img) => img.url) || [];
+
+            return {
+                id: prod._id,
+                slug: prod.slug,
+                name: prod.productName,
+                price: prod.realPrice,
+                originalPrice: prod.oldPrice,
+                discount: `-${discPercent}%`,
+                image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+                allImages: Array.from(new Set(allImages)),
+                category: normalizedCategory,
+                backSupport: prod.backSupport || "High Back",
+                height: prod.height || "5'7\" - 6'6\"",
+                hours: prod.hours || "8+ Hours",
+                colors: prod.colors || ["#0f172a"],
+                rating: prod.rating || 4.7,
+                capacity: prod.capacity || "150 kg",
+            };
+        });
+        setProductsList(mappedProducts);
+    }, [rawProducts]);
 
     const activeProducts = productsList.filter(p => p.category === activeCategory);
 
