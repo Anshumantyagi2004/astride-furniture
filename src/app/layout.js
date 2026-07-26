@@ -59,12 +59,7 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
-        <link
-          rel="preload"
-          href="/3D_asset_glb/a3.glb"
-          as="fetch"
-          crossOrigin="anonymous"
-        />
+        {/* GLB preload removed — 3D viewer is disabled */}
       </head>
       <body className="min-h-screen overflow-x-clip max-w-[100vw]">
         <LayoutWrapper>
