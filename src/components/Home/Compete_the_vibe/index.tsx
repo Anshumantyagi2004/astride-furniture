@@ -260,7 +260,7 @@ export default function CompeteTheVibe() {
         <div className="w-full pb-0 px-1">
           <Swiper
             modules={[Autoplay]}
-            loop={true}
+            loop={products.length >= 8}
             autoplay={{
               delay: 2500,
               disableOnInteraction: false,

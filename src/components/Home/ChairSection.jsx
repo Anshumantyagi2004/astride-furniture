@@ -156,8 +156,8 @@ export default function ChairSection() {
                     <Swiper
                         modules={[Autoplay]}
                         spaceBetween={20}
-                        slidesPerView={1} // Changed from 1.15 to exactly 1 to remove side lines
-                        loop={true}
+                        slidesPerView={1}
+                        loop={chairData.length >= 6}
                         autoplay={{
                             delay: 2500,
                             disableOnInteraction: false,
@@ -165,15 +165,15 @@ export default function ChairSection() {
                         }}
                         breakpoints={{
                             640: {
-                                slidesPerView: 2.2,
+                                slidesPerView: 2,
                                 spaceBetween: 20,
                             },
                             1024: {
-                                slidesPerView: 4,
+                                slidesPerView: 3,
                                 spaceBetween: 24,
                             },
                             1280: {
-                                slidesPerView: 5,
+                                slidesPerView: 4,
                                 spaceBetween: 24,
                             }
                         }}
