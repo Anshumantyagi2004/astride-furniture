@@ -92,37 +92,39 @@ export default function WhyUs() {
                 </motion.div>
 
                 {/* MOBILE VIEW (Swiper) */}
-                <div className="block md:hidden w-full pb-4">
-                    <Swiper
-                        modules={[Autoplay]}
-                        spaceBetween={12}
-                        slidesPerView={2}
-                        loop={features.length >= 6}
-                        autoplay={{
-                            delay: 1500,
-                            disableOnInteraction: false,
-                        }}
-                        className="w-full !overflow-hidden"
-                    >
-                        {features.map((item, index) => (
-                            <SwiperSlide key={index} className="w-full pb-2 pr-1">
-                                <div className="group relative rounded-[16px] border-2 border-[#131313] bg-white p-4 flex flex-col items-center justify-center text-center gap-3 overflow-hidden cursor-default min-h-[130px] shadow-[4px_4px_0_#131313] active:translate-y-[2px] active:shadow-[2px_2px_0_#131313] transition-all duration-200">
-                                    {/* ICON BOX */}
-                                    <div className="relative w-11 h-11 rounded-full bg-[#0F1E36] border-2 border-[#131313] flex items-center justify-center text-white flex-shrink-0 shadow-[2px_2px_0_#131313]">
-                                        <div className="relative z-10 scale-90">{item.icon}</div>
-                                    </div>
+                {isMobile && (
+                    <div className="block md:hidden w-full pb-4">
+                        <Swiper
+                            modules={[Autoplay]}
+                            spaceBetween={12}
+                            slidesPerView={2}
+                            loop={features.length >= 6}
+                            autoplay={{
+                                delay: 1500,
+                                disableOnInteraction: false,
+                            }}
+                            className="w-full !overflow-hidden"
+                        >
+                            {features.map((item, index) => (
+                                <SwiperSlide key={index} className="w-full pb-2 pr-1">
+                                    <div className="group relative rounded-[16px] border-2 border-[#131313] bg-white p-4 flex flex-col items-center justify-center text-center gap-3 overflow-hidden cursor-default min-h-[130px] shadow-[4px_4px_0_#131313] active:translate-y-[2px] active:shadow-[2px_2px_0_#131313] transition-all duration-200">
+                                        {/* ICON BOX */}
+                                        <div className="relative w-11 h-11 rounded-full bg-[#0F1E36] border-2 border-[#131313] flex items-center justify-center text-white flex-shrink-0 shadow-[2px_2px_0_#131313]">
+                                            <div className="relative z-10 scale-90">{item.icon}</div>
+                                        </div>
 
-                                    {/* CONTENT */}
-                                    <div className="relative z-10 w-full">
-                                        <h3 className="text-[11px] font-extrabold text-[#131313] uppercase tracking-wider font-sans">
-                                            {item.title}
-                                        </h3>
+                                        {/* CONTENT */}
+                                        <div className="relative z-10 w-full">
+                                            <h3 className="text-[11px] font-extrabold text-[#131313] uppercase tracking-wider font-sans">
+                                                {item.title}
+                                            </h3>
+                                        </div>
                                     </div>
-                                </div>
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    </div>
+                )}
 
                 {/* DESKTOP VIEW (Grid) */}
                 <div className="hidden md:grid grid-cols-2 xl:grid-cols-4 gap-5">

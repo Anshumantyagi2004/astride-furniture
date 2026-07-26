@@ -253,6 +253,14 @@ export default function BestSellersSection_New() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { margin: "0px" });
   const [swiperInstance, setSwiperInstance] = useState<any>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     if (swiperInstance && !swiperInstance.destroyed && swiperInstance.autoplay) {
@@ -325,21 +333,34 @@ export default function BestSellersSection_New() {
       const singleImageProducts = mappedProducts.filter((p: any) => !p.allImages || p.allImages.length <= 1);
       finalProducts = [...finalProducts, ...singleImageProducts];
     }
+    if (finalProducts.length < 4) {
+      for (const fb of fallbackProducts) {
+        if (finalProducts.length >= 4) break;
+        if (!finalProducts.some((p: any) => p.id === fb.id)) {
+          finalProducts.push(fb);
+        }
+      }
+    }
     setProductsList(finalProducts.slice(0, 8));
   }, [rawProducts]);
+
+  // Pair products into groups of 2 per slide for mobile without Swiper Grid module
+  const pairedProducts = useRef<any[]>([]);
+  pairedProducts.current = [];
+  for (let i = 0; i < productsList.length; i += 2) {
+    pairedProducts.current.push(productsList.slice(i, i + 2));
+  }
 
   return (
     <section id="shop" ref={sectionRef} className="pt-2 pb-[10px] md:pt-3 md:pb-[15px] lg:pt-4 lg:pb-[20px] overflow-hidden">
       <div className="mx-auto max-w-[1440px] px-3 md:px-8 lg:px-12">
-        {/* Section Header UPDATED: Now vertically stacking, with pill/button in the same flex row */}
+        {/* Section Header */}
         <div className="mb-4 flex flex-col gap-2 px-1 md:px-0">
-          
           <div className="flex flex-row items-center justify-between w-full">
             <span className={`inline-block rounded-full border border-[#131313] bg-white px-3 py-1.5 md:px-4 md:py-2 text-[10px] md:text-xs font-bold uppercase tracking-[0.15em] text-[#8B5CF6] shrink-0 ${sans.className}`}>
               Explore bestsellers
             </span>
 
-            {/* Reduced padding specifically on mobile: px-3 py-1.5 */}
             <Link
               href="/products"
               className={`inline-flex items-center gap-1 md:gap-2 rounded-full bg-[#131313] px-3 py-1.5 md:px-7 md:py-4 font-bold text-white transition duration-300 hover:-translate-y-1 hover:bg-[#1F1F1F] hover:shadow-xl text-[11px] md:text-base shrink-0 ${sans.className}`}
@@ -364,51 +385,35 @@ export default function BestSellersSection_New() {
           </div>
         ) : (
           <>
-            {/* MOBILE 2x2 GRID SWIPER (md:hidden) */}
-            {/* Added pt-4 to prevent the sticker from getting chopped off */}
-            <div className="block md:hidden w-full mt-6">
-              <style jsx global>{`
-                .best-swiper.swiper {
-                  width: 100%;
-                  height: auto;
-                  padding-bottom: 24px;
-                }
-                .best-swiper .swiper-slide {
-                  height: auto !important;
-                }
-                .best-swiper .swiper-wrapper {
-                  flex-direction: row !important;
-                }
-              `}</style>
-              <Swiper
-                key={`bestsellers-swiper-${productsList.length}`}
-                onSwiper={setSwiperInstance}
-                modules={[Autoplay, Grid]}
-                grid={{
-                  rows: 2,
-                  fill: "row"
-                }}
-                slidesPerView={2}
-                spaceBetween={12}
-                autoplay={{
-                  delay: 2500,
-                  disableOnInteraction: false,
-                }}
-                className="best-swiper w-full"
-              >
-                {productsList.map((product) => (
-                  <SwiperSlide key={product.id}>
-                    {/* Added pt-4 here as well for good measure */}
-                    <div className="pb-3 pt-4">
-                      <BestsellerCard product={product} />
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </div>
+            {/* MOBILE 2x2 PAIRED SWIPER (Only mounted on mobile client screens) */}
+            {isMobile && (
+              <div className="block md:hidden w-full mt-6">
+                <Swiper
+                  key={`bestsellers-swiper-${productsList.length}`}
+                  onSwiper={setSwiperInstance}
+                  modules={[Autoplay]}
+                  slidesPerView={1}
+                  spaceBetween={12}
+                  autoplay={{
+                    delay: 2500,
+                    disableOnInteraction: false,
+                  }}
+                  className="best-swiper w-full"
+                >
+                  {pairedProducts.current.map((pair: any[], idx: number) => (
+                    <SwiperSlide key={idx}>
+                      <div className="grid grid-cols-2 gap-3 pb-3 pt-4">
+                        {pair.map((product: any) => (
+                          <BestsellerCard key={product.id} product={product} />
+                        ))}
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            )}
 
             {/* DESKTOP/TABLET GRID VIEW (hidden md:grid) */}
-            {/* Added pt-4 for the same reason on desktop */}
             <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px] px-1 md:px-0 mt-6 pt-4">
               {productsList.map((product) => (
                 <BestsellerCard key={product.id} product={product} />

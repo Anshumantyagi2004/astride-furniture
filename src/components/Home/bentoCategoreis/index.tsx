@@ -97,6 +97,15 @@ const CATEGORIES: BentoCategory[] = [
 ];
 
 export default function BentoCategories() {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   return (
     <section 
       className={`w-full bg-[#FAFAFA] pt-6 pb-4 px-4 md:pt-8 md:pb-6 md:px-12 lg:px-20 overflow-hidden ${sans.className}`}
@@ -104,7 +113,8 @@ export default function BentoCategories() {
       <div className="max-w-[1440px] mx-auto flex flex-col gap-6 md:gap-10">
         
         {/* MOBILE VIEW */}
-        <div className="block md:hidden relative w-full pt-2 pb-6">
+        {isMobile && (
+          <div className="block md:hidden relative w-full pt-2 pb-6">
           <Swiper
             modules={[Autoplay, Pagination]}
             spaceBetween={16}
@@ -167,6 +177,7 @@ export default function BentoCategories() {
             ))}
           </Swiper>
         </div>
+        )}
 
         {/* DESKTOP VIEW (Unchanged) */}
         <div className="hidden md:grid grid-cols-12 gap-[30px] w-full items-stretch">
