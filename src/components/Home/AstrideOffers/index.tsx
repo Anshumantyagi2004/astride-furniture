@@ -66,16 +66,20 @@ export default function AstrideOffers() {
   }, [rawProducts]);
 
   const scrollRight = () => {
-    if (swiperRef && window.innerWidth < 768) {
-      swiperRef.slideNext();
+    if (swiperRef && !swiperRef.destroyed && window.innerWidth < 768) {
+      try {
+        swiperRef.slideNext();
+      } catch (err) {}
     } else if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({ left: 320, behavior: 'smooth' });
     }
   };
 
   const scrollLeft = () => {
-    if (swiperRef && window.innerWidth < 768) {
-      swiperRef.slidePrev();
+    if (swiperRef && !swiperRef.destroyed && window.innerWidth < 768) {
+      try {
+        swiperRef.slidePrev();
+      } catch (err) {}
     } else if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({ left: -320, behavior: 'smooth' });
     }

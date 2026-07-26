@@ -393,8 +393,10 @@ export default function VideoTestimonials() {
                             className="video-swiper w-full"
                             onSlideChange={(swiper) => {
                                 setPlayingId(null); 
-                                if (swiper.autoplay && !swiper.autoplay.running) {
-                                    swiper.autoplay.start(); 
+                                if (swiper && !swiper.destroyed && swiper.autoplay && !swiper.autoplay.running) {
+                                    try {
+                                        swiper.autoplay.start(); 
+                                    } catch (err) {}
                                 }
                             }}
                         >
@@ -405,8 +407,10 @@ export default function VideoTestimonials() {
                                             video={v}
                                             onPlay={() => {
                                                 setPlayingId(v.id);
-                                                if (swiperInstance && swiperInstance.autoplay) {
-                                                    swiperInstance.autoplay.stop();
+                                                if (swiperInstance && !swiperInstance.destroyed && swiperInstance.autoplay) {
+                                                    try {
+                                                        swiperInstance.autoplay.stop();
+                                                    } catch (err) {}
                                                 }
                                             }}
                                             isPlaying={isMobile && playingId === v.id}

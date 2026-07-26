@@ -517,12 +517,14 @@ const CertificationsBento = () => {
   const [swiperInstance, setSwiperInstance] = useState<any>(null);
 
   useEffect(() => {
-    if (swiperInstance && swiperInstance.autoplay) {
-      if (isInView) {
-        swiperInstance.autoplay.start();
-      } else {
-        swiperInstance.autoplay.stop();
-      }
+    if (swiperInstance && !swiperInstance.destroyed && swiperInstance.autoplay) {
+      try {
+        if (isInView) {
+          swiperInstance.autoplay.start();
+        } else {
+          swiperInstance.autoplay.stop();
+        }
+      } catch (err) {}
     }
   }, [isInView, swiperInstance]);
 
