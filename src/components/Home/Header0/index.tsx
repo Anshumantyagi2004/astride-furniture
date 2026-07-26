@@ -123,7 +123,7 @@ export default function Header0() {
           effect="fade"
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           pagination={{ clickable: true }}
-          loop={true}
+          loop={slides.length >= 4}
           className="w-full h-full"
         >
           {slides.map((slide, idx) => (
@@ -156,7 +156,7 @@ export default function Header0() {
           effect="fade"
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           pagination={{ clickable: true }}
-          loop={true}
+          loop={mobileSlides.length >= 4}
           className="w-full h-full"
         >
           {mobileSlides.map((slide, idx) => (

@@ -142,7 +142,7 @@ export default function ComparisonSection() {
                     }}
                     autoplay={{ delay: 4500, disableOnInteraction: false }}
                     grabCursor
-                    loop
+                    loop={comparisons.length >= 4}
                     className="!pb-12 [&_.swiper-pagination-bullet-active]:!opacity-100 [&_.swiper-pagination-bullet-active]:!w-[44px]"
                 >
                     {comparisons.map((c, i) => (

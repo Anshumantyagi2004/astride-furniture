@@ -383,7 +383,7 @@ export default function VideoTestimonials() {
                             onSwiper={setSwiperInstance}
                             modules={[Pagination, Autoplay]}
                             pagination={{ clickable: true }}
-                            loop={true}
+                            loop={videos.length >= 6}
                             autoplay={{
                                 delay: 3500,
                                 disableOnInteraction: false,

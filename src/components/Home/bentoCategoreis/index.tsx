@@ -109,7 +109,7 @@ export default function BentoCategories() {
             modules={[Autoplay, Pagination]}
             spaceBetween={16}
             slidesPerView={1}
-            loop={true}
+            loop={CATEGORIES.length >= 6}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
