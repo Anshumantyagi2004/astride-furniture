@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -37,6 +38,15 @@ const reviews = [
 ];
 
 export default function Reviews_New() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   return (
     <section
       className="w-full pt-2 pb-2 px-5 md:px-8 lg:px-16 relative overflow-hidden"
@@ -63,70 +73,72 @@ export default function Reviews_New() {
         </div>
 
         {/* MOBILE VIEW (Swiper) */}
-        <div className="block md:hidden w-full pb-2 px-1">
-          <Swiper
-            modules={[Autoplay, Pagination]}
-            spaceBetween={16}
-            slidesPerView={1}
-            loop={reviews.length >= 6}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
-            pagination={{ clickable: true }}
-            className="w-full !pb-12 !pt-4" // Ensures shadow and tape are not clipped
-          >
-            {reviews.map((review, i) => (
-              <SwiperSlide key={i} className="w-full px-1.5 h-auto">
-                <div
-                  className={`relative ${review.cardBg} border-[2.5px] border-[#131313] px-7 py-7 pb-8 rounded-lg h-full`}
-                  style={{
-                    boxShadow: "6px 6px 0px #131313",
-                  }}
-                >
-                  {/* Tape deco */}
+        {isMobile && (
+          <div className="block md:hidden w-full pb-2 px-1">
+            <Swiper
+              modules={[Autoplay, Pagination]}
+              spaceBetween={16}
+              slidesPerView={1}
+              loop={reviews.length >= 6}
+              autoplay={{
+                delay: 2500,
+                disableOnInteraction: false,
+              }}
+              pagination={{ clickable: true }}
+              className="w-full !pb-12 !pt-4" // Ensures shadow and tape are not clipped
+            >
+              {reviews.map((review, i) => (
+                <SwiperSlide key={i} className="w-full px-1.5 h-auto">
                   <div
-                    className="absolute -top-[13px] left-1/2 -translate-x-1/2 w-24 h-6 rounded-[3px]"
+                    className={`relative ${review.cardBg} border-[2.5px] border-[#131313] px-7 py-7 pb-8 rounded-lg h-full`}
                     style={{
-                      backgroundColor: "rgba(220, 243, 81, 0.85)",
-                      boxShadow: "0 2px 4px rgba(19, 19, 19, 0.12)",
-                      transform: "translateX(-50%) rotate(-2deg)",
+                      boxShadow: "6px 6px 0px #131313",
                     }}
-                  />
+                  >
+                    {/* Tape deco */}
+                    <div
+                      className="absolute -top-[13px] left-1/2 -translate-x-1/2 w-24 h-6 rounded-[3px]"
+                      style={{
+                        backgroundColor: "rgba(220, 243, 81, 0.85)",
+                        boxShadow: "0 2px 4px rgba(19, 19, 19, 0.12)",
+                        transform: "translateX(-50%) rotate(-2deg)",
+                      }}
+                    />
 
-                  {/* Quote Mark */}
-                  <span className="font-serif text-5xl font-black text-[#EC4899] leading-none block mt-4 mb-1">
-                    &quot;
-                  </span>
+                    {/* Quote Mark */}
+                    <span className="font-serif text-5xl font-black text-[#EC4899] leading-none block mt-4 mb-1">
+                      &quot;
+                    </span>
 
-                  {/* Review Text */}
-                  <p className="text-[14.5px] text-[#333333] leading-relaxed mb-6 font-medium">
-                    {review.text}
-                  </p>
+                    {/* Review Text */}
+                    <p className="text-[14.5px] text-[#333333] leading-relaxed mb-6 font-medium">
+                      {review.text}
+                    </p>
 
-                  {/* Reviewer Info */}
-                  <div className="flex items-center gap-3 pt-2 border-t border-[#131313]/10 mt-auto">
-                    {/* Avatar */}
-                    <div className="relative w-12 h-12 shrink-0 rounded-full border-[2.5px] border-[#131313] overflow-hidden">
-                      <Image
-                        src={review.avatar}
-                        alt={review.name}
-                        fill
-                        sizes="48px"
-                        loading={i === 0 ? "eager" : "lazy"} // Only eager load the first one for speed
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <b className="block text-[14px] text-[#131313] font-black">{review.name}</b>
-                      <span className="block text-[12px] text-zinc-500 font-semibold">{review.role}</span>
+                    {/* Reviewer Info */}
+                    <div className="flex items-center gap-3 pt-2 border-t border-[#131313]/10 mt-auto">
+                      {/* Avatar */}
+                      <div className="relative w-12 h-12 shrink-0 rounded-full border-[2.5px] border-[#131313] overflow-hidden">
+                        <Image
+                          src={review.avatar}
+                          alt={review.name}
+                          fill
+                          sizes="48px"
+                          loading={i === 0 ? "eager" : "lazy"} // Only eager load the first one for speed
+                          className="object-cover"
+                        />
+                      </div>
+                      <div>
+                        <b className="block text-[14px] text-[#131313] font-black">{review.name}</b>
+                        <span className="block text-[12px] text-zinc-500 font-semibold">{review.role}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        )}
 
         {/* DESKTOP VIEW (Grid) */}
         <div className="hidden md:grid grid-cols-3 gap-10 items-stretch">
