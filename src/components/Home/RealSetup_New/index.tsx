@@ -108,7 +108,7 @@ export default function RealSetup_New() {
         {/* Swiper Auto-Scrolling Strip */}
         <Swiper
           modules={[Autoplay, Navigation]}
-          loop={true}
+          loop={setups.length >= 10}
           autoplay={{
             delay: 2500,
             disableOnInteraction: false,

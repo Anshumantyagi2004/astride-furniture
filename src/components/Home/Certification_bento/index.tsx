@@ -571,7 +571,7 @@ const CertificationsBento = () => {
             modules={SWIPER_MODULES}
             pagination={SWIPER_PAGINATION_CONFIG}
             autoplay={SWIPER_AUTOPLAY_CONFIG}
-            loop={true}
+            loop={CERTS_DATA.length >= 4}
             spaceBetween={24}
             slidesPerView={1}
             breakpoints={{
