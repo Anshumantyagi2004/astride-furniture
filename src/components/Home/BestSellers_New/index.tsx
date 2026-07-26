@@ -23,6 +23,7 @@ const sans = Plus_Jakarta_Sans({
 const fallbackProducts = [
   {
     id: "1",
+    slug: "ergofit-premium",
     sticker: "hot rn 🔥",
     hot: true,
     category: "Gaming Chair",
@@ -36,6 +37,7 @@ const fallbackProducts = [
   },
   {
     id: "2",
+    slug: "fitwell-pro",
     sticker: "staff fave",
     hot: false,
     category: "Study Chair",
@@ -49,6 +51,7 @@ const fallbackProducts = [
   },
   {
     id: "3",
+    slug: "fitwell-basic",
     sticker: "",
     hot: false,
     category: "Staff Chair",
@@ -62,6 +65,7 @@ const fallbackProducts = [
   },
   {
     id: "4",
+    slug: "octave-studio",
     sticker: "new drop",
     hot: false,
     category: "Bar Stool",
@@ -75,6 +79,7 @@ const fallbackProducts = [
   },
   {
     id: "5",
+    slug: "classic-comfort",
     sticker: "",
     hot: false,
     category: "Office Chair",
@@ -88,6 +93,7 @@ const fallbackProducts = [
   },
   {
     id: "6",
+    slug: "alpha-brown",
     sticker: "boss mode",
     hot: true,
     category: "Office Chair",
@@ -101,6 +107,7 @@ const fallbackProducts = [
   },
   {
     id: "7",
+    slug: "carbon-pro",
     sticker: "limited",
     hot: false,
     category: "Gaming Chair",
@@ -114,6 +121,7 @@ const fallbackProducts = [
   },
   {
     id: "8",
+    slug: "flexiback-elite",
     sticker: "selling fast",
     hot: true,
     category: "Study Chair",
