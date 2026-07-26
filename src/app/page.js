@@ -26,7 +26,7 @@ import Newletter from '@/components/Home/Newletter';
 import FAQ from '@/components/Home/FAQ';
 
 // Only dynamic loading heavy client components that contain heavy browser APIs or 3D canvas
-const PreloadModelViewer = dynamic(() => import('@/components/Home/PreloadModelViewer'));
+// const PreloadModelViewer = dynamic(() => import('@/components/Home/PreloadModelViewer')); // Disabled: THREE.js WebGL context crash
 const Reviews_New = dynamic(() => import('@/components/Home/Reviews_New'));
 const RealSetup_New = dynamic(() => import('@/components/Home/RealSetup_New'));
 const VideoTestimonials = dynamic(() => import('@/components/Home/VideoTestimonials'));
@@ -46,7 +46,7 @@ export default function Home() {
         <AstrideOffers />
         <Marquee5_New />
         <BentoCategories />
-        <PreloadModelViewer />
+        {/* <PreloadModelViewer /> */} {/* Disabled: THREE.js WebGL context crash */}
         <BestSellersSection_New />
         <CertificationsBento />
         <ChairSection />
