@@ -84,7 +84,7 @@ export default function Page() {
                     {/* Neo-Brutalist Grid Stats Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
                         {/* 1. Products Card */}
-                        <div className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4">
+                        <Link href="/admin/products" className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4 hover:-translate-y-1 hover:shadow-[6px_6px_0_#131313] transition-all cursor-pointer">
                             <div className="w-12 h-12 rounded-xl bg-[#ECFDF5] border-2 border-[#131313] flex items-center justify-center text-emerald-600 shadow-[2px_2px_0_#131313]">
                                 <ShoppingBag size={20} />
                             </div>
@@ -92,10 +92,10 @@ export default function Page() {
                                 <span className="text-[10px] text-neutral-400 font-black uppercase tracking-wider block mb-0.5">Products</span>
                                 <span className="text-2xl font-black leading-none">{stats.products}</span>
                             </div>
-                        </div>
+                        </Link>
 
                         {/* 2. Users Card */}
-                        <div className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4">
+                        <Link href="/admin/users" className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4 hover:-translate-y-1 hover:shadow-[6px_6px_0_#131313] transition-all cursor-pointer">
                             <div className="w-12 h-12 rounded-xl bg-[#EFF6FF] border-2 border-[#131313] flex items-center justify-center text-blue-600 shadow-[2px_2px_0_#131313]">
                                 <Users size={20} />
                             </div>
@@ -103,10 +103,10 @@ export default function Page() {
                                 <span className="text-[10px] text-neutral-400 font-black uppercase tracking-wider block mb-0.5">Users</span>
                                 <span className="text-2xl font-black leading-none">{stats.users}</span>
                             </div>
-                        </div>
+                        </Link>
 
                         {/* 3. Inquiries Card */}
-                        <div className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4">
+                        <Link href="/admin/inquiries" className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4 hover:-translate-y-1 hover:shadow-[6px_6px_0_#131313] transition-all cursor-pointer">
                             <div className="w-12 h-12 rounded-xl bg-[#FFFBEB] border-2 border-[#131313] flex items-center justify-center text-amber-600 shadow-[2px_2px_0_#131313]">
                                 <Headphones size={20} />
                             </div>
@@ -114,10 +114,10 @@ export default function Page() {
                                 <span className="text-[10px] text-neutral-400 font-black uppercase tracking-wider block mb-0.5">Inquiries</span>
                                 <span className="text-2xl font-black leading-none">{stats.inquiries}</span>
                             </div>
-                        </div>
+                        </Link>
 
                         {/* 4. Contacts Card */}
-                        <div className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4">
+                        <Link href="/admin/contacts" className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4 hover:-translate-y-1 hover:shadow-[6px_6px_0_#131313] transition-all cursor-pointer">
                             <div className="w-12 h-12 rounded-xl bg-[#F5F3FF] border-2 border-[#131313] flex items-center justify-center text-[#8B5CF6] shadow-[2px_2px_0_#131313]">
                                 <MessageSquare size={20} />
                             </div>
@@ -125,10 +125,10 @@ export default function Page() {
                                 <span className="text-[10px] text-neutral-400 font-black uppercase tracking-wider block mb-0.5">Messages</span>
                                 <span className="text-2xl font-black leading-none">{stats.contacts}</span>
                             </div>
-                        </div>
+                        </Link>
 
                         {/* 5. Orders Card */}
-                        <div className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4">
+                        <Link href="/admin/orders" className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4 hover:-translate-y-1 hover:shadow-[6px_6px_0_#131313] transition-all cursor-pointer">
                             <div className="w-12 h-12 rounded-xl bg-[#FFF5F5] border-2 border-[#131313] flex items-center justify-center text-red-500 shadow-[2px_2px_0_#131313]">
                                 <Boxes size={20} />
                             </div>
@@ -136,7 +136,7 @@ export default function Page() {
                                 <span className="text-[10px] text-neutral-400 font-black uppercase tracking-wider block mb-0.5">Orders</span>
                                 <span className="text-2xl font-black leading-none">{stats.orders}</span>
                             </div>
-                        </div>
+                        </Link>
                     </div>
 
                     {/* Sales Chart Section */}

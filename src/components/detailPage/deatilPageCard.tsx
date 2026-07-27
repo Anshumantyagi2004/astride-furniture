@@ -171,6 +171,20 @@ export default function DetailPageCard({ product }: { product: any }) {
     window.dispatchEvent(new CustomEvent('add-to-cart', { detail: cartItem }));
   };
 
+  const handleAddSetClick = (setSize: number) => {
+    if (!product) return;
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: activeImage || product.image,
+      slug: product.slug,
+      quantity: setSize,
+      color: selectedColor
+    };
+    window.dispatchEvent(new CustomEvent('add-to-cart', { detail: cartItem }));
+  };
+
   if (!product) {
     return (
       <div className="max-w-[1380px] mx-auto p-4 md:p-8 lg:p-10 bg-white min-h-screen flex items-center justify-center font-sans">
@@ -451,7 +465,25 @@ export default function DetailPageCard({ product }: { product: any }) {
 
 
 
-          <div className="flex gap-3 mt-5 flex-wrap items-stretch">
+          {/* Quick Bulk Sets */}
+          <div className="grid grid-cols-2 gap-3 mt-4 mb-2">
+            <button 
+              type="button" 
+              onClick={() => handleAddSetClick(5)}
+              className="flex-1 bg-[#EFF6FF] text-blue-700 font-extrabold text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all"
+            >
+              Set of 5 🪑
+            </button>
+            <button 
+              type="button" 
+              onClick={() => handleAddSetClick(10)}
+              className="flex-1 bg-[#ECFDF5] text-emerald-700 font-extrabold text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all"
+            >
+              Set of 10 🪑
+            </button>
+          </div>
+
+          <div className="flex gap-3 mt-1 flex-wrap items-stretch">
             {/* Quantity */}
             <div className="flex items-center border-[2.5px] border-[#131313] rounded-[14px] bg-white shadow-[3px_3px_0_#131313]" aria-label="Quantity">
               <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-[38px] h-full min-h-[46px] bg-transparent border-none text-[18px] font-bold hover:text-[#EC4899]">−</button>

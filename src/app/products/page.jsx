@@ -106,7 +106,36 @@ export default async function page() {
       .lean();
 
     // Remap to the field shape expected by ProductPageCard
-    preloadedProducts = JSON.parse(JSON.stringify(rawProducts)).map(mapProduct);
+    const mapped = JSON.parse(JSON.stringify(rawProducts)).map(mapProduct);
+
+    const PRIORITY_CHAIRS = [
+      "octave",
+      "ergofit",
+      "erizo",
+      "airsense",
+      "avein pro",
+      "ace",
+      "amica",
+      "rapid",
+      "alpha"
+    ];
+
+    preloadedProducts = mapped.sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+
+      const indexA = PRIORITY_CHAIRS.findIndex(p => nameA.includes(p));
+      const indexB = PRIORITY_CHAIRS.findIndex(p => nameB.includes(p));
+
+      const hasA = indexA !== -1;
+      const hasB = indexB !== -1;
+
+      if (hasA && !hasB) return -1;
+      if (!hasA && hasB) return 1;
+      if (hasA && hasB) return indexA - indexB;
+
+      return 0;
+    });
 
     const rawCategories = await Category.find({}).lean();
     preloadedCategories = JSON.parse(JSON.stringify(rawCategories));
