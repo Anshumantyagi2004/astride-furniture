@@ -205,11 +205,15 @@ export default function Page() {
                         ) : (
                             <div className="space-y-3">
                                 {recentOrders.map((order) => (
-                                    <Link key={order._id} href="/admin/orders" className="flex items-center justify-between border-b border-neutral-50 pb-3 last:border-b-0 last:pb-0 hover:bg-neutral-50 p-2 rounded-lg transition-colors -mx-2 px-2">
+                                    <Link key={order._id} href={`/admin/orders#order-${order._id}`} className="flex items-center justify-between border-b border-neutral-50 pb-3 last:border-b-0 last:pb-0 hover:bg-neutral-50 p-2 rounded-lg transition-colors -mx-2 px-2">
                                         <div className="flex-1">
                                             <div className="flex items-center gap-2">
                                                 <p className="text-sm font-bold text-[#131313]">
-                                                    {order.userId?.name || "Unknown User"}
+                                                    {order.userId?.name 
+                                                        ? order.userId.name 
+                                                        : (order.shippingInfo?.fullName 
+                                                            ? `${order.shippingInfo.fullName} (Guest User)` 
+                                                            : "Guest User")}
                                                 </p>
                                                 <span className="text-xs text-neutral-400">
                                                     Order ID: {order._id.toString().slice(-6).toUpperCase()}

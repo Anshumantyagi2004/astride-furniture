@@ -30,10 +30,13 @@ export default function TrackOrderPage() {
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
 
   useEffect(() => {
-    const phoneParam = searchParams?.get('phone');
-    if (phoneParam && phoneParam.length === 10 && phoneParam !== phone) {
-      setPhone(phoneParam);
-      fetchOrdersByPhone(phoneParam);
+    const rawPhoneParam = searchParams?.get('phone');
+    if (rawPhoneParam) {
+      const cleanNum = rawPhoneParam.replace(/\D/g, '').slice(-10);
+      if (cleanNum.length === 10 && cleanNum !== phone) {
+        setPhone(cleanNum);
+        fetchOrdersByPhone(cleanNum);
+      }
     }
   }, [searchParams, phone]);
 
@@ -113,7 +116,7 @@ export default function TrackOrderPage() {
     return -1; // For cancelled or returned orders
   };
   return (
-    <div className="min-h-screen bg-neutral-50/50 pt-4 pb-16 sm:py-16 px-4 sm:px-6 lg:px-8 sm:mt-16 font-sans">
+    <div className="min-h-screen bg-neutral-50/50 pt-2 sm:pt-6 pb-16 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8 sm:mb-10">
           <h1 className="text-4xl md:text-5xl font-black text-neutral-900 tracking-tight mb-3">Track Your Order</h1>

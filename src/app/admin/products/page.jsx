@@ -18,6 +18,16 @@ import Link from "next/link";
 export default function Page() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+
+
+    const filteredProducts = products.filter((product) => {
+        const query = searchQuery.toLowerCase().trim();
+        const nameMatch = product.title?.toLowerCase().includes(query);
+        const categoryMatch = product.category?.name?.toLowerCase().includes(query);
+        return nameMatch || categoryMatch;
+    });
+
 
     // GET PRODUCTS
     const getProducts = async () => {
@@ -39,10 +49,10 @@ export default function Page() {
 
     useEffect(() => {
         getProducts();
-        
+
         // Auto-refresh every 10 seconds to catch new products/categories
         const interval = setInterval(getProducts, 10000);
-        
+
         return () => clearInterval(interval);
     }, []);
 
@@ -75,14 +85,33 @@ export default function Page() {
 
             {/* MAIN CONTENT */}
             <main className="flex-1 p-6">
-                <div className="mb-6">
-                    <h1 className="text-3xl font-bold text-black">
-                        All Products
-                    </h1>
+                <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-black">
+                            All Products
+                        </h1>
+                        <p className="text-gray-600 mt-1">
+                            Manage all your products
+                        </p>
+                    </div>
 
-                    <p className="text-gray-600 mt-2">
-                        Manage all your products
-                    </p>
+                    <div className="relative max-w-xs w-full">
+                        <input
+                            type="text"
+                            placeholder="Search products by name or category..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full bg-white border border-neutral-300 rounded-xl px-4 py-2.5 text-sm text-neutral-900 shadow-sm outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                        />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery("")}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-400 font-bold hover:text-black"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {loading ? (
@@ -102,24 +131,24 @@ export default function Page() {
                             </div>
                         ))}
                     </div>
-                ) : products.length === 0 ? (
-                    <div className="bg-white rounded-3xl p-10 text-center shadow">
+                ) : filteredProducts.length === 0 ? (
+                    <div className="bg-white rounded-3xl p-10 text-center shadow border border-neutral-100">
                         <Package
-                            className="mx-auto text-gray-600 mb-4"
+                            className="mx-auto text-neutral-400 mb-4"
                             size={60}
                         />
 
                         <h2 className="text-2xl font-bold text-black">
-                            No Products Found
+                            {searchQuery ? `No products match "${searchQuery}"` : "No Products Found"}
                         </h2>
 
                         <p className="text-gray-500 mt-2">
-                            Add your first product
+                            {searchQuery ? "Try searching with a different term." : "Add your first product"}
                         </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {products.map((product, idx) => (
+                        {filteredProducts.map((product, idx) => (
                             <div key={product._id} className="bg-white rounded-lg overflow-hidden shadow hover:shadow-xl transition">
                                 <div className="relative h-60 w-full bg-gray-100">
                                     <Image

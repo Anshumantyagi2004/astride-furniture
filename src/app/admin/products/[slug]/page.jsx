@@ -13,6 +13,8 @@ import {
     Trash2,
     Link2,
     FileText,
+    ArrowLeft,
+    ArrowRight,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
@@ -343,10 +345,33 @@ export default function Page() {
         setSpecifications(updated);
     };
 
-    const handleSpecChange = (index, field, value) => {
-        const updated = [...specifications,];
-        updated[index][field] = value;
-        setSpecifications(updated);
+    const moveVariantImage = (variantIndex, imageIndex, direction) => {
+        const updated = [...colorVariants];
+        const targetIndex = direction === "left" ? imageIndex - 1 : imageIndex + 1;
+        const total = updated[variantIndex].previews?.length || 0;
+        
+        if (targetIndex < 0 || targetIndex >= total) return;
+
+        // Swap previews
+        const tempPreview = updated[variantIndex].previews[imageIndex];
+        updated[variantIndex].previews[imageIndex] = updated[variantIndex].previews[targetIndex];
+        updated[variantIndex].previews[targetIndex] = tempPreview;
+
+        // Swap images if present
+        if (updated[variantIndex].images && updated[variantIndex].images.length > 0) {
+            const tempImg = updated[variantIndex].images[imageIndex];
+            updated[variantIndex].images[imageIndex] = updated[variantIndex].images[targetIndex];
+            updated[variantIndex].images[targetIndex] = tempImg;
+        }
+
+        // Swap existingImages if present
+        if (updated[variantIndex].existingImages && updated[variantIndex].existingImages.length > 0) {
+            const tempExist = updated[variantIndex].existingImages[imageIndex];
+            updated[variantIndex].existingImages[imageIndex] = updated[variantIndex].existingImages[targetIndex];
+            updated[variantIndex].existingImages[targetIndex] = tempExist;
+        }
+
+        setColorVariants(updated);
     };
 
     // UPDATE
@@ -875,18 +900,40 @@ export default function Page() {
                                                             </div>
                                                         )}
 
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                removeVariantImage(
-                                                                    index,
-                                                                    imageIndex
-                                                                )
-                                                            }
-                                                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-90 hover:opacity-100 shadow-md z-20"
-                                                        >
-                                                            <Trash2 size={14} />
-                                                        </button>
+                                                        <div className="absolute top-2 right-2 flex items-center gap-1 z-20">
+                                                            {imageIndex > 0 && (
+                                                                <button
+                                                                    type="button"
+                                                                    title="Move Left"
+                                                                    onClick={() => moveVariantImage(index, imageIndex, "left")}
+                                                                    className="bg-black/70 hover:bg-black text-white rounded-full p-1 shadow-md transition"
+                                                                >
+                                                                    <ArrowLeft size={14} />
+                                                                </button>
+                                                            )}
+                                                            {imageIndex < (variant.previews?.length || 0) - 1 && (
+                                                                <button
+                                                                    type="button"
+                                                                    title="Move Right"
+                                                                    onClick={() => moveVariantImage(index, imageIndex, "right")}
+                                                                    className="bg-black/70 hover:bg-black text-white rounded-full p-1 shadow-md transition"
+                                                                >
+                                                                    <ArrowRight size={14} />
+                                                                </button>
+                                                            )}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    removeVariantImage(
+                                                                        index,
+                                                                        imageIndex
+                                                                    )
+                                                                }
+                                                                className="bg-red-500 text-white rounded-full p-1 opacity-90 hover:opacity-100 shadow-md"
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        </div>
                                                     </div>
 
                                                     {/* TYPE TOGGLE BADGE */}

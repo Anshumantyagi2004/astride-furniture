@@ -19,6 +19,7 @@ const orderSchema = new mongoose.Schema(
       pinCode: String,
       customMessage: String,
       billingAddress: String,
+      gstNumber: String,
     },
 
     products: [
