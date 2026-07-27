@@ -27,7 +27,7 @@ export const uploadToR2 = async ({ file, folder, fileName, contentType }) => {
         .toBuffer();
 
       // If buffer is too large (more than 110 KB), decrease quality iteratively
-      while (optimizedBuffer.length > 112640 && quality > 15) {
+      while (optimizedBuffer.length > 56320 && quality > 15) {
         quality -= 10;
         optimizedBuffer = await sharp(file)
           .resize({ width: 1000, withoutEnlargement: true })
@@ -36,10 +36,10 @@ export const uploadToR2 = async ({ file, folder, fileName, contentType }) => {
       }
       
       // If still too large after quality drop, scale down width to 800px to enforce 100kb limit
-      if (optimizedBuffer.length > 112640) {
+      if (optimizedBuffer.length > 56320) {
         optimizedBuffer = await sharp(file)
-          .resize({ width: 800, withoutEnlargement: true })
-          .webp({ quality: 65 })
+          .resize({ width: 700, withoutEnlargement: true })
+          .webp({ quality: 55 })
           .toBuffer();
       }
     } catch (err) {
