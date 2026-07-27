@@ -92,7 +92,7 @@ const CATEGORY_CACHE_TTL = 0; // Cache disabled for real-time data
 export async function GET() {
     try {
         await connectDB();
-        const categories = await Category.find().sort({ createdAt: -1 });
+        const categories = await Category.find().sort({ createdAt: -1 }).lean();
 
         const data = {
             success: true,
