@@ -68,20 +68,6 @@ export default function Header0() {
     };
   }, []);
 
-  const prefetchProducts = async () => {
-    try {
-      if (typeof window !== "undefined" && !sessionStorage.getItem("astride_nav_products_cache")) {
-        const res = await fetch("/api/product");
-        const data = await res.json();
-        if (data?.success) {
-          sessionStorage.setItem("astride_nav_products_cache", JSON.stringify(data.products));
-        }
-      }
-    } catch (err) {
-      console.error("Prefetch error:", err);
-    }
-  };
-
   const handleBannerClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsNavigating(true);
@@ -132,7 +118,6 @@ export default function Header0() {
               <Link 
                 href="/products" 
                 onClick={handleBannerClick}
-                onMouseEnter={prefetchProducts}
                 className="relative inset-0 z-0 cursor-pointer block w-full h-full"
               >
                 <Image
@@ -164,7 +149,6 @@ export default function Header0() {
               <Link 
                 href="/products" 
                 onClick={handleBannerClick}
-                onMouseEnter={prefetchProducts}
                 className="relative inset-0 z-0 cursor-pointer block w-full h-full"
               >
                 <Image
