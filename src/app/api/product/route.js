@@ -180,7 +180,7 @@ export async function GET() {
         const products = await Product.find(
             {}, 
             "productName slug category oldPrice realPrice backSupport height hours colors rating capacity colorVariants metaTitle metaDescription shortDescription"
-        ).populate("category").sort({ createdAt: -1 });
+        ).populate("category").sort({ createdAt: -1 }).lean();
 
         data = {
             success: true,
