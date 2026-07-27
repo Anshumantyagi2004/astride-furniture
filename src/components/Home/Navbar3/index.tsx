@@ -465,17 +465,35 @@ export default function Navbar3() {
 
                     {/* Mobile Navigation */}
                     {isOpen && (
-                        <nav className="absolute left-0 right-0 top-full flex flex-col gap-4 border-b-2 border-slate-900 bg-white px-5 py-5 lg:hidden">
+                        <nav className="absolute left-0 right-0 top-full flex flex-col gap-4 border-b-2 border-slate-900 bg-white px-5 py-5 lg:hidden shadow-xl">
                             {navItems.map((item) => (
                                 <Link
                                     key={item}
                                     href={`/products?category=${encodeURIComponent(item)}`}
-                                    className="font-semibold"
+                                    className="font-semibold text-slate-800 hover:text-black"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     {item}
                                 </Link>
                             ))}
+
+                            {/* Contact & Inquiry Buttons inside Mobile Menu */}
+                            <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-200 mt-1">
+                                <Link
+                                    href="/contact"
+                                    onClick={() => setIsOpen(false)}
+                                    className="flex items-center justify-center py-2.5 px-3 rounded-xl bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 text-center transition-colors"
+                                >
+                                    Contact Us
+                                </Link>
+                                <Link
+                                    href="/inquiry"
+                                    onClick={() => setIsOpen(false)}
+                                    className="flex items-center justify-center py-2.5 px-3 rounded-xl bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 text-center transition-colors"
+                                >
+                                    Inquiry Us
+                                </Link>
+                            </div>
                         </nav>
                     )}
                 </div>

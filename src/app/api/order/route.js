@@ -105,15 +105,20 @@ export async function PUT(req) {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const { status } = await req.json();
+    const body = await req.json();
+
+    const updateData = {};
+    if (body.status !== undefined) updateData.status = body.status;
+    if (body.adminNote !== undefined) updateData.adminNote = body.adminNote;
+
     const order = await Order.findByIdAndUpdate(
       id,
-      { status },
+      updateData,
       { new: true }
     );
     return NextResponse.json({
       success: true,
-      message: "Order status updated successfully",
+      message: "Order updated successfully",
       order,
     });
   } catch (error) {

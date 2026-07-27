@@ -777,6 +777,25 @@ export default function Navbar() {
                     </Link>
                   ))}
                 </nav>
+
+                {/* Two side-by-side buttons after categories */}
+                <div className="grid grid-cols-2 gap-2 mt-4 px-1">
+                  <Link
+                    href="/contact"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center py-3 px-3 rounded-xl bg-zinc-900 border border-zinc-700/80 text-white text-[11px] font-bold uppercase tracking-wider hover:bg-zinc-800 transition-all text-center"
+                  >
+                    Contact Us
+                  </Link>
+
+                  <Link
+                    href="/inquiry"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center py-3 px-3 rounded-xl bg-[#8B5CF6] text-white text-[11px] font-bold uppercase tracking-wider hover:bg-[#7C3AED] transition-all text-center"
+                  >
+                    Bulk Enquiries
+                  </Link>
+                </div>
               </div>
             </div>
 

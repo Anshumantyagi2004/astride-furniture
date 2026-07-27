@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 interface AccountPageProps {
-  activeTab: "account" | "orders" | "wishlist";
+  activeTab: "account" | "orders" | "wishlist" | "messages";
 }
 
 interface UserProfile {
@@ -54,7 +54,10 @@ interface Order {
     city: string;
     state: string;
     pinCode: string;
+    customMessage?: string;
+    billingAddress?: string;
   };
+  adminNote?: string;
   products: OrderItem[];
   pricing: {
     subtotal: number;
@@ -279,6 +282,7 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
   const sidebarItems = [
     { id: "account", label: "My Account", icon: User, path: "/account" },
     { id: "orders", label: "My Orders", icon: ShoppingBag, path: "/account/orders" },
+    { id: "messages", label: "Order Messages", icon: Mail, path: "/account/messages" },
     { id: "wishlist", label: "My Wishlist", icon: Heart, path: "/account/wishlist" },
   ];
 
@@ -578,6 +582,24 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                                   </div>
                                 </div>
                               ))}
+
+                              {/* Custom Note & Admin Message Display */}
+                              {(order.shippingInfo?.customMessage || order.adminNote) && (
+                                <div className="space-y-2.5 pt-3 border-t border-slate-100 w-full">
+                                  {order.shippingInfo?.customMessage && (
+                                    <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-900">
+                                      <span className="font-bold text-amber-700 block mb-0.5 uppercase tracking-wider text-[10px]">Your Note (Order ID: {order._id})</span>
+                                      "{order.shippingInfo.customMessage}"
+                                    </div>
+                                  )}
+                                  {order.adminNote && (
+                                    <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-3 text-xs text-emerald-900">
+                                      <span className="font-bold text-emerald-700 block mb-0.5 uppercase tracking-wider text-[10px]">Message from Astride Team (Order ID: {order._id})</span>
+                                      "{order.adminNote}"
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
 
                             {/* Status badge and actions */}
@@ -822,11 +844,64 @@ export default function AccountPage({ activeTab }: AccountPageProps) {
                 </div>
               )}
 
+
+              {/* ORDER MESSAGES TAB */}
+              {activeTab === "messages" && (
+                <div>
+                  <h2 className="text-lg font-black text-slate-850 uppercase tracking-wider border-b border-slate-200/60 pb-6 mb-8">
+                    Order Messages & Support
+                  </h2>
+
+                  {(() => {
+                    const messageOrders = orders.filter(o => o.shippingInfo?.customMessage || o.adminNote);
+                    if (messageOrders.length === 0) {
+                      return (
+                        <div className="text-center py-16">
+                          <Mail size={40} className="text-slate-350 mx-auto mb-4" />
+                          <p className="text-xs font-black text-slate-400 uppercase tracking-wider font-extrabold">No Order Messages</p>
+                          <p className="text-xs text-slate-500 mt-1">Order notes and admin messages will appear here.</p>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div className="space-y-6">
+                        {messageOrders.map((order) => (
+                          <div key={order._id} className="border border-slate-200/60 rounded-2xl p-5 bg-white space-y-3 shadow-sm">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
+                              <div>
+                                <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest block">Order ID</span>
+                                <span className="text-sm font-mono font-bold text-slate-900">{order._id}</span>
+                              </div>
+                              <span className="text-xs text-slate-400 font-semibold">{new Date(order.createdAt).toLocaleDateString('en-IN')}</span>
+                            </div>
+
+                            {order.shippingInfo?.customMessage && (
+                              <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-3.5 text-xs text-amber-900">
+                                <span className="font-bold text-amber-700 block mb-1 uppercase tracking-wider text-[10px]">Your Note Sent to Seller</span>
+                                "{order.shippingInfo.customMessage}"
+                              </div>
+                            )}
+
+                            {order.adminNote && (
+                              <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-xl p-3.5 text-xs text-emerald-900">
+                                <span className="font-bold text-emerald-700 block mb-1 uppercase tracking-wider text-[10px]">Message from Astride Support Team</span>
+                                "{order.adminNote}"
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
             </div>
           </main>
-
         </div>
       </div>
     </div>
   );
 }
+
+
+

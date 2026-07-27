@@ -51,9 +51,26 @@ export async function POST(req) {
 }
 
 // Handle GET request to view enquiries (for admin dashboard)
-export async function GET() {
+export async function GET(req) {
   try {
     await connectDB();
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (id) {
+      const enquiry = await Enquiry.findById(id);
+      if (!enquiry) {
+        return NextResponse.json(
+          { success: false, message: "Enquiry not found" },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json({
+        success: true,
+        enquiry,
+      });
+    }
 
     const enquiries = await Enquiry.find().sort({ createdAt: -1 });
 

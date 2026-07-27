@@ -115,6 +115,7 @@ export default function Footer() {
                             { name: "About Us", link: "/about" },
                             { name: "Blog", link: "/blogs" },
                             { name: "Contact Us", link: "/contact" },
+                            { name: "Bulk Enquiry", link: "/inquiry" },
                             { name: "FAQs", link: "/#faq" },
                             { name: "Track Order", link: "/track-order" },
                         ].map((item, index) => {

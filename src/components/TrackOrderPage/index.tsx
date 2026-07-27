@@ -1,6 +1,7 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 interface OrderItem {
   productName: string;
   image: string;
@@ -19,6 +20,7 @@ interface Order {
 }
 const ORDER_STATUS_STEPS = ["Confirmed", "Processing", "Dispatched", "Out for Delivery", "Delivered"];
 export default function TrackOrderPage() {
+  const searchParams = useSearchParams();
   const [phone, setPhone] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +28,33 @@ export default function TrackOrderPage() {
   const [error, setError] = useState("");
   const [isCancelling, setIsCancelling] = useState<string | null>(null);
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const phoneParam = searchParams?.get('phone');
+    if (phoneParam && phoneParam.length === 10 && phoneParam !== phone) {
+      setPhone(phoneParam);
+      fetchOrdersByPhone(phoneParam);
+    }
+  }, [searchParams, phone]);
+
+  const fetchOrdersByPhone = async (num: string) => {
+    setError("");
+    setIsLoading(true);
+    setHasSearched(true);
+    try {
+      const res = await fetch(`/api/order/track?phone=${num}`);
+      const data = await res.json();
+      if (data.success) {
+        setOrders(data.orders || []);
+      } else {
+        setError(data.message || "Failed to load orders");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleCancelOrder = async (orderId: string) => {
     setIsCancelling(orderId);
