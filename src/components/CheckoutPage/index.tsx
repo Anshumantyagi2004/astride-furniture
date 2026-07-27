@@ -133,25 +133,24 @@ export default function CheckoutPage() {
   const placeOrder = useCallback(async () => {
     if (isProcessing) return;
     try {
-      // Force validate all fields on submit
-      const newErrors = {
-        fullName: validateField("fullName", formData.fullName),
-        email: validateField("email", formData.email),
-        phone: validateField("phone", formData.phone),
-        address: validateField("address", formData.address),
-        city: validateField("city", formData.city),
-        stateName: validateField("stateName", formData.stateName),
-        pinCode: validateField("pinCode", formData.pinCode),
-      };
-
-      setErrors(newErrors);
-
-      // Stop submission if ANY error exists
-      if (Object.values(newErrors).some(err => err !== "")) {
-        // Scroll to top so user sees the errors
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        return;
-      }
+      // =====================================================================
+      // ORIGINAL FORM VALIDATION - COMMENTED OUT (Magic Checkout handles this)
+      // =====================================================================
+      // const newErrors = {
+      //   fullName: validateField("fullName", formData.fullName),
+      //   email: validateField("email", formData.email),
+      //   phone: validateField("phone", formData.phone),
+      //   address: validateField("address", formData.address),
+      //   city: validateField("city", formData.city),
+      //   stateName: validateField("stateName", formData.stateName),
+      //   pinCode: validateField("pinCode", formData.pinCode),
+      // };
+      // setErrors(newErrors);
+      // if (Object.values(newErrors).some(err => err !== "")) {
+      //   window.scrollTo({ top: 0, behavior: "smooth" });
+      //   return;
+      // }
+      // =====================================================================
 
       if (!paymentMethod) {
         alert("Please select a payment method before proceeding.");
@@ -178,23 +177,25 @@ export default function CheckoutPage() {
         }
       }
 
-     
-      
       setIsProcessing(true);
       
       const totalAmount = subtotal + shippingCost;
+      // NOTE: shippingInfo populated by Razorpay Magic Checkout — fields are empty by design
       const orderData = {
         userId: userId,
-        shippingInfo: { ...formData, state: formData.stateName },
+        shippingInfo: {
+          fullName: formData.fullName || "",
+          email: formData.email || "",
+          phone: formData.phone || "",
+          address: formData.address || "",
+          city: formData.city || "",
+          state: formData.stateName || "",
+          pinCode: formData.pinCode || "",
+        },
         products: cartItems.map((item) => {
           // Robustly extract the raw MongoDB ObjectId from any cart item format:
-          // - detail page: "6a27b01257ac440ad71b9b93-Red"  → split on first "-"
-          // - product card: "6a27b01257ac440ad71b9b93"       → use as-is
-          // - FavouriteCategories spreads full product obj   → item._id exists
           const rawId = item.id ?? item._id ?? "";
           const rawIdStr = String(rawId);
-          // An ObjectId is exactly 24 hex chars. If the rawId looks like one, use it.
-          // Otherwise, try taking the first segment before "-" (handles "objectId-color").
           let productId: string;
           if (/^[a-f0-9]{24}$/i.test(rawIdStr)) {
             productId = rawIdStr;
@@ -238,7 +239,10 @@ export default function CheckoutPage() {
         const res = await fetch("/api/create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: totalAmount * 100 }), 
+          body: JSON.stringify({ 
+            amount: totalAmount * 100,
+            cartItems: cartItems, // Required for Razorpay Magic Checkout line_items
+          }), 
         });
         const razorpayOrder = await res.json();
         
@@ -254,6 +258,8 @@ export default function CheckoutPage() {
           name: "Astride Furniture",
           description: "Order Payment",
           order_id: razorpayOrder.order_id,
+          one_click_checkout: true,
+          remember_customer: true,
           handler: async function (response: any) {
             try {
               const verifyRes = await fetch("/api/verify-payment", {
@@ -338,9 +344,9 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-[#f8fafc] py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <Script
-        src="https://checkout.razorpay.com/v1/checkout.js"
+        src="https://checkout.razorpay.com/v1/magic-checkout.js"
         strategy="afterInteractive"
-        onLoad={() => console.log("Razorpay script loaded successfully")}
+        onLoad={() => console.log("Razorpay Magic Checkout script loaded")}
       />
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
@@ -364,199 +370,48 @@ export default function CheckoutPage() {
         </h1>
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-          {/* LEFT: Shipping Information */}
+          {/* LEFT: Magic Checkout - Address & Payment handled by Razorpay */}
           <div className="flex-1">
             <div className="bg-white rounded-3xl p-8 md:p-10 shadow-[0_20px_40px_rgba(0,0,0,0.04),_0_5px_15px_rgba(0,0,0,0.01)] border border-neutral-100">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-neutral-900">Shipping Information</h2>
-                <Link
-                  href="/login"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors"
-                >
-                  Login
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                    <polyline points="10 17 15 12 10 7" />
-                    <line x1="15" y1="12" x2="3" y2="12" />
-                  </svg>
-                </Link>
-              </div>
               
-              <form className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-                  <div className="flex flex-col">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Full Name</label>
-                    <input 
-                      type="text" 
-                      name="fullName"
-                      placeholder="Full Name"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      onBlur={handleBlur}
-                      className={getInputClass(errors.fullName)}
-                    />
-                    <ErrorMessage error={errors.fullName} />
+              {/* Magic Checkout Info */}
+              <div className="flex flex-col items-center text-center gap-6 py-6">
+                <div className="w-16 h-16 bg-[#072654] rounded-2xl flex items-center justify-center shadow-lg">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 3L4 9v7c0 6.627 5.148 12.825 12 14 6.852-1.175 12-7.373 12-14V9L16 3z" fill="#3395FF" fillOpacity="0.3"/>
+                    <path d="M11 16l3.5 3.5L21 13" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-black text-neutral-900 tracking-tight">Razorpay Magic Checkout</h2>
+                  <p className="text-sm text-neutral-500 font-medium mt-2 max-w-sm mx-auto leading-relaxed">
+                    Complete your purchase instantly. Razorpay will securely handle your address, OTP verification, and payment — all in one step.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 w-full max-w-sm">
+                  <div className="flex flex-col items-center gap-1.5 bg-neutral-50 rounded-2xl p-3 border border-neutral-100">
+                    <span className="text-lg">📍</span>
+                    <span className="text-[10px] font-bold text-neutral-600 uppercase tracking-wide text-center">Saved Address</span>
                   </div>
-                  <div className="flex flex-col">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Email</label>
-                    <input 
-                      type="email" 
-                      name="email"
-                      placeholder="Email Address"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      onBlur={handleBlur}
-                      className={getInputClass(errors.email)}
-                    />
-                    <ErrorMessage error={errors.email} />
+                  <div className="flex flex-col items-center gap-1.5 bg-neutral-50 rounded-2xl p-3 border border-neutral-100">
+                    <span className="text-lg">⚡</span>
+                    <span className="text-[10px] font-bold text-neutral-600 uppercase tracking-wide text-center">1-Click OTP</span>
                   </div>
-                </div>
-
-                <div className="flex flex-col">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Phone Number</label>
-                  <input 
-                    type="text" 
-                    name="phone"
-                    placeholder="10-digit Phone Number"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    className={getInputClass(errors.phone)}
-                  />
-                  <ErrorMessage error={errors.phone} />
-                </div>
-
-                <div className="flex flex-col">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Shipping Address</label>
-                  <textarea 
-                    name="address"
-                    placeholder="Street Address (Shipping)"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    rows={3}
-                    className={`${getInputClass(errors.address)} resize-none`}
-                  />
-                  <ErrorMessage error={errors.address} />
-                </div>
-
-                <div className="flex flex-col">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Billing Address (Optional)</label>
-                    {formData.address.trim() !== "" && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const formattedAddress = [formData.address, formData.city, formData.stateName, formData.pinCode].filter(Boolean).join(', ');
-                          setFormData(prev => ({ ...prev, billingAddress: formattedAddress || formData.address }));
-                        }}
-                        className="text-[11px] font-bold text-neutral-700 hover:text-black bg-neutral-100 hover:bg-neutral-200 px-2.5 py-1 rounded-lg transition-all active:scale-95"
-                      >
-                        Same as Shipping Address
-                      </button>
-                    )}
-                  </div>
-                  <textarea 
-                    name="billingAddress"
-                    placeholder="Same as shipping address if left blank..."
-                    value={formData.billingAddress}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    rows={3}
-                    className={`${getInputClass("")} resize-none`}
-                  />
-                </div>
-
-                <div className="flex flex-col">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">City</label>
-                  <input 
-                    type="text" 
-                    name="city"
-                    placeholder="City"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    className={getInputClass(errors.city)}
-                  />
-                  <ErrorMessage error={errors.city} />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-                  <div className="flex flex-col">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">State</label>
-                    <input 
-                      type="text" 
-                      name="stateName"
-                      placeholder="State"
-                      value={formData.stateName}
-                      onChange={handleInputChange}
-                      onBlur={handleBlur}
-                      className={getInputClass(errors.stateName)}
-                    />
-                    <ErrorMessage error={errors.stateName} />
-                  </div>
-                  <div className="flex flex-col">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">PIN Code</label>
-                    <input 
-                      type="text" 
-                      name="pinCode"
-                      placeholder="6-digit PIN"
-                      value={formData.pinCode}
-                      onChange={handleInputChange}
-                      onBlur={handleBlur}
-                      className={getInputClass(errors.pinCode)}
-                    />
-                    <ErrorMessage error={errors.pinCode} />
+                  <div className="flex flex-col items-center gap-1.5 bg-neutral-50 rounded-2xl p-3 border border-neutral-100">
+                    <span className="text-lg">🔒</span>
+                    <span className="text-[10px] font-bold text-neutral-600 uppercase tracking-wide text-center">Secure Pay</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Custom Order Note / Message (Optional)</label>
-                  <textarea 
-                    name="customMessage"
-                    rows={3}
-                    placeholder="Add any special instructions or custom message for your order..."
-                    value={formData.customMessage}
-                    onChange={handleInputChange}
-                    className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-900 focus:outline-none focus:border-black transition-all resize-none"
-                  />
-                </div>
-
-                {/* <div className="space-y-3 pt-3 pb-4">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Select Payment Method</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* <button
-                      type="button"
-                      onClick={() => setPaymentMethod("COD")}
-                      className={`py-3 px-4 rounded-xl border text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${
-                        paymentMethod === "COD"
-                          ? "border-black bg-black text-white shadow-md"
-                          : "border-neutral-200 bg-neutral-50 text-neutral-600 hover:border-neutral-300"
-                      }`}
-                    >
-                      Cash on Delivery
-                    </button>}
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMethod("Razorpay")}
-                      className={`py-3 px-4 rounded-xl border text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${
-                        paymentMethod === "Razorpay"
-                          ? "border-black bg-black text-white shadow-md"
-                          : "border-neutral-200 bg-neutral-50 text-neutral-600 hover:border-neutral-300"
-                      }`}
-                    >
-                      Pay Online
-                    </button>
-                  </div>
-                </div> */}
-
-                <div className="pt-2 hidden md:block">
-                  <button 
+                <div className="w-full pt-2 hidden md:block">
+                  <button
                     type="button"
                     onClick={placeOrder}
-                    disabled={isProcessing}
-                    className={`w-full bg-black text-white py-4 rounded-xl font-bold text-base hover:bg-neutral-800 transition-all active:scale-[0.99] shadow-lg shadow-black/20 flex items-center justify-center gap-2 ${
-                      isProcessing ? "opacity-75 cursor-not-allowed" : ""
+                    disabled={isProcessing || cartItems.length === 0}
+                    className={`w-full bg-[#072654] text-white py-4 rounded-xl font-bold text-base hover:bg-[#0a3070] transition-all active:scale-[0.99] shadow-lg shadow-[#072654]/30 flex items-center justify-center gap-3 ${
+                      isProcessing || cartItems.length === 0 ? "opacity-60 cursor-not-allowed" : ""
                     }`}
                   >
                     {isProcessing ? (
@@ -565,14 +420,87 @@ export default function CheckoutPage() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Processing...
+                        Opening Razorpay...
                       </>
                     ) : (
-                      "Place Order"
+                      <>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        Pay Securely with Razorpay
+                      </>
                     )}
                   </button>
                 </div>
+
+                <p className="text-[10px] text-neutral-400 font-medium">
+                  Powered by <span className="font-bold text-[#3395FF]">Razorpay Magic Checkout</span> · 100M+ shoppers trust this
+                </p>
+              </div>
+
+              {/* =====================================================================
+                  ORIGINAL SHIPPING FORM - COMMENTED OUT (Replaced by Magic Checkout)
+                  ===================================================================== */}
+              {/*
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-neutral-900">Shipping Information</h2>
+                <Link href="/login" className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500 hover:text-black transition-colors">
+                  Login
+                </Link>
+              </div>
+              
+              <form className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Full Name</label>
+                    <input type="text" name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleInputChange} onBlur={handleBlur} className={getInputClass(errors.fullName)} />
+                    <ErrorMessage error={errors.fullName} />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Email</label>
+                    <input type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleInputChange} onBlur={handleBlur} className={getInputClass(errors.email)} />
+                    <ErrorMessage error={errors.email} />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label>Phone Number</label>
+                  <input type="text" name="phone" placeholder="10-digit Phone Number" value={formData.phone} onChange={handleInputChange} onBlur={handleBlur} className={getInputClass(errors.phone)} />
+                  <ErrorMessage error={errors.phone} />
+                </div>
+                <div className="flex flex-col">
+                  <label>Shipping Address</label>
+                  <textarea name="address" placeholder="Street Address (Shipping)" value={formData.address} onChange={handleInputChange} onBlur={handleBlur} rows={3} className={`${getInputClass(errors.address)} resize-none`} />
+                  <ErrorMessage error={errors.address} />
+                </div>
+                <div className="flex flex-col">
+                  <label>City</label>
+                  <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleInputChange} onBlur={handleBlur} className={getInputClass(errors.city)} />
+                  <ErrorMessage error={errors.city} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col">
+                    <label>State</label>
+                    <input type="text" name="stateName" placeholder="State" value={formData.stateName} onChange={handleInputChange} onBlur={handleBlur} className={getInputClass(errors.stateName)} />
+                    <ErrorMessage error={errors.stateName} />
+                  </div>
+                  <div className="flex flex-col">
+                    <label>PIN Code</label>
+                    <input type="text" name="pinCode" placeholder="6-digit PIN" value={formData.pinCode} onChange={handleInputChange} onBlur={handleBlur} className={getInputClass(errors.pinCode)} />
+                    <ErrorMessage error={errors.pinCode} />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label>Custom Order Note (Optional)</label>
+                  <textarea name="customMessage" rows={3} placeholder="Special instructions..." value={formData.customMessage} onChange={handleInputChange} className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm resize-none" />
+                </div>
+                <div className="pt-2 hidden md:block">
+                  <button type="button" onClick={placeOrder} disabled={isProcessing} className="w-full bg-black text-white py-4 rounded-xl font-bold text-base">
+                    {isProcessing ? "Processing..." : "Place Order"}
+                  </button>
+                </div>
               </form>
+              */}
+
             </div>
           </div>
 
@@ -646,9 +574,9 @@ export default function CheckoutPage() {
                     <button 
                       type="button"
                       onClick={placeOrder}
-                      disabled={isProcessing}
-                      className={`w-full bg-black text-white py-4 rounded-xl font-bold text-base hover:bg-[#111111] transition-all active:scale-[0.99] shadow-lg shadow-black/20 flex items-center justify-center gap-2 ${
-                        isProcessing ? "opacity-75 cursor-not-allowed" : ""
+                      disabled={isProcessing || cartItems.length === 0}
+                      className={`w-full bg-[#072654] text-white py-4 rounded-xl font-bold text-base hover:bg-[#0a3070] transition-all active:scale-[0.99] shadow-lg shadow-[#072654]/30 flex items-center justify-center gap-3 ${
+                        isProcessing || cartItems.length === 0 ? "opacity-60 cursor-not-allowed" : ""
                       }`}
                     >
                       {isProcessing ? (
@@ -657,10 +585,15 @@ export default function CheckoutPage() {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          Processing...
+                          Opening Razorpay...
                         </>
                       ) : (
-                        "Place Order"
+                        <>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                          </svg>
+                          Pay Securely with Razorpay
+                        </>
                       )}
                     </button>
                   </div>
