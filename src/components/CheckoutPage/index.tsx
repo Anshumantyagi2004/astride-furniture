@@ -21,7 +21,7 @@ export default function CheckoutPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<"COD" | "Razorpay" | "">("");
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "Razorpay" | "">("Razorpay");
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Form State
@@ -33,6 +33,8 @@ export default function CheckoutPage() {
     city: "",
     stateName: "",
     pinCode: "",
+    customMessage: "",
+    billingAddress: "",
   });
 
   // Validation Error State
@@ -425,10 +427,10 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Address</label>
+                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Shipping Address</label>
                   <textarea 
                     name="address"
-                    placeholder="Street Address"
+                    placeholder="Street Address (Shipping)"
                     value={formData.address}
                     onChange={handleInputChange}
                     onBlur={handleBlur}
@@ -436,6 +438,33 @@ export default function CheckoutPage() {
                     className={`${getInputClass(errors.address)} resize-none`}
                   />
                   <ErrorMessage error={errors.address} />
+                </div>
+
+                <div className="flex flex-col">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Billing Address (Optional)</label>
+                    {formData.address.trim() !== "" && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const formattedAddress = [formData.address, formData.city, formData.stateName, formData.pinCode].filter(Boolean).join(', ');
+                          setFormData(prev => ({ ...prev, billingAddress: formattedAddress || formData.address }));
+                        }}
+                        className="text-[11px] font-bold text-neutral-700 hover:text-black bg-neutral-100 hover:bg-neutral-200 px-2.5 py-1 rounded-lg transition-all active:scale-95"
+                      >
+                        Same as Shipping Address
+                      </button>
+                    )}
+                  </div>
+                  <textarea 
+                    name="billingAddress"
+                    placeholder="Same as shipping address if left blank..."
+                    value={formData.billingAddress}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    rows={3}
+                    className={`${getInputClass("")} resize-none`}
+                  />
                 </div>
 
                 <div className="flex flex-col">
@@ -481,7 +510,19 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <div className="space-y-3 pt-3 pb-4">
+                <div className="flex flex-col">
+                  <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Custom Order Note / Message (Optional)</label>
+                  <textarea 
+                    name="customMessage"
+                    rows={3}
+                    placeholder="Add any special instructions or custom message for your order..."
+                    value={formData.customMessage}
+                    onChange={handleInputChange}
+                    className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-900 focus:outline-none focus:border-black transition-all resize-none"
+                  />
+                </div>
+
+                {/* <div className="space-y-3 pt-3 pb-4">
                   <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">Select Payment Method</label>
                   <div className="grid grid-cols-2 gap-4">
                     {/* <button
@@ -494,7 +535,7 @@ export default function CheckoutPage() {
                       }`}
                     >
                       Cash on Delivery
-                    </button> */}
+                    </button>}
                     <button
                       type="button"
                       onClick={() => setPaymentMethod("Razorpay")}
@@ -507,7 +548,7 @@ export default function CheckoutPage() {
                       Pay Online
                     </button>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="pt-2 hidden md:block">
                   <button 

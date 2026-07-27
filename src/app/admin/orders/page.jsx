@@ -13,13 +13,38 @@ import {
     CreditCard,
     Trash2,
     ShoppingBag,
-    Loader2
+    Loader2,
+    MessageSquare,
+    ExternalLink
 } from "lucide-react";
 
 export default function Page() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [deletingId, setDeletingId] = useState(null);
+    const [replyTexts, setReplyTexts] = useState({});
+    const [sendingReplyId, setSendingReplyId] = useState(null);
+
+    const handleSendReply = async (orderId) => {
+        const note = replyTexts[orderId];
+        if (!note || !note.trim()) {
+            toast.error("Please enter a message");
+            return;
+        }
+        try {
+            setSendingReplyId(orderId);
+            const { data } = await axios.put(`/api/order?id=${orderId}`, { adminNote: note });
+            if (data.success) {
+                toast.success("Message sent to customer account!");
+                setOrders(orders.map(o => o._id === orderId ? { ...o, adminNote: note } : o));
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to send message");
+        } finally {
+            setSendingReplyId(null);
+        }
+    };
 
     const getOrders = async () => {
         try {
@@ -134,19 +159,31 @@ export default function Page() {
                                             )}
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            disabled={deletingId === order._id}
-                                            onClick={() => handleDeleteOrder(order._id)}
-                                            className="self-start sm:self-center flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-6 py-3 rounded-xl text-base font-bold transition-all disabled:opacity-50"
-                                        >
-                                            {deletingId === order._id ? (
-                                                <Loader2 className="animate-spin" size={18} />
-                                            ) : (
-                                                <Trash2 size={18} />
-                                            )}
-                                            <span>Delete Order</span>
-                                        </button>
+                                        <div className="flex items-center gap-3 self-start sm:self-center">
+                                            <a
+                                                href={`/track-order${order.shippingInfo?.phone ? `?phone=${order.shippingInfo.phone}` : ''}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-xl text-base font-bold transition-all shadow-sm"
+                                            >
+                                                <ExternalLink size={18} />
+                                                <span>Track Order</span>
+                                            </a>
+
+                                            <button
+                                                type="button"
+                                                disabled={deletingId === order._id}
+                                                onClick={() => handleDeleteOrder(order._id)}
+                                                className="flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-6 py-3 rounded-xl text-base font-bold transition-all disabled:opacity-50"
+                                            >
+                                                {deletingId === order._id ? (
+                                                    <Loader2 className="animate-spin" size={18} />
+                                                ) : (
+                                                    <Trash2 size={18} />
+                                                )}
+                                                <span>Delete Order</span>
+                                            </button>
+                                        </div>
                                     </div>
 
                                     {order.cancelledByUser && (
@@ -192,12 +229,74 @@ export default function Page() {
                                                 <div className="flex items-start gap-4">
                                                     <MapPin size={22} className="text-neutral-400 mt-1 shrink-0" />
                                                     <div>
-                                                        <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider block mb-0.5">Delivery Address</span>
+                                                        <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider block mb-0.5">Shipping Address</span>
                                                         <p className="text-lg font-medium text-neutral-700 leading-relaxed">
                                                             {order.shippingInfo?.address}, {order.shippingInfo?.city}, {order.shippingInfo?.state} - <span className="font-bold text-neutral-900">{order.shippingInfo?.pinCode}</span>
                                                         </p>
                                                     </div>
                                                 </div>
+
+                                                {order.shippingInfo?.billingAddress && (
+                                                    <div className="flex items-start gap-4">
+                                                        <CreditCard size={22} className="text-neutral-400 mt-1 shrink-0" />
+                                                        <div>
+                                                            <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider block mb-0.5">Billing Address</span>
+                                                            <p className="text-lg font-medium text-neutral-700 leading-relaxed select-all">
+                                                                {order.shippingInfo.billingAddress}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {order.shippingInfo?.customMessage && (
+                                                    <div className="flex items-start gap-4 p-3.5 bg-amber-50/80 border border-amber-200/80 rounded-xl mt-2">
+                                                        <MessageSquare size={22} className="text-amber-600 mt-0.5 shrink-0" />
+                                                        <div>
+                                                            <span className="text-xs text-amber-700 font-bold uppercase tracking-wider block mb-0.5">Custom Order Note</span>
+                                                            <p className="text-base font-semibold text-neutral-900 leading-relaxed select-all">
+                                                                "{order.shippingInfo.customMessage}"
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Send / Update Admin Reply - only if customer is registered */}
+                                                {order.userId ? (
+                                                    <div className="mt-4 pt-3 border-t border-neutral-100 space-y-2">
+                                                        <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider block">
+                                                            Send Message / Reply to Customer
+                                                        </label>
+                                                        {order.adminNote && (
+                                                            <div className="bg-emerald-50/80 border border-emerald-200/80 p-3 rounded-xl mb-2 text-xs font-medium text-emerald-900">
+                                                                <span className="font-bold block mb-0.5 text-emerald-700">Sent Admin Message:</span>
+                                                                "{order.adminNote}"
+                                                            </div>
+                                                        )}
+                                                        <div className="flex gap-2">
+                                                            <input 
+                                                                type="text" 
+                                                                placeholder="Type message to display in customer's account..."
+                                                                value={replyTexts[order._id] !== undefined ? replyTexts[order._id] : (order.adminNote || "")}
+                                                                onChange={(e) => setReplyTexts({ ...replyTexts, [order._id]: e.target.value })}
+                                                                className="flex-1 bg-white border border-neutral-200 rounded-xl px-3.5 py-2 text-sm text-neutral-900 focus:outline-none focus:border-black transition-all"
+                                                            />
+                                                            <button 
+                                                                type="button"
+                                                                onClick={() => handleSendReply(order._id)}
+                                                                disabled={sendingReplyId === order._id}
+                                                                className="bg-black hover:bg-neutral-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all disabled:opacity-50 shrink-0"
+                                                            >
+                                                                {sendingReplyId === order._id ? "Sending..." : "Send Message"}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="mt-4 pt-3 border-t border-neutral-100">
+                                                        <span className="inline-block px-3 py-1 bg-neutral-100 border border-neutral-200 rounded-lg text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+                                                            Guest Checkout — Account Messaging Disabled
+                                                        </span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 

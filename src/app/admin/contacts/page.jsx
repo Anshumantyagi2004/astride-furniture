@@ -4,7 +4,9 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Sidebar from "@/components/Admin/Sidebar";
+import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import * as XLSX from "xlsx";
 import { 
     Mail, 
     User, 
@@ -15,7 +17,9 @@ import {
     Calendar,
     Loader2,
     Trash2,
-    ChevronDown
+    ChevronDown,
+    ExternalLink,
+    Download
 } from "lucide-react";
 
 const sans = Plus_Jakarta_Sans({
@@ -109,14 +113,44 @@ export default function Page() {
                             </p>
                         </div>
 
-                        {/* Counter Stats Container */}
-                        <div className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4 min-w-[240px] shrink-0 self-start sm:self-auto">
-                            <div className="w-12 h-12 rounded-xl bg-[#8B5CF6] border-2 border-[#131313] flex items-center justify-center text-white shadow-[2px_2px_0_#131313]">
-                                <MessageSquare size={20} />
-                            </div>
-                            <div>
-                                <span className="text-[10px] text-neutral-400 font-black uppercase tracking-wider block mb-0.5">Total Messages</span>
-                                <span className="text-3xl font-black text-[#131313] leading-none">{totalContacts}</span>
+                        {/* Right side stats & Export button */}
+                        <div className="flex flex-wrap items-center gap-4">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (contacts.length === 0) return toast.error("No contacts available to export");
+                                    const formatted = contacts.map((c, index) => ({
+                                        "S.No": index + 1,
+                                        "Full Name": c.fullName || "",
+                                        "Email": c.email || "",
+                                        "Phone": c.phone || "",
+                                        "Company": c.companyName || "N/A",
+                                        "Location": `${c.city || ""}, ${c.state || ""}`.trim().replace(/^,|,$/g, "") || "N/A",
+                                        "Message": c.message || "",
+                                        "Status": c.status || "pending",
+                                        "Date Submitted": c.createdAt ? new Date(c.createdAt).toLocaleString() : "N/A",
+                                    }));
+                                    const ws = XLSX.utils.json_to_sheet(formatted);
+                                    const wb = XLSX.utils.book_new();
+                                    XLSX.utils.book_append_sheet(wb, ws, "Contacts");
+                                    XLSX.writeFile(wb, `Contacts_Report_${Date.now()}.xlsx`);
+                                    toast.success("Excel file downloaded!");
+                                }}
+                                className="flex items-center gap-2 px-4 py-3 bg-white border-[2.5px] border-[#131313] rounded-[20px] font-black text-xs uppercase tracking-wider text-[#131313] shadow-[4px_4px_0_#131313] hover:translate-y-[-1px] hover:shadow-[5px_5px_0_#131313] transition-all cursor-pointer"
+                            >
+                                <Download size={16} className="text-[#8B5CF6]" />
+                                Export Excel
+                            </button>
+
+                            {/* Counter Stats Container */}
+                            <div className="bg-white border-[2.5px] border-[#131313] rounded-[24px] p-5 shadow-[4px_4px_0_#131313] flex items-center gap-4 min-w-[220px] shrink-0">
+                                <div className="w-12 h-12 rounded-xl bg-[#8B5CF6] border-2 border-[#131313] flex items-center justify-center text-white shadow-[2px_2px_0_#131313]">
+                                    <MessageSquare size={20} />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-neutral-400 font-black uppercase tracking-wider block mb-0.5">Total Messages</span>
+                                    <span className="text-3xl font-black text-[#131313] leading-none">{totalContacts}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -160,18 +194,24 @@ export default function Page() {
 
                                                 {/* Client Name & Location */}
                                                 <td className="px-6 py-5">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-9 h-9 rounded-full border-[2px] border-[#131313] bg-neutral-100 flex items-center justify-center text-neutral-600 shrink-0 shadow-[1.5px_1.5px_0_#131313]">
+                                                    <Link 
+                                                        href={`/admin/contacts/${contact._id}`}
+                                                        className="flex items-center gap-3 group hover:opacity-80 transition-all cursor-pointer"
+                                                    >
+                                                        <div className="w-9 h-9 rounded-full border-[2px] border-[#131313] bg-neutral-100 flex items-center justify-center text-neutral-600 shrink-0 shadow-[1.5px_1.5px_0_#131313] group-hover:bg-[#8B5CF6] group-hover:text-white transition-colors">
                                                             <User size={15} />
                                                         </div>
                                                         <div className="overflow-hidden">
-                                                            <p className="text-[15px] font-bold text-[#131313] leading-tight truncate">{contact.fullName}</p>
+                                                            <p className="text-[15px] font-bold text-[#131313] leading-tight truncate group-hover:text-[#8B5CF6] group-hover:underline flex items-center gap-1.5">
+                                                                {contact.fullName}
+                                                                <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-[#8B5CF6] shrink-0" />
+                                                            </p>
                                                             <span className="text-xs text-neutral-400 font-semibold flex items-center gap-1 mt-1 capitalize truncate">
                                                                 <MapPin size={11} className="text-neutral-400 shrink-0" />
                                                                 {`${contact.city || ""}, ${contact.state || ""}`.trim().replace(/^,|,$/g, "") || "unknown"}
                                                             </span>
                                                         </div>
-                                                    </div>
+                                                    </Link>
                                                 </td>
 
                                                 {/* Company */}

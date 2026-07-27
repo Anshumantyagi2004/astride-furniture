@@ -17,6 +17,8 @@ const orderSchema = new mongoose.Schema(
       city: String,
       state: String,
       pinCode: String,
+      customMessage: String,
+      billingAddress: String,
     },
 
     products: [
@@ -77,6 +79,11 @@ const orderSchema = new mongoose.Schema(
     cancelledByUser: {
       type: Boolean,
       default: false,
+    },
+
+    adminNote: {
+      type: String,
+      default: "",
     },
 
   },

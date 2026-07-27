@@ -47,7 +47,9 @@ export async function sendTelegramOrderNotification(order, paymentType) {
       `• Address: ${escapeHTML(shipping.address)}\n` +
       `• City: ${escapeHTML(shipping.city)}\n` +
       `• State: ${escapeHTML(shipping.state)}\n` +
-      `• PIN Code: ${escapeHTML(shipping.pinCode)}\n\n` +
+      `• PIN Code: ${escapeHTML(shipping.pinCode)}\n` +
+      (shipping.billingAddress ? `• Billing Address: ${escapeHTML(shipping.billingAddress)}\n` : "") +
+      (shipping.customMessage ? `• Note: ${escapeHTML(shipping.customMessage)}\n` : "") + `\n` +
       `🪑 <b>Ordered Products (${products.length})</b>\n` +
       `${productLines || "  No products"}\n\n` +
       `💰 <b>Pricing Breakdown</b>\n` +

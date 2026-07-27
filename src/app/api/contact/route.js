@@ -50,9 +50,27 @@ export async function POST(req) {
 }
 
 // 2. Fetch all Messages (GET)
-export async function GET() {
+export async function GET(req) {
   try {
     await connectDB();
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (id) {
+      const contact = await Contact.findById(id);
+      if (!contact) {
+        return NextResponse.json(
+          { success: false, message: "Contact not found" },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json({
+        success: true,
+        contact,
+      });
+    }
+
     const contacts = await Contact.find().sort({ createdAt: -1 });
     return NextResponse.json({
       success: true,
