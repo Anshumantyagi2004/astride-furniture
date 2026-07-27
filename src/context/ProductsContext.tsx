@@ -17,13 +17,16 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    let hasCache = false;
     try {
       const cached = sessionStorage.getItem("astride_nav_products_cache");
       if (cached) {
         setProducts(JSON.parse(cached));
         setLoading(false);
+        hasCache = true;
       }
     } catch (e) {}
+
     async function fetchProducts() {
       try {
         const res = await fetch("/api/product");
@@ -42,7 +45,10 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     }
-    fetchProducts();
+
+    if (!hasCache) {
+      fetchProducts();
+    }
   }, []);
 
   return (
