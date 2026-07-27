@@ -49,11 +49,6 @@ export default function Page() {
 
     useEffect(() => {
         getProducts();
-
-        // Auto-refresh every 10 seconds to catch new products/categories
-        const interval = setInterval(getProducts, 10000);
-
-        return () => clearInterval(interval);
     }, []);
 
     const deleteProduct = async (id) => {
@@ -85,23 +80,18 @@ export default function Page() {
 
             {/* MAIN CONTENT */}
             <main className="flex-1 p-6">
-                <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 className="text-3xl font-bold text-black">
-                            All Products
-                        </h1>
-                        <p className="text-gray-600 mt-1">
-                            Manage all your products
-                        </p>
-                    </div>
+                <div className="mb-6">
+                    <h1 className="text-3xl font-bold text-black">
+                        All Products
+                    </h1>
 
                     <div className="relative max-w-xs w-full">
                         <input
                             type="text"
-                            placeholder="Search products by name or category..."
+                            placeholder="Search products..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white border border-neutral-300 rounded-xl px-4 py-2.5 text-sm text-neutral-900 shadow-sm outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                            className="w-full bg-white border border-neutral-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-black transition-all"
                         />
                         {searchQuery && (
                             <button
@@ -112,6 +102,10 @@ export default function Page() {
                             </button>
                         )}
                     </div>
+
+                    <p className="text-gray-600 mt-2">
+                        Manage all your products
+                    </p>
                 </div>
 
                 {loading ? (
@@ -131,24 +125,24 @@ export default function Page() {
                             </div>
                         ))}
                     </div>
-                ) : filteredProducts.length === 0 ? (
-                    <div className="bg-white rounded-3xl p-10 text-center shadow border border-neutral-100">
+                ) : products.length === 0 ? (
+                    <div className="bg-white rounded-3xl p-10 text-center shadow">
                         <Package
-                            className="mx-auto text-neutral-400 mb-4"
+                            className="mx-auto text-gray-600 mb-4"
                             size={60}
                         />
 
                         <h2 className="text-2xl font-bold text-black">
-                            {searchQuery ? `No products match "${searchQuery}"` : "No Products Found"}
+                            No Products Found
                         </h2>
 
                         <p className="text-gray-500 mt-2">
-                            {searchQuery ? "Try searching with a different term." : "Add your first product"}
+                            Add your first product
                         </p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredProducts.map((product, idx) => (
+                        {products.map((product, idx) => (
                             <div key={product._id} className="bg-white rounded-lg overflow-hidden shadow hover:shadow-xl transition">
                                 <div className="relative h-60 w-full bg-gray-100">
                                     <Image
