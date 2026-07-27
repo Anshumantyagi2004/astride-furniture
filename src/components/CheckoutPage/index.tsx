@@ -112,7 +112,8 @@ export default function CheckoutPage() {
                 stateName: info.state || "",
                 pinCode: info.pinCode || "",
                 customMessage: "",
-                billingAddress: ""
+                billingAddress: "",
+                gstNumber: info.gstNumber || ""
               });
             }
           }
