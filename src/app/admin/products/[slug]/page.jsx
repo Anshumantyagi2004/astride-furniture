@@ -203,7 +203,7 @@ export default function Page() {
                     img.onload = () => {
                         let width = img.width;
                         let height = img.height;
-                        const MAX_SIZE = 1200;
+                        const MAX_SIZE = 800;
                         if (width > height && width > MAX_SIZE) {
                             height = Math.round((height * MAX_SIZE) / width);
                             width = MAX_SIZE;
@@ -222,7 +222,7 @@ export default function Page() {
                             const webpFile = new File([blob], `${file.name.replace(/\.[^/.]+$/, "")}.webp`, { type: "image/webp" });
                             webpFile.originalSize = file.size; // Store original size
                             resolve(webpFile);
-                        }, "image/webp", 0.85);
+                        }, "image/webp", 0.70);
                     };
                     img.onerror = () => reject(new Error("Failed to load image"));
                     img.src = event.target.result;

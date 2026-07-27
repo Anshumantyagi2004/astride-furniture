@@ -121,7 +121,7 @@ const handleImageChange = async (index, e) => {
                 img.onload = () => {
                     let width = img.width;
                     let height = img.height;
-                    const MAX_SIZE = 1200;
+                    const MAX_SIZE = 800;
 
                     if (width > height && width > MAX_SIZE) {
                         height = Math.round((height * MAX_SIZE) / width);
@@ -163,7 +163,7 @@ const handleImageChange = async (index, e) => {
                             resolve(webpFile);
                         },
                         "image/webp",
-                        0.85
+                        0.70
                     );
                 };
 
