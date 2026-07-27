@@ -125,13 +125,20 @@ export default function BestSeller() {
       else if (dbCategory.includes("BAR") || dbCategory.includes("STOOL")) normalizedCategory = "Bar";
 
       const blackVariant = prod.colorVariants?.find((v) => v.colorName?.toLowerCase() === "black");
-      const blackImage = blackVariant?.images?.[0]?.url;
-
       const fallbackVariant = prod.colorVariants?.find((v) => v.images && v.images.length > 0);
-      const fallbackImage = fallbackVariant?.images?.[0]?.url;
 
       const defaultVariant = blackVariant || fallbackVariant;
-      const allImages = defaultVariant?.images?.map((img) => img.url) || [];
+      const sortedVariantImages = defaultVariant?.images
+        ? [...defaultVariant.images].sort((a, b) => {
+            const aIsInfographic = a.imageType === "infographic";
+            const bIsInfographic = b.imageType === "infographic";
+            if (aIsInfographic && !bIsInfographic) return -1;
+            if (!aIsInfographic && bIsInfographic) return 1;
+            return 0;
+          })
+        : [];
+      const allImages = sortedVariantImages.map((img) => img.url || img);
+      const coverImage = sortedVariantImages[0]?.url || defaultVariant?.images?.[0]?.url || "/Png1/chair12_ErgoFit.webp";
 
       return {
           id: prod._id,
@@ -140,7 +147,7 @@ export default function BestSeller() {
           price: prod.realPrice,
           originalPrice: prod.oldPrice,
           discount: `-${discPercent}%`,
-          image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+          image: coverImage,
           allImages: Array.from(new Set(allImages)),
           category: normalizedCategory,
           description: prod.shortDescription || "Elevate your setup with a perfect blend of elegance and functionality."

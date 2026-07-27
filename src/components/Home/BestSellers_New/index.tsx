@@ -307,13 +307,20 @@ export default function BestSellersSection_New() {
       }
 
       const blackVariant = prod.colorVariants?.find((v: any) => v.colorName?.toLowerCase() === "black");
-      const blackImage = blackVariant?.images?.[0]?.url;
-
       const fallbackVariant = prod.colorVariants?.find((v: any) => v.images && v.images.length > 0);
-      const fallbackImage = fallbackVariant?.images?.[0]?.url;
 
       const defaultVariant = blackVariant || fallbackVariant;
-      const allImages = defaultVariant?.images?.map((img: any) => img.url) || [];
+      const sortedVariantImages = defaultVariant?.images
+        ? [...defaultVariant.images].sort((a: any, b: any) => {
+            const aIsInfographic = a.imageType === "infographic";
+            const bIsInfographic = b.imageType === "infographic";
+            if (aIsInfographic && !bIsInfographic) return -1;
+            if (!aIsInfographic && bIsInfographic) return 1;
+            return 0;
+          })
+        : [];
+      const allImages = sortedVariantImages.map((img: any) => img.url || img);
+      const coverImage = sortedVariantImages[0]?.url || defaultVariant?.images?.[0]?.url || "/Png1/chair12_ErgoFit.webp";
 
       const stickers = ["hot rn 🔥", "staff fave", "", "new drop", "", "boss mode", "limited", "selling fast"];
       const sticker = stickers[idx % stickers.length] || "";
@@ -326,7 +333,7 @@ export default function BestSellersSection_New() {
         hot,
         category: normalizedCategory,
         name: prod.productName,
-        image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+        image: coverImage,
         allImages: Array.from(new Set(allImages)),
         oldPrice: `₹${(prod.oldPrice || (prod.realPrice * 2.5)).toLocaleString("en-IN")}`,
         price: `₹${(prod.realPrice || 9999).toLocaleString("en-IN")}`,

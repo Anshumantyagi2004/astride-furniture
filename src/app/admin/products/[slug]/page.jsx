@@ -96,8 +96,14 @@ export default function Page() {
                             ? product.colorVariants.map((variant) => ({
                                 colorName: variant.colorName,
                                 images: [],
-                                existingImages: variant.images || [],
-                                previews: variant.images.map((img) => img.url),
+                                existingImages: (variant.images || []).map(img => ({
+                                    ...img,
+                                    imageType: img.imageType || "png"
+                                })),
+                                previews: (variant.images || []).map((img) => ({
+                                    url: img.url,
+                                    imageType: img.imageType || "png"
+                                })),
                             }))
                             : [
                                 {
@@ -235,6 +241,7 @@ export default function Page() {
                     url: URL.createObjectURL(file),
                     originalSize: file.originalSize || file.size,
                     newSize: file.size,
+                    imageType: "png",
                 }))
             ];
 
@@ -343,6 +350,31 @@ export default function Page() {
     };
 
     // UPDATE
+    const toggleImageType = (variantIndex, imageIndex) => {
+        const updated = [...colorVariants];
+        const previewItem = updated[variantIndex].previews[imageIndex];
+        const currentType = typeof previewItem === "object" && previewItem.imageType ? previewItem.imageType : "png";
+        const newType = currentType === "infographic" ? "png" : "infographic";
+
+        if (typeof previewItem === "object") {
+            updated[variantIndex].previews[imageIndex].imageType = newType;
+        } else {
+            updated[variantIndex].previews[imageIndex] = {
+                url: previewItem,
+                imageType: newType,
+            };
+        }
+
+        const existingCount = updated[variantIndex].existingImages?.length || 0;
+        if (imageIndex < existingCount) {
+            if (updated[variantIndex].existingImages[imageIndex]) {
+                updated[variantIndex].existingImages[imageIndex].imageType = newType;
+            }
+        }
+
+        setColorVariants(updated);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -365,11 +397,21 @@ export default function Page() {
             formData.append("specifications", JSON.stringify(specifications));
             formData.append("chairSpecs", JSON.stringify(chairSpecs));
             const colorData = colorVariants.map(
-                (variant) => ({
-                    colorName: variant.colorName,
-                    imageCount: variant.images.length,
-                    existingImages: variant.existingImages || [],
-                })
+                (variant) => {
+                    const existingCount = variant.existingImages?.length || 0;
+                    const newImageTypes = variant.previews.slice(existingCount).map(p => typeof p === "object" ? p.imageType || "png" : "png");
+
+                    return {
+                        colorName: variant.colorName,
+                        imageCount: variant.images.length,
+                        existingImages: (variant.existingImages || []).map(img => ({
+                            url: img.url,
+                            imageField: img.imageField,
+                            imageType: img.imageType || "png",
+                        })),
+                        newImageTypes: newImageTypes,
+                    };
+                }
             );
 
             formData.append(
@@ -805,48 +847,62 @@ export default function Page() {
 
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
 
-                                        {variant.previews.map(
-                                            (image, imageIndex) => {
-                                                const isObj = typeof image === "object";
-                                                const srcUrl = isObj ? image.url : image;
-                                                const origSize = isObj && image.originalSize ? (image.originalSize / 1024 / 1024).toFixed(2) + " MB" : null;
-                                                const newSize = isObj && image.newSize ? (image.newSize / 1024).toFixed(1) + " KB" : null;
+                                        {variant.previews.map((image, imageIndex) => {
+                                            const isObj = typeof image === "object";
+                                            const srcUrl = isObj ? image.url : image;
+                                            const origSize = isObj && image.originalSize ? (image.originalSize / 1024 / 1024).toFixed(2) + " MB" : null;
+                                            const newSize = isObj && image.newSize ? (image.newSize / 1024).toFixed(1) + " KB" : null;
+                                            const imageType = isObj && image.imageType ? image.imageType : "png";
 
-                                                return (
+                                            return (
                                                 <div
                                                     key={imageIndex}
-                                                    className="relative h-40 rounded-xl overflow-hidden border group"
+                                                    className="relative h-44 rounded-xl overflow-hidden border group bg-gray-50 flex flex-col justify-between"
                                                 >
-                                                    <Image
-                                                        src={srcUrl}
-                                                        alt="Preview"
-                                                        fill
-                                                        unoptimized
-                                                        className="object-cover"
-                                                    />
+                                                    <div className="relative w-full h-32">
+                                                        <Image
+                                                            src={srcUrl}
+                                                            alt="Preview"
+                                                            fill
+                                                            unoptimized
+                                                            className="object-cover"
+                                                        />
 
-                                                    {origSize && newSize && (
-                                                        <div className="absolute top-0 left-0 bg-black/70 backdrop-blur-sm p-2 rounded-br-lg text-[10px] font-mono leading-tight shadow-md border-r border-b border-white/10 z-10">
-                                                            <div className="text-gray-300">Original: {origSize}</div>
-                                                            <div className="text-[#34d399] font-bold mt-0.5">WEBP: {newSize}</div>
-                                                        </div>
-                                                    )}
+                                                        {origSize && newSize && (
+                                                            <div className="absolute top-0 left-0 bg-black/70 backdrop-blur-sm p-1.5 rounded-br-lg text-[9px] font-mono leading-tight shadow-md border-r border-b border-white/10 z-10">
+                                                                <div className="text-gray-300">Orig: {origSize}</div>
+                                                                <div className="text-[#34d399] font-bold">WEBP: {newSize}</div>
+                                                            </div>
+                                                        )}
 
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                removeVariantImage(
+                                                                    index,
+                                                                    imageIndex
+                                                                )
+                                                            }
+                                                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-90 hover:opacity-100 shadow-md z-20"
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    </div>
+
+                                                    {/* TYPE TOGGLE BADGE */}
                                                     <button
                                                         type="button"
-                                                        onClick={() =>
-                                                            removeVariantImage(
-                                                                index,
-                                                                imageIndex
-                                                            )
-                                                        }
-                                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-90 hover:opacity-100 shadow-md z-20"
+                                                        onClick={() => toggleImageType(index, imageIndex)}
+                                                        className={`w-full py-1 text-[11px] font-semibold tracking-wide transition border-t flex items-center justify-center gap-1 ${imageType === "infographic"
+                                                            ? "bg-purple-600 text-white border-purple-700 hover:bg-purple-700"
+                                                            : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
+                                                            }`}
                                                     >
-                                                        <Trash2 size={14} />
+                                                        {imageType === "infographic" ? "📊 Infographic" : "🖼️ Main PNG"}
                                                     </button>
                                                 </div>
-                                            )}
-                                        )}
+                                            )
+                                        })}
                                     </div>
                                 </div>
                             ))}

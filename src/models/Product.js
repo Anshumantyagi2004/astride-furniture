@@ -43,6 +43,12 @@ const productSchema = new mongoose.Schema(
                             type: String,
                             required: true,
                         },
+
+                        imageType: {
+                            type: String,
+                            enum: ["png", "infographic"],
+                            default: "png",
+                        },
                     },
                 ],
             }

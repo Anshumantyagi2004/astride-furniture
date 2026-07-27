@@ -97,7 +97,8 @@ export async function POST(req) {
 
             const uploadedImages = [];
 
-            for (const image of files) {
+            for (let imgIdx = 0; imgIdx < files.length; imgIdx++) {
+                const image = files[imgIdx];
                 const bytes = await image.arrayBuffer();
                 const buffer = Buffer.from(bytes);
 
@@ -113,9 +114,12 @@ export async function POST(req) {
                     contentType: image.type,
                 });
 
+                const imageType = variant.imageTypes && variant.imageTypes[imgIdx] ? variant.imageTypes[imgIdx] : "png";
+
                 uploadedImages.push({
                     url: uploadedImage.url,
                     imageField: uploadedImage.key,
+                    imageType: imageType,
                 });
             }
 

@@ -48,10 +48,20 @@ export default function DetailPage({ productId }: { productId?: string }) {
           const blackVariant = prod.colorVariants?.find(
             (v: any) => v.colorName?.toLowerCase() === "black"
           );
-          const blackImage = blackVariant?.images?.[0]?.url;
-          const fallbackImage = prod.colorVariants?.find(
+          const fallbackVariant = prod.colorVariants?.find(
             (v: any) => v.images && v.images.length > 0
-          )?.images?.[0]?.url;
+          );
+          const defaultVariant = blackVariant || fallbackVariant;
+          const sortedVariantImages = defaultVariant?.images
+            ? [...defaultVariant.images].sort((a: any, b: any) => {
+                const aIsInfographic = a.imageType === "infographic";
+                const bIsInfographic = b.imageType === "infographic";
+                if (aIsInfographic && !bIsInfographic) return -1;
+                if (!aIsInfographic && bIsInfographic) return 1;
+                return 0;
+              })
+            : [];
+          const coverImage = sortedVariantImages[0]?.url || defaultVariant?.images?.[0]?.url || "/Png1/chair12_ErgoFit.webp";
 
           const mapped = {
             id: prod._id,
@@ -60,7 +70,7 @@ export default function DetailPage({ productId }: { productId?: string }) {
             price: prod.realPrice,
             originalPrice: prod.oldPrice,
             discount: `-${discPercent}%`,
-            image: blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp",
+            image: coverImage,
             category: category,
             categoryId: prod.category?._id || prod.category,
             backSupport: prod.backSupport || "High Back",

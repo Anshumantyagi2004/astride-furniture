@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { Truck, RotateCcw, ShieldCheck, ArrowRight, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import CustomButton from './deatileProductCardButton';
@@ -45,6 +45,26 @@ export default function DetailPageCard({ product }: { product: any }) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+
+  const allVariantImages = useMemo(() => {
+    if (!product || !product.colorVariants) return [];
+    
+    // Only show images from the currently selected color variant
+    const selectedVariant = product.colorVariants.find(
+      (v: any) => v.colorName?.toLowerCase() === selectedColor?.toLowerCase()
+    );
+    if (selectedVariant && selectedVariant.images && selectedVariant.images.length > 0) {
+      // Sort images: Infographics first, PNGs second
+      return [...selectedVariant.images].sort((a: any, b: any) => {
+        const aIsInfographic = a.imageType === "infographic";
+        const bIsInfographic = b.imageType === "infographic";
+        if (aIsInfographic && !bIsInfographic) return -1;
+        if (!aIsInfographic && bIsInfographic) return 1;
+        return 0;
+      });
+    }
+    return [];
+  }, [product, selectedColor]);
 
   useEffect(() => {
     if (product) {
@@ -101,9 +121,6 @@ export default function DetailPageCard({ product }: { product: any }) {
       const initialColor = firstVariantWithImages?.colorName || product.colors?.[0] || "Black";
       setSelectedColor(initialColor);
 
-      const initialImage = firstVariantWithImages?.images?.[0]?.url || product.image;
-      setActiveImage(initialImage);
-
       // Keep description open by default
       setActiveTab('description');
     }
@@ -111,14 +128,11 @@ export default function DetailPageCard({ product }: { product: any }) {
 
   useEffect(() => {
     if (product && selectedColor) {
-      const variant = product.colorVariants?.find(
-        (v: any) => v.colorName?.toLowerCase() === selectedColor?.toLowerCase()
-      );
-      if (variant && variant.images && variant.images.length > 0) {
+      if (allVariantImages && allVariantImages.length > 0) {
         setActiveImage((curr) => {
-          const isCurrentInVariant = variant.images.some((img: any) => img.url === curr);
-          if (!isCurrentInVariant) {
-            return variant.images[0].url;
+          const isCurrentInVariant = allVariantImages.some((img: any) => img.url === curr);
+          if (!isCurrentInVariant || !curr) {
+            return allVariantImages[0].url;
           }
           return curr;
         });
@@ -126,7 +140,7 @@ export default function DetailPageCard({ product }: { product: any }) {
         setActiveImage(product.image);
       }
     }
-  }, [selectedColor, product]);
+  }, [selectedColor, product, allVariantImages]);
 
   const handleThumbnailClick = (imgUrl: string) => {
     // Since thumbnails now only show images from selected color, just update active image
@@ -164,18 +178,6 @@ export default function DetailPageCard({ product }: { product: any }) {
       </div>
     );
   }
-
-  const allVariantImages = React.useMemo(() => {
-    if (!product?.colorVariants) return [];
-    // Only show images from the currently selected color variant
-    const selectedVariant = product.colorVariants.find(
-      (v: any) => v.colorName?.toLowerCase() === selectedColor?.toLowerCase()
-    );
-    if (selectedVariant && selectedVariant.images && selectedVariant.images.length > 0) {
-      return selectedVariant.images;
-    }
-    return [];
-  }, [product, selectedColor]);
 
   const isBarStool = product.category?.toLowerCase().includes("bar");
 
@@ -804,7 +806,18 @@ export default function DetailPageCard({ product }: { product: any }) {
               ))}
             </div>
             <div className="mt-6 flex justify-center drop-shadow-[0_0_60px_rgba(255,255,255,1)] drop-shadow-[0_0_20px_rgba(255,255,255,0.9)]">
-              <Image src={product.image || "/Png1/chair12_ErgoFit.webp"} alt="Adjustability" width={240} height={230} className="object-contain max-h-[230px]" />
+              <Image 
+                src={
+                  allVariantImages.find((img: any) => img.imageType === "png")?.url || 
+                  allVariantImages.find((img: any) => img.imageType !== "infographic")?.url || 
+                  product.image || 
+                  "/Png1/chair12_ErgoFit.webp"
+                } 
+                alt="Adjustability" 
+                width={240} 
+                height={230} 
+                className="object-contain max-h-[230px]" 
+              />
             </div>
           </div>
         </div>
