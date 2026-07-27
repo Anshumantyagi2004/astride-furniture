@@ -18,7 +18,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
     if (images.length > 1) {
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
-      }, 2000);
+      }, 3500);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);

@@ -148,7 +148,7 @@ export async function PUT(req, { params }) {
                 const files = formData.getAll(`variant_${variantIndex}`);
 
                 const uploadedImages = await Promise.all(
-                    files.map(async (image) => {
+                    files.map(async (image, imgIdx) => {
                         const bytes = await image.arrayBuffer();
                         const buffer = Buffer.from(bytes);
                         const extension = path.extname(image.name);
@@ -161,16 +161,25 @@ export async function PUT(req, { params }) {
                             contentType: image.type,
                         });
 
+                        const newType = variant.newImageTypes && variant.newImageTypes[imgIdx] ? variant.newImageTypes[imgIdx] : "png";
+
                         return {
                             url: uploadedImage.url,
                             imageField: uploadedImage.key,
+                            imageType: newType,
                         };
                     })
                 );
 
+                const existingImages = (variant.existingImages || []).map((img) => ({
+                    url: img.url,
+                    imageField: img.imageField,
+                    imageType: img.imageType || "png",
+                }));
+
                 return {
                     colorName: variant.colorName,
-                    images: [...(variant.existingImages || []), ...uploadedImages],
+                    images: [...existingImages, ...uploadedImages],
                 };
             })
         );
