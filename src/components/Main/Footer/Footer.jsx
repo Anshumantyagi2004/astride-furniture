@@ -165,6 +165,7 @@ export default function Footer() {
                         </h4>
                         {[
                             { name: "Cancellation Policy", link: "/cancellation-policy" },
+                            { name: "DIY Policy", link: "/diy-policy" },
                             { name: "Privacy Policy", link: "/privacy-policy" },
                             { name: "Refund Policy", link: "/refund-policy" },
                             { name: "Return Policy", link: "/return-policy" },

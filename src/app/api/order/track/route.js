@@ -18,8 +18,13 @@ export async function GET(req) {
       );
     }
 
-    // Find all orders matching the shipping phone number, sorted by newest first
-    const orders = await Order.find({ "shippingInfo.phone": phone }).sort({
+    // Clean phone number (extract last 10 digits)
+    const cleanPhone = phone.replace(/\D/g, "").slice(-10);
+
+    // Find all orders matching the last 10 digits of the shipping phone number, sorted by newest first
+    const orders = await Order.find({
+      "shippingInfo.phone": { $regex: cleanPhone }
+    }).sort({
       createdAt: -1,
     });
 

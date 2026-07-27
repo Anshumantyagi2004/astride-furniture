@@ -15,7 +15,8 @@ import {
     ShoppingBag,
     Loader2,
     MessageSquare,
-    ExternalLink
+    ExternalLink,
+    Printer
 } from "lucide-react";
 
 export default function Page() {
@@ -57,6 +58,14 @@ export default function Page() {
             toast.error("Failed to load orders");
         } finally {
             setLoading(false);
+            setTimeout(() => {
+                if (window.location.hash) {
+                    const el = document.querySelector(window.location.hash);
+                    if (el) {
+                        el.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                }
+            }, 300);
         }
     };
 
@@ -131,7 +140,8 @@ export default function Page() {
                             {orders.map((order) => (
                                 <div
                                     key={order._id}
-                                    className="bg-white border border-neutral-150 rounded-3xl shadow-[0_25px_50px_rgba(0,0,0,0.03)] overflow-hidden transition-all hover:shadow-[0_25px_50px_rgba(0,0,0,0.06)]"
+                                    id={`order-${order._id}`}
+                                    className="bg-white border border-neutral-150 rounded-3xl shadow-[0_25px_50px_rgba(0,0,0,0.03)] overflow-hidden transition-all hover:shadow-[0_25px_50px_rgba(0,0,0,0.06)] scroll-mt-6"
                                 >
                                     {/* Order Card Header */}
                                     <div className="border-b border-neutral-100 bg-neutral-50/50 px-8 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -161,12 +171,22 @@ export default function Page() {
 
                                         <div className="flex items-center gap-3 self-start sm:self-center">
                                             <a
-                                                href={`/track-order${order.shippingInfo?.phone ? `?phone=${order.shippingInfo.phone}` : ''}`}
+                                                href={`/admin/orders/${order._id}/invoice`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-xl text-base font-bold transition-all shadow-sm"
+                                                className="h-11 px-4 min-w-[120px] flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-sm font-bold transition-all border border-blue-200 shadow-sm"
                                             >
-                                                <ExternalLink size={18} />
+                                                <Printer size={16} />
+                                                <span>Invoice</span>
+                                            </a>
+
+                                            <a
+                                                href={`/track-order${order.shippingInfo?.phone ? `?phone=${order.shippingInfo.phone.replace(/\D/g, '').slice(-10)}` : ''}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="h-11 px-4 min-w-[120px] flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold transition-all shadow-sm"
+                                            >
+                                                <ExternalLink size={16} />
                                                 <span>Track Order</span>
                                             </a>
 
@@ -174,12 +194,12 @@ export default function Page() {
                                                 type="button"
                                                 disabled={deletingId === order._id}
                                                 onClick={() => handleDeleteOrder(order._id)}
-                                                className="flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-6 py-3 rounded-xl text-base font-bold transition-all disabled:opacity-50"
+                                                className="h-11 px-4 min-w-[120px] flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
                                             >
                                                 {deletingId === order._id ? (
-                                                    <Loader2 className="animate-spin" size={18} />
+                                                    <Loader2 className="animate-spin" size={16} />
                                                 ) : (
-                                                    <Trash2 size={18} />
+                                                    <Trash2 size={16} />
                                                 )}
                                                 <span>Delete Order</span>
                                             </button>
@@ -236,13 +256,23 @@ export default function Page() {
                                                     </div>
                                                 </div>
 
-                                                {order.shippingInfo?.billingAddress && (
-                                                    <div className="flex items-start gap-4">
-                                                        <CreditCard size={22} className="text-neutral-400 mt-1 shrink-0" />
+                                                <div className="flex items-start gap-4">
+                                                    <CreditCard size={22} className="text-neutral-400 mt-1 shrink-0" />
+                                                    <div>
+                                                        <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider block mb-0.5">Billing Address</span>
+                                                        <p className="text-lg font-medium text-neutral-700 leading-relaxed select-all">
+                                                            {order.shippingInfo?.billingAddress ? order.shippingInfo.billingAddress : "N/A (Same as Above)"}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                {order.shippingInfo?.gstNumber && (
+                                                    <div className="flex items-start gap-4 p-3 bg-blue-50/80 border border-blue-200/80 rounded-xl">
+                                                        <CreditCard size={22} className="text-blue-600 mt-0.5 shrink-0" />
                                                         <div>
-                                                            <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider block mb-0.5">Billing Address</span>
-                                                            <p className="text-lg font-medium text-neutral-700 leading-relaxed select-all">
-                                                                {order.shippingInfo.billingAddress}
+                                                            <span className="text-xs text-blue-700 font-bold uppercase tracking-wider block mb-0.5">Customer GSTIN</span>
+                                                            <p className="text-base font-extrabold text-blue-950 font-mono tracking-wide select-all">
+                                                                {order.shippingInfo.gstNumber}
                                                             </p>
                                                         </div>
                                                     </div>
