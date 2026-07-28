@@ -28,20 +28,20 @@ const chairData = [
         hoverScaleValue: 1.00
     },
     { 
-        mainImage: "/Png1/chair12_ErgoFit.webp", 
-        hoverImage: "/Png1/chair12_ErgoFit12a.png", 
-        name: "ErgoFit Premium", 
-        subtitle: "Ergonomic White",
-        productId: "6a27a9016149f2acd03556be",
-        mainScaleValue: 0.95,
-        hoverScaleValue: 1.00
-    },
-    { 
         mainImage: "/Png1/chair10_FitWell.webp", 
         hoverImage: "/Png1/chair10_FitWell10a.png", 
         name: "Ergonomic Comfort", 
         subtitle: "FlexPro",
         productId: "6a22790f4299b73c074f7e50",
+        mainScaleValue: 0.95,
+        hoverScaleValue: 1.00
+    },
+    { 
+        mainImage: "/Png1/chair12_ErgoFit.webp", 
+        hoverImage: "/Png1/chair12_ErgoFit12a.png", 
+        name: "ErgoFit Premium", 
+        subtitle: "Ergonomic White",
+        productId: "6a27a9016149f2acd03556be",
         mainScaleValue: 0.95,
         hoverScaleValue: 1.00
     },
@@ -73,18 +73,18 @@ function ChairCard({ chair, products, priorityLoad }) {
     return (
         <Link
             href={targetUrl}
-            className={`group relative bg-white border border-gray-200 rounded-[30px] overflow-hidden transition-all duration-300 block h-full w-full cursor-pointer md:hover:border-zinc-400 md:hover:-translate-y-3 md:hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] ${sans.className}`}
+            className={`group relative bg-white border border-gray-200/90 rounded-[28px] overflow-hidden transition-all duration-300 block h-full w-full cursor-pointer hover:border-black hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] ${sans.className}`}
         >
             {/* HOVER GLOW (Desktop Only) */}
             <div className="hidden md:block absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 
             {/* IMAGE CONTAINER */}
-            <div className="relative h-[300px] md:h-[420px] flex items-center justify-center p-6">
-                <div className="w-full h-full flex items-center justify-center relative transition-transform duration-300 md:group-hover:scale-105 md:group-hover:-rotate-1">
+            <div className="relative h-[260px] lg:h-[340px] flex items-center justify-center p-4">
+                <div className="w-full h-full flex items-center justify-center relative transition-transform duration-300 md:group-hover:scale-105">
                     
                     {/* Main Image (Stacked - visible by default, hides on desktop hover) */}
                     <div 
-                        className="absolute w-full h-[260px] md:h-[380px] transition-all duration-500 flex items-center justify-center md:group-hover:opacity-0 md:group-hover:scale-90"
+                        className="absolute w-full h-[230px] lg:h-[300px] transition-all duration-500 flex items-center justify-center md:group-hover:opacity-0 md:group-hover:scale-90"
                         style={{ transform: `scale(${chair.mainScaleValue || 0.95})` }}
                     >
                         <Image
@@ -99,7 +99,7 @@ function ChairCard({ chair, products, priorityLoad }) {
 
                     {/* Hover Image (Stacked - hidden by default, shows on desktop hover) */}
                     <div 
-                        className="hidden md:flex absolute w-full h-[260px] md:h-[380px] transition-all duration-500 items-center justify-center opacity-0 scale-90 md:group-hover:opacity-100 md:group-hover:scale-100 pointer-events-none"
+                        className="hidden md:flex absolute w-full h-[230px] lg:h-[300px] transition-all duration-500 items-center justify-center opacity-0 scale-90 md:group-hover:opacity-100 md:group-hover:scale-100 pointer-events-none"
                     >
                         <Image
                             src={chair.hoverImage}
@@ -151,12 +151,25 @@ export default function ChairSection() {
                     </h2>
                 </div>
 
-                {/* SWIPER CAROUSEL */}
-                <div className="w-full">
+                {/* DESKTOP GRID (5 ITEMS) */}
+                <div className="hidden lg:grid lg:grid-cols-5 gap-4 xl:gap-5">
+                    {chairData.map((chair, index) => (
+                        <div key={index} className="h-full">
+                            <ChairCard 
+                                chair={chair} 
+                                products={products} 
+                                priorityLoad={index < 2} 
+                            />
+                        </div>
+                    ))}
+                </div>
+
+                {/* MOBILE/TABLET SWIPER */}
+                <div className="w-full lg:hidden">
                     <Swiper
                         modules={[Autoplay]}
                         spaceBetween={20}
-                        slidesPerView={1}
+                        slidesPerView={1.2}
                         loop={chairData.length >= 6}
                         autoplay={{
                             delay: 2500,
@@ -165,16 +178,12 @@ export default function ChairSection() {
                         }}
                         breakpoints={{
                             640: {
-                                slidesPerView: 2,
-                                spaceBetween: 20,
+                                slidesPerView: 2.2,
+                                spaceBetween: 16,
                             },
-                            1024: {
+                            768: {
                                 slidesPerView: 3,
-                                spaceBetween: 24,
-                            },
-                            1280: {
-                                slidesPerView: 4,
-                                spaceBetween: 24,
+                                spaceBetween: 18,
                             }
                         }}
                         className="!pb-10"

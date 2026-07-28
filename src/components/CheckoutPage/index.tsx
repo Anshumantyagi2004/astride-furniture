@@ -838,6 +838,15 @@ export default function CheckoutPage() {
                     />
                   )}
 
+                  <input
+                    type="text"
+                    name="gstNumber"
+                    placeholder="Enter GSTIN Number (Optional, e.g. 07AAAAA0000A1Z5)"
+                    value={formData.gstNumber || ""}
+                    onChange={handleInputChange}
+                    className="w-full bg-white border border-neutral-300 rounded-xl p-3 text-xs focus:outline-none focus:border-black transition-all uppercase tracking-wider"
+                  />
+
                   <textarea
                     name="customMessage"
                     rows={2}
