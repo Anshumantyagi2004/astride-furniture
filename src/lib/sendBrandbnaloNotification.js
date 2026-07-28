@@ -75,7 +75,7 @@ export async function sendBrandbnaloNotification(order, paymentType) {
     const payload = {
       supplierToken: "7311164111",
       platform: "Website Contact Page",
-      platformEmail: "algoknightcode@gmail.com",
+      platformEmail: "deepa@mbtc.co.in",
       name: shipping.fullName || "N/A",
       phone: shipping.phone || "N/A",
       email: shipping.email || "N/A",
@@ -116,7 +116,7 @@ export async function sendBrandbnaloContactNotification(contact) {
     const payload = {
       supplierToken: "7311164111",
       platform: "Website Contact Page",
-      platformEmail: "algoknightcode@gmail.com",
+      platformEmail: "deepa@mbtc.co.in",
       name: contact.fullName || "N/A",
       phone: contact.phone || "N/A",
       email: contact.email || "N/A",
@@ -153,7 +153,7 @@ export async function sendBrandbnaloEnquiryNotification(enquiry) {
     const payload = {
       supplierToken: "7311164111",
       platform: "Website Contact Page",
-      platformEmail: "algoknightcode@gmail.com",
+      platformEmail: "deepa@mbtc.co.in",
       name: enquiry.fullName || "N/A",
       phone: enquiry.phone || "N/A",
       email: enquiry.email || "N/A",
