@@ -5,6 +5,7 @@ import Product from "@/models/Product";
 import Category from "@/models/Category";
 import { sendTelegramOrderNotification } from "@/lib/sendTelegramNotification";
 import { sendBrandbnaloNotification } from "@/lib/sendBrandbnaloNotification";
+import { sendWhatsappOrderNotification } from "@/lib/sendWhatsappNotification";
 import { verifyAdmin } from "@/lib/verifyAdmin";
 
 // Force Node.js runtime — mongoose and env vars (TELEGRAM_BOT_TOKEN) require Node runtime
@@ -20,6 +21,7 @@ export async function POST(req) {
     // Fire-and-forget Telegram notification — does NOT block the response
     sendTelegramOrderNotification(order.toObject ? order.toObject() : order, body.paymentMethod || "COD");
     sendBrandbnaloNotification(order.toObject ? order.toObject() : order, body.paymentMethod || "COD");
+    sendWhatsappOrderNotification(order.toObject ? order.toObject() : order, body.paymentMethod || "COD");
 
     return NextResponse.json({
       success: true,

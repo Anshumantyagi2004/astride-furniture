@@ -840,9 +840,9 @@ export default function DetailPageCard({ product }: { product: any }) {
             <div className="mt-6 flex justify-center drop-shadow-[0_0_60px_rgba(255,255,255,1)] drop-shadow-[0_0_20px_rgba(255,255,255,0.9)]">
               <Image 
                 src={
-                  allVariantImages.find((img: any) => img.imageType === "png")?.url || 
-                  allVariantImages.find((img: any) => img.imageType !== "infographic")?.url || 
-                  product.image || 
+                  product?.colorVariants?.[0]?.images?.find((img: any) => img.imageType === "png")?.url || 
+                  product?.colorVariants?.[0]?.images?.[0]?.url || 
+                  product?.image || 
                   "/Png1/chair12_ErgoFit.webp"
                 } 
                 alt="Adjustability" 
