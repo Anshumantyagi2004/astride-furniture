@@ -491,7 +491,7 @@ export default function Navbar3() {
                                     onClick={() => setIsOpen(false)}
                                     className="flex items-center justify-center py-2.5 px-3 rounded-xl bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-800 text-center transition-colors"
                                 >
-                                    Inquiry Us
+                                    Bulk Inquiries
                                 </Link>
                             </div>
                         </nav>

@@ -19,7 +19,25 @@ const COLOR_MAP: Record<string, string> = {
   pink: '#db2777',
   purple: '#9333ea',
   brown: '#7c2d12',
+  'neon green': '#39ff14',
 };
+
+const getSwatchBackground = (colorName: string): string => {
+  if (!colorName) return '#cccccc';
+  const normalized = colorName.toLowerCase().trim();
+  if (COLOR_MAP[normalized]) return COLOR_MAP[normalized];
+
+  // Handle two-tone colors like "white-blue", "white blue", "blue/white", etc.
+  const parts = normalized.split(/[\s\-\/]+/);
+  if (parts.length === 2) {
+    const c1 = COLOR_MAP[parts[0]] || parts[0];
+    const c2 = COLOR_MAP[parts[1]] || parts[1];
+    return `linear-gradient(135deg, ${c1} 50%, ${c2} 50%)`;
+  }
+
+  return normalized;
+};
+
 
 export default function DetailPageCard({ product }: { product: any }) {
 //   // Grab the category name safely
@@ -430,7 +448,7 @@ export default function DetailPageCard({ product }: { product: any }) {
             </span>
             <div className="flex items-center gap-2.5 mt-2 pr-1">
               {(product.colors || []).map((colorName: string) => {
-                const colorHex = COLOR_MAP[colorName.toLowerCase()] || colorName.toLowerCase();
+                const colorHex = getSwatchBackground(colorName);
                 const isSelected = selectedColor?.toLowerCase() === colorName?.toLowerCase();
 
                 return (
@@ -445,7 +463,7 @@ export default function DetailPageCard({ product }: { product: any }) {
                         el.scrollIntoView({ behavior: "smooth", block: "center" });
                       }
                     }}
-                    style={{ backgroundColor: colorHex }}
+                    style={{ background: colorHex }}
                     className={`w-[32px] h-[32px] rounded-full border-[2.5px] border-[#131313] relative transition-transform duration-150 hover:scale-[1.12] focus:outline-none ${isSelected
                       ? 'ring-4 ring-offset-2 ring-transparent before:absolute before:-inset-[5px] before:rounded-full before:border-[2px] before:border-dashed before:border-[#8B5CF6]'
                       : ''
@@ -548,16 +566,16 @@ export default function DetailPageCard({ product }: { product: any }) {
       </div>
 
       {/* DETAILS Section */}
-      <section className="py-[clamp(18px,2.5vw,26px)] mt-1 bg-[#FAFAFA] rounded-[32px] border-[2.5px] border-[#131313] px-4 md:px-10 lg:px-16 shadow-[8px_8px_0_#131313] relative overflow-hidden w-full">
-        <div className="mb-6">
+      <section className="py-[clamp(28px,3.5vw,44px)] mt-4 bg-[#FAFAFA] rounded-[32px] border-[2.5px] border-[#131313] px-4 md:px-10 lg:px-16 shadow-[8px_8px_0_#131313] relative overflow-hidden w-full">
+        <div className="mb-8">
           <h2 className="text-[clamp(32px,4.4vw,54px)] font-bold leading-[1.05] tracking-tight text-[#131313]">
             Everything <span className="bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">it's packing.</span>
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-[clamp(30px,5vw,70px)] items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-[clamp(36px,5vw,70px)] items-start">
           {/* Accordion List */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5">
 
             {/* Description */}
             <div className="bg-white border-[2.5px] border-[#131313] rounded-[14px] shadow-[5px_5px_0_#131313] overflow-hidden transition-all">
