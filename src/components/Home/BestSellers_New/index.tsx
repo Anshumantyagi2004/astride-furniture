@@ -146,19 +146,16 @@ function BestsellerCard({ product }: { product: any }) {
     : [product.image];
 
   useEffect(() => {
-    if (isHovered && images.length > 1) {
-      setCurrentImageIndex(0);
+    if (images.length > 1) {
+      // Auto sweep every 2.5 seconds (2500ms)
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
-      }, 1500);
-    } else {
-      if (timerRef.current) clearInterval(timerRef.current);
-      setCurrentImageIndex(0);
+      }, 2500);
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isHovered, images.length]);
+  }, [images.length]);
 
   return (
     <article
@@ -190,17 +187,6 @@ function BestsellerCard({ product }: { product: any }) {
           className="mx-auto h-[140px] sm:h-[230px] w-auto object-contain transition duration-300 group-hover:rotate-[-1.5deg] group-hover:scale-105"
         />
 
-        {/* Pagination Dots */}
-        {images.length > 1 && (
-          <div className="absolute bottom-2 flex gap-1.5 justify-center w-full opacity-100 transition-opacity duration-300 z-10">
-            {images.map((_: any, idx: number) => (
-              <div 
-                key={idx} 
-                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? 'w-3 bg-[#131313]' : 'w-1.5 bg-slate-300'}`}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Product Info */}
