@@ -350,6 +350,19 @@ export default function CheckoutPage() {
             cartItems: cartItems, // Required for Razorpay Magic Checkout line_items
           }), 
         });
+        if (!res.ok) {
+          const errorText = await res.text();
+          let msg = "Failed to initiate payment. Please try again.";
+          try {
+            const errJson = JSON.parse(errorText);
+            msg = errJson.message || msg;
+          } catch (e) {
+            // Server returned HTML error page (e.g. 504 / 500 HTML)
+          }
+          alert(msg);
+          setIsProcessing(false);
+          return;
+        }
         const razorpayOrder = await res.json();
         
         if (!razorpayOrder.success) {
@@ -484,7 +497,7 @@ export default function CheckoutPage() {
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* LEFT: Magic Checkout - Address & Payment handled by Razorpay */}
-          <div className="flex-1">
+          <div className="hidden lg:block lg:flex-1">
             <div className="bg-white rounded-3xl p-8 md:p-10 shadow-[0_20px_40px_rgba(0,0,0,0.04),_0_5px_15px_rgba(0,0,0,0.01)] border border-neutral-100 flex flex-col items-center text-center space-y-6">
               <div className="w-16 h-16 bg-[#072654]/10 rounded-2xl flex items-center justify-center text-[#072654]">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -599,26 +612,27 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                   <div className="pt-2 md:hidden">
-                    {checkoutStep === "contact" ? (
-                      <button 
-                        type="button"
-                        onClick={placeOrder}
-                        disabled={isProcessing || cartItems.length === 0}
-                        className="w-full bg-[#072654] text-white py-4 rounded-xl font-bold text-base hover:bg-[#0a3070] transition-all active:scale-[0.99] shadow-lg shadow-[#072654]/30 flex items-center justify-center gap-3"
-                      >
-                        {isProcessing ? "Opening Razorpay..." : "Pay Securely with Razorpay"}
-                      </button>
-                    ) : (
-                      <button 
-                        type="button"
-                        onClick={placeOrder}
-                        disabled={isProcessing || cartItems.length === 0}
-                        className="w-full bg-neutral-900 text-white py-4 rounded-xl font-bold text-base hover:bg-black transition-all active:scale-[0.99] shadow-lg shadow-black/20 flex items-center justify-center gap-2"
-                      >
-                        {isProcessing ? "Processing..." : "Complete Payment"}
-                      </button>
-                    )}
+                   <div className="pt-2 lg:hidden">
+                    <button 
+                      type="button"
+                      onClick={placeOrder}
+                      disabled={isProcessing || cartItems.length === 0}
+                      className={`w-full bg-[#072654] text-white py-4 rounded-xl font-bold text-base hover:bg-[#0a3070] transition-all active:scale-[0.99] shadow-lg shadow-[#072654]/30 flex items-center justify-center gap-3 ${
+                        isProcessing || cartItems.length === 0 ? "opacity-60 cursor-not-allowed" : ""
+                      }`}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Opening Razorpay...
+                        </>
+                      ) : (
+                        "Pay Securely with Razorpay"
+                      )}
+                    </button>
                   </div>
                 </div>
               )}
