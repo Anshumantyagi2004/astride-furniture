@@ -28,6 +28,9 @@ export default function BlogDetailsPage({
 
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
     
     // Fetch single blog from the API
     const getBlogData = async () => {
