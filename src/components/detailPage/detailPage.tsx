@@ -16,8 +16,9 @@ export default function DetailPage({ productId }: { productId?: string }) {
     async function loadProduct() {
       if (!productId) return;
       
-      // Clear stale product caches to ensure fresh data
+      // Ensure page opens at the very top when navigating to product detail
       if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
         sessionStorage.removeItem("astride_products_cache");
         sessionStorage.removeItem("astride_nav_products_cache");
       }
