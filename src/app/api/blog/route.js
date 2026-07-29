@@ -94,8 +94,8 @@ export async function GET(req) {
       return NextResponse.json({ success: true, blog });
     }
 
-    // Default: return all blogs
-    const blogs = await Blog.find().sort({ date: -1 });
+    // Default: return all blogs sorted by newest created first
+    const blogs = await Blog.find().sort({ createdAt: -1, date: -1, _id: -1 });
     return NextResponse.json({ success: true, blogs });
   } catch (error) {
     console.error("Get Blogs Error:", error);

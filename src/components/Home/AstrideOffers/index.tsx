@@ -241,22 +241,18 @@ function DealCard({ deal }: { deal: any }) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (isHovered && deal.images && deal.images.length > 1) {
+    if (deal.images && deal.images.length > 1) {
+      // Auto sweep every 2.5 seconds (2500ms)
       timerRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => (prev + 1) % deal.images.length);
-      }, 1500);
-    } else {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-      setCurrentImageIndex(0);
+      }, 2500);
     }
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
     };
-  }, [isHovered, deal.images]);
+  }, [deal.images]);
 
   return (
     <Link 
@@ -283,19 +279,6 @@ function DealCard({ deal }: { deal: any }) {
             />
           </div>
 
-          {/* Dots Indicator (visible on hover) */}
-          {deal.images.length > 1 && (
-            <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-10">
-              {deal.images.map((_: any, idx: number) => (
-                <span 
-                  key={idx} 
-                  className={`w-2 h-2 rounded-full transition-all duration-300 border border-[#131313] ${
-                    idx === currentImageIndex ? 'bg-[#DCF351] scale-110' : 'bg-white/60'
-                  }`}
-                />
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Product Info Block */}

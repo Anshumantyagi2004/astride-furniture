@@ -37,7 +37,15 @@ export default function BlogsPage() {
     const fetchBlogs = async () => {
       try {
         const { data } = await axios.get("/api/blog");
-        if (data.success) setBlogs(data.blogs);
+        if (data.success && Array.isArray(data.blogs)) {
+          // Sort blogs newest first (by createdAt or date or MongoDB _id timestamp)
+          const sorted = [...data.blogs].sort((a: any, b: any) => {
+            const timeA = new Date(a.createdAt || a.date || 0).getTime();
+            const timeB = new Date(b.createdAt || b.date || 0).getTime();
+            return timeB - timeA;
+          });
+          setBlogs(sorted);
+        }
       } catch (err) {
         console.error("Failed to load blogs:", err);
       } finally {
