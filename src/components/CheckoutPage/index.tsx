@@ -237,8 +237,9 @@ export default function CheckoutPage() {
     if (isProcessing) return;
     try {
       // =====================================================================
-      // STANDARD FORM VALIDATION (Re-enabled so user fills details on site)
+      // MAGIC CHECKOUT: Form validation bypassed — user enters details inside Magic Checkout
       // =====================================================================
+      /* 
       const newErrors = {
         fullName: validateField("fullName", formData.fullName),
         email: validateField("email", formData.email),
@@ -254,6 +255,7 @@ export default function CheckoutPage() {
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
+      */
       // =====================================================================
 
       if (!paymentMethod) {
@@ -351,7 +353,7 @@ export default function CheckoutPage() {
         const razorpayOrder = await res.json();
         
         if (!razorpayOrder.success) {
-          alert("Failed to initiate payment. Please try again.");
+          alert(razorpayOrder.message || "Failed to initiate payment. Please try again.");
           setIsProcessing(false);
           return;
         }
@@ -483,144 +485,51 @@ export default function CheckoutPage() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* LEFT: Magic Checkout - Address & Payment handled by Razorpay */}
           <div className="flex-1">
-            <div className="bg-white rounded-3xl p-8 md:p-10 shadow-[0_20px_40px_rgba(0,0,0,0.04),_0_5px_15px_rgba(0,0,0,0.01)] border border-neutral-100">
-              
-              {/* Standard Checkout Form: Customer fills inputs on site */}
-              <form className="space-y-6">
-                <div>
-                  <h2 className="text-xl font-black text-neutral-900 tracking-tight mb-4">Contact Information</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">Full Name *</label>
-                      <input
-                        type="text"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleInputChange}
-                        onBlur={handleBlur}
-                        placeholder="John Doe"
-                        className={getInputClass(errors.fullName)}
-                      />
-                      <ErrorMessage error={errors.fullName} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">Email Address *</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        onBlur={handleBlur}
-                        placeholder="john@example.com"
-                        className={getInputClass(errors.email)}
-                      />
-                      <ErrorMessage error={errors.email} />
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">Phone Number *</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      onBlur={handleBlur}
-                      placeholder="9876543210"
-                      className={getInputClass(errors.phone)}
-                    />
-                    <ErrorMessage error={errors.phone} />
-                  </div>
-                </div>
+            <div className="bg-white rounded-3xl p-8 md:p-10 shadow-[0_20px_40px_rgba(0,0,0,0.04),_0_5px_15px_rgba(0,0,0,0.01)] border border-neutral-100 flex flex-col items-center text-center space-y-6">
+              <div className="w-16 h-16 bg-[#072654]/10 rounded-2xl flex items-center justify-center text-[#072654]">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              </div>
 
-                <div className="pt-4 border-t border-neutral-100">
-                  <h2 className="text-xl font-black text-neutral-900 tracking-tight mb-4">Shipping Address</h2>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">Street Address *</label>
-                      <input
-                        type="text"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        onBlur={handleBlur}
-                        placeholder="House / Flat No., Street, Area"
-                        className={getInputClass(errors.address)}
-                      />
-                      <ErrorMessage error={errors.address} />
-                    </div>
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-3">
+                  ⚡ 1-Click Fast Checkout
+                </span>
+                <h2 className="text-2xl font-black text-neutral-900 tracking-tight">Razorpay Magic Checkout</h2>
+                <p className="text-sm text-neutral-500 font-medium mt-2 max-w-md mx-auto">
+                  Your delivery address, contact details, and payment options will be securely collected directly inside Razorpay's 1-Click Magic Checkout.
+                </p>
+              </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">City *</label>
-                        <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleInputChange}
-                          onBlur={handleBlur}
-                          placeholder="New Delhi"
-                          className={getInputClass(errors.city)}
-                        />
-                        <ErrorMessage error={errors.city} />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">State *</label>
-                        <input
-                          type="text"
-                          name="stateName"
-                          value={formData.stateName}
-                          onChange={handleInputChange}
-                          onBlur={handleBlur}
-                          placeholder="Delhi"
-                          className={getInputClass(errors.stateName)}
-                        />
-                        <ErrorMessage error={errors.stateName} />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">PIN Code *</label>
-                        <input
-                          type="text"
-                          name="pinCode"
-                          value={formData.pinCode}
-                          onChange={handleInputChange}
-                          onBlur={handleBlur}
-                          placeholder="110001"
-                          className={getInputClass(errors.pinCode)}
-                        />
-                        <ErrorMessage error={errors.pinCode} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                  {/* Payment Button */}
-                  <div className="pt-6">
-                    <button
-                      type="button"
-                      onClick={placeOrder}
-                      disabled={isProcessing || cartItems.length === 0}
-                      className={`w-full bg-[#072654] text-white py-4 rounded-xl font-bold text-base hover:bg-[#0a3070] transition-all active:scale-[0.99] shadow-lg shadow-[#072654]/30 flex items-center justify-center gap-3 ${
-                        isProcessing || cartItems.length === 0 ? "opacity-60 cursor-not-allowed" : ""
-                      }`}
-                    >
-                      {isProcessing ? (
-                        <>
-                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Processing Order...
-                        </>
-                      ) : (
-                        <>
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                          </svg>
-                          Proceed to Pay Securely
-                        </>
-                      )}
-                    </button>
-                  </div>
-              </form>
+              <div className="w-full pt-4 border-t border-neutral-100">
+                <button
+                  type="button"
+                  onClick={placeOrder}
+                  disabled={isProcessing || cartItems.length === 0}
+                  className={`w-full bg-[#072654] text-white py-4 rounded-xl font-bold text-base hover:bg-[#0a3070] transition-all active:scale-[0.99] shadow-lg shadow-[#072654]/30 flex items-center justify-center gap-3 ${
+                    isProcessing || cartItems.length === 0 ? "opacity-60 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isProcessing ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Opening Razorpay Magic Checkout...
+                    </>
+                  ) : (
+                    <>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      </svg>
+                      Pay Securely with Razorpay
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 

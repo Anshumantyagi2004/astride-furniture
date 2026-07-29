@@ -34,16 +34,22 @@ export async function POST(req) {
     const receipt = `receipt_order_${Date.now()}`;
 
     // Build line_items for Magic Checkout (MANDATORY for Magic Checkout to work)
-    const line_items = cartItems.map((item, index) => ({
-      sku: String(item.id || item._id || `item_${index}`),
-      variant_id: String(item.id || item._id || `variant_${index}`),
-      price: Math.round((item.price || 0) * 100),           // in paise
-      offer_price: Math.round((item.price || 0) * 100),     // in paise
-      quantity: item.quantity || 1,
-      name: item.name || "Product",
-      description: item.name || "Product",
-      image_url: item.image || "",
-    }));
+    const line_items = cartItems.map((item, index) => {
+      let imageUrl = item.image || "";
+      if (imageUrl && imageUrl.startsWith("/")) {
+        imageUrl = `https://astride.in${imageUrl}`;
+      }
+      return {
+        sku: String(item.id || item._id || `item_${index}`),
+        variant_id: String(item.id || item._id || `variant_${index}`),
+        price: Math.round((item.price || 0) * 100),           // in paise
+        offer_price: Math.round((item.price || 0) * 100),     // in paise
+        quantity: item.quantity || 1,
+        name: item.name || "Product",
+        description: item.name || "Product",
+        ...(imageUrl ? { image_url: imageUrl } : {}),
+      };
+    });
 
     const line_items_total = line_items.reduce(
       (sum, li) => sum + li.offer_price * li.quantity,
@@ -51,7 +57,9 @@ export async function POST(req) {
     );
 
     // Call Razorpay API using native fetch to avoid package bundling issues/compilation hangs
-    const auth = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
+    const cleanKeyId = keyId.trim();
+    const cleanKeySecret = keySecret.trim();
+    const auth = Buffer.from(`${cleanKeyId}:${cleanKeySecret}`).toString("base64");
     
     const response = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",

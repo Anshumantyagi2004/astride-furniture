@@ -51,11 +51,17 @@ export async function sendWhatsappOrderNotification(order, paymentType) {
 
     const url = `${process.env.MYOPERATOR_BASE_URL}/chat/messages`;
 
+    let rawPhone = String(shipping.phone || process.env.OWNER_WHATSAPP_NUMBER || "").replace(/\D/g, "");
+    if (rawPhone.length > 10 && rawPhone.startsWith("91")) {
+      rawPhone = rawPhone.slice(2);
+    }
+    const cleanPhone = rawPhone.slice(-10);
+
     const payload = {
       phone_number_id: process.env.MYOPERATOR_PHONE_NUMBER_ID,
 
       customer_country_code: "91",
-      customer_number: shipping.phone,
+      customer_number: cleanPhone,
 
       data: {
         type: "template",
