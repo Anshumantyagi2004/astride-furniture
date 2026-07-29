@@ -237,22 +237,23 @@ export default function CheckoutPage() {
     if (isProcessing) return;
     try {
       // =====================================================================
-      // ORIGINAL FORM VALIDATION - COMMENTED OUT (Magic Checkout handles this)
+      // STANDARD FORM VALIDATION (Re-enabled so user fills details on site)
       // =====================================================================
-      // const newErrors = {
-      //   fullName: validateField("fullName", formData.fullName),
-      //   email: validateField("email", formData.email),
-      //   phone: validateField("phone", formData.phone),
-      //   address: validateField("address", formData.address),
-      //   city: validateField("city", formData.city),
-      //   stateName: validateField("stateName", formData.stateName),
-      //   pinCode: validateField("pinCode", formData.pinCode),
-      // };
-      // setErrors(newErrors);
-      // if (Object.values(newErrors).some(err => err !== "")) {
-      //   window.scrollTo({ top: 0, behavior: "smooth" });
-      //   return;
-      // }
+      const newErrors = {
+        fullName: validateField("fullName", formData.fullName),
+        email: validateField("email", formData.email),
+        phone: validateField("phone", formData.phone),
+        address: validateField("address", formData.address),
+        city: validateField("city", formData.city),
+        stateName: validateField("stateName", formData.stateName),
+        pinCode: validateField("pinCode", formData.pinCode),
+        gstNumber: validateField("gstNumber", formData.gstNumber),
+      };
+      setErrors(newErrors);
+      if (Object.values(newErrors).some(err => err !== "")) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
       // =====================================================================
 
       if (!paymentMethod) {
@@ -484,97 +485,141 @@ export default function CheckoutPage() {
           <div className="flex-1">
             <div className="bg-white rounded-3xl p-8 md:p-10 shadow-[0_20px_40px_rgba(0,0,0,0.04),_0_5px_15px_rgba(0,0,0,0.01)] border border-neutral-100">
               
-              {checkoutStep === "contact" ? (
-                /* STEP 1: Fast Magic Checkout */
-                <div className="flex flex-col items-center text-center gap-6 py-6 animate-in fade-in duration-300">
-                  <div className="w-16 h-16 bg-[#072654] rounded-2xl flex items-center justify-center shadow-lg">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                      <path d="M16 3L4 9v7c0 6.627 5.148 12.825 12 14 6.852-1.175 12-7.373 12-14V9L16 3z" fill="#3395FF" fillOpacity="0.3"/>
-                      <path d="M11 16l3.5 3.5L21 13" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-
-                  <div>
-                    <h2 className="text-xl font-black text-neutral-900 tracking-tight">Razorpay Magic Checkout</h2>
-                    <p className="text-sm text-neutral-500 font-medium mt-2 max-w-sm mx-auto leading-relaxed">
-                      Complete your purchase instantly. Razorpay will securely handle your address, OTP verification, and payment — all in one step.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4 w-full max-w-sm">
-                    <div className="flex flex-col items-center gap-1.5 bg-neutral-50 rounded-2xl p-3 border border-neutral-100">
-                      <span className="text-lg">📍</span>
-                      <span className="text-[10px] font-bold text-neutral-600 uppercase tracking-wide text-center">Saved Address</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1.5 bg-neutral-50 rounded-2xl p-3 border border-neutral-100">
-                      <span className="text-lg">⚡</span>
-                      <span className="text-[10px] font-bold text-neutral-600 uppercase tracking-wide text-center">1-Click OTP</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1.5 bg-neutral-50 rounded-2xl p-3 border border-neutral-100">
-                      <span className="text-lg">🔒</span>
-                      <span className="text-[10px] font-bold text-neutral-600 uppercase tracking-wide text-center">Secure Pay</span>
-                    </div>
-                  </div>
-
-                  <div className="w-full pt-2 hidden md:block">
-                    <button
-                      type="button"
-                      onClick={placeOrder}
-                      disabled={isProcessing || cartItems.length === 0}
-                      className={`w-full bg-[#072654] text-white py-4 rounded-xl font-bold text-base hover:bg-[#0a3070] transition-all active:scale-[0.99] shadow-lg shadow-[#072654]/30 flex items-center justify-center gap-3 ${
-                        isProcessing || cartItems.length === 0 ? "opacity-60 cursor-not-allowed" : ""
-                      }`}
-                    >
-                      {isProcessing ? (
-                        <>
-                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Opening Razorpay...
-                        </>
-                      ) : (
-                        <>
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                          </svg>
-                          Pay Securely with Razorpay
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  <p className="text-[10px] text-neutral-400 font-medium">
-                    Powered by <span className="font-bold text-[#3395FF]">Razorpay Magic Checkout</span> · 100M+ shoppers trust this
-                  </p>
-                </div>
-              ) : (
-                /* STEP 2: Shopify-like Address Pre-filled + Billing Address Toggle Form */
-                <div className="space-y-6 animate-in fade-in duration-300">
-                  <div className="border-b border-neutral-100 pb-5">
-                    <h2 className="text-xl font-black text-neutral-900 tracking-tight">Delivery Details</h2>
-                    <p className="text-xs text-neutral-400 font-bold uppercase tracking-wider mt-1">Verified via Razorpay</p>
-                  </div>
-
-                  {/* Prefilled Customer Summary */}
-                  <div className="bg-neutral-50 border border-neutral-100 rounded-2xl p-5 space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Customer Name</span>
-                        <span className="font-bold text-neutral-800">{formData.fullName || "Guest User"}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Phone Number</span>
-                        <span className="font-bold text-neutral-800">{formData.phone}</span>
-                      </div>
+              {/* Standard Checkout Form: Customer fills inputs on site */}
+              <form className="space-y-6">
+                <div>
+                  <h2 className="text-xl font-black text-neutral-900 tracking-tight mb-4">Contact Information</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">Full Name *</label>
+                      <input
+                        type="text"
+                        name="fullName"
+                        value={formData.fullName}
+                        onChange={handleInputChange}
+                        onBlur={handleBlur}
+                        placeholder="John Doe"
+                        className={getInputClass(errors.fullName)}
+                      />
+                      <ErrorMessage error={errors.fullName} />
                     </div>
                     <div>
-                      <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">Shipping Address</span>
-                      <span className="font-bold text-neutral-700 block leading-relaxed mt-0.5">
-                        {formData.address}, {formData.city}, {formData.stateName} - {formData.pinCode}
-                      </span>
+                      <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">Email Address *</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        onBlur={handleBlur}
+                        placeholder="john@example.com"
+                        className={getInputClass(errors.email)}
+                      />
+                      <ErrorMessage error={errors.email} />
                     </div>
                   </div>
+                  <div className="mt-4">
+                    <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">Phone Number *</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      placeholder="9876543210"
+                      className={getInputClass(errors.phone)}
+                    />
+                    <ErrorMessage error={errors.phone} />
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-neutral-100">
+                  <h2 className="text-xl font-black text-neutral-900 tracking-tight mb-4">Shipping Address</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">Street Address *</label>
+                      <input
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        onBlur={handleBlur}
+                        placeholder="House / Flat No., Street, Area"
+                        className={getInputClass(errors.address)}
+                      />
+                      <ErrorMessage error={errors.address} />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">City *</label>
+                        <input
+                          type="text"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleInputChange}
+                          onBlur={handleBlur}
+                          placeholder="New Delhi"
+                          className={getInputClass(errors.city)}
+                        />
+                        <ErrorMessage error={errors.city} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">State *</label>
+                        <input
+                          type="text"
+                          name="stateName"
+                          value={formData.stateName}
+                          onChange={handleInputChange}
+                          onBlur={handleBlur}
+                          placeholder="Delhi"
+                          className={getInputClass(errors.stateName)}
+                        />
+                        <ErrorMessage error={errors.stateName} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-2">PIN Code *</label>
+                        <input
+                          type="text"
+                          name="pinCode"
+                          value={formData.pinCode}
+                          onChange={handleInputChange}
+                          onBlur={handleBlur}
+                          placeholder="110001"
+                          className={getInputClass(errors.pinCode)}
+                        />
+                        <ErrorMessage error={errors.pinCode} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <div className="mt-8 pt-6 border-t border-neutral-100">
+                <button
+                  type="button"
+                  onClick={placeOrder}
+                  disabled={isProcessing || cartItems.length === 0}
+                  className={`w-full bg-[#072654] text-white py-4 rounded-xl font-bold text-base hover:bg-[#0a3070] transition-all active:scale-[0.99] shadow-lg shadow-[#072654]/30 flex items-center justify-center gap-3 ${
+                    isProcessing || cartItems.length === 0 ? "opacity-60 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {isProcessing ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing Order...
+                    </>
+                  ) : (
+                    <>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      </svg>
+                      Proceed to Pay Securely
+                    </>
+                  )}
+                </button>
+              </div>
 
                   <form className="space-y-5">
                     {/* Billing address selection */}
