@@ -4,14 +4,7 @@
 import { useRef } from 'react';
 import Image from 'next/image';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Plus_Jakarta_Sans } from 'next/font/google';
 import ChairErizo from '../../../../public/Png1/chair8_ERIZO.webp';
-
-const sans = Plus_Jakarta_Sans({
-    subsets: ['latin'],
-    weight: ['400', '500', '600', '700', '800'],
-    variable: '--font-sans',
-});
 
 const FEATURES_LIST = [
     "Precision-Engineered Seat Base",
@@ -39,14 +32,12 @@ export default function Chair_split() {
         offset: ["start start", "end end"]
     });
 
-    // OPTIMIZATION: Smooth the raw scroll progress to prevent jitter/jank
     const smoothProgress = useSpring(scrollYProgress, {
         stiffness: 100,
         damping: 30,
         restDelta: 0.001
     });
 
-    // Use smoothProgress instead of scrollYProgress
     const stickyPaneX = useTransform(smoothProgress, [0.25, 0.9], ["5%", "95%"]);
 
     const centerChairX = useTransform(smoothProgress, [0.25, 0.9], ["-8vw", "0vw"]);
@@ -65,12 +56,12 @@ export default function Chair_split() {
     return (
         <div
             ref={containerRef}
-            className={`hidden md:block relative w-full h-[155vh] bg-black text-white -mt-24 md:-mt-36 ${sans.className}`}
+            className="hidden md:block relative w-full h-[155vh] bg-black text-white -mt-24 md:-mt-36 font-sans"
         >
             <div className="sticky top-0 w-full h-[100vh] overflow-hidden z-10 select-none pointer-events-none">
                 <motion.div
                     style={{ x: stickyPaneX, z: 0 }}
-                    className="w-full md:w-1/2 h-full flex items-center justify-center relative pointer-events-auto will-change-transform" // Added will-change
+                    className="w-full md:w-1/2 h-full flex items-center justify-center relative pointer-events-auto will-change-transform"
                 >
                     <motion.div
                         style={{ x: leftChairX, opacity: leftChairOpacity, scale: leftChairScale, zIndex: 10, z: 0 }}
@@ -80,7 +71,16 @@ export default function Chair_split() {
                             <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[8px] font-black tracking-widest bg-neutral-900 border border-neutral-800 text-neutral-400 px-2 py-0.5 rounded whitespace-nowrap">
                                 LOW PROFILE
                             </span>
-                            <Image src={ChairErizo} alt="Astride Chair Low Profile" width={330} height={330} quality={75} style={{ imageRendering: '-webkit-optimize-contrast' }} className="object-contain filter drop-shadow-[0_20px_40px_rgba(0,0,0,0.85)] brightness-90" priority />
+                            <Image 
+                                src={ChairErizo} 
+                                alt="Astride Chair Low Profile" 
+                                width={330} 
+                                height={330} 
+                                quality={75} 
+                                sizes="330px" 
+                                style={{ imageRendering: '-webkit-optimize-contrast' }} 
+                                className="object-contain brightness-90" 
+                            />
                         </div>
                     </motion.div>
 
@@ -92,7 +92,17 @@ export default function Chair_split() {
                             <motion.span style={{ opacity: sizeIndicatorOpacity }} className="absolute -top-6 left-1/2 -translate-x-1/2 text-[8px] font-black tracking-widest bg-white text-black px-2 py-0.5 rounded whitespace-nowrap">
                                 STANDARD
                             </motion.span>
-                            <Image src={ChairErizo} alt="Astride Chair Standard" width={330} height={330} quality={75} style={{ imageRendering: '-webkit-optimize-contrast' }} className="object-contain filter drop-shadow-[0_25px_50px_rgba(0,0,0,0.95)]" priority />
+                            <Image 
+                                src={ChairErizo} 
+                                alt="Astride Chair Standard" 
+                                width={330} 
+                                height={330} 
+                                quality={75} 
+                                sizes="330px" 
+                                style={{ imageRendering: '-webkit-optimize-contrast' }} 
+                                className="object-contain" 
+                                priority 
+                            />
                         </div>
                     </motion.div>
 
@@ -104,7 +114,16 @@ export default function Chair_split() {
                             <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[8px] font-black tracking-widest bg-neutral-900 border border-neutral-800 text-neutral-400 px-2 py-0.5 rounded whitespace-nowrap">
                                 EXTENDED HEIGHT
                             </span>
-                            <Image src={ChairErizo} alt="Astride Chair Extended" width={330} height={330} quality={75} style={{ imageRendering: '-webkit-optimize-contrast' }} className="object-contain filter drop-shadow-[0_20px_40px_rgba(0,0,0,0.85)] brightness-95" priority />
+                            <Image 
+                                src={ChairErizo} 
+                                alt="Astride Chair Extended" 
+                                width={330} 
+                                height={330} 
+                                quality={75} 
+                                sizes="330px" 
+                                style={{ imageRendering: '-webkit-optimize-contrast' }} 
+                                className="object-contain brightness-95" 
+                            />
                         </div>
                     </motion.div>
                 </motion.div>
@@ -114,7 +133,7 @@ export default function Chair_split() {
                 <div className="flex flex-col gap-5 pointer-events-auto">
                     <h2 className="text-[54px] lg:text-[72px] xl:text-[80px] font-black uppercase leading-[1.0] tracking-[-0.02em] text-white">
                         Engineered<br />
-                        <span className={`${sans.className} font-extrabold`} style={gradientStyle}>
+                        <span className="font-extrabold font-sans" style={gradientStyle}>
                             To Every Part 
                         </span>
                     </h2>
@@ -140,7 +159,7 @@ export default function Chair_split() {
                 <div className="flex flex-col gap-5 pointer-events-auto">
                     <h2 className="text-[54px] lg:text-[72px] xl:text-[80px] font-black uppercase leading-[1.0] tracking-[-0.02em] text-white">
                         One Chair.<br />
-                        <span className={`${sans.className} font-extrabold`} style={gradientStyle}>
+                        <span className="font-extrabold font-sans" style={gradientStyle}>
                             Universal Fit.
                         </span>
                     </h2>

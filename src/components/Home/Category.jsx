@@ -17,9 +17,9 @@ const sans = Plus_Jakarta_Sans({
     variable: "--font-sans",
 });
 
-export default function Category() {
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(false);
+export default function Category({ initialCategories = [] }) {
+    const [categories, setCategories] = useState(initialCategories);
+    const [loading, setLoading] = useState(!initialCategories || initialCategories.length === 0);
     const [isMobile, setIsMobile] = useState(false);
 
     const getCategories = async () => {
@@ -49,8 +49,12 @@ export default function Category() {
         // ✅ Detect mobile on mount
         setIsMobile(window.innerWidth < 768);
         
-        // ✅ Only fetch once on mount - categories don't change frequently
-        getCategories();
+        if (initialCategories && initialCategories.length > 0) {
+            setLoading(false);
+        } else {
+            // ✅ Only fetch once on mount if not provided by server
+            getCategories();
+        }
         
         // ✅ Only refetch if admin changes categories in another tab
         const handleStorageChange = () => {

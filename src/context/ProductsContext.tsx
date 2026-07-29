@@ -12,11 +12,20 @@ const ProductsContext = createContext<ProductsContextType>({
   loading: true,
 });
 
-export function ProductsProvider({ children }: { children: ReactNode }) {
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+export function ProductsProvider({ children, initialProducts }: { children: ReactNode, initialProducts?: any[] }) {
+  const [products, setProducts] = useState<any[]>(initialProducts || []);
+  const [loading, setLoading] = useState<boolean>(!initialProducts);
 
   useEffect(() => {
+    if (initialProducts && initialProducts.length > 0) {
+      if (typeof window !== "undefined") {
+        try {
+          sessionStorage.setItem("astride_nav_products_cache", JSON.stringify(initialProducts));
+        } catch (e) {}
+      }
+      return;
+    }
+
     let hasCache = false;
     try {
       const cached = sessionStorage.getItem("astride_nav_products_cache");
