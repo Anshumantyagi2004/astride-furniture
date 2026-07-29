@@ -105,16 +105,16 @@ export async function POST(req) {
     }
 
     // =========================================================
-    // MAGIC CHECKOUT: Fetch address from Razorpay Orders API
-    // Razorpay Magic Checkout does NOT send address in callback.
-    // We must fetch the order to get customer_details.
+    // MAGIC CHECKOUT & FALLBACK: Fetch address/contact from Razorpay
     // =========================================================
     let magicShippingInfo = null;
+    let paymentContactInfo = null;
     try {
       const rzpAuthHeader = Buffer.from(
         `${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_KEY_SECRET}`
       ).toString("base64");
 
+      // 1. Fetch Order (for Magic Checkout customer_details)
       const rzpOrderRes = await fetch(
         `https://api.razorpay.com/v1/orders/${razorpay_order_id}`,
         {
@@ -122,6 +122,7 @@ export async function POST(req) {
             Authorization: `Basic ${rzpAuthHeader}`,
             "Content-Type": "application/json",
           },
+          cache: "no-store"
         }
       );
 
@@ -141,16 +142,44 @@ export async function POST(req) {
           };
         }
       }
+
+      // 2. Fetch Payment (Fallback for contact & email if standard checkout was used)
+      if (razorpay_payment_id) {
+        const rzpPaymentRes = await fetch(
+          `https://api.razorpay.com/v1/payments/${razorpay_payment_id}`,
+          {
+            headers: { Authorization: `Basic ${rzpAuthHeader}` },
+            cache: "no-store"
+          }
+        );
+        if (rzpPaymentRes.ok) {
+          const pData = await rzpPaymentRes.json();
+          paymentContactInfo = {
+            email: pData.email || "",
+            phone: pData.contact || "",
+          };
+        }
+      }
     } catch (fetchErr) {
-      console.error("Failed to fetch Razorpay order for Magic Checkout address:", fetchErr);
+      console.error("Failed to fetch Razorpay details:", fetchErr);
     }
 
-    // Merge: Magic Checkout address takes priority for address details, but preserve customMessage & billingAddress from orderData if provided
-    const baseShipping = magicShippingInfo || orderData?.shippingInfo || {};
+    // Merge strategy: Prioritize Magic Checkout -> Frontend Data -> Payment Data
+    const frontendData = orderData?.shippingInfo || {};
+    const magicData = magicShippingInfo || {};
+    const paymentData = paymentContactInfo || {};
+
     const finalShippingInfo = {
-      ...baseShipping,
-      customMessage: orderData?.shippingInfo?.customMessage || baseShipping.customMessage || "",
-      billingAddress: orderData?.shippingInfo?.billingAddress || baseShipping.billingAddress || "",
+      fullName: magicData.fullName || frontendData.fullName || "",
+      email: magicData.email || frontendData.email || paymentData.email || "",
+      phone: magicData.phone || frontendData.phone || paymentData.phone || "",
+      address: magicData.address || frontendData.address || "",
+      city: magicData.city || frontendData.city || "",
+      state: magicData.state || frontendData.stateName || frontendData.state || "",
+      pinCode: magicData.pinCode || frontendData.pinCode || "",
+      customMessage: frontendData.customMessage || "",
+      billingAddress: frontendData.billingAddress || "",
+      gstNumber: frontendData.gstNumber || "",
     };
 
     // Save verified order into database
