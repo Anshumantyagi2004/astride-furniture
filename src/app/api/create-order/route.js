@@ -45,8 +45,8 @@ export async function POST(req) {
         price: Math.round((item.price || 0) * 100),           // in paise
         offer_price: Math.round((item.price || 0) * 100),     // in paise
         quantity: item.quantity || 1,
-        name: item.name || "Product",
-        description: item.name || "Product",
+        name: (item.name || "Product").slice(0, 120),
+        description: (item.name || "Product").slice(0, 120),
         ...(imageUrl ? { image_url: imageUrl } : {}),
       };
     });
