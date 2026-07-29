@@ -4,26 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
 
-// Helper function to convert numbers to Indian Rupee Words
-const numberToWords = (num) => {
-  const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
-  const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-  
-  const val = Math.round(Number(num) || 0);
-  if (val === 0) return 'Zero Rupees Only';
-  
-  if (val.toString().length > 9) return 'Overflow';
-  const n = ('000000000' + val).slice(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-  if (!n) return '';
-  let str = '';
-  str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
-  str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
-  str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
-  str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
-  str += (n[5] != 0) ? ((str != '') ? 'And ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
-  return str.trim() + ' Rupees Only';
-};
-
 const OrderInvoice = () => {
   const params = useParams();
   const orderId = params?.id;
@@ -60,7 +40,7 @@ const OrderInvoice = () => {
     return (
       <div className="min-h-screen bg-neutral-100 flex flex-col items-center justify-center gap-3">
         <div className="w-8 h-8 border-4 border-neutral-300 border-t-neutral-900 rounded-full animate-spin"></div>
-        <p className="text-sm font-bold text-neutral-600">Generating Tax Invoice...</p>
+        <p className="text-sm font-bold text-neutral-600">Generating Invoice...</p>
       </div>
     );
   }
@@ -82,13 +62,18 @@ const OrderInvoice = () => {
     pricing: order.pricing || { subtotal: 0, shippingCharge: 0, total: 0 }
   };
 
-  const invoiceNumber = `INV-${safeOrder._id?.toString().slice(-8).toUpperCase()}`;
-  const orderDate = new Date(safeOrder.createdAt).toLocaleDateString('en-IN');
-  const amountInWords = numberToWords(safeOrder.pricing.total);
+  // Formatting variables
+  const invoiceNumber = `#${safeOrder._id?.toString().slice(-6).toUpperCase()}`;
+  const orderDate = new Date(safeOrder.createdAt).toLocaleDateString('en-GB'); // DD/MM/YYYY
+  const paymentMethod = safeOrder.paymentMethod || "Razorpay secure";
+  const shippingMethod = safeOrder.pricing.shippingCharge > 0 ? "Standard Delivery" : "Free Standard Delivery";
 
-  // Determine Tax Type (IGST for Inter-state, CGST/SGST for Intra-state)
-  const isInterState = safeOrder.shippingInfo.state?.toLowerCase() !== 'delhi';
-  const taxType = isInterState ? 'IGST' : 'CGST/SGST';
+  // Calculations exactly matching Image 1's summary
+  const subtotalInclusive = safeOrder.products.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const totalExclTax = subtotalInclusive / 1.18;
+  const salesTax = subtotalInclusive - totalExclTax;
+  const shipping = safeOrder.pricing.shippingCharge || 0;
+  const finalTotal = subtotalInclusive + shipping;
 
   const handlePrint = () => {
     window.print();
@@ -109,158 +94,128 @@ const OrderInvoice = () => {
         {/* Header Section */}
         <div className="header">
           <div className="logo-container">
-            <img src="/logo.webp" alt="Astride Furniture" className="brand-logo" />
+            {/* Update path to your actual logo if needed */}
+            <img src="/logo.webp" alt="Astride" className="brand-logo" />
           </div>
-          <div className="doc-title">
-            <h2>Tax Invoice</h2>
-            <p>(Original for Recipient)</p>
-          </div>
-        </div>
-
-        {/* Addresses & Meta Details */}
-        <div className="details-grid">
-          <div className="left-col">
-            <div className="section">
-              <strong>Sold By:</strong><br />
-              MBTC INTRAFURNISH PRIVATE LIMITED (ASTRIDE®)<br />
-              J-113 & 114, DSIIDC Industrial Area,<br />
-              Sector 4, Bawana, New Delhi, Delhi - 110039<br />
-            </div>
-            <div className="section">
-              <strong>PAN No:</strong> AAQCS4259Q<br />
-              <strong>GST Registration No:</strong> 106AAQCS4259Q1ZE
-            </div>
-            <div className="section mt-large">
-              <strong>Order Number:</strong> {safeOrder._id}<br />
-              <strong>Order Date:</strong> {orderDate}
-            </div>
-          </div>
-
-          <div className="right-col text-right">
-            <div className="section">
-              <strong>Billing Address:</strong><br />
-              {safeOrder.shippingInfo.fullName}<br />
-              {safeOrder.shippingInfo.billingAddress || safeOrder.shippingInfo.address}<br />
-              {safeOrder.shippingInfo.city}, {safeOrder.shippingInfo.state} - {safeOrder.shippingInfo.pinCode}<br />
-              {safeOrder.shippingInfo.phone} | {safeOrder.shippingInfo.email}
-              {safeOrder.shippingInfo.gstNumber && (
-                <><br /><strong>Buyer GSTIN:</strong> {safeOrder.shippingInfo.gstNumber}</>
-              )}
-            </div>
-            <div className="section">
-              <strong>Shipping Address:</strong><br />
-              {safeOrder.shippingInfo.fullName}<br />
-              {safeOrder.shippingInfo.address}<br />
-              {safeOrder.shippingInfo.city}, {safeOrder.shippingInfo.state} - {safeOrder.shippingInfo.pinCode}
-            </div>
-            <div className="section mt-large">
-              <strong>Invoice Number:</strong> {invoiceNumber}<br />
-              <strong>Invoice Date:</strong> {orderDate}<br />
-              <strong>Payment Mode:</strong> {safeOrder.paymentMethod}<br />
-              <strong>Payment Status:</strong> {safeOrder.paymentStatus}
-            </div>
+          <div className="doc-meta">
+            <p><strong>INVOICE NO.</strong> {invoiceNumber}</p>
+            <p><strong>ORDER DATE</strong> {orderDate}</p>
+            <p><strong>PAYMENT</strong> {paymentMethod}</p>
+            <p><strong>SHIPPING</strong> {shippingMethod}</p>
           </div>
         </div>
 
-        {/* Itemized Table */}
-        <table className="invoice-table">
-          <thead>
-            <tr>
-              <th>Sl.<br/>No</th>
-              <th>Description</th>
-              <th>Unit Price</th>
-              <th>Qty</th>
-              <th>Net<br/>Amount</th>
-              <th>Tax<br/>Rate</th>
-              <th>Tax<br/>Type</th>
-              <th>Tax<br/>Amount</th>
-              <th>Total<br/>Amount</th>
-            </tr>
-          </thead>
-          <tbody>
+        {/* Addresses Section */}
+        <div className="address-section">
+          <div className="address-block">
+            <h3>BILL TO</h3>
+            <p>{safeOrder.shippingInfo.fullName}</p>
+            <p>{safeOrder.shippingInfo.billingAddress || safeOrder.shippingInfo.address}</p>
+            <p>{safeOrder.shippingInfo.city}, {safeOrder.shippingInfo.state} - {safeOrder.shippingInfo.pinCode}</p>
+            <p>Tel. {safeOrder.shippingInfo.phone}</p>
+          </div>
+          <div className="address-block">
+            <h3>SHIP TO</h3>
+            <p>{safeOrder.shippingInfo.fullName}</p>
+            <p>{safeOrder.shippingInfo.address}</p>
+            <p>{safeOrder.shippingInfo.city}, {safeOrder.shippingInfo.state} - {safeOrder.shippingInfo.pinCode}</p>
+          </div>
+        </div>
+
+        {/* Items Section */}
+        <div className="items-section">
+          <div className="items-header">
+            <div className="col-desc">ITEM DESCRIPTION</div>
+            <div className="col-qty">QTY</div>
+            <div className="col-tax">TAX</div>
+            <div className="col-price">PRICE</div>
+            <div className="col-total">TOTAL</div>
+          </div>
+
+          <div className="items-body">
             {safeOrder.products.map((item, index) => {
-              // --- EXACT GST MATH LOGIC ---
-              // 1. Original Price (Inclusive of GST)
-              const inclusivePrice = item.price;
-              
-              // 2. Divide by 1.18 to get Base Unit Price (Exclusive of GST)
-              const baseUnitPrice = inclusivePrice / 1.18;
-              
-              // 3. Subtract Base from Inclusive to find the exact Tax Amount per item
-              const taxPerItem = inclusivePrice - baseUnitPrice;
-
-              // 4. Multiply by Quantity for the table columns
-              const netAmount = baseUnitPrice * item.quantity;
-              const totalTaxAmount = taxPerItem * item.quantity;
-              const totalAmount = inclusivePrice * item.quantity;
+              const itemTotal = item.price * item.quantity;
+              const productImage = item.image || item.imgUrl || (typeof item.productId === 'object' ? (item.productId?.images?.[0]?.url || item.productId?.image) : null) || "/placeholder.webp";
 
               return (
-                <tr key={index}>
-                  <td className="text-center">{index + 1}</td>
-                  <td>
-                    <strong>{item.productName}</strong> {item.color && `(Color: ${item.color})`}<br />
-                    <span className="text-sm">HSN: 9401</span>
-                  </td>
-                  {/* Show Base Unit Price */}
-                  <td className="text-right">₹{baseUnitPrice.toFixed(2)}</td>
-                  <td className="text-center">{item.quantity}</td>
-                  {/* Show Net Amount (Base * Qty) */}
-                  <td className="text-right">₹{netAmount.toFixed(2)}</td>
-                  <td className="text-center">18%</td>
-                  <td className="text-center">{taxType}</td>
-                  {/* Show Subtracted Tax Amount */}
-                  <td className="text-right">₹{totalTaxAmount.toFixed(2)}</td>
-                  {/* Show Final Inclusive Total */}
-                  <td className="text-right">₹{totalAmount.toFixed(2)}</td>
-                </tr>
+                <div className="item-row" key={index}>
+                  <div className="col-desc flex-desc">
+                    <img 
+                      src={productImage} 
+                      alt={item.productName || "Product"} 
+                      className="product-image" 
+                    />
+                    <div className="product-details">
+                      <strong>{item.productName}</strong>
+                      <p className="text-gray" style={{ fontSize: '11px', marginTop: '3px' }}>
+                        Color Variant: <span style={{ fontWeight: '600', color: '#111' }}>{item.color || item.colorName || item.colorVariant || item.variant || "Standard"}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="col-qty">x {item.quantity}</div>
+                  <div className="col-tax">18.0%</div>
+                  <div className="col-price">
+                    {/* Showing a crossed-out MRP and current price similar to Image 1 */}
+                    {/* <span className="strikethrough">Rs. {originalPrice.toFixed(2)}</span><br/> */}
+                    Rs. {item.price.toFixed(2)}
+                  </div>
+                  <div className="col-total">Rs. {itemTotal.toFixed(2)}</div>
+                </div>
               );
             })}
-            
-            {/* Shipping Row if applicable */}
-            {safeOrder.pricing.shippingCharge > 0 && (
-              <tr>
-                <td className="text-center">{safeOrder.products.length + 1}</td>
-                <td>Shipping Charges</td>
-                <td className="text-right">₹{safeOrder.pricing.shippingCharge.toFixed(2)}</td>
-                <td className="text-center">1</td>
-                <td className="text-right">₹{safeOrder.pricing.shippingCharge.toFixed(2)}</td>
-                <td className="text-center">-</td>
-                <td className="text-center">-</td>
-                <td className="text-right">₹0.00</td>
-                <td className="text-right">₹{safeOrder.pricing.shippingCharge.toFixed(2)}</td>
-              </tr>
-            )}
-          </tbody>
-          
-          {/* Footer Totals */}
-          <tfoot>
-            <tr className="total-row">
-              <td colSpan="7" className="text-right pr-2"><strong>Total:</strong></td>
-              <td className="text-right">
-                 {/* Total Tax Calculation Loop */}
-                 ₹{safeOrder.products.reduce((acc, item) => {
-                    const base = item.price / 1.18;
-                    const tax = item.price - base;
-                    return acc + (tax * item.quantity);
-                 }, 0).toFixed(2)}
-              </td>
-              <td className="text-right"><strong>₹{safeOrder.pricing.total.toFixed(2)}</strong></td>
-            </tr>
-          </tfoot>
-        </table>
+          </div>
+        </div>
 
-        {/* Amount in Words & Signatory */}
-        <div className="invoice-footer">
-          <div className="amount-words">
-            <strong>Amount in Words:</strong><br />
-            {amountInWords}
+        {/* Summary Section */}
+        <div className="summary-section">
+          <div className="notes-block">
+            <strong>NOTES</strong>
+            <p className="text-gray mt-2">DTSS</p> 
           </div>
-          
-          <div className="signatory">
-            <strong>For MBTC INTRAFURNISH PRIVATE LIMITED:</strong>
-            <div className="signature-space"></div>
-            <strong>Authorized Signatory</strong>
+          <div className="totals-block">
+             <div className="total-line">
+                <span>Subtotal</span>
+                <span>Rs. {subtotalInclusive.toFixed(2)}</span>
+             </div>
+             <div className="total-line">
+                <span>Shipping</span>
+                <span>Rs. {shipping.toFixed(2)}</span>
+             </div>
+             <div className="total-line">
+                <span>Total excl. Tax</span>
+                <span>Rs. {totalExclTax.toFixed(2)}</span>
+             </div>
+             <div className="total-line">
+                <span>Sales Tax</span>
+                <span>Rs. {salesTax.toFixed(2)}</span>
+             </div>
+             <div className="total-line bold-total">
+                <span>TOTAL</span>
+                <span>RS. {finalTotal.toFixed(2)}</span>
+             </div>
+             <div className="total-line mt-2">
+                <span>Paid</span>
+                <span>Rs. {finalTotal.toFixed(2)}</span>
+             </div>
           </div>
+        </div>
+
+        {/* Footer Section */}
+        <div className="footer-section">
+           <p className="footer-text">If you have any questions, please do get in contact.</p>
+           <h2 className="phone-number">📞 73111-64111</h2>
+           <p className="website-link">
+             <a href="https://astride.in" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: '#000' }}>
+               <strong>astride.in</strong>
+             </a>
+           </p>
+           <div className="social-icons">
+             <a href="https://www.facebook.com/Astride.furniture" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>Facebook</a>
+             {' • '}
+             <a href="https://www.instagram.com/astride.furniture" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>Instagram</a>
+             {' • '}
+             <a href="https://www.linkedin.com/company/astride-furniture" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>LinkedIn</a>
+           </div>
         </div>
 
       </div>
@@ -268,126 +223,186 @@ const OrderInvoice = () => {
       {/* --- CSS Styles --- */}
       <style dangerouslySetInnerHTML={{__html: `
         .invoice-wrapper {
-          background: #f3f4f6;
-          padding: 20px;
+          background: #525252; /* Dark background outside paper */
+          padding: 40px 20px;
           min-height: 100vh;
-          font-family: Arial, sans-serif;
-          color: #000;
+          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          color: #1a1a1a;
         }
         .print-actions {
           text-align: center;
           margin-bottom: 20px;
         }
         .print-btn {
-          background: #2563eb;
+          background: #000;
           color: white;
           padding: 10px 20px;
           border: none;
           border-radius: 5px;
           font-size: 16px;
-          font-weight: bold;
           cursor: pointer;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .print-btn:hover { background: #1d4ed8; }
+        
         .invoice-container {
-          max-width: 800px;
+          max-width: 850px;
           margin: 0 auto;
           background: #fff;
-          padding: 40px;
-          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+          padding: 50px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
+
+        /* Header */
         .header {
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
+          margin-bottom: 40px;
+        }
+        .brand-logo { 
+          max-height: 50px; 
+        }
+        .doc-meta p {
+          margin: 4px 0;
+          font-size: 13px;
+          text-align: left;
+        }
+        .doc-meta strong {
+          display: inline-block;
+          width: 100px; /* Aligns the labels */
+        }
+
+        /* Addresses */
+        .address-section {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 40px;
+        }
+        .address-block {
+          width: 48%;
+        }
+        .address-block h3 {
+          font-size: 13px;
+          margin-bottom: 15px;
+          text-transform: uppercase;
+          border-bottom: 1px solid #e0e0e0;
+          padding-bottom: 5px;
+        }
+        .address-block p {
+          margin: 3px 0;
+          font-size: 13px;
+          color: #333;
+        }
+
+        /* Items Grid */
+        .items-section {
+          margin-bottom: 20px;
+        }
+        .items-header {
+          display: flex;
+          border-top: 2px solid #000;
+          border-bottom: 1px solid #000;
+          padding: 10px 0;
+          font-weight: bold;
+          font-size: 12px;
+        }
+        
+        /* Column Widths */
+        .col-desc { flex: 2; padding-right: 20px; }
+        .col-qty { flex: 0.5; text-align: center; }
+        .col-tax { flex: 0.5; text-align: center; }
+        .col-price { flex: 1; text-align: right; }
+        .col-total { flex: 1; text-align: right; }
+
+        .item-row {
+          display: flex;
+          padding: 20px 0;
+          border-bottom: 1px solid #e0e0e0;
+          align-items: center;
+          font-size: 13px;
+        }
+        .flex-desc {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+        .product-image {
+          width: 80px;
+          height: 80px;
+          object-fit: contain;
+          background: #f8f9fa;
+        }
+        .product-details strong {
+          display: block;
+          margin-bottom: 5px;
+          line-height: 1.4;
+        }
+        .text-gray { color: #666; font-size: 12px; }
+        .strikethrough { text-decoration: line-through; color: #888; font-size: 11px; }
+
+        /* Summary */
+        .summary-section {
+          display: flex;
+          justify-content: space-between;
+          padding-top: 10px;
+          margin-bottom: 40px;
           border-bottom: 2px solid #000;
           padding-bottom: 20px;
-          margin-bottom: 20px;
         }
-        .brand-logo { max-height: 40px; }
-        .doc-title { text-align: right; }
-        .doc-title h2 { margin: 0; font-size: 18px; text-transform: uppercase; }
-        .doc-title p { margin: 2px 0 0; font-size: 14px; }
-        
-        .details-grid {
+        .notes-block {
+          width: 45%;
+          font-size: 13px;
+        }
+        .totals-block {
+          width: 50%;
+          font-size: 13px;
+        }
+        .total-line {
           display: flex;
           justify-content: space-between;
+          margin-bottom: 10px;
+          color: #333;
+        }
+        .bold-total {
+          font-weight: bold;
+          font-size: 14px;
+          color: #000;
+          margin-top: 15px;
+        }
+        .mt-2 { margin-top: 10px; }
+
+        /* Footer */
+        .footer-section {
+          text-align: center;
           font-size: 12px;
-          line-height: 1.5;
-          margin-bottom: 20px;
+          color: #555;
         }
-        .left-col {
-          width: 48%;
+        .footer-text { margin-bottom: 20px; }
+        .phone-number { 
+          font-size: 24px; 
+          color: #000; 
+          margin: 15px 0; 
         }
-        .right-col {
-          width: 48%;
-          max-width: 320px;
+        .website-link { 
+          font-size: 14px; 
+          color: #000; 
+          margin-bottom: 10px;
         }
-        .section { margin-bottom: 10px; word-wrap: break-word; }
-        .mt-large { margin-top: 25px; }
-        .text-right { text-align: right; }
-        .text-center { text-align: center; }
-        
-        .invoice-table {
-          width: 100%;
-          border-collapse: collapse;
-          font-size: 11px;
-          margin-bottom: 5px;
-        }
-        .invoice-table th, .invoice-table td {
-          border: 1px solid #000;
-          padding: 6px;
-          vertical-align: top;
-        }
-        .invoice-table th {
-          background-color: #f3f3f3;
+        .social-icons {
+          font-size: 12px;
           font-weight: bold;
         }
-        .text-sm { font-size: 10px; color: #555; }
-        
-        .invoice-footer {
-          border: 1px solid #000;
-          border-top: none;
-          display: flex;
-          justify-content: space-between;
-          font-size: 12px;
-          padding: 0;
-        }
-        .amount-words {
-          padding: 10px;
-          width: 60%;
-          border-right: 1px solid #000;
-        }
-        .signatory {
-          padding: 10px;
-          width: 40%;
-          text-align: right;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-        }
-        .signature-space { height: 60px; }
-        .pr-2 { padding-right: 8px !important; }
 
-        /* Print Specific CSS */
+        /* Print Settings */
         @media print {
-          @page { size: A4; margin: 10mm; }
+          @page { size: A4; margin: 0; }
           body { 
             background: #fff; 
             -webkit-print-color-adjust: exact; 
             print-color-adjust: exact; 
           }
-          .invoice-wrapper {
-            padding: 0;
-            background: #fff;
-          }
+          .invoice-wrapper { padding: 0; background: transparent; }
           .no-print { display: none !important; }
-          .invoice-container {
-            box-shadow: none;
-            padding: 0;
-            max-width: 100%;
-          }
+          .invoice-container { box-shadow: none; padding: 15mm; max-width: 100%; }
         }
       `}} />
     </div>
