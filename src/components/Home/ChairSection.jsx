@@ -170,7 +170,8 @@ export default function ChairSection() {
                         modules={[Autoplay]}
                         spaceBetween={20}
                         slidesPerView={1.2}
-                        loop={chairData.length >= 6}
+                        centeredSlides={true}
+                        loop={true}
                         autoplay={{
                             delay: 2500,
                             disableOnInteraction: false,

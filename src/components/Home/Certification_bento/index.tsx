@@ -336,7 +336,7 @@ const CertCard = memo(({
             WebkitBackfaceVisibility: "hidden",
           }}
         >
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col min-h-0">
             <div className="flex items-center justify-between gap-2 mb-3">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-12 h-12 rounded-xl bg-black/20 flex items-center justify-center shrink-0">

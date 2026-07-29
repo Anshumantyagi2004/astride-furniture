@@ -52,9 +52,8 @@ export default function RealSetup_New() {
       className="w-full pt-2 pb-6 md:pt-4 md:pb-8 px-5 md:px-8 lg:px-16 overflow-hidden"
       style={{
         backgroundColor: "#F5EFE6",
-        backgroundImage:
-          "linear-gradient(#d6c9b8 1px, #F5EFE6 1px), linear-gradient(90deg, #d6c9b8 1px, #F5EFE6 1px)",
-        backgroundSize: "32px 32px",
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Crect width='32' height='32' fill='%23F5EFE6'/%3E%3Cpath d='M0 0.5H32M0.5 0V32' stroke='%23d6c9b8' stroke-width='1'/%3E%3C/svg%3E")`,
+        WebkitTransform: "translateZ(0)",
       }}
     >
       {/* Header Section (Row Layout) */}
