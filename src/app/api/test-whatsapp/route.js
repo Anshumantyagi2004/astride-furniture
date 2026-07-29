@@ -4,32 +4,46 @@ import { sendWhatsappOrderNotification } from "@/lib/sendWhatsappNotification";
 export const runtime = "nodejs";
 
 export async function GET() {
-  try {
-    const mockOrder = {
-      _id: `TEST_ORD_${Date.now().toString().slice(-6)}`,
-      shippingInfo: {
-        fullName: "Simran Test User",
-        phone: "9868552523",
-        city: "New Delhi",
-        state: "Delhi",
+  const mockOrder = {
+    _id: `TEST_${Date.now()}`,
+    shippingInfo: {
+      fullName: "Simran Test User",
+      phone: "9868552523",
+      city: "New Delhi",
+      state: "Delhi",
+    },
+    products: [
+      {
+        productName: "Ergofit Chair",
+        color: "Black",
+        quantity: 1,
       },
-      products: [
-        { productName: "Ergofit Chair", color: "Black", quantity: 1 },
-        { productName: "Octave Chair", color: "Red", quantity: 2 },
-      ],
-      pricing: {
-        total: 5199,
+      {
+        productName: "Octave Chair",
+        color: "Red",
+        quantity: 2,
       },
-    };
+    ],
+    pricing: {
+      total: 5199,
+    },
+  };
+  
 
-    console.log("Triggering test WhatsApp notification...");
-    await sendWhatsappOrderNotification(mockOrder, "COD");
+  try {
+    const result = await sendWhatsappOrderNotification(mockOrder, "COD");
 
     return NextResponse.json({
       success: true,
-      message: "Test WhatsApp notification executed! Check terminal logs and your WhatsApp phone.",
+      result,
     });
-  } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (err) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: err.message,
+      },
+      { status: 500 }
+    );
   }
 }

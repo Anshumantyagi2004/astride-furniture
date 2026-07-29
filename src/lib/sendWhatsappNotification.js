@@ -1,65 +1,137 @@
 /**
  * Sends a WhatsApp order notification to the owner via MyOperator.
  * Template name: product_notification
- * @param {object} order - The order object from MongoDB
- * @param {string} paymentType - "COD" or "Razorpay"
+ *
+ * @param {Object} order - Order object from MongoDB
+ * @param {String} paymentType - "COD" or "Razorpay"
  */
 export async function sendWhatsappOrderNotification(order, paymentType) {
   try {
-    const shipping = order.shippingInfo || {};
-    const products = order.products || [];
-    const pricing = order.pricing || {};
+    // Validate required environment variables
+    const requiredEnv = [
+      "MYOPERATOR_BASE_URL",
+      "MYOPERATOR_AUTHENTICATION",
+      "MYOPERATOR_PHONE_NUMBER_ID",
+      "OWNER_WHATSAPP_NUMBER",
+    ];
 
-    const totalAmount = pricing.total || ((pricing.subtotal || 0) + (pricing.shippingCharge || 0));
+    for (const key of requiredEnv) {
+      if (!process.env[key]) {
+        throw new Error(`Missing environment variable: ${key}`);
+      }
+    }
 
-    const productSummary = products
-      .map((p, i) => `${i + 1}. ${p.productName || "Product"}${p.color ? ` (${p.color})` : ""} x${p.quantity}`)
-      .join("; ");
+    const shipping = order?.shippingInfo || {};
+    const products = order?.products || [];
+    const pricing = order?.pricing || {};
 
-    const paymentLabel = paymentType === "COD" ? "Cash on Delivery (COD)" : "Online Payment (Razorpay)";
-    const timeIST = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+    const totalAmount =
+      pricing.total ??
+      ((pricing.subtotal || 0) + (pricing.shippingCharge || 0));
 
-    const url = `${process.env.MYOPERATOR_BASE_URL || "https://publicapi.myoperator.co"}/chat/messages`;
-    
+    const productSummary =
+      products.length > 0
+        ? products
+          .map(
+            (p, i) =>
+              `${i + 1}. ${p.productName || "Product"}${p.color ? ` (${p.color})` : ""
+              } x${p.quantity || 1}`
+          )
+          .join("; ")
+        : "No Products";
+
+    const paymentLabel =
+      paymentType === "COD"
+        ? "Cash on Delivery (COD)"
+        : "Online Payment (Razorpay)";
+
+    const timeIST = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+    });
+
+    const url = `${process.env.MYOPERATOR_BASE_URL}/chat/messages`;
+
+    const payload = {
+      phone_number_id: process.env.MYOPERATOR_PHONE_NUMBER_ID,
+
+      customer_country_code: "91",
+      customer_number: shipping.phone,
+
+      data: {
+        type: "template",
+        language: "en",
+        context: {
+          template_name: "notification_template",
+          language: "en",
+
+          body: {
+            "1": shipping.fullName || "",
+            "2": shipping.phone || "",
+            "3": shipping.city || "",
+            "4": shipping.state || "",
+            "5": productSummary,
+            "6": totalAmount.toString(),
+            "7": paymentLabel,
+            "8": String(order._id),
+            "9": timeIST,
+          },
+        },
+      },
+
+      reply_to: null,
+      myop_ref_id: String(order._id),
+
+      trail: {
+        name: null,
+      },
+    };
+
+    console.log("========== MYOPERATOR REQUEST ==========");
+    console.log("URL:", url);
+    console.log("Phone Number ID:", process.env.MYOPERATOR_PHONE_NUMBER_ID);
+    console.log("Owner:", process.env.OWNER_WHATSAPP_NUMBER);
+    console.log("Payload:", JSON.stringify(payload, null, 2));
+    console.log({
+      key: process.env.MYOPERATOR_AUTHENTICATION,
+      company: process.env.MYOPERATOR_COMPANY_ID,
+    });
     const response = await fetch(url, {
       method: "POST",
       headers: {
+        "Accept": "application/json",
         "Content-Type": "application/json",
-        "x-api-key": process.env.MYOPERATOR_AUTHENTICATION, // Updated header
+        "Authorization": `Bearer ${process.env.MYOPERATOR_AUTHENTICATION}`,
+        "X-MYOP-COMPANY-ID": process.env.MYOPERATOR_COMPANY_ID,
       },
-      body: JSON.stringify({
-        phone_number_id: process.env.MYOPERATOR_PHONE_NUMBER_ID,
-        messaging_product: "whatsapp",
-        recipient_type: "individual",
-        to: process.env.OWNER_WHATSAPP_NUMBER,
-        type: "template",
-        template: {
-          name: "product_notification",
-          language: { code: "en" },
-          components: [
-            {
-              type: "body",
-              parameters: [
-                { type: "text", text: shipping.fullName || "N/A" },
-                { type: "text", text: shipping.phone || "N/A" },
-                { type: "text", text: shipping.city || "N/A" },
-                { type: "text", text: shipping.state || "N/A" },
-                { type: "text", text: productSummary || "N/A" },
-                { type: "text", text: totalAmount.toLocaleString("en-IN") },
-                { type: "text", text: paymentLabel },
-                { type: "text", text: String(order._id || "N/A") },
-                { type: "text", text: timeIST },
-              ],
-            },
-          ],
-        },
-      }),
+      body: JSON.stringify(payload),
     });
+    const responseText = await response.text();
+    console.log(responseText);
+    console.log("========== MYOPERATOR RESPONSE ==========");
+    console.log("MYOPERATOR_PHONE_NUMBER_ID", process.env.MYOPERATOR_PHONE_NUMBER_ID);
+    console.log("Status:", response.status);
+    console.log("Body:", responseText);
 
-    const resData = await response.json();
-    console.log("MyOperator Response:", resData);
+    let responseData = {};
 
-  } catch (err) {
-    console.error("WhatsApp notification error:", err);
+    try {
+      responseData = JSON.parse(responseText);
+    } catch {
+      responseData = { raw: responseText };
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        responseData.message ||
+        `MyOperator API failed with status ${response.status}`
+      );
+    }
+
+    console.log("WhatsApp notification sent successfully.");
+
+    return responseData;
+  } catch (error) {
+    console.error("WhatsApp notification error:", error);
+    throw error;
   }
 }
