@@ -592,138 +592,35 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                 </div>
-              </form>
-              <div className="mt-8 pt-6 border-t border-neutral-100">
-                <button
-                  type="button"
-                  onClick={placeOrder}
-                  disabled={isProcessing || cartItems.length === 0}
-                  className={`w-full bg-[#072654] text-white py-4 rounded-xl font-bold text-base hover:bg-[#0a3070] transition-all active:scale-[0.99] shadow-lg shadow-[#072654]/30 flex items-center justify-center gap-3 ${
-                    isProcessing || cartItems.length === 0 ? "opacity-60 cursor-not-allowed" : ""
-                  }`}
-                >
-                  {isProcessing ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Processing Order...
-                    </>
-                  ) : (
-                    <>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                      </svg>
-                      Proceed to Pay Securely
-                    </>
-                  )}
-                </button>
-              </div>
-
-                  <form className="space-y-5">
-                    {/* Billing address selection */}
-                    <div className="pt-3">
-                      <h3 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-3">Billing address</h3>
-                      <div className="space-y-3">
-                        <label className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                          billingAddressSame ? "border-neutral-900 bg-neutral-50" : "border-neutral-200 bg-white hover:border-neutral-300"
-                        }`}>
-                          <input
-                            type="radio"
-                            name="billingOption"
-                            checked={billingAddressSame}
-                            onChange={() => {
-                              setBillingAddressSame(true);
-                              setFormData(prev => ({ ...prev, billingAddress: "" }));
-                            }}
-                            className="w-4 h-4 accent-neutral-900"
-                          />
-                          <span className="text-sm font-semibold text-neutral-800">Same as shipping address</span>
-                        </label>
-
-                        <label className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                          !billingAddressSame ? "border-neutral-900 bg-neutral-50" : "border-neutral-200 bg-white hover:border-neutral-300"
-                        }`}>
-                          <input
-                            type="radio"
-                            name="billingOption"
-                            checked={!billingAddressSame}
-                            onChange={() => setBillingAddressSame(false)}
-                            className="w-4 h-4 accent-neutral-900"
-                          />
-                          <span className="text-sm font-semibold text-neutral-800">Use a different billing address</span>
-                        </label>
-
-                        {!billingAddressSame && (
-                          <div className="mt-3 animate-in fade-in duration-300">
-                            <textarea 
-                              name="billingAddress"
-                              placeholder="Enter your complete billing address..."
-                              value={formData.billingAddress}
-                              onChange={handleInputChange}
-                              rows={3}
-                              className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-900 focus:outline-none focus:border-black transition-all resize-none"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* GST Number Field (Optional with validation) */}
-                    <div className="flex flex-col">
-                      <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5 flex justify-between items-center">
-                        <span>GST Number (Optional)</span>
-                        <span className="text-[10px] text-neutral-400 font-normal">Format: 15-digit GSTIN</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="gstNumber"
-                        placeholder="e.g. 22AAAAA0000A1Z5"
-                        value={formData.gstNumber}
-                        onChange={handleInputChange}
-                        onBlur={handleBlur}
-                        maxLength={15}
-                        className={`w-full bg-neutral-50 border rounded-xl px-4 py-3 text-sm text-neutral-900 focus:outline-none transition-all uppercase tracking-wider ${
-                          errors.gstNumber ? "border-red-500 bg-red-50/20" : "border-neutral-200 focus:border-black"
-                        }`}
-                      />
-                      {errors.gstNumber && (
-                        <span className="text-xs font-medium text-red-500 mt-1">{errors.gstNumber}</span>
+                  {/* Payment Button */}
+                  <div className="pt-6">
+                    <button
+                      type="button"
+                      onClick={placeOrder}
+                      disabled={isProcessing || cartItems.length === 0}
+                      className={`w-full bg-[#072654] text-white py-4 rounded-xl font-bold text-base hover:bg-[#0a3070] transition-all active:scale-[0.99] shadow-lg shadow-[#072654]/30 flex items-center justify-center gap-3 ${
+                        isProcessing || cartItems.length === 0 ? "opacity-60 cursor-not-allowed" : ""
+                      }`}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing Order...
+                        </>
+                      ) : (
+                        <>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                          </svg>
+                          Proceed to Pay Securely
+                        </>
                       )}
-                    </div>
-
-                    {/* Order note */}
-                    <div className="flex flex-col">
-                      <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Custom Order Note (Optional)</label>
-                      <textarea name="customMessage" rows={2} placeholder="Add any special instructions..." value={formData.customMessage} onChange={handleInputChange} className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-900 focus:outline-none focus:border-black transition-all resize-none" />
-                    </div>
-
-                    {/* Final Pay Now Button */}
-                    <div className="pt-4 hidden md:block">
-                      <button
-                        type="button"
-                        onClick={placeOrder}
-                        disabled={isProcessing}
-                        className={`w-full bg-neutral-900 text-white py-4 rounded-xl font-bold text-base hover:bg-black transition-all active:scale-[0.99] shadow-lg shadow-black/20 flex items-center justify-center gap-2 ${
-                          isProcessing ? "opacity-60 cursor-not-allowed" : ""
-                        }`}
-                      >
-                        {isProcessing ? (
-                          <>
-                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Processing...
-                          </>
-                        ) : "Complete Payment"}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
-
+                    </button>
+                  </div>
+              </form>
             </div>
           </div>
 
