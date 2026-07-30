@@ -886,9 +886,9 @@ export default function Page() {
                                         )}
                                     </div>
                                      {/* SWATCH SOURCE RADIO SELECTOR */}
-                                     <div className="flex flex-wrap items-center gap-4 bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 mb-3">
-                                         <span className="text-gray-600 font-bold">Select Swatch Source:</span>
-                                         <label className="flex items-center gap-1.5 cursor-pointer hover:text-black">
+                                     <div className="flex flex-wrap items-center gap-6 md:gap-8 bg-gray-50 p-3.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 mb-3">
+                                         <span className="text-gray-600 font-bold mr-1">Select Swatch Source:</span>
+                                         <label className="flex items-center gap-2 cursor-pointer hover:text-black">
                                              <input
                                                  type="radio"
                                                  name={`colorMode_edit_${index}`}
@@ -896,10 +896,10 @@ export default function Page() {
                                                  onChange={() => handleColorChange(index, "colorMode", "name")}
                                                  className="accent-black w-4 h-4 cursor-pointer"
                                              />
-                                             <span>✓ Use Color Name</span>
+                                             <span>Use Color Name</span>
                                          </label>
 
-                                         <label className="flex items-center gap-1.5 cursor-pointer hover:text-black">
+                                         <label className="flex items-center gap-2 cursor-pointer hover:text-black">
                                              <input
                                                  type="radio"
                                                  name={`colorMode_edit_${index}`}
@@ -907,10 +907,10 @@ export default function Page() {
                                                  onChange={() => handleColorChange(index, "colorMode", "hex")}
                                                  className="accent-black w-4 h-4 cursor-pointer"
                                              />
-                                             <span>✓ Use Custom Hex / Color Picker</span>
+                                             <span>Use Custom Hex / Color Picker</span>
                                          </label>
 
-                                         <label className="flex items-center gap-1.5 cursor-pointer hover:text-black">
+                                         <label className="flex items-center gap-2 cursor-pointer hover:text-black">
                                              <input
                                                  type="radio"
                                                  name={`colorMode_edit_${index}`}
@@ -918,7 +918,7 @@ export default function Page() {
                                                  onChange={() => handleColorChange(index, "colorMode", "dual")}
                                                  className="accent-black w-4 h-4 cursor-pointer"
                                              />
-                                             <span>✓ Use Dual-Tone (2 Shades)</span>
+                                             <span>Use Dual-Tone (2 Shades)</span>
                                          </label>
                                      </div>
 
