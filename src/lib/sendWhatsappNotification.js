@@ -12,7 +12,6 @@ export async function sendWhatsappOrderNotification(order, paymentType) {
       "MYOPERATOR_BASE_URL",
       "MYOPERATOR_AUTHENTICATION",
       "MYOPERATOR_PHONE_NUMBER_ID",
-      "OWNER_WHATSAPP_NUMBER",
     ];
 
     for (const key of requiredEnv) {
@@ -21,7 +20,7 @@ export async function sendWhatsappOrderNotification(order, paymentType) {
       }
     }
 
-    const shipping = order?.shippingInfo || {};
+    const shipping = order?.shippingInfo || order?.shippingAddress || {};
     const products = order?.products || [];
     const pricing = order?.pricing || {};
 
@@ -45,35 +44,42 @@ export async function sendWhatsappOrderNotification(order, paymentType) {
         ? "Cash on Delivery (COD)"
         : "Online Payment (Razorpay)";
 
-    const timeIST = new Date().toLocaleString("en-IN", {
-      timeZone: "Asia/Kolkata",
-    });
-
     const url = `${process.env.MYOPERATOR_BASE_URL}/chat/messages`;
+
+    // Clean customer phone number (extract last 10 digits)
+    const rawPhone = shipping.phone || shipping.contactNumber || "";
+    const customerPhone = String(rawPhone).replace(/\D/g, "").slice(-10);
+
+    if (!customerPhone || customerPhone.length !== 10) {
+      throw new Error(`Invalid customer phone number: ${rawPhone}`);
+    }
+
+    const customerName = shipping.fullName || shipping.name || "Customer";
+    const city = shipping.city || "";
+    const state = shipping.state || "";
 
     const payload = {
       phone_number_id: process.env.MYOPERATOR_PHONE_NUMBER_ID,
 
       customer_country_code: "91",
-      customer_number: shipping.phone,
+      customer_number: customerPhone,
 
       data: {
         type: "template",
         language: "en",
         context: {
-          template_name: "notification_template",
+          template_name: "customer_notification",
           language: "en",
 
           body: {
-            "1": shipping.fullName || "",
-            "2": shipping.phone || "",
-            "3": shipping.city || "",
-            "4": shipping.state || "",
+            "1": customerName,
+            "2": rawPhone,
+            "3": city,
+            "4": state,
             "5": productSummary,
             "6": totalAmount.toString(),
             "7": paymentLabel,
             "8": String(order._id),
-            "9": timeIST,
           },
         },
       },
@@ -89,7 +95,7 @@ export async function sendWhatsappOrderNotification(order, paymentType) {
     console.log("========== MYOPERATOR REQUEST ==========");
     console.log("URL:", url);
     console.log("Phone Number ID:", process.env.MYOPERATOR_PHONE_NUMBER_ID);
-    console.log("Owner:", process.env.OWNER_WHATSAPP_NUMBER);
+    console.log("Customer Phone:", customerPhone);
     console.log("Payload:", JSON.stringify(payload, null, 2));
     console.log({
       key: process.env.MYOPERATOR_AUTHENTICATION,
