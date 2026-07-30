@@ -483,6 +483,7 @@ const handleImageChange = async (index, e) => {
                                         type="number"
                                         value={oldPrice}
                                         onChange={(e) => setOldPrice(e.target.value)}
+                                        onWheel={(e) => e.target.blur()}
                                         placeholder="999"
                                         className="w-full border border-gray-400 rounded-lg py-2 pl-12 pr-4 outline-none focus:ring-1 focus:ring-black text-black"
                                     />
@@ -501,6 +502,7 @@ const handleImageChange = async (index, e) => {
                                         type="number"
                                         value={realPrice}
                                         onChange={(e) => setRealPrice(e.target.value)}
+                                        onWheel={(e) => e.target.blur()}
                                         placeholder="799"
                                         className="w-full border border-gray-400 rounded-lg py-2 pl-12 pr-4 outline-none focus:ring-1 focus:ring-black text-black"
                                     />
