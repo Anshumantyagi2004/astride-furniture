@@ -17,6 +17,37 @@ interface CartItem {
   color?: string;
 }
 
+// Indian GSTIN State Code (01-38) & Mod-36 Checksum Validation
+const GST_REGEX = /^(0[1-9]|1[0-9]|2[0-9]|3[0-8])[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[A-Z0-9]$/;
+
+function verifyGSTChecksum(gst: string): boolean {
+  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let factor = 2;
+  let sum = 0;
+  const checkChar = gst[14];
+  const inputChars = gst.substring(0, 14);
+
+  for (let i = inputChars.length - 1; i >= 0; i--) {
+    let codePoint = chars.indexOf(inputChars[i]);
+    if (codePoint === -1) return false;
+    let add = factor * codePoint;
+    factor = factor === 2 ? 1 : 2;
+    add = Math.floor(add / 36) + (add % 36);
+    sum += add;
+  }
+  const remainder = sum % 36;
+  const checkCodePoint = (36 - remainder) % 36;
+  return chars[checkCodePoint] === checkChar;
+}
+
+export function validateGST(gst: string): boolean {
+  if (!gst) return false;
+  gst = gst.trim().toUpperCase();
+  if (gst.length !== 15) return false;
+  if (!GST_REGEX.test(gst)) return false;
+  return verifyGSTChecksum(gst);
+}
+
 export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isMounted, setIsMounted] = useState(false);
@@ -43,6 +74,7 @@ export default function CheckoutPage() {
     customMessage: "",
     billingAddress: "",
     gstNumber: "",
+    companyName: "",
   });
 
   // Validation Error State
@@ -73,29 +105,26 @@ export default function CheckoutPage() {
       }
     }
 
-    // Check if returning from Razorpay Magic Checkout redirect callback
-    const rzpOrderId = searchParams?.get("razorpay_order_id") || searchParams?.get("order_id");
-    if (rzpOrderId) {
-      setOrderId(rzpOrderId);
-      setCheckoutStep("billing");
-      
+    // Check if returning from SideMenuAddToCart drawer or Razorpay Magic Checkout redirect callback
+    const paramOrderId = searchParams?.get("orderId") || searchParams?.get("razorpay_order_id") || searchParams?.get("order_id");
+    const isSuccessParam = searchParams?.get("success") === "true";
+
+    if (paramOrderId) {
+      setOrderId(paramOrderId);
+      if (isSuccessParam) {
+        setShowSuccess(true);
+      } else {
+        setCheckoutStep("billing");
+      }
+
       // Fetch shipping info from order details
       const fetchDetails = async () => {
         try {
-          const res = await fetch(`https://api.razorpay.com/v1/orders/${rzpOrderId}`, {
-            headers: {
-              // Note: Normally Razorpay fetches order on server side.
-              // To handle pre-filling on the client safely: we can retrieve or construct
-              // the customer address from the local storage or fetch order from our backend wrapper.
-            }
-          });
-          // Since client-side cannot call Razorpay directly without exposing secrets,
-          // we call our server endpoint to fetch order details securely:
           const serverRes = await fetch(`/api/verify-payment`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              razorpay_order_id: rzpOrderId,
+              razorpay_order_id: paramOrderId,
               onlyFetchDetails: true
             })
           });
@@ -113,7 +142,8 @@ export default function CheckoutPage() {
                 pinCode: info.pinCode || "",
                 customMessage: "",
                 billingAddress: "",
-                gstNumber: info.gstNumber || ""
+                gstNumber: info.gstNumber || "",
+                companyName: info.companyName || "",
               });
             }
           }
@@ -146,9 +176,8 @@ export default function CheckoutPage() {
     if (name === "pinCode" && value.length !== 6) {
       return "Requires exactly 6 digits";
     }
-    if (name === "gstNumber") {
-      const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
-      if (!gstRegex.test(value.trim().toUpperCase())) return "Invalid GST Number format (e.g. 22AAAAA0000A1Z5)";
+    if (name === "gstNumber" && value.trim()) {
+      if (!validateGST(value)) return "Invalid GST Number";
     }
     if ((name === "fullName" || name === "city" || name === "stateName") && value.trim().length < 2) {
       return "Too short";
@@ -174,7 +203,12 @@ export default function CheckoutPage() {
       const formatted = value.toUpperCase();
       if (formatted.length > 15) return;
       setFormData(prev => ({ ...prev, gstNumber: formatted }));
-      setErrors(prev => ({ ...prev, gstNumber: validateField("gstNumber", formatted) }));
+      // Only show error while typing if user reaches 15 characters or field was cleared
+      if (formatted.length === 15 || formatted.length === 0) {
+        setErrors(prev => ({ ...prev, gstNumber: validateField("gstNumber", formatted) }));
+      } else {
+        setErrors(prev => ({ ...prev, gstNumber: "" }));
+      }
       return;
     }
     
@@ -202,6 +236,14 @@ export default function CheckoutPage() {
 
   const handleSaveAdditionalDetails = async () => {
     if (!orderId) return;
+
+    if (formData.gstNumber && formData.gstNumber.trim()) {
+      if (!validateGST(formData.gstNumber)) {
+        setErrors(prev => ({ ...prev, gstNumber: "Invalid GST Number" }));
+        return;
+      }
+    }
+
     setIsUpdatingDetails(true);
     try {
       const res = await fetch("/api/order/update-details", {
@@ -211,6 +253,7 @@ export default function CheckoutPage() {
           orderId,
           billingAddress: billingAddressSame ? "" : formData.billingAddress,
           gstNumber: formData.gstNumber,
+          companyName: formData.companyName,
           customMessage: formData.customMessage,
         }),
       });
@@ -669,6 +712,29 @@ export default function CheckoutPage() {
 
               {!detailsSubmitted ? (
                 <div className="space-y-3">
+                  <div>
+                    <input
+                      type="text"
+                      name="companyName"
+                      placeholder="Company Name (Optional)"
+                      value={formData.companyName || ""}
+                      onChange={handleInputChange}
+                      className="w-full bg-white border border-neutral-300 rounded-xl p-3 text-xs focus:outline-none focus:border-black transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <input
+                      type="text"
+                      name="gstNumber"
+                      placeholder="GSTIN Number (Optional)"
+                      value={formData.gstNumber || ""}
+                      onChange={handleInputChange}
+                      className="w-full bg-white border border-neutral-300 rounded-xl p-3 text-xs focus:outline-none focus:border-black transition-all uppercase tracking-wider"
+                    />
+                    <ErrorMessage error={errors.gstNumber} />
+                  </div>
+
                   <div className="space-y-2 text-xs font-semibold text-neutral-700">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -703,15 +769,6 @@ export default function CheckoutPage() {
                     />
                   )}
 
-                  <input
-                    type="text"
-                    name="gstNumber"
-                    placeholder="Enter GSTIN Number (Optional, e.g. 07AAAAA0000A1Z5)"
-                    value={formData.gstNumber || ""}
-                    onChange={handleInputChange}
-                    className="w-full bg-white border border-neutral-300 rounded-xl p-3 text-xs focus:outline-none focus:border-black transition-all uppercase tracking-wider"
-                  />
-
                   <textarea
                     name="customMessage"
                     rows={2}
@@ -737,7 +794,7 @@ export default function CheckoutPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 w-full mt-1">
               <Link 
-                href="/track-order"
+                href={`/track-order${formData.phone ? `?phone=${formData.phone.replace(/\D/g, '').slice(-10)}` : ''}`}
                 className="flex-1 py-3.5 bg-neutral-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all text-center shadow-md active:scale-95"
               >
                 Track Order

@@ -20,6 +20,7 @@ const orderSchema = new mongoose.Schema(
       customMessage: String,
       billingAddress: String,
       gstNumber: String,
+      companyName: String,
     },
 
     products: [
@@ -87,6 +88,10 @@ const orderSchema = new mongoose.Schema(
       default: "",
     },
 
+    isRead: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

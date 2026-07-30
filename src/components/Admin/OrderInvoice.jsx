@@ -22,6 +22,8 @@ const OrderInvoice = () => {
           const found = data.orders.find(o => o._id === orderId);
           if (found) {
             setOrder(found);
+            const invNum = found._id?.toString().slice(-6).toUpperCase() || "ORDER";
+            document.title = `Invoice_${invNum}`;
           } else {
             setError("Order not found");
           }
@@ -34,6 +36,10 @@ const OrderInvoice = () => {
       }
     };
     fetchOrder();
+
+    return () => {
+      document.title = "Admin Dashboard | Astride Furniture";
+    };
   }, [orderId]);
 
   if (loading) {
@@ -119,8 +125,13 @@ const OrderInvoice = () => {
               </>
             )}
             <p>Tel. {safeOrder.shippingInfo.phone}</p>
-            {safeOrder.shippingInfo.gstNumber && (
+            {safeOrder.shippingInfo.companyName && (
               <p style={{ marginTop: '6px', fontWeight: 'bold' }}>
+                Company: {safeOrder.shippingInfo.companyName}
+              </p>
+            )}
+            {safeOrder.shippingInfo.gstNumber && (
+              <p style={{ marginTop: safeOrder.shippingInfo.companyName ? '2px' : '6px', fontWeight: 'bold' }}>
                 GSTIN: {safeOrder.shippingInfo.gstNumber}
               </p>
             )}
@@ -234,8 +245,8 @@ const OrderInvoice = () => {
       {/* --- CSS Styles --- */}
       <style dangerouslySetInnerHTML={{__html: `
         .invoice-wrapper {
-          background: #525252; /* Dark background outside paper */
-          padding: 40px 20px;
+          background: #fff;
+          padding: 20px;
           min-height: 100vh;
           font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
           color: #1a1a1a;
@@ -259,7 +270,7 @@ const OrderInvoice = () => {
           margin: 0 auto;
           background: #fff;
           padding: 50px;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         /* Header */
@@ -405,15 +416,40 @@ const OrderInvoice = () => {
 
         /* Print Settings */
         @media print {
-          @page { size: A4; margin: 0; }
-          body { 
-            background: #fff; 
-            -webkit-print-color-adjust: exact; 
-            print-color-adjust: exact; 
+          @page { 
+            size: A4 portrait; 
+            margin: 15mm; 
           }
-          .invoice-wrapper { padding: 0; background: transparent; }
+          html, body { 
+            background: #fff !important; 
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            -webkit-print-color-adjust: exact !important; 
+            print-color-adjust: exact !important; 
+          }
+          .invoice-wrapper { 
+            padding: 0 !important; 
+            margin: 0 !important;
+            background: #fff !important;
+            width: 100% !important;
+            min-height: auto !important;
+          }
           .no-print { display: none !important; }
-          .invoice-container { box-shadow: none; padding: 15mm; max-width: 100%; }
+          .invoice-container { 
+            box-shadow: none !important; 
+            padding: 0 !important; 
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            border: none !important;
+            background: #fff !important;
+          }
+          .product-image {
+            width: 70px !important;
+            height: 70px !important;
+            flex-shrink: 0 !important;
+          }
         }
       `}} />
     </div>

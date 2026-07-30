@@ -220,3 +220,15 @@ h6 {
 .jodit-content li {
   margin: 5px 0;
 }
+
+/* ── Global Print Reset ─────────────────────────────────────────
+   Prevents the global bg-background (Tailwind) from bleeding as
+   a grey strip in PDFs. The invoice component handles its own
+   @media print styles; this just ensures the page canvas is white.
+────────────────────────────────────────────────────────────────── */
+@media print {
+  html,
+  body {
+    background-color: #fff !important;
+  }
+}

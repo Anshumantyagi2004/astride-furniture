@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export async function PATCH(req) {
   try {
     await connectDB();
-    const { orderId, billingAddress, customMessage, gstNumber } = await req.json();
+    const { orderId, billingAddress, customMessage, gstNumber, companyName } = await req.json();
 
     if (!orderId) {
       return NextResponse.json(
@@ -23,6 +23,7 @@ export async function PATCH(req) {
           "shippingInfo.billingAddress": billingAddress || "",
           "shippingInfo.customMessage": customMessage || "",
           "shippingInfo.gstNumber": gstNumber || "",
+          "shippingInfo.companyName": companyName || "",
         },
       },
       { new: true }
