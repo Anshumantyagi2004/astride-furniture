@@ -125,6 +125,9 @@ export async function POST(req) {
 
             uploadedColorVariants.push({
                 colorName: variant.colorName,
+                colorCode: variant.colorCode || "",
+                secondaryColorCode: variant.secondaryColorCode || "",
+                colorMode: variant.colorMode || "name",
                 images: uploadedImages,
             });
         }

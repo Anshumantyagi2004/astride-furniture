@@ -19,11 +19,34 @@ const COLOR_MAP: Record<string, string> = {
   pink: '#db2777',
   purple: '#9333ea',
   brown: '#7c2d12',
+  maroon: '#800000',
+  mahroon: '#800000',
+  navy: '#000080',
+  teal: '#008080',
+  beige: '#f5f5dc',
+  cream: '#fffdd0',
+  gold: '#ffd700',
+  silver: '#c0c0c0',
   'neon green': '#39ff14',
 };
 
-const getSwatchBackground = (colorName: string): string => {
+const getSwatchBackground = (colorName: string, colorVariants?: any[]): string => {
   if (!colorName) return '#cccccc';
+
+  if (colorVariants && colorVariants.length > 0) {
+    const variantObj = colorVariants.find(
+      (v: any) => v.colorName?.toLowerCase().trim() === colorName.toLowerCase().trim()
+    );
+    if (variantObj) {
+      if (variantObj.secondaryColorCode && variantObj.colorCode) {
+        return `linear-gradient(135deg, ${variantObj.colorCode} 50%, ${variantObj.secondaryColorCode} 50%)`;
+      }
+      if (variantObj.colorCode && variantObj.colorCode.trim() !== "") {
+        return variantObj.colorCode;
+      }
+    }
+  }
+
   const normalized = colorName.toLowerCase().trim();
   if (COLOR_MAP[normalized]) return COLOR_MAP[normalized];
 
@@ -448,7 +471,7 @@ export default function DetailPageCard({ product }: { product: any }) {
             </span>
             <div className="flex items-center gap-2.5 mt-2 pr-1">
               {(product.colors || []).map((colorName: string) => {
-                const colorHex = getSwatchBackground(colorName);
+                const colorHex = getSwatchBackground(colorName, product.colorVariants);
                 const isSelected = selectedColor?.toLowerCase() === colorName?.toLowerCase();
 
                 return (
