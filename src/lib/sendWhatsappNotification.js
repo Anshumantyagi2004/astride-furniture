@@ -12,6 +12,7 @@ export async function sendWhatsappOrderNotification(order, paymentType) {
       "MYOPERATOR_BASE_URL",
       "MYOPERATOR_AUTHENTICATION",
       "MYOPERATOR_PHONE_NUMBER_ID",
+      "MYOPERATOR_COMPANY_ID",
     ];
 
     for (const key of requiredEnv) {
@@ -55,8 +56,8 @@ export async function sendWhatsappOrderNotification(order, paymentType) {
     }
 
     const customerName = shipping.fullName || shipping.name || "Customer";
-    const city = shipping.city || "";
-    const state = shipping.state || "";
+    const city = shipping.city || "N/A";
+    const state = shipping.state || "N/A";
 
     const payload = {
       phone_number_id: process.env.MYOPERATOR_PHONE_NUMBER_ID,
