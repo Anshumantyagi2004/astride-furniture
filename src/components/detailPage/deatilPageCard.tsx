@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Truck, RotateCcw, ShieldCheck, ArrowRight, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import CustomButton from './deatileProductCardButton';
 import gsap from 'gsap';
+import toast from 'react-hot-toast';
 
 const COLOR_MAP: Record<string, string> = {
   black: '#000000',
@@ -78,7 +79,7 @@ export default function DetailPageCard({ product }: { product: any }) {
 // console.log("Active Category ID:", activeCategoryId);
 // console.log("Active Category Name:", activeCategoryName);
 
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(0);
   const [selectedColor, setSelectedColor] = useState('Red');
   const [activeImage, setActiveImage] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'description' | 'features' | 'specs' | 'application' | 'whychoose'>('description');
@@ -200,6 +201,21 @@ export default function DetailPageCard({ product }: { product: any }) {
 
   const handleAddToCartClick = () => {
     if (!product) return;
+    if (quantity <= 0) {
+      toast.error("Please select quantity or choose a chair set first! 🪑", {
+        duration: 3000,
+        style: {
+          border: '2px solid #131313',
+          padding: '12px 16px',
+          color: '#131313',
+          fontWeight: 'bold',
+          borderRadius: '14px',
+          background: '#FFFBEB',
+          boxShadow: '3px 3px 0 #131313',
+        },
+      });
+      return;
+    }
     const cartItem = {
       id: product.id,
       name: product.name,
@@ -506,19 +522,32 @@ export default function DetailPageCard({ product }: { product: any }) {
 
 
 
-          {/* Quick Bulk Sets */}
-          <div className="grid grid-cols-2 gap-3 mt-4 mb-2">
+          {/* Quick Bulk Sets & Single Chair */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-4 mb-2">
             <button 
               type="button" 
-              onClick={() => handleAddSetClick(5)}
-              className="flex-1 bg-[#EFF6FF] text-blue-700 font-extrabold text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all"
+              onClick={() => setQuantity(1)}
+              className={`flex-1 font-extrabold text-[11px] sm:text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all ${
+                quantity === 1 ? 'bg-[#FEF3C7] text-amber-900 ring-2 ring-amber-600 scale-[1.02]' : 'bg-[#FFFBEB] text-amber-800 hover:bg-[#FEF3C7]'
+              }`}
+            >
+              1 Chair 🪑
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setQuantity(5)}
+              className={`flex-1 font-extrabold text-[11px] sm:text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all ${
+                quantity === 5 ? 'bg-[#BFDBFE] text-blue-900 ring-2 ring-blue-600 scale-[1.02]' : 'bg-[#EFF6FF] text-blue-700 hover:bg-[#BFDBFE]'
+              }`}
             >
               Set of 5 🪑
             </button>
             <button 
               type="button" 
-              onClick={() => handleAddSetClick(10)}
-              className="flex-1 bg-[#ECFDF5] text-emerald-700 font-extrabold text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all"
+              onClick={() => setQuantity(10)}
+              className={`flex-1 font-extrabold text-[11px] sm:text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all ${
+                quantity === 10 ? 'bg-[#A7F3D0] text-emerald-900 ring-2 ring-emerald-600 scale-[1.02]' : 'bg-[#ECFDF5] text-emerald-700 hover:bg-[#A7F3D0]'
+              }`}
             >
               Set of 10 🪑
             </button>
@@ -527,7 +556,7 @@ export default function DetailPageCard({ product }: { product: any }) {
           <div className="flex gap-3 mt-1 flex-wrap items-stretch">
             {/* Quantity */}
             <div className="flex items-center border-[2.5px] border-[#131313] rounded-[14px] bg-white shadow-[3px_3px_0_#131313]" aria-label="Quantity">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-[38px] h-full min-h-[46px] bg-transparent border-none text-[18px] font-bold hover:text-[#EC4899]">−</button>
+              <button onClick={() => setQuantity(Math.max(0, quantity - 1))} className="w-[38px] h-full min-h-[46px] bg-transparent border-none text-[18px] font-bold hover:text-[#EC4899]">−</button>
               <span className="min-w-[28px] text-center font-extrabold text-[15px]">{quantity}</span>
               <button onClick={() => setQuantity(quantity + 1)} className="w-[38px] h-full min-h-[46px] bg-transparent border-none text-[18px] font-bold hover:text-[#EC4899]">+</button>
             </div>
