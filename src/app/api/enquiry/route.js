@@ -73,16 +73,28 @@ export async function GET(req) {
     }
 
     const enquiries = await Enquiry.find().sort({ createdAt: -1 });
+    const unreadCount = await Enquiry.countDocuments({ isRead: { $ne: true } });
 
     return NextResponse.json({
       success: true,
       enquiries,
+      unreadCount,
     });
   } catch (error) {
     return NextResponse.json(
       { success: false, message: error.message },
       { status: 500 }
     );
+  }
+}
+
+export async function PATCH() {
+  try {
+    await connectDB();
+    await Enquiry.updateMany({ isRead: { $ne: true } }, { $set: { isRead: true } });
+    return NextResponse.json({ success: true, message: "Enquiries marked as read" });
+  } catch (error) {
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
 

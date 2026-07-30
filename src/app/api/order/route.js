@@ -77,9 +77,12 @@ export async function GET() {
       return orderObj;
     });
 
+    const unreadCount = await Order.countDocuments({ isRead: { $ne: true } });
+
     return NextResponse.json({
       success: true,
       orders: formattedOrders,
+      unreadCount,
     });
   } catch (error) {
     return NextResponse.json(
@@ -91,6 +94,16 @@ export async function GET() {
         status: 500,
       }
     );
+  }
+}
+
+export async function PATCH(req) {
+  try {
+    await connectDB();
+    await Order.updateMany({ isRead: { $ne: true } }, { $set: { isRead: true } });
+    return NextResponse.json({ success: true, message: "Orders marked as read" });
+  } catch (error) {
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
 

@@ -341,13 +341,17 @@ export default function Navbar3() {
 
                         {/* Search */}
                         <div
-                            className="relative flex items-center bg-transparent transition-all duration-300 rounded-full"
+                            className="relative flex items-center justify-end transition-all duration-300"
                             onMouseEnter={() => setIsSearchExpanded(true)}
                             onMouseLeave={() => {
                                 if (searchQuery === "") setIsSearchExpanded(false);
                             }}
                         >
-                            <div className={`relative overflow-hidden transition-all duration-350 flex items-center ease-in-out ${isSearchExpanded ? 'w-36 md:w-44 pl-1.5 pr-0.5 opacity-100' : 'w-0 opacity-0 pointer-events-none'}`}>
+                            <div className={`transition-all duration-300 flex items-center ease-in-out ${
+                                isSearchExpanded 
+                                    ? 'w-[180px] sm:w-[220px] md:w-44 opacity-100' 
+                                    : 'w-0 opacity-0 pointer-events-none'
+                            }`}>
                                 <input
                                     type="text"
                                     placeholder="Search products..."
@@ -366,7 +370,7 @@ export default function Navbar3() {
                                             setSearchQuery("");
                                             setIsSearchExpanded(false);
                                         }}
-                                        className="absolute right-2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                                        className="absolute right-7 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                                         aria-label="Clear search"
                                     >
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-3.5 h-3.5">
@@ -383,7 +387,7 @@ export default function Navbar3() {
                                         setIsSearchExpanded(!isSearchExpanded);
                                     }
                                 }}
-                                className="relative grid place-items-center text-slate-900 hover:text-slate-700 transition-colors shrink-0 cursor-pointer"
+                                className="relative grid place-items-center text-slate-900 hover:text-slate-700 transition-colors shrink-0 cursor-pointer p-1"
                                 aria-label="Search"
                             >
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="w-[22px] h-[22px]">

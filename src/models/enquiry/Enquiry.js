@@ -30,6 +30,10 @@ const EnquirySchema = new mongoose.Schema(
       enum: ["pending", "contacted", "closed"],
       default: "pending",
     },
+    isRead: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

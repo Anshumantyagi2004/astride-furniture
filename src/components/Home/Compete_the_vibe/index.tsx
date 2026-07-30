@@ -194,18 +194,23 @@ export default function CompeteTheVibe() {
   useEffect(() => {
     if (!rawProducts || rawProducts.length === 0) return;
 
-    const officeProducts = rawProducts
-      .filter((prod: any) => {
-        const catName = typeof prod.category === "string"
-          ? prod.category.toLowerCase()
-          : (prod.category?.name || "").toLowerCase();
-        return catName.includes("office");
-      })
-      .slice(0, 6);
+    // Filter products (prefer office chairs, fallback to all products if none matched)
+    let filtered = rawProducts.filter((prod: any) => {
+      const catName = typeof prod.category === "string"
+        ? prod.category.toLowerCase()
+        : (prod.category?.name || "").toLowerCase();
+      return catName.includes("office") || catName.includes("chair");
+    });
 
-    if (officeProducts.length > 0) {
-      const mapped = officeProducts.map((prod: any, idx: number) => {
-        const normalizedCategory = prod.category?.name || (typeof prod.category === "string" ? prod.category : "Office Chair");
+    if (filtered.length === 0) {
+      filtered = rawProducts;
+    }
+
+    const selectedProducts = filtered.slice(0, 10);
+
+    if (selectedProducts.length > 0) {
+      const mapped = selectedProducts.map((prod: any, idx: number) => {
+        const normalizedCategory = prod.category?.name || (typeof prod.category === "string" ? prod.category : "Chair");
         const allUrls = new Set<string>();
         if (prod.images?.length) prod.images.forEach((img: any) => allUrls.add(img.url || img));
         let variantCount = 0;
@@ -214,18 +219,18 @@ export default function CompeteTheVibe() {
           if (variant.images?.length) { allUrls.add(variant.images[0].url); variantCount++; }
         }
         const allImages = Array.from(allUrls).slice(0, 3);
-        const defaultImage = allImages[0] || "/Png1/chair12_ErgoFit.webp";
+        const defaultImage = allImages[0] || prod.image || "/Png1/chair12_ErgoFit.webp";
         const stickerChoice = STICKERS[idx % STICKERS.length];
         return {
-          id: prod._id,
+          id: prod._id || prod.id,
           slug: prod.slug,
-          name: prod.productName,
+          name: prod.productName || prod.name,
           category: normalizedCategory,
           image: defaultImage,
           allImages,
-          oldPrice: `₹${(prod.oldPrice || prod.realPrice * 2).toLocaleString()}`,
-          price: `₹${prod.realPrice.toLocaleString()}`,
-          rawPrice: prod.realPrice,
+          oldPrice: prod.oldPrice ? (typeof prod.oldPrice === "number" ? `₹${prod.oldPrice.toLocaleString()}` : prod.oldPrice) : `₹${((prod.realPrice || prod.price || 0) * 1.3).toFixed(0)}`,
+          price: `₹${(prod.realPrice || prod.price || 0).toLocaleString()}`,
+          rawPrice: prod.realPrice || prod.price || 0,
           sticker: stickerChoice.text,
           stickerBg: stickerChoice.bg
         };

@@ -16,7 +16,8 @@ import {
     Loader2,
     MessageSquare,
     ExternalLink,
-    Printer
+    Printer,
+    Building
 } from "lucide-react";
 
 export default function Page() {
@@ -261,10 +262,22 @@ export default function Page() {
                                                     <div>
                                                         <span className="text-xs text-neutral-400 font-bold uppercase tracking-wider block mb-0.5">Billing Address</span>
                                                         <p className="text-lg font-medium text-neutral-700 leading-relaxed select-all">
-                                                            {order.shippingInfo?.billingAddress ? order.shippingInfo.billingAddress : "N/A (Same as Above)"}
+                                                            {order.shippingInfo?.billingAddress ? order.shippingInfo.billingAddress : `${order.shippingInfo?.address}, ${order.shippingInfo?.city}, ${order.shippingInfo?.state} - ${order.shippingInfo?.pinCode}`}
                                                         </p>
                                                     </div>
                                                 </div>
+
+                                                {order.shippingInfo?.companyName && (
+                                                    <div className="flex items-start gap-4 p-3 bg-purple-50/80 border border-purple-200/80 rounded-xl mb-2">
+                                                        <Building size={22} className="text-purple-600 mt-0.5 shrink-0" />
+                                                        <div>
+                                                            <span className="text-xs text-purple-700 font-bold uppercase tracking-wider block mb-0.5">Company Name</span>
+                                                            <p className="text-base font-extrabold text-purple-950 tracking-wide select-all">
+                                                                {order.shippingInfo.companyName}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                )}
 
                                                 {order.shippingInfo?.gstNumber && (
                                                     <div className="flex items-start gap-4 p-3 bg-blue-50/80 border border-blue-200/80 rounded-xl">

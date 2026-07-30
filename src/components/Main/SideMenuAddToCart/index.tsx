@@ -4,6 +4,12 @@ import React, { useState, useEffect, useRef, useMemo, useCallback, useTransition
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { X, Minus, Plus } from 'lucide-react';
+import { Plus_Jakarta_Sans } from 'next/font/google';
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+});
 
 interface CartItem {
   id: string | number;
@@ -22,6 +28,7 @@ export default function SideMenuAddToCart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   // Don't render until after mount to prevent SSR flash
   const [isMounted, setIsMounted] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [isPending, startTransition] = useTransition();
   const storageDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -229,7 +236,7 @@ export default function SideMenuAddToCart() {
         </div>
 
         {/* Footer Subtotal & Action buttons */}
-        <div className="p-6 border-t border-neutral-100 bg-neutral-50/50 flex flex-col gap-4">
+        <div className="p-6 border-t border-neutral-100 bg-neutral-50/50 flex flex-col gap-3">
           <div className="flex justify-between items-baseline">
             <span className="text-[14px] font-medium text-neutral-500">Subtotal</span>
             <span className="text-[20px] font-bold text-neutral-900 tracking-tight">
@@ -237,20 +244,147 @@ export default function SideMenuAddToCart() {
             </span>
           </div>
 
+          {/* 
+            COMMENTED OUT: Dedicated checkout page redirect
+            router.push('/checkout');
+          */}
+
           <button 
-            disabled={cartItems.length === 0}
-            onClick={() => {
-              setIsOpen(false);
-              router.push('/checkout');
+            disabled={cartItems.length === 0 || isProcessing}
+            onClick={async () => {
+              if (isProcessing || cartItems.length === 0) return;
+              setIsProcessing(true);
+              try {
+                const subtotalAmt = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+                
+                // Load Razorpay script dynamically if missing
+                if (typeof window !== "undefined" && !(window as any).Razorpay) {
+                  await new Promise<void>((resolve, reject) => {
+                    const script = document.createElement("script");
+                    script.src = "https://checkout.razorpay.com/v1/magic-checkout.js";
+                    script.onload = () => resolve();
+                    script.onerror = () => reject(new Error("Failed to load Razorpay script"));
+                    document.body.appendChild(script);
+                  });
+                }
+
+                const res = await fetch("/api/create-order", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    amount: subtotalAmt * 100,
+                    cartItems: cartItems,
+                  }),
+                });
+
+                if (!res.ok) {
+                  alert("Failed to initiate payment. Please try again.");
+                  setIsProcessing(false);
+                  return;
+                }
+
+                const razorpayOrder = await res.json();
+                if (!razorpayOrder.success) {
+                  alert(razorpayOrder.message || "Payment initiation failed.");
+                  setIsProcessing(false);
+                  return;
+                }
+
+                const orderData = {
+                  shippingInfo: {},
+                  products: cartItems.map((item) => {
+                    const rawIdStr = String(item.id);
+                    let productId = rawIdStr;
+                    if (/^[a-f0-9]{24}$/i.test(rawIdStr)) {
+                      productId = rawIdStr;
+                    } else if (rawIdStr.includes("-")) {
+                      const candidate = rawIdStr.split("-")[0];
+                      productId = /^[a-f0-9]{24}$/i.test(candidate) ? candidate : rawIdStr;
+                    }
+                    return {
+                      productId,
+                      productName: item.name,
+                      image: item.image,
+                      slug: item.slug,
+                      color: item.color,
+                      quantity: item.quantity,
+                      price: item.price,
+                    };
+                  }),
+                  pricing: { subtotal: subtotalAmt, shippingCharge: 0, total: subtotalAmt },
+                };
+
+                const options: any = {
+                  key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+                  amount: razorpayOrder.amount,
+                  currency: razorpayOrder.currency,
+                  name: "Astride Furniture",
+                  description: "Order Payment",
+                  order_id: razorpayOrder.order_id,
+                  one_click_checkout: true,
+                  remember_customer: true,
+                  theme: { color: "#000000" },
+                  modal: {
+                    ondismiss: function () {
+                      setIsProcessing(false);
+                    }
+                  },
+                  handler: async function (response: any) {
+                    try {
+                      setIsProcessing(true);
+                      const verifyRes = await fetch("/api/verify-payment", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          razorpay_order_id: response.razorpay_order_id,
+                          razorpay_payment_id: response.razorpay_payment_id,
+                          razorpay_signature: response.razorpay_signature,
+                          orderData,
+                        }),
+                      });
+                      const verifyData = await verifyRes.json();
+                      if (verifyData.success) {
+                        setIsOpen(false);
+                        localStorage.removeItem("astride_cart");
+                        setCartItems([]);
+                        window.dispatchEvent(new Event("astride_cart_updated"));
+                        
+                        const completedOrderId = verifyData.order?._id || response.razorpay_order_id || "";
+                        router.push(`/checkout?orderId=${completedOrderId}&success=true`);
+                      } else {
+                        alert("Payment verification failed.");
+                      }
+                    } catch (err) {
+                      console.error("Verification error:", err);
+                    } finally {
+                      setIsProcessing(false);
+                    }
+                  }
+                };
+
+                const rzp = new (window as any).Razorpay(options);
+                rzp.open();
+              } catch (err: any) {
+                console.error("Razorpay trigger error:", err);
+                alert("Could not open Razorpay Checkout.");
+              } finally {
+                setIsProcessing(false);
+              }
             }}
-            className={`w-full py-4 text-center rounded-2xl text-[14px] font-semibold transition-all shadow-md focus:outline-none ${
-              cartItems.length === 0 
+            className={`w-full py-4 text-center rounded-2xl text-[14px] font-semibold transition-all shadow-md focus:outline-none flex items-center justify-center gap-2 ${
+              cartItems.length === 0 || isProcessing
                 ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed shadow-none' 
                 : 'bg-black text-white hover:bg-neutral-900 active:scale-[0.98]'
             }`}
           >
-            Checkout
+            {isProcessing ? "Opening Razorpay..." : "Checkout"}
           </button>
+
+          <div className={`mt-2 px-4 py-3.5 bg-[#072654] border border-[#0a3370] rounded-2xl text-center shadow-lg shadow-[#072654]/20 ${jakarta.className}`}>
+            <p className="text-[11px] font-extrabold text-white uppercase tracking-[0.18em] leading-relaxed">
+              Company details & GSTIN can be filled right after checkout
+            </p>
+          </div>
         </div>
       </div>
     </>

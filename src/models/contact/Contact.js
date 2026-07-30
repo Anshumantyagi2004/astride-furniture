@@ -40,7 +40,12 @@ const ContactSchema = new mongoose.Schema(
       enum: ["pending", "contacted", "closed"],
       default: "pending",
     },
+    isRead: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
+delete mongoose.models.Contact;
 export default mongoose.models.Contact || mongoose.model("Contact", ContactSchema);

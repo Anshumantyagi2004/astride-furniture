@@ -61,7 +61,7 @@ export default function RootLayout({ children }) {
         />
         {/* GLB preload removed — 3D viewer is disabled */}
       </head>
-      <body className="min-h-screen overflow-x-clip max-w-[100vw]">
+      <body className="min-h-screen">
         <LayoutWrapper>
           {children}
         </LayoutWrapper>
