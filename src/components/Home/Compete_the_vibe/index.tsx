@@ -189,7 +189,7 @@ function VibeProductCard({ product }: { product: any }) {
 
 export default function CompeteTheVibe() {
   const { products: rawProducts } = useProducts();
-  const [products, setProducts] = useState<any[]>(STATIC_FALLBACKS);
+  const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
     if (!rawProducts || rawProducts.length === 0) return;
@@ -211,15 +211,25 @@ export default function CompeteTheVibe() {
     if (selectedProducts.length > 0) {
       const mapped = selectedProducts.map((prod: any, idx: number) => {
         const normalizedCategory = prod.category?.name || (typeof prod.category === "string" ? prod.category : "Chair");
-        const allUrls = new Set<string>();
-        if (prod.images?.length) prod.images.forEach((img: any) => allUrls.add(img.url || img));
-        let variantCount = 0;
-        for (const variant of (prod.colorVariants || [])) {
-          if (variantCount >= 4) break;
-          if (variant.images?.length) { allUrls.add(variant.images[0].url); variantCount++; }
+        const allUrls: string[] = [];
+        if (prod.images?.length) {
+          prod.images.forEach((img: any) => {
+            const u = img.url || img;
+            if (u && typeof u === 'string' && !allUrls.includes(u)) allUrls.push(u);
+          });
         }
-        const allImages = Array.from(allUrls).slice(0, 3);
-        const defaultImage = allImages[0] || prod.image || "/Png1/chair12_ErgoFit.webp";
+        if (prod.colorVariants?.length) {
+          prod.colorVariants.forEach((variant: any) => {
+            if (variant.images?.length) {
+              variant.images.forEach((img: any) => {
+                const u = img.url || img;
+                if (u && typeof u === 'string' && !allUrls.includes(u)) allUrls.push(u);
+              });
+            }
+          });
+        }
+        const defaultImage = allUrls[0] || prod.image || "/Png1/chair12_ErgoFit.webp";
+        const allImages = allUrls.length > 0 ? allUrls : [defaultImage];
         const stickerChoice = STICKERS[idx % STICKERS.length];
         return {
           id: prod._id || prod.id,
