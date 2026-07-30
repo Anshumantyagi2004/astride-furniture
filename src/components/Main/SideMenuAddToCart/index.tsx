@@ -44,8 +44,20 @@ export default function SideMenuAddToCart() {
   // Lock body scroll when open
   useEffect(() => {
     if (!isMounted) return;
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      document.documentElement.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      document.documentElement.style.overflow = '';
+    };
   }, [isOpen, isMounted]);
 
   // Debounced localStorage sync
@@ -134,10 +146,13 @@ export default function SideMenuAddToCart() {
 
       {/* Sidebar Panel — pure CSS slide */}
       <div
-        className={`fixed top-0 right-0 bottom-0 md:top-4 md:right-4 md:bottom-4 w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full h-[100dvh] md:top-4 md:right-4 md:bottom-4 md:h-[calc(100vh-32px)] w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transition-transform duration-300 ease-in-out overscroll-contain ${
           isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-[calc(100%+24px)]'
         }`}
-        style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
+        style={{
+          fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+          overscrollBehavior: 'contain',
+        }}
       >
         {/* Header section */}
         <div className="p-6 pb-4 border-b border-neutral-100 flex items-center justify-between">
@@ -153,7 +168,10 @@ export default function SideMenuAddToCart() {
         </div>
 
         {/* Cart Items List */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5 scrollbar-none" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div
+          className="flex-1 overflow-y-auto px-6 py-4 space-y-5 scrollbar-none overscroll-contain"
+          style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
+        >
           {cartItems.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center gap-4 py-12">
               <span className="text-neutral-300 text-6xl">🛒</span>
