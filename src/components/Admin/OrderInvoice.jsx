@@ -110,9 +110,20 @@ const OrderInvoice = () => {
           <div className="address-block">
             <h3>BILL TO</h3>
             <p>{safeOrder.shippingInfo.fullName}</p>
-            <p>{safeOrder.shippingInfo.billingAddress || safeOrder.shippingInfo.address}</p>
-            <p>{safeOrder.shippingInfo.city}, {safeOrder.shippingInfo.state} - {safeOrder.shippingInfo.pinCode}</p>
+            {safeOrder.shippingInfo.billingAddress ? (
+              <p>{safeOrder.shippingInfo.billingAddress}</p>
+            ) : (
+              <>
+                <p>{safeOrder.shippingInfo.address}</p>
+                <p>{safeOrder.shippingInfo.city}, {safeOrder.shippingInfo.state} - {safeOrder.shippingInfo.pinCode}</p>
+              </>
+            )}
             <p>Tel. {safeOrder.shippingInfo.phone}</p>
+            {safeOrder.shippingInfo.gstNumber && (
+              <p style={{ marginTop: '6px', fontWeight: 'bold' }}>
+                GSTIN: {safeOrder.shippingInfo.gstNumber}
+              </p>
+            )}
           </div>
           <div className="address-block">
             <h3>SHIP TO</h3>
@@ -155,8 +166,6 @@ const OrderInvoice = () => {
                   <div className="col-qty">x {item.quantity}</div>
                   <div className="col-tax">18.0%</div>
                   <div className="col-price">
-                    {/* Showing a crossed-out MRP and current price similar to Image 1 */}
-                    {/* <span className="strikethrough">Rs. {originalPrice.toFixed(2)}</span><br/> */}
                     Rs. {item.price.toFixed(2)}
                   </div>
                   <div className="col-total">Rs. {itemTotal.toFixed(2)}</div>
@@ -170,7 +179,9 @@ const OrderInvoice = () => {
         <div className="summary-section">
           <div className="notes-block">
             <strong>NOTES</strong>
-            <p className="text-gray mt-2">DTSS</p> 
+            <p className="text-gray mt-2">
+              {safeOrder.shippingInfo?.customMessage || safeOrder.adminNote || "N/A"}
+            </p> 
           </div>
           <div className="totals-block">
              <div className="total-line">
