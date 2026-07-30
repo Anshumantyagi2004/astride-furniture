@@ -896,12 +896,12 @@ export default function DetailPageCard({ product }: { product: any }) {
               ).map((spec: any, idx: number, arr: any[]) => (
                 <div 
                   key={idx} 
-                  className={`flex justify-between items-center py-4 ${idx < arr.length - 1 ? 'border-b-[1.5px] border-dashed border-[#3a3a3a]' : ''}`}
+                  className={`flex justify-between items-start sm:items-center gap-3 sm:gap-4 py-3.5 ${idx < arr.length - 1 ? 'border-b-[1.5px] border-dashed border-[#3a3a3a]' : ''}`}
                 >
-                  <span className="text-[12px] tracking-[0.12em] uppercase text-[#9a9a9a] font-semibold">
+                  <span className="text-[11px] sm:text-[12px] tracking-[0.1em] uppercase text-[#9a9a9a] font-bold shrink-0 min-w-[110px] sm:min-w-[130px] whitespace-nowrap">
                     {spec.key}
                   </span>
-                  <b className="font-bold text-[15px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text">
+                  <b className="font-bold text-[13px] sm:text-[15px] bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-transparent bg-clip-text text-right leading-snug break-words">
                     {spec.value}
                   </b>
                 </div>

@@ -156,6 +156,7 @@ function VibeProductCard({ product }: { product: any }) {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              const firstVariantColor = product.colorVariants?.[0]?.colorName || product.color;
               window.dispatchEvent(
                 new CustomEvent("add-to-cart", {
                   detail: {
@@ -165,6 +166,7 @@ function VibeProductCard({ product }: { product: any }) {
                     image: product.image,
                     slug: product.slug,
                     quantity: 1,
+                    color: firstVariantColor,
                   },
                 })
               );
@@ -254,6 +256,8 @@ export default function CompeteTheVibe() {
             category: normalizedCategory,
             image: defaultImage,
             allImages,
+            colorVariants: prod.colorVariants,
+            color: prod.colorVariants?.[0]?.colorName || prod.color,
             oldPrice: prod.oldPrice ? (typeof prod.oldPrice === "number" ? `₹${prod.oldPrice.toLocaleString()}` : prod.oldPrice) : `₹${((prod.realPrice || prod.price || 0) * 1.3).toFixed(0)}`,
             price: `₹${(prod.realPrice || prod.price || 0).toLocaleString()}`,
             rawPrice: prod.realPrice || prod.price || 0,

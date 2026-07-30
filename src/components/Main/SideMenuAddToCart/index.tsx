@@ -205,9 +205,6 @@ export default function SideMenuAddToCart() {
                         {item.name}
                       </h4>
                       <div className="flex flex-col gap-0.5 mt-1">
-                        <p className="text-[11px] text-neutral-400 font-medium">
-                          Material: Premium Cushioning
-                        </p>
                         {item.color && (
                           <p className="text-[11px] text-neutral-500 font-semibold uppercase tracking-wider">
                             Color: {item.color}
