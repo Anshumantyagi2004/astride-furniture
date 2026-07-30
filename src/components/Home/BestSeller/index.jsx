@@ -29,7 +29,7 @@ const BestSellerCard = ({ product }) => {
   }, [images.length]);
 
   const handleAddToCart = () => {
-    const firstVariantColor = product.colorVariants?.[0]?.colorName || product.color;
+    const cardVariantColor = product.color || product.colorVariants?.[0]?.colorName || "Black";
     const cartItem = {
       id: product.id,
       name: product.name,
@@ -37,7 +37,7 @@ const BestSellerCard = ({ product }) => {
       image: product.image,
       slug: product.slug,
       quantity: 1,
-      color: firstVariantColor
+      color: cardVariantColor
     };
     window.dispatchEvent(new CustomEvent('add-to-cart', { detail: cartItem }));
   };

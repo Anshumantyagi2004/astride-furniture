@@ -156,7 +156,7 @@ function VibeProductCard({ product }: { product: any }) {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              const firstVariantColor = product.colorVariants?.[0]?.colorName || product.color;
+              const cardVariantColor = product.color || product.colorVariants?.[0]?.colorName || "Black";
               window.dispatchEvent(
                 new CustomEvent("add-to-cart", {
                   detail: {
@@ -166,7 +166,7 @@ function VibeProductCard({ product }: { product: any }) {
                     image: product.image,
                     slug: product.slug,
                     quantity: 1,
-                    color: firstVariantColor,
+                    color: cardVariantColor,
                   },
                 })
               );
