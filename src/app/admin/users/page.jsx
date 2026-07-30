@@ -104,41 +104,41 @@ export default function Page() {
                                 <table className="w-full text-left border-collapse">
                                     <thead>
                                         <tr className="bg-neutral-50 border-b border-neutral-150">
-                                            <th className="px-8 py-5 text-sm font-black text-neutral-400 uppercase tracking-wider">Customer</th>
-                                            <th className="px-8 py-5 text-sm font-black text-neutral-400 uppercase tracking-wider">Email Address</th>
-                                            <th className="px-8 py-5 text-sm font-black text-neutral-400 uppercase tracking-wider">Phone Number</th>
-                                            <th className="px-8 py-5 text-sm font-black text-neutral-400 uppercase tracking-wider">Registered On</th>
-                                            <th className="px-8 py-5 text-sm font-black text-neutral-400 uppercase tracking-wider text-right">Actions</th>
+                                            <th className="px-5 py-4 text-xs font-black text-neutral-400 uppercase tracking-wider">Customer</th>
+                                            <th className="px-5 py-4 text-xs font-black text-neutral-400 uppercase tracking-wider">Email Address</th>
+                                            <th className="px-5 py-4 text-xs font-black text-neutral-400 uppercase tracking-wider">Phone Number</th>
+                                            <th className="px-5 py-4 text-xs font-black text-neutral-400 uppercase tracking-wider">Registered On</th>
+                                            <th className="px-5 py-4 text-xs font-black text-neutral-400 uppercase tracking-wider text-right">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-neutral-100">
                                         {users.map((customer) => (
                                             <tr key={customer._id} className="hover:bg-neutral-50/50 transition-colors">
                                                 {/* Customer Name */}
-                                                <td className="px-8 py-5 whitespace-nowrap">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-12 h-12 rounded-full border border-neutral-200 bg-neutral-100/70 flex items-center justify-center text-neutral-500">
-                                                            <User size={20} />
+                                                <td className="px-5 py-4 whitespace-nowrap">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-full border border-neutral-200 bg-neutral-100/70 flex items-center justify-center text-neutral-500 shrink-0">
+                                                            <User size={18} />
                                                         </div>
                                                         <div>
-                                                            <p className="text-lg font-bold text-neutral-900 leading-tight">{customer.name}</p>
-                                                            <span className="text-xs text-neutral-400 font-mono">ID: {customer._id}</span>
+                                                            <p className="text-base font-bold text-neutral-900 leading-tight">{customer.name}</p>
+                                                            <span className="text-[11px] text-neutral-400 font-mono">ID: {customer._id}</span>
                                                         </div>
                                                     </div>
                                                 </td>
 
                                                 {/* Email */}
-                                                <td className="px-8 py-5 whitespace-nowrap">
-                                                    <div className="flex items-center gap-2.5 text-base font-semibold text-neutral-700">
-                                                        <Mail size={16} className="text-neutral-400" />
+                                                <td className="px-5 py-4 whitespace-nowrap">
+                                                    <div className="flex items-center gap-2 text-sm font-semibold text-neutral-700">
+                                                        <Mail size={15} className="text-neutral-400 shrink-0" />
                                                         <span className="select-all">{customer.email}</span>
                                                     </div>
                                                 </td>
 
                                                 {/* Phone */}
-                                                <td className="px-8 py-5 whitespace-nowrap">
-                                                    <div className="flex items-center gap-2.5 text-base font-semibold text-neutral-700">
-                                                        <Phone size={16} className="text-neutral-400" />
+                                                <td className="px-5 py-4 whitespace-nowrap">
+                                                    <div className="flex items-center gap-2 text-sm font-semibold text-neutral-700">
+                                                        <Phone size={15} className="text-neutral-400 shrink-0" />
                                                         {customer.phone ? (
                                                             <span className="select-all">{customer.phone}</span>
                                                         ) : (
@@ -148,17 +148,17 @@ export default function Page() {
                                                 </td>
 
                                                 {/* Registered Date */}
-                                                <td className="px-8 py-5 whitespace-nowrap text-base text-neutral-500 font-medium">
+                                                <td className="px-5 py-4 whitespace-nowrap text-sm text-neutral-500 font-medium">
                                                     {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : "—"}
                                                 </td>
 
                                                 {/* Actions */}
-                                                <td className="px-8 py-5 whitespace-nowrap text-right text-base font-medium">
+                                                <td className="px-5 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                     <button
                                                         type="button"
                                                         disabled={deletingId === customer._id}
                                                         onClick={() => handleDeleteUser(customer._id)}
-                                                        className="inline-flex items-center justify-center gap-1.5 bg-red-55/10 hover:bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-extrabold transition-all disabled:opacity-50"
+                                                        className="inline-flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all disabled:opacity-50"
                                                     >
                                                         {deletingId === customer._id ? (
                                                             <Loader2 className="animate-spin" size={14} />
