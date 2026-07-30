@@ -192,61 +192,80 @@ export default function CompeteTheVibe() {
   const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!rawProducts || rawProducts.length === 0) return;
+    async function loadData() {
+      let sourceProducts = rawProducts;
 
-    // Filter products (prefer office chairs, fallback to all products if none matched)
-    let filtered = rawProducts.filter((prod: any) => {
-      const catName = typeof prod.category === "string"
-        ? prod.category.toLowerCase()
-        : (prod.category?.name || "").toLowerCase();
-      return catName.includes("office") || catName.includes("chair");
-    });
-
-    if (filtered.length === 0) {
-      filtered = rawProducts;
-    }
-
-    const selectedProducts = filtered.slice(0, 10);
-
-    if (selectedProducts.length > 0) {
-      const mapped = selectedProducts.map((prod: any, idx: number) => {
-        const normalizedCategory = prod.category?.name || (typeof prod.category === "string" ? prod.category : "Chair");
-        const allUrls: string[] = [];
-        if (prod.images?.length) {
-          prod.images.forEach((img: any) => {
-            const u = img.url || img;
-            if (u && typeof u === 'string' && !allUrls.includes(u)) allUrls.push(u);
-          });
+      // If context doesn't provide products, fetch them directly
+      if (!sourceProducts || sourceProducts.length === 0) {
+        try {
+          const res = await fetch("/api/product");
+          const data = await res.json();
+          if (data?.success && data.products) {
+            sourceProducts = data.products;
+          }
+        } catch (e) {
+          console.error("Failed to fetch products for CompeteTheVibe", e);
         }
-        if (prod.colorVariants?.length) {
-          prod.colorVariants.forEach((variant: any) => {
-            if (variant.images?.length) {
-              variant.images.forEach((img: any) => {
-                const u = img.url || img;
-                if (u && typeof u === 'string' && !allUrls.includes(u)) allUrls.push(u);
-              });
-            }
-          });
-        }
-        const defaultImage = allUrls[0] || prod.image || "/Png1/chair12_ErgoFit.webp";
-        const allImages = allUrls.length > 0 ? allUrls : [defaultImage];
-        const stickerChoice = STICKERS[idx % STICKERS.length];
-        return {
-          id: prod._id || prod.id,
-          slug: prod.slug,
-          name: prod.productName || prod.name,
-          category: normalizedCategory,
-          image: defaultImage,
-          allImages,
-          oldPrice: prod.oldPrice ? (typeof prod.oldPrice === "number" ? `₹${prod.oldPrice.toLocaleString()}` : prod.oldPrice) : `₹${((prod.realPrice || prod.price || 0) * 1.3).toFixed(0)}`,
-          price: `₹${(prod.realPrice || prod.price || 0).toLocaleString()}`,
-          rawPrice: prod.realPrice || prod.price || 0,
-          sticker: stickerChoice.text,
-          stickerBg: stickerChoice.bg
-        };
+      }
+
+      if (!sourceProducts || sourceProducts.length === 0) return;
+
+      // Filter products (prefer office chairs, fallback to all products if none matched)
+      let filtered = sourceProducts.filter((prod: any) => {
+        const catName = typeof prod.category === "string"
+          ? prod.category.toLowerCase()
+          : (prod.category?.name || "").toLowerCase();
+        return catName.includes("office") || catName.includes("chair");
       });
-      setProducts(mapped);
+
+      if (filtered.length === 0) {
+        filtered = sourceProducts;
+      }
+
+      const selectedProducts = filtered.slice(0, 8);
+
+      if (selectedProducts.length > 0) {
+        const mapped = selectedProducts.map((prod: any, idx: number) => {
+          const normalizedCategory = prod.category?.name || (typeof prod.category === "string" ? prod.category : "Chair");
+          const allUrls: string[] = [];
+          if (prod.images?.length) {
+            prod.images.forEach((img: any) => {
+              const u = img.url || img;
+              if (u && typeof u === 'string' && !allUrls.includes(u)) allUrls.push(u);
+            });
+          }
+          if (prod.colorVariants?.length) {
+            prod.colorVariants.forEach((variant: any) => {
+              if (variant.images?.length) {
+                variant.images.forEach((img: any) => {
+                  const u = img.url || img;
+                  if (u && typeof u === 'string' && !allUrls.includes(u)) allUrls.push(u);
+                });
+              }
+            });
+          }
+          const defaultImage = allUrls[0] || prod.image || "/Png1/chair12_ErgoFit.webp";
+          const allImages = allUrls.length > 0 ? allUrls : [defaultImage];
+          const stickerChoice = STICKERS[idx % STICKERS.length];
+          return {
+            id: prod._id || prod.id,
+            slug: prod.slug,
+            name: prod.productName || prod.name,
+            category: normalizedCategory,
+            image: defaultImage,
+            allImages,
+            oldPrice: prod.oldPrice ? (typeof prod.oldPrice === "number" ? `₹${prod.oldPrice.toLocaleString()}` : prod.oldPrice) : `₹${((prod.realPrice || prod.price || 0) * 1.3).toFixed(0)}`,
+            price: `₹${(prod.realPrice || prod.price || 0).toLocaleString()}`,
+            rawPrice: prod.realPrice || prod.price || 0,
+            sticker: stickerChoice.text,
+            stickerBg: stickerChoice.bg
+          };
+        });
+        setProducts(mapped);
+      }
     }
+
+    loadData();
   }, [rawProducts]);
 
   return (
