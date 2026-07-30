@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
-
+import html2pdf from "html2pdf.js";
 const OrderInvoice = () => {
   const params = useParams();
   const orderId = params?.id;
@@ -94,27 +94,18 @@ const OrderInvoice = () => {
 
       // Pre-fetch all product images and convert to base64 data URLs
       // This bypasses CORS tainted canvas restrictions entirely
-      const imgElements = element.querySelectorAll("img");
+      const images = Array.from(element.querySelectorAll("img"));
+
       await Promise.all(
-        Array.from(imgElements).map(async (img) => {
-          try {
-            const response = await fetch(img.src, { mode: "cors" });
-            if (response.ok) {
-              const blob = await response.blob();
-              const dataUrl = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.readAsDataURL(blob);
-              });
-              img.src = dataUrl;
-            }
-          } catch {
-            // If fetch fails, keep original src — image will render as placeholder
-          }
+        images.map((img) => {
+          if (img.complete) return Promise.resolve();
+
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
         })
       );
-
-      const html2pdf = (await import("html2pdf.js")).default;
       const invNum = safeOrder._id?.toString().slice(-6).toUpperCase() || "ORDER";
 
       // A4 portrait content width: 210mm - 2*10mm margin = 190mm = ~718px at 96dpi
@@ -122,51 +113,48 @@ const OrderInvoice = () => {
       const CAPTURE_WIDTH = 680;
 
       const options = {
-        margin: [10, 10, 10, 10],
+        margin: [2, 2, 2, 2],
         filename: `Invoice_${invNum}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
+        image: {
+          type: "jpeg",
+          quality: 1
+        },
         html2canvas: {
           scale: 2,
           useCORS: true,
-          allowTaint: true,
-          logging: false,
-          backgroundColor: "#ffffff",
-          windowWidth: CAPTURE_WIDTH,
-          onclone: (clonedDoc) => {
-            // Remove all external stylesheets (Tailwind etc. that contain lab()/oklch())
-            clonedDoc.querySelectorAll('link[rel="stylesheet"]').forEach((link) => link.remove());
-
-            // Sanitize any inline <style> tags
-            clonedDoc.querySelectorAll("style").forEach((style) => {
-              if (style.textContent) {
-                style.textContent = style.textContent
-                  .replace(/lab\([^)]+\)/gi, "transparent")
-                  .replace(/oklch\([^)]+\)/gi, "transparent")
-                  .replace(/oklab\([^)]+\)/gi, "transparent")
-                  .replace(/color\([^)]+\)/gi, "transparent");
-              }
+          backgroundColor: "#fff",
+          onclone: (doc) => {
+            doc.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+              link.remove();
             });
 
-            // Pin container width to capture width
-            const container = clonedDoc.querySelector(".invoice-container");
-            if (container) {
-              container.style.width = `${CAPTURE_WIDTH}px`;
-              container.style.maxWidth = `${CAPTURE_WIDTH}px`;
-              container.style.padding = "20px 22px";
-              container.style.boxSizing = "border-box";
-              container.style.margin = "0";
-              container.style.backgroundColor = "#ffffff";
-              container.style.color = "#1a1a1a";
-            }
+            doc.querySelectorAll("style").forEach(style => {
+              style.textContent = style.textContent
+                .replace(/oklch\([^)]+\)/g, "#ffffff")
+                .replace(/oklab\([^)]+\)/g, "#ffffff")
+                .replace(/lab\([^)]+\)/g, "#ffffff")
+                .replace(/lch\([^)]+\)/g, "#ffffff")
+                .replace(/color\([^)]+\)/g, "#ffffff");
+            });
           }
         },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+        jsPDF: {
+          unit: "mm",
+          format: "a4",
+          orientation: "portrait"
+        },
+        pagebreak: {
+          mode: ["avoid-all", "css"]
+        }
       };
 
-      await html2pdf().set(options).from(element).save();
+      await html2pdf()
+        .set(options)
+        .from(element)
+        .save();
     } catch (err) {
       console.error("html2pdf error, falling back to window.print():", err);
-      window.print();
+      alert(err.message);
     } finally {
       setIsGeneratingPdf(false);
     }
@@ -183,7 +171,7 @@ const OrderInvoice = () => {
 
       {/* A4 Printable Area */}
       <div className="invoice-container">
-        
+
         {/* Header Section */}
         <div className="header">
           <div className="logo-container">
@@ -245,15 +233,16 @@ const OrderInvoice = () => {
             {safeOrder.products.map((item, index) => {
               const itemTotal = item.price * item.quantity;
               const productImage = item.image || item.imgUrl || (typeof item.productId === 'object' ? (item.productId?.images?.[0]?.url || item.productId?.image) : null) || "/placeholder.webp";
-
+              // console.log(productImage)
               return (
                 <div className="item-row" key={index}>
                   <div className="col-desc flex-desc">
-                    <img 
-                      src={productImage} 
-                      alt={item.productName || "Product"} 
-                      className="product-image" 
-                      crossOrigin="anonymous"
+                    <img
+                      src={`/api/image?url=${encodeURIComponent(productImage)}`}
+                      alt={item.productName || "Product"}
+                      className="product-image"
+                      loading="eager"
+                      referrerPolicy="no-referrer"
                     />
                     <div className="product-details">
                       <strong>{item.productName}</strong>
@@ -280,67 +269,66 @@ const OrderInvoice = () => {
             <strong>NOTES</strong>
             <p className="text-gray mt-2">
               {safeOrder.shippingInfo?.customMessage || safeOrder.adminNote || "N/A"}
-            </p> 
+            </p>
           </div>
           <div className="totals-block">
-             <div className="total-line">
-                <span>Subtotal</span>
-                <span>Rs. {subtotalInclusive.toFixed(2)}</span>
-             </div>
-             <div className="total-line">
-                <span>Shipping</span>
-                <span>Rs. {shipping.toFixed(2)}</span>
-             </div>
-             <div className="total-line">
-                <span>Total excl. Tax</span>
-                <span>Rs. {totalExclTax.toFixed(2)}</span>
-             </div>
-             <div className="total-line">
-                <span>Sales Tax</span>
-                <span>Rs. {salesTax.toFixed(2)}</span>
-             </div>
-             <div className="total-line bold-total">
-                <span>TOTAL</span>
-                <span>RS. {finalTotal.toFixed(2)}</span>
-             </div>
-             <div className="total-line mt-2">
-                <span>Paid</span>
-                <span>Rs. {finalTotal.toFixed(2)}</span>
-             </div>
+            <div className="total-line">
+              <span>Subtotal</span>
+              <span>Rs. {subtotalInclusive.toFixed(2)}</span>
+            </div>
+            <div className="total-line">
+              <span>Shipping</span>
+              <span>Rs. {shipping.toFixed(2)}</span>
+            </div>
+            <div className="total-line">
+              <span>Total excl. Tax</span>
+              <span>Rs. {totalExclTax.toFixed(2)}</span>
+            </div>
+            <div className="total-line">
+              <span>Sales Tax</span>
+              <span>Rs. {salesTax.toFixed(2)}</span>
+            </div>
+            <div className="total-line bold-total">
+              <span>TOTAL</span>
+              <span>RS. {finalTotal.toFixed(2)}</span>
+            </div>
+            <div className="total-line mt-2">
+              <span>Paid</span>
+              <span>Rs. {finalTotal.toFixed(2)}</span>
+            </div>
           </div>
         </div>
 
         {/* Footer Section */}
         <div className="footer-section">
-           <p className="footer-text">If you have any questions, please do get in contact.</p>
-           <h2 className="phone-number">📞 73111-64111</h2>
-           <p className="website-link">
-             <a href="https://astride.in" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: '#000' }}>
-               <strong>astride.in</strong>
-             </a>
-           </p>
-           <div className="social-icons">
-             <a href="https://www.facebook.com/Astride.furniture" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>Facebook</a>
-             {' • '}
-             <a href="https://www.instagram.com/astride.furniture" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>Instagram</a>
-             {' • '}
-             <a href="https://www.linkedin.com/company/astride-furniture" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>LinkedIn</a>
-           </div>
+          <p className="footer-text">If you have any questions, please do get in contact.</p>
+          <h2 className="phone-number">📞 73111-64111</h2>
+          <p className="website-link">
+            <a href="https://astride.in" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: '#000' }}>
+              <strong>astride.in</strong>
+            </a>
+          </p>
+          <div className="social-icons">
+            <a href="https://www.facebook.com/Astride.furniture" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>Facebook</a>
+            {' • '}
+            <a href="https://www.instagram.com/astride.furniture" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>Instagram</a>
+            {' • '}
+            <a href="https://www.linkedin.com/company/astride-furniture" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>LinkedIn</a>
+          </div>
         </div>
 
       </div>
 
       {/* --- CSS Styles --- */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .invoice-wrapper, .invoice-wrapper * {
           box-sizing: border-box;
         }
         .invoice-wrapper {
           background: #fff;
           padding: 20px;
-          min-height: 100vh;
           font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-          color: #1a1a1a;
         }
         .print-actions {
           text-align: center;
@@ -357,12 +345,12 @@ const OrderInvoice = () => {
         }
         
         .invoice-container {
-          width: 100%;
-          max-width: 750px;
-          margin: 0 auto;
-          background: #fff;
-          padding: 25px 30px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    width:100%;
+    max-width:794px;
+    background:#fff;
+    margin:auto;
+    padding:25px 30px;
+    box-sizing:border-box;
         }
 
         /* Header */
@@ -458,9 +446,9 @@ const OrderInvoice = () => {
           display: flex;
           justify-content: space-between;
           padding-top: 10px;
-          margin-bottom: 25px;
+          margin-bottom:10px;
+          padding-bottom:10px;
           border-bottom: 2px solid #000;
-          padding-bottom: 15px;
         }
         .notes-block {
           width: 45%;
@@ -489,7 +477,8 @@ const OrderInvoice = () => {
           text-align: center;
           font-size: 12px;
           color: #555;
-          margin-top: 10px;
+          margin-top:5px;
+          padding-top:5px;
         }
         .footer-text { margin-bottom: 8px; }
         .phone-number { 
@@ -508,42 +497,53 @@ const OrderInvoice = () => {
         }
 
         /* Print Settings */
-        @media print {
-          @page { 
-            size: A4 portrait; 
-            margin: 15mm; 
-          }
-          html, body { 
-            background: #fff !important; 
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-            -webkit-print-color-adjust: exact !important; 
-            print-color-adjust: exact !important; 
-          }
-          .invoice-wrapper { 
-            padding: 0 !important; 
-            margin: 0 !important;
-            background: #fff !important;
-            width: 100% !important;
-            min-height: auto !important;
-          }
-          .no-print { display: none !important; }
-          .invoice-container { 
-            box-shadow: none !important; 
-            padding: 0 !important; 
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            border: none !important;
-            background: #fff !important;
-          }
-          .product-image {
-            width: 70px !important;
-            height: 70px !important;
-            flex-shrink: 0 !important;
-          }
+        @page {
+          size: A4;
+          margin: 10mm;
         }
+
+@media print {
+
+html,
+body{
+    margin:0;
+    padding:0;
+    width:auto;
+    height:auto;
+}
+
+.invoice-wrapper{
+    padding:0;
+    margin:0;
+}
+
+.invoice-container,
+.header,
+.address-section,
+.items-section,
+.summary-section,
+.footer-section{
+    break-inside:avoid;
+    page-break-inside:avoid;
+}
+
+.invoice-container{
+     width: 100% !important;
+    max-width: 100% !important;
+    padding:0 !important;
+    margin:0 !important;
+    box-shadow:none !important;
+    overflow:hidden;
+}
+
+.footer-section{
+    page-break-inside:avoid;
+}
+
+.item-row{
+    page-break-inside:avoid;
+}
+}
       `}} />
     </div>
   );
