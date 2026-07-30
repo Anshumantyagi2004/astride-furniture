@@ -98,7 +98,7 @@ export default function Header6_New() {
 
           {/* CTA Button */}
           <Link
-            href="#shop"
+            href="/products"
             className="group inline-flex items-center gap-3 border border-[#C8F135] text-[#C8F135] font-black text-[11px] tracking-[0.18em] uppercase px-5 py-[11px] rounded-md w-fit hover:bg-[#C8F135] hover:text-black transition-all duration-250 relative overflow-hidden"
           >
             <span className="relative z-10">Explore Setups</span>
