@@ -179,6 +179,9 @@ export async function PUT(req, { params }) {
 
                 return {
                     colorName: variant.colorName,
+                    colorCode: variant.colorCode || "",
+                    secondaryColorCode: variant.secondaryColorCode || "",
+                    colorMode: variant.colorMode || "name",
                     images: [...existingImages, ...uploadedImages],
                 };
             })

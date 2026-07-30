@@ -25,12 +25,27 @@ const productSchema = new mongoose.Schema(
             required: true,
         },
 
-        // PRODUCT IMAGES
+        // PRODUCT IMAGES & COLOR VARIANTS
         colorVariants: [
             {
                 colorName: {
                     type: String,
                     trim: true,
+                },
+                colorCode: {
+                    type: String,
+                    trim: true,
+                    default: "",
+                },
+                secondaryColorCode: {
+                    type: String,
+                    trim: true,
+                    default: "",
+                },
+                colorMode: {
+                    type: String,
+                    enum: ["name", "hex", "dual"],
+                    default: "name",
                 },
                 images: [
                     {

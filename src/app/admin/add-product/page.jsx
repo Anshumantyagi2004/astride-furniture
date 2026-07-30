@@ -18,6 +18,44 @@ import {
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
+const COLOR_MAP = {
+  black: '#000000',
+  white: '#ffffff',
+  red: '#dc2626',
+  blue: '#2563eb',
+  grey: '#4b5563',
+  gray: '#4b5563',
+  orange: '#ea580c',
+  green: '#16a34a',
+  yellow: '#ca8a04',
+  pink: '#db2777',
+  purple: '#9333ea',
+  brown: '#7c2d12',
+  maroon: '#800000',
+  mahroon: '#800000',
+  navy: '#000080',
+  teal: '#008080',
+  beige: '#f5f5dc',
+  cream: '#fffdd0',
+  gold: '#ffd700',
+  silver: '#c0c0c0',
+  'neon green': '#39ff14',
+};
+
+const getAdminSwatchBackground = (variant) => {
+  const mode = variant.colorMode || (variant.secondaryColorCode ? "dual" : (variant.colorCode && variant.colorCode.trim() !== "") ? "hex" : "name");
+
+  if (mode === "dual" && variant.colorCode && variant.secondaryColorCode) {
+    return `linear-gradient(135deg, ${variant.colorCode} 50%, ${variant.secondaryColorCode} 50%)`;
+  }
+  if (mode === "hex" && variant.colorCode && variant.colorCode.trim() !== "") {
+    return variant.colorCode;
+  }
+  const normalized = (variant.colorName || "").toLowerCase().trim();
+  if (COLOR_MAP[normalized]) return COLOR_MAP[normalized];
+  return normalized || '#cccccc';
+};
+
 export default function Page() {
     // PRODUCT DATA
     const [productName, setProductName] = useState("");
@@ -35,6 +73,8 @@ export default function Page() {
     const [colorVariants, setColorVariants] = useState([
         {
             colorName: "",
+            colorCode: "",
+            secondaryColorCode: "",
             images: [],
             previews: [],
         },
@@ -76,6 +116,8 @@ export default function Page() {
             ...colorVariants,
             {
                 colorName: "",
+                colorCode: "",
+                secondaryColorCode: "",
                 images: [],
                 previews: [],
             },
@@ -97,9 +139,9 @@ export default function Page() {
         setColorVariants(updated);
     };
 
-    const handleColorChange = (index, value) => {
+    const handleColorChange = (index, field, value) => {
         const updated = [...colorVariants];
-        updated[index].colorName = value;
+        updated[index][field] = value;
         setColorVariants(updated);
     };
 
@@ -311,11 +353,17 @@ const handleImageChange = async (index, e) => {
             formData.append("videoLinks", JSON.stringify(videoLinks));
             formData.append("specifications", JSON.stringify(specifications));
 
-            // MULTIPLE IMAGES
-            const colorData = colorVariants.map((variant) => ({
-                colorName: variant.colorName,
-                imageCount: variant.images.length,
-            }));
+            // MULTIPLE IMAGES & COLOR DATA
+            const colorData = colorVariants.map((variant) => {
+                const mode = variant.colorMode || (variant.secondaryColorCode ? "dual" : (variant.colorCode && variant.colorCode.trim() !== "") ? "hex" : "name");
+                return {
+                    colorName: variant.colorName,
+                    colorCode: mode === "name" ? "" : (variant.colorCode || ""),
+                    secondaryColorCode: mode === "dual" ? (variant.secondaryColorCode || "") : "",
+                    colorMode: mode,
+                    imageCount: variant.images.length,
+                };
+            });
 
             formData.append("colorVariants", JSON.stringify(colorData));
             colorVariants.forEach((variant, variantIndex) => {
@@ -704,16 +752,126 @@ const handleImageChange = async (index, e) => {
                                         )}
                                     </div>
 
-                                    {/* COLOR NAME */}
-                                    <input
-                                        type="text"
-                                        placeholder="Color Name (Black, Blue, Red...)"
-                                        value={variant.colorName}
-                                        onChange={(e) =>
-                                            handleColorChange(index, e.target.value)
-                                        }
-                                        className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-black"
-                                    />
+                                     {/* SWATCH SOURCE RADIO SELECTOR */}
+                                     <div className="flex flex-wrap items-center gap-4 bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 mb-2">
+                                         <span className="text-gray-600 font-bold">Select Swatch Source:</span>
+                                         <label className="flex items-center gap-1.5 cursor-pointer hover:text-black">
+                                             <input
+                                                 type="radio"
+                                                 name={`colorMode_${index}`}
+                                                 checked={(variant.colorMode || (variant.secondaryColorCode ? "dual" : (variant.colorCode && variant.colorCode.trim() !== "") ? "hex" : "name")) === "name"}
+                                                 onChange={() => handleColorChange(index, "colorMode", "name")}
+                                                 className="accent-black w-4 h-4 cursor-pointer"
+                                             />
+                                             <span>✓ Use Color Name</span>
+                                         </label>
+
+                                         <label className="flex items-center gap-1.5 cursor-pointer hover:text-black">
+                                             <input
+                                                 type="radio"
+                                                 name={`colorMode_${index}`}
+                                                 checked={(variant.colorMode || (variant.secondaryColorCode ? "dual" : (variant.colorCode && variant.colorCode.trim() !== "") ? "hex" : "name")) === "hex"}
+                                                 onChange={() => handleColorChange(index, "colorMode", "hex")}
+                                                 className="accent-black w-4 h-4 cursor-pointer"
+                                             />
+                                             <span>✓ Use Custom Hex / Color Picker</span>
+                                         </label>
+
+                                         <label className="flex items-center gap-1.5 cursor-pointer hover:text-black">
+                                             <input
+                                                 type="radio"
+                                                 name={`colorMode_${index}`}
+                                                 checked={(variant.colorMode || (variant.secondaryColorCode ? "dual" : (variant.colorCode && variant.colorCode.trim() !== "") ? "hex" : "name")) === "dual"}
+                                                 onChange={() => handleColorChange(index, "colorMode", "dual")}
+                                                 className="accent-black w-4 h-4 cursor-pointer"
+                                             />
+                                             <span>✓ Use Dual-Tone (2 Shades)</span>
+                                         </label>
+                                     </div>
+
+                                     {/* COLOR NAME & CODES */}
+                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                         <div>
+                                             <label className="block text-xs font-semibold text-gray-600 mb-1">Color Name</label>
+                                             <input
+                                                 type="text"
+                                                 placeholder="Color Name (e.g. Light Blue)"
+                                                 value={variant.colorName}
+                                                 onChange={(e) => handleColorChange(index, "colorName", e.target.value)}
+                                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-black text-black"
+                                             />
+                                         </div>
+
+                                         <div>
+                                             <label className="block text-xs font-semibold text-gray-600 mb-1">Primary Color (Hex / Picker)</label>
+                                             <div className="flex items-center gap-2">
+                                                 <input
+                                                     type="color"
+                                                     value={variant.colorCode || "#000000"}
+                                                     onChange={(e) => handleColorChange(index, "colorCode", e.target.value)}
+                                                     className="w-9 h-9 p-0 border rounded cursor-pointer flex-shrink-0"
+                                                 />
+                                                 <input
+                                                     type="text"
+                                                     value={variant.colorCode || ""}
+                                                     onChange={(e) => handleColorChange(index, "colorCode", e.target.value)}
+                                                     placeholder="Optional Hex (e.g. #800000)"
+                                                     className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-xs text-black outline-none focus:ring-1 focus:ring-black"
+                                                 />
+                                                 {variant.colorCode && (
+                                                     <button
+                                                         type="button"
+                                                         onClick={() => handleColorChange(index, "colorCode", "")}
+                                                         className="text-xs text-red-500 hover:underline flex-shrink-0"
+                                                     >
+                                                         Clear
+                                                     </button>
+                                                 )}
+                                             </div>
+                                         </div>
+
+                                         <div>
+                                             <label className="block text-xs font-semibold text-gray-600 mb-1">2nd Shade (Optional Dual-Tone)</label>
+                                             <div className="flex items-center gap-2">
+                                                 <input
+                                                     type="color"
+                                                     value={variant.secondaryColorCode || "#ffffff"}
+                                                     onChange={(e) => handleColorChange(index, "secondaryColorCode", e.target.value)}
+                                                     className="w-9 h-9 p-0 border rounded cursor-pointer flex-shrink-0"
+                                                 />
+                                                 <input
+                                                     type="text"
+                                                     value={variant.secondaryColorCode || ""}
+                                                     onChange={(e) => handleColorChange(index, "secondaryColorCode", e.target.value)}
+                                                     placeholder="Optional (e.g. #000000)"
+                                                     className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-xs text-black outline-none focus:ring-1 focus:ring-black"
+                                                 />
+                                                 {variant.secondaryColorCode && (
+                                                     <button
+                                                         type="button"
+                                                         onClick={() => handleColorChange(index, "secondaryColorCode", "")}
+                                                         className="text-xs text-red-500 hover:underline flex-shrink-0"
+                                                     >
+                                                         Clear
+                                                     </button>
+                                                 )}
+                                             </div>
+                                         </div>
+                                     </div>
+
+                                     {/* LIVE SWATCH PREVIEW */}
+                                     <div className="flex items-center gap-3 pt-1">
+                                         <span className="text-xs text-gray-500 font-medium">Swatch Preview:</span>
+                                         <div
+                                             className="w-7 h-7 rounded-full border border-gray-300 shadow-sm flex-shrink-0"
+                                             style={{
+                                                 background: getAdminSwatchBackground(variant)
+                                             }}
+                                         />
+                                         <span className="text-xs font-semibold text-gray-700">
+                                             {variant.colorName || "Unnamed Variant"} {variant.secondaryColorCode ? "(Dual-Tone Split Swatch)" : ""}
+                                         </span>
+                                     </div>
 
                                     {/* IMAGE UPLOAD */}
                                     <label className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-black transition">
