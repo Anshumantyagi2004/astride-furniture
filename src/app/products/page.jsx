@@ -54,14 +54,11 @@ function mapProduct(prod) {
 
   const category = prod.category && prod.category.name ? prod.category.name : "Gaming Chair";
 
-  const blackVariant = prod.colorVariants?.find(
-    (v) => v.colorName?.toLowerCase() === "black"
-  );
-  const fallbackVariant = prod.colorVariants?.find(
+  const primaryVariant = prod.colorVariants?.find(
     (v) => v.images && v.images.length > 0
-  );
+  ) || prod.colorVariants?.[0];
 
-  const defaultVariant = blackVariant || fallbackVariant;
+  const defaultVariant = primaryVariant;
   const sortedVariantImages = defaultVariant?.images
     ? [...defaultVariant.images].sort((a, b) => {
         const aIsInfographic = a.imageType === "infographic";
@@ -84,6 +81,8 @@ function mapProduct(prod) {
     image: coverImage,
     allImages: Array.from(new Set(allImages)),
     category: category,
+    color: defaultVariant?.colorName || prod.color || "Standard",
+    colorVariants: prod.colorVariants || [],
     backSupport: prod.backSupport || "High Back",
     height: prod.height || "5'7\" - 6'6\"",
     hours: prod.hours || "8+ Hours",

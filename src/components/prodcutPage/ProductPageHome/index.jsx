@@ -251,17 +251,11 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
                 // Use actual category name from database instead of normalizing
                 const category = prod.category && prod.category.name ? prod.category.name : "Gaming Chair";
 
-                const blackVariant = prod.colorVariants?.find(
-                  (v) => v.colorName?.toLowerCase() === "black"
-                );
-                const blackImage = blackVariant?.images?.[0]?.url;
-
-                const fallbackVariant = prod.colorVariants?.find(
+                const primaryVariant = prod.colorVariants?.find(
                   (v) => v.images && v.images.length > 0
-                );
-                const fallbackImage = fallbackVariant?.images?.[0]?.url;
+                ) || prod.colorVariants?.[0];
 
-                const defaultVariant = blackVariant || fallbackVariant;
+                const defaultVariant = primaryVariant;
                 const sortedVariantImages = defaultVariant?.images
                   ? [...defaultVariant.images].sort((a, b) => {
                       const aIsInfographic = a.imageType === "infographic";
@@ -272,7 +266,7 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
                     })
                   : [];
                 const allImages = sortedVariantImages.map((img) => img.url || img);
-                const coverImage = sortedVariantImages[0]?.url || blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp";
+                const coverImage = sortedVariantImages[0]?.url || defaultVariant?.images?.[0]?.url || "/Png1/chair12_ErgoFit.webp";
 
                 return {
                   id: prod._id,
@@ -284,6 +278,8 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
                   image: coverImage,
                   allImages: Array.from(new Set(allImages)),
                   category: category,
+                  color: defaultVariant?.colorName || prod.color || "Standard",
+                  colorVariants: prod.colorVariants || [],
                   backSupport: prod.backSupport || "High Back",
                   height: prod.height || "5'7\" - 6'6\"",
                   hours: prod.hours || "8+ Hours",
@@ -319,18 +315,11 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
             // Use actual category name from database instead of normalizing
             const category = prod.category && prod.category.name ? prod.category.name : "Gaming Chair";
 
-            const blackVariant = prod.colorVariants?.find(
-              (v) => v.colorName?.toLowerCase() === "black"
-            );
-            const blackImage = blackVariant?.images?.[0]?.url;
-
-            const fallbackVariant = prod.colorVariants?.find(
+            const primaryVariant = prod.colorVariants?.find(
               (v) => v.images && v.images.length > 0
-            );
-            const fallbackImage = fallbackVariant?.images?.[0]?.url;
+            ) || prod.colorVariants?.[0];
 
-            // Extract image URLs from the default active variant only
-            const defaultVariant = blackVariant || fallbackVariant;
+            const defaultVariant = primaryVariant;
             const sortedVariantImages = defaultVariant?.images
               ? [...defaultVariant.images].sort((a, b) => {
                   const aIsInfographic = a.imageType === "infographic";
@@ -341,7 +330,7 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
                 })
               : [];
             const allImages = sortedVariantImages.map((img) => img.url || img);
-            const coverImage = sortedVariantImages[0]?.url || blackImage || fallbackImage || "/Png1/chair12_ErgoFit.webp";
+            const coverImage = sortedVariantImages[0]?.url || defaultVariant?.images?.[0]?.url || "/Png1/chair12_ErgoFit.webp";
 
             return {
               id: prod._id,
@@ -353,6 +342,8 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
               image: coverImage,
               allImages: Array.from(new Set(allImages)),
               category: category,
+              color: defaultVariant?.colorName || prod.color || "Standard",
+              colorVariants: prod.colorVariants || [],
               backSupport: prod.backSupport || "High Back",
               height: prod.height || "5'7\" - 6'6\"",
               hours: prod.hours || "8+ Hours",
