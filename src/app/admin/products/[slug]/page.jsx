@@ -145,6 +145,7 @@ export default function Page() {
                                 })),
                                 previews: (variant.images || []).map((img) => ({
                                     url: img.url,
+                                    imageField: img.imageField,
                                     imageType: img.imageType || "png"
                                 })),
                             }))
@@ -281,11 +282,12 @@ export default function Page() {
             const webpFiles = await Promise.all(files.map((file) => convertToWebP(file)));
             const updated = [...colorVariants];
 
-            updated[index].images = [...updated[index].images, ...webpFiles];
+            updated[index].images = [...(updated[index].images || []), ...webpFiles];
             updated[index].previews = [
-                ...updated[index].previews,
+                ...(updated[index].previews || []),
                 ...webpFiles.map((file) => ({
                     url: URL.createObjectURL(file),
+                    file: file,
                     originalSize: file.originalSize || file.size,
                     newSize: file.size,
                     imageType: "png",
@@ -302,20 +304,21 @@ export default function Page() {
     const removeVariantImage = (variantIndex, imageIndex) => {
         const updated = [...colorVariants];
         const previewItem = updated[variantIndex].previews[imageIndex];
-        const previewUrl = typeof previewItem === "object" ? previewItem.url : previewItem;
-
+        
+        // Remove from previews
         updated[variantIndex].previews.splice(imageIndex, 1);
 
-        if (previewUrl && previewUrl.startsWith("blob:")) {
-            const existingCount = updated[variantIndex].existingImages?.length || 0;
-            const newFileIndex = imageIndex - existingCount;
-            if (newFileIndex >= 0) {
-                updated[variantIndex].images.splice(newFileIndex, 1);
+        // If it was a newly added file, remove from images array
+        if (typeof previewItem === "object" && previewItem.file) {
+            const fileIdx = (updated[variantIndex].images || []).indexOf(previewItem.file);
+            if (fileIdx !== -1) {
+                updated[variantIndex].images.splice(fileIdx, 1);
             }
         } else {
-            const oldImageIndex = updated[variantIndex].existingImages?.findIndex(img => img.url === previewUrl);
-            if (oldImageIndex !== undefined && oldImageIndex >= 0) {
-                updated[variantIndex].existingImages.splice(oldImageIndex, 1);
+            const previewUrl = typeof previewItem === "object" ? previewItem.url : previewItem;
+            const oldIdx = (updated[variantIndex].existingImages || []).findIndex(img => img.url === previewUrl);
+            if (oldIdx !== -1) {
+                updated[variantIndex].existingImages.splice(oldIdx, 1);
             }
         }
 
@@ -397,24 +400,10 @@ export default function Page() {
         
         if (targetIndex < 0 || targetIndex >= total) return;
 
-        // Swap previews
+        // Swap previews cleanly
         const tempPreview = updated[variantIndex].previews[imageIndex];
         updated[variantIndex].previews[imageIndex] = updated[variantIndex].previews[targetIndex];
         updated[variantIndex].previews[targetIndex] = tempPreview;
-
-        // Swap images if present
-        if (updated[variantIndex].images && updated[variantIndex].images.length > 0) {
-            const tempImg = updated[variantIndex].images[imageIndex];
-            updated[variantIndex].images[imageIndex] = updated[variantIndex].images[targetIndex];
-            updated[variantIndex].images[targetIndex] = tempImg;
-        }
-
-        // Swap existingImages if present
-        if (updated[variantIndex].existingImages && updated[variantIndex].existingImages.length > 0) {
-            const tempExist = updated[variantIndex].existingImages[imageIndex];
-            updated[variantIndex].existingImages[imageIndex] = updated[variantIndex].existingImages[targetIndex];
-            updated[variantIndex].existingImages[targetIndex] = tempExist;
-        }
 
         setColorVariants(updated);
     };
@@ -468,8 +457,18 @@ export default function Page() {
             formData.append("chairSpecs", JSON.stringify(chairSpecs));
             const colorData = colorVariants.map(
                 (variant) => {
-                    const existingCount = variant.existingImages?.length || 0;
-                    const newImageTypes = variant.previews.slice(existingCount).map(p => typeof p === "object" ? p.imageType || "png" : "png");
+                    const previews = variant.previews || [];
+                    const existingImages = previews
+                        .filter((p) => typeof p === "object" && !p.file && p.url && !p.url.startsWith("blob:"))
+                        .map((p) => ({
+                            url: p.url,
+                            imageField: p.imageField || "",
+                            imageType: p.imageType || "png",
+                        }));
+
+                    const newItems = previews.filter((p) => typeof p === "object" && p.file);
+                    const newFiles = newItems.map((p) => p.file);
+                    const newImageTypes = newItems.map((p) => p.imageType || "png");
 
                     const mode = variant.colorMode || (variant.secondaryColorCode ? "dual" : (variant.colorCode && variant.colorCode.trim() !== "") ? "hex" : "name");
                     return {
@@ -477,28 +476,25 @@ export default function Page() {
                         colorCode: mode === "name" ? "" : (variant.colorCode || ""),
                         secondaryColorCode: mode === "dual" ? (variant.secondaryColorCode || "") : "",
                         colorMode: mode,
-                        imageCount: variant.images.length,
-                        existingImages: (variant.existingImages || []).map(img => ({
-                            url: img.url,
-                            imageField: img.imageField,
-                            imageType: img.imageType || "png",
-                        })),
+                        imageCount: newFiles.length,
+                        existingImages: existingImages,
                         newImageTypes: newImageTypes,
+                        _newFiles: newFiles,
                     };
                 }
             );
 
             formData.append(
                 "colorVariants",
-                JSON.stringify(colorData)
+                JSON.stringify(colorData.map(({ _newFiles, ...rest }) => rest))
             );
 
-            colorVariants.forEach(
-                (variant, variantIndex) => {
-                    variant.images.forEach((image) => {
+            colorData.forEach(
+                (vData, variantIndex) => {
+                    vData._newFiles.forEach((file) => {
                         formData.append(
                             `variant_${variantIndex}`,
-                            image
+                            file
                         );
                     });
                 }
@@ -886,9 +882,9 @@ export default function Page() {
                                         )}
                                     </div>
                                      {/* SWATCH SOURCE RADIO SELECTOR */}
-                                     <div className="flex flex-wrap items-center gap-4 bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 mb-3">
-                                         <span className="text-gray-600 font-bold">Select Swatch Source:</span>
-                                         <label className="flex items-center gap-1.5 cursor-pointer hover:text-black">
+                                     <div className="flex flex-wrap items-center gap-6 md:gap-8 bg-gray-50 p-3.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 mb-3">
+                                         <span className="text-gray-600 font-bold mr-1">Select Swatch Source:</span>
+                                         <label className="flex items-center gap-2 cursor-pointer hover:text-black">
                                              <input
                                                  type="radio"
                                                  name={`colorMode_edit_${index}`}
@@ -896,10 +892,10 @@ export default function Page() {
                                                  onChange={() => handleColorChange(index, "colorMode", "name")}
                                                  className="accent-black w-4 h-4 cursor-pointer"
                                              />
-                                             <span>✓ Use Color Name</span>
+                                             <span>Use Color Name</span>
                                          </label>
 
-                                         <label className="flex items-center gap-1.5 cursor-pointer hover:text-black">
+                                         <label className="flex items-center gap-2 cursor-pointer hover:text-black">
                                              <input
                                                  type="radio"
                                                  name={`colorMode_edit_${index}`}
@@ -907,10 +903,10 @@ export default function Page() {
                                                  onChange={() => handleColorChange(index, "colorMode", "hex")}
                                                  className="accent-black w-4 h-4 cursor-pointer"
                                              />
-                                             <span>✓ Use Custom Hex / Color Picker</span>
+                                             <span>Use Custom Hex / Color Picker</span>
                                          </label>
 
-                                         <label className="flex items-center gap-1.5 cursor-pointer hover:text-black">
+                                         <label className="flex items-center gap-2 cursor-pointer hover:text-black">
                                              <input
                                                  type="radio"
                                                  name={`colorMode_edit_${index}`}
@@ -918,7 +914,7 @@ export default function Page() {
                                                  onChange={() => handleColorChange(index, "colorMode", "dual")}
                                                  className="accent-black w-4 h-4 cursor-pointer"
                                              />
-                                             <span>✓ Use Dual-Tone (2 Shades)</span>
+                                             <span>Use Dual-Tone (2 Shades)</span>
                                          </label>
                                      </div>
 
