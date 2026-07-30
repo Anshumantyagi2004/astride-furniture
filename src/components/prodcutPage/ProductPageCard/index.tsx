@@ -124,12 +124,14 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
         <div className="w-full mt-1.5">
           <Button onClick={(e) => {
             e.stopPropagation();
+            const firstVariantColor = product.colorVariants?.[0]?.colorName || product.color;
             const cartItem = {
               id: product.id,
               name: product.name,
               price: product.price,
               image: product.image,
-              quantity: 1
+              quantity: 1,
+              color: firstVariantColor
             };
             window.dispatchEvent(new CustomEvent('add-to-cart', { detail: cartItem }));
           }} />

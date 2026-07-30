@@ -29,13 +29,15 @@ const BestSellerCard = ({ product }) => {
   }, [images.length]);
 
   const handleAddToCart = () => {
+    const firstVariantColor = product.colorVariants?.[0]?.colorName || product.color;
     const cartItem = {
       id: product.id,
       name: product.name,
       price: product.price,
       image: product.image,
       slug: product.slug,
-      quantity: 1
+      quantity: 1,
+      color: firstVariantColor
     };
     window.dispatchEvent(new CustomEvent('add-to-cart', { detail: cartItem }));
   };
@@ -150,6 +152,8 @@ export default function BestSeller() {
           image: coverImage,
           allImages: Array.from(new Set(allImages)),
           category: normalizedCategory,
+          colorVariants: prod.colorVariants,
+          color: defaultVariant?.colorName || prod.color,
           description: prod.shortDescription || "Elevate your setup with a perfect blend of elegance and functionality."
       };
     });

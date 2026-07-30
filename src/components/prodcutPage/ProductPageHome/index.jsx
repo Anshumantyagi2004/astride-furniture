@@ -152,6 +152,10 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
     } else {
       setSearchQuery("");
     }
+    // Always scroll page to top when category or search parameter changes
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
   }, [urlCategory, searchParam]);
 
   // Verify and correct category match once tabs populate from API

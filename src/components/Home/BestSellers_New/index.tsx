@@ -211,6 +211,7 @@ function BestsellerCard({ product }: { product: any }) {
             aria-label={`Add ${product.name} to cart`}
             onClick={(e) => {
               e.stopPropagation();
+              const firstVariantColor = product.colorVariants?.[0]?.colorName || product.color;
               window.dispatchEvent(new CustomEvent('add-to-cart', { 
                 detail: { 
                   id: product.id,
@@ -219,7 +220,8 @@ function BestsellerCard({ product }: { product: any }) {
                   originalPrice: product.rawOriginalPrice || 12999,
                   image: product.image,
                   slug: product.slug,
-                  quantity: 1
+                  quantity: 1,
+                  color: firstVariantColor
                 } 
               }));
             }}
