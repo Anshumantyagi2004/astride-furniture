@@ -102,10 +102,13 @@ export async function POST(req) {
                 const bytes = await image.arrayBuffer();
                 const buffer = Buffer.from(bytes);
 
-                const extension = path.extname(image.name);
+                let extension = path.extname(image.name || "");
+                if (!extension) {
+                    extension = image.type === "image/webp" ? ".webp" : (image.type === "image/jpeg" || image.type === "image/jpg" ? ".jpg" : ".png");
+                }
 
                 const fileName =
-                    `${Date.now()}-${generateSlug(productName)}-${variant.colorName}${extension}`;
+                    `${Date.now()}-${generateSlug(productName)}-${variant.colorName}-${crypto.randomBytes(2).toString("hex")}${extension}`;
 
                 const uploadedImage = await uploadToR2({
                     file: buffer,

@@ -151,7 +151,10 @@ export async function PUT(req, { params }) {
                     files.map(async (image, imgIdx) => {
                         const bytes = await image.arrayBuffer();
                         const buffer = Buffer.from(bytes);
-                        const extension = path.extname(image.name);
+                        let extension = path.extname(image.name || "");
+                        if (!extension) {
+                            extension = image.type === "image/webp" ? ".webp" : (image.type === "image/jpeg" || image.type === "image/jpg" ? ".jpg" : ".png");
+                        }
                         const fileName = `${Date.now()}-${generateSlug(productName)}-${variant.colorName}-${crypto.randomBytes(2).toString("hex")}${extension}`;
 
                         const uploadedImage = await uploadToR2({
@@ -173,7 +176,7 @@ export async function PUT(req, { params }) {
 
                 const existingImages = (variant.existingImages || []).map((img) => ({
                     url: img.url,
-                    imageField: img.imageField,
+                    imageField: img.imageField || (img.url ? img.url.split("/").pop() : "products/image"),
                     imageType: img.imageType || "png",
                 }));
 
