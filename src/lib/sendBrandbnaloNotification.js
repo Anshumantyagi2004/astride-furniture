@@ -8,7 +8,6 @@ import Category from "@/models/Category";
  * @param {string} paymentType - "COD" or "Razorpay"
  */
 export async function sendBrandbnaloNotification(order, paymentType) {
-  // return; // BRANDBNALO NOTIFICATIONS DISABLED - Remove or comment this line to re-enable
   try {
     const shipping = order.shippingInfo || {};
     const products = order.products || [];
@@ -108,7 +107,6 @@ export async function sendBrandbnaloNotification(order, paymentType) {
  * @param {object} contact
  */
 export async function sendBrandbnaloContactNotification(contact) {
-  // return; // BRANDBNALO NOTIFICATIONS DISABLED - Remove or comment this line to re-enable
   try {
     const message = 
       `<b>NEW CONTACT FORM SUBMISSION</b><br><br>` +
@@ -146,7 +144,6 @@ export async function sendBrandbnaloContactNotification(contact) {
  * @param {object} enquiry
  */
 export async function sendBrandbnaloEnquiryNotification(enquiry) {
-  // return; // BRANDBNALO NOTIFICATIONS DISABLED - Remove or comment this line to re-enable
   try {
     const message = 
       `<b>NEW CORPORATE ENQUIRY SUBMISSION</b><br><br>` +
