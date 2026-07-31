@@ -7,8 +7,7 @@ import { ArrowRight } from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
+
 
 const sans = Plus_Jakarta_Sans({
   subsets: ['latin'],

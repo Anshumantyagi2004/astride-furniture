@@ -6,8 +6,7 @@ import { Pagination, Autoplay, EffectFade } from "swiper/modules";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Check, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
-import "swiper/css";
-import "swiper/css/pagination";
+
 
 const comparisons = [
     {

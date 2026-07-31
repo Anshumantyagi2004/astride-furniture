@@ -11,7 +11,8 @@ import { Autoplay } from "swiper/modules";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { useProducts } from "@/context/ProductsContext";
 
-import "swiper/css";
+
+
 
 const sans = Plus_Jakarta_Sans({
     subsets: ["latin"],
