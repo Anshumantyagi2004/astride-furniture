@@ -59,6 +59,7 @@ export default function CheckoutPage() {
   const [billingAddressSame, setBillingAddressSame] = useState(true);
   const [detailsSubmitted, setDetailsSubmitted] = useState(false);
   const [isUpdatingDetails, setIsUpdatingDetails] = useState(false);
+  const [successPhone, setSuccessPhone] = useState("");
   
   const searchParams = useSearchParams();
 
@@ -132,6 +133,9 @@ export default function CheckoutPage() {
             const data = await serverRes.json();
             if (data.success && data.shippingInfo) {
               const info = data.shippingInfo;
+              if (info.phone) {
+                setSuccessPhone(String(info.phone).replace(/\D/g, '').slice(-10));
+              }
               setFormData({
                 fullName: info.fullName || "",
                 email: info.email || "",
@@ -154,6 +158,28 @@ export default function CheckoutPage() {
       fetchDetails();
     }
   }, [searchParams]);
+
+  // Once order is confirmed, fetch saved order from DB to get the phone number for Track Order link
+  useEffect(() => {
+    if (!showSuccess || !orderId) return;
+    if (successPhone) return; // Already have phone, skip
+
+    const fetchSavedPhone = async () => {
+      try {
+        const res = await fetch(`/api/order/${orderId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const phone = data?.order?.shippingInfo?.phone || data?.shippingInfo?.phone;
+        if (phone) {
+          const clean = String(phone).replace(/\D/g, '').slice(-10);
+          if (clean.length === 10) setSuccessPhone(clean);
+        }
+      } catch (e) {
+        // silent fail - user can still manually enter phone on track page
+      }
+    };
+    fetchSavedPhone();
+  }, [showSuccess, orderId]);
 
   const subtotal = useMemo(() => {
     return cartItems.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity), 0);
@@ -376,6 +402,12 @@ export default function CheckoutPage() {
         const data = await response.json();
         if (data.success) {
           setOrderId(data.order?._id || data.orderId || "");
+          const savedPhone = data.order?.shippingInfo?.phone || formData.phone;
+          if (savedPhone) {
+            const cleanPhone = String(savedPhone).replace(/\D/g, '').slice(-10);
+            setSuccessPhone(cleanPhone);
+            setFormData(prev => ({ ...prev, phone: cleanPhone }));
+          }
           setShowSuccess(true);
           window.scrollTo({ top: 0, behavior: "smooth" });
           localStorage.removeItem("astride_cart");
@@ -451,6 +483,12 @@ export default function CheckoutPage() {
               const verifyData = await verifyRes.json();
               if (verifyData.success) {
                 setOrderId(verifyData.order?._id || response.razorpay_order_id);
+                const savedPhone = verifyData.order?.shippingInfo?.phone || verifyData.order?.shippingAddress?.phone || formData.phone;
+                if (savedPhone) {
+                  const cleanPhone = String(savedPhone).replace(/\D/g, '').slice(-10);
+                  setSuccessPhone(cleanPhone);
+                  setFormData(prev => ({ ...prev, phone: cleanPhone }));
+                }
                 setShowSuccess(true);
                 window.scrollTo({ top: 0, behavior: "smooth" });
                 localStorage.removeItem("astride_cart");
@@ -793,12 +831,19 @@ export default function CheckoutPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 w-full mt-1">
-              <Link 
-                href={`/track-order${formData.phone ? `?phone=${formData.phone.replace(/\D/g, '').slice(-10)}` : ''}`}
-                className="flex-1 py-3.5 bg-neutral-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all text-center shadow-md active:scale-95"
-              >
-                Track Order
-              </Link>
+              {(() => {
+                const phoneForTrack = successPhone || formData.phone;
+                const cleanTrackPhone = phoneForTrack ? phoneForTrack.replace(/\D/g, '').slice(-10) : '';
+                const targetUrl = cleanTrackPhone.length === 10 ? `/track-order?phone=${cleanTrackPhone}` : '/track-order';
+                return (
+                  <Link 
+                    href={targetUrl}
+                    className="flex-1 py-3.5 bg-neutral-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all text-center shadow-md active:scale-95"
+                  >
+                    Track Order
+                  </Link>
+                );
+              })()}
               <Link 
                 href="/products"
                 className="flex-1 py-3.5 bg-white border border-neutral-200 text-neutral-700 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-50 transition-all text-center shadow-sm active:scale-95"
