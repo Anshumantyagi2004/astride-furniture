@@ -78,8 +78,6 @@ export default function CircularChairs({ onStart = () => { } }: CircularChairsPr
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
         @keyframes float-in {
           from { opacity:0; transform:translateY(28px) scale(0.95); }
           to   { opacity:1; transform:translateY(0)    scale(1); }

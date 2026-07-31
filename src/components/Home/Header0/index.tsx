@@ -9,9 +9,7 @@ import { ChevronRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, EffectFade } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/effect-fade";
+
 import ChairFinder from "../ChairFinder";
 
 const containerVariants: Variants = {

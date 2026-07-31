@@ -9,8 +9,7 @@ import {
   IconArmchair
 } from '@tabler/icons-react';
 
-import 'swiper/css';
-import 'swiper/css/pagination';
+
 
 const BisIcon = ({ size = 28, style, ...props }: { size?: number; style?: React.CSSProperties; [key: string]: any }) => {
   const fillAccent = style?.color || "currentColor";

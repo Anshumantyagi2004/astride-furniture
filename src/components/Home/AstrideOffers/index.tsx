@@ -9,7 +9,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import { useProducts } from '@/context/ProductsContext';
 
-import 'swiper/css';
+
+
 
 export default function AstrideOffers() {
   const { products: rawProducts } = useProducts();
