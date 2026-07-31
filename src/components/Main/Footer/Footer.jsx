@@ -116,7 +116,7 @@ export default function Footer() {
                             { name: "Blog", link: "/blogs" },
                             { name: "Contact Us", link: "/contact" },
                             { name: "Bulk Enquiry", link: "/inquiry" },
-                            { name: "FAQs", link: "/#faq" },
+                            { name: "FAQs", link: "/faq" },
                             { name: "Track Order", link: "/track-order" },
                         ].map((item, index) => {
                             // Special handling for FAQs: ensure smooth scroll to homepage #faq
@@ -124,7 +124,7 @@ export default function Footer() {
                                 return (
                                     <a
                                         key={index}
-                                        href="/#faq"
+                                        href="/faq"
                                         onClick={(e) => {
                                             // If already on homepage, prevent default and smooth scroll
                                             if (pathname === '/') {
@@ -136,7 +136,7 @@ export default function Footer() {
                                             } else {
                                                 // On other pages, we force a full navigation so it correctly jumps to the ID
                                                 e.preventDefault();
-                                                window.location.href = '/#faq';
+                                                window.location.href = '/faq';
                                             }
                                         }}
                                         className="block text-[#bdbdbd] text-[14px] py-[5px] transition-all duration-200 hover:text-white hover:translate-x-1 font-sans font-medium"
