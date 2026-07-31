@@ -30,15 +30,15 @@ export default function TrackOrderPage() {
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
 
   useEffect(() => {
-    const rawPhoneParam = searchParams?.get('phone');
-    if (rawPhoneParam) {
-      const cleanNum = rawPhoneParam.replace(/\D/g, '').slice(-10);
-      if (cleanNum.length === 10 && cleanNum !== phone) {
+    const rawPhone = searchParams?.get('phone');
+    if (rawPhone) {
+      const cleanNum = rawPhone.replace(/\D/g, '').slice(-10);
+      if (cleanNum.length === 10) {
         setPhone(cleanNum);
         fetchOrdersByPhone(cleanNum);
       }
     }
-  }, [searchParams, phone]);
+  }, [searchParams]);
 
   const fetchOrdersByPhone = async (num: string) => {
     setError("");
