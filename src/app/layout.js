@@ -3,6 +3,8 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import SideMenuAddToCart from "@/components/Main/SideMenuAddToCart";
 import LayoutWrapper from "./LayoutWrapper";
+import Script from "next/script";
+
 
 const forum = Forum({
   subsets: ["latin"],
@@ -42,6 +44,19 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${forum.variable} ${sans.variable} ${sans.className}`}>
       <head>
+         {/* Google Analytics Script */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-QN4L70TBMR"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-QN4L70TBMR');
+          `}
+        </Script>
         <meta
           name="google-site-verification"
           content="oo7Se9amQ-_Nfvln61Rt4HRmrRKaSecpc_wTTyBFTfk"

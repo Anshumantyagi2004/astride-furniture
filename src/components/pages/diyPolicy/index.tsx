@@ -99,14 +99,14 @@ export default function DiyPolicyPage() {
             To request an installation manual or assembly guidance, contact us:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-semibold tracking-wider uppercase">
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
+            <a href="mailto:support@astride.in" className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
               <span className="text-zinc-500 text-[10px] mb-1">Email</span>
               <span className="text-white text-xs sm:text-sm">support@astride.in</span>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
+            </a>
+            <a  href="tel:+917311164111"  className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col justify-center">
               <span className="text-zinc-500 text-[10px] mb-1">Phone / WhatsApp</span>
               <span className="text-white text-xs sm:text-sm">+91-7311164111</span>
-            </div>
+            </a>
           </div>
         </motion.div>
       </div>

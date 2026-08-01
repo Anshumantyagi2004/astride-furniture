@@ -49,7 +49,7 @@ export default function Reviews_New() {
 
   return (
     <section
-      className="w-full pt-2 pb-2 px-5 md:px-8 lg:px-16 relative overflow-hidden"
+      className="w-full  px-5 md:px-8 py-8 lg:px-16 relative overflow-hidden"
       style={{
         backgroundColor: "#F5EFE6",
         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Crect width='32' height='32' fill='%23F5EFE6'/%3E%3Cpath d='M0 0.5H32M0.5 0V32' stroke='%23d6c9b8' stroke-width='1'/%3E%3C/svg%3E")`,

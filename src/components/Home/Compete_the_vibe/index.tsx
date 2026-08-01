@@ -273,7 +273,7 @@ export default function CompeteTheVibe() {
   }, [rawProducts]);
 
   return (
-    <section className={`pt-2 pb-0 md:pt-3 md:pb-6 bg-white ${sans.className}`}>
+    <section className={`pt-5 pb-5 md:pt-3 md:pb-6 bg-white ${sans.className}`}>
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12">
         
         <div className="mb-4 md:mb-12 flex flex-row items-end justify-between gap-2 md:gap-5">

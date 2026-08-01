@@ -528,7 +528,7 @@ const CertificationsBento = () => {
   }, [isInView, swiperInstance]);
 
   return (
-    <section ref={sectionRef} className="w-full pt-8 pb-8 px-5 md:px-8 lg:px-16 overflow-hidden" style={{ backgroundColor: "#1a1a1a" }}>
+    <section ref={sectionRef} className="w-full pt-8  px-5 md:px-8 lg:px-16 overflow-hidden" style={{ backgroundColor: "#1a1a1a" }}>
       <style jsx global>{`
         .cert-swiper .swiper-pagination-bullet {
           background: rgba(255, 255, 255, 0.3) !important;
@@ -566,7 +566,7 @@ const CertificationsBento = () => {
         </motion.div>
 
         {/* RESPONSIVE CAROUSEL */}
-        <div className="w-full pb-10">
+        <div className="w-full pb-5">
           <Swiper
             onSwiper={setSwiperInstance}
             modules={SWIPER_MODULES}

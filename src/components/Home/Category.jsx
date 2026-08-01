@@ -69,10 +69,10 @@ export default function Category({ initialCategories = [] }) {
     }, []);
 
     return (
-        <section className={`relative overflow-hidden bg-[#FAFAFA] pt-0 md:pt-2 pb-2 md:pb-4 ${sans.className}`}>
+        <section className={`relative overflow-hidden bg-[#FAFAFA] pt-5 md:pt-2 pb-5 md:pb-4 ${sans.className}`}>
 
             {/* HEADING */}
-            <div className="relative z-10 md:px-15 px-4 mb-2 md:mb-4 max-w-[1400px] mx-auto">
+            <div className="relative z-10 pt-4 md:pt-4 md:px-15 px-4 mb-4 md:mb-4 max-w-[1400px] mx-auto">
                 <p className="uppercase tracking-[5px] text-[#8B5CF6] text-xs md:text-sm font-extrabold mb-1 md:mb-2">
                     Browse Collection
                 </p>

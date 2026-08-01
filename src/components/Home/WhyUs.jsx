@@ -58,7 +58,7 @@ export default function WhyUs() {
     ];
 
     return (
-        <section className={`relative py-2 bg-[#F8F9FA] overflow-hidden ${sans.className}`}>
+        <section className={`relative py-5 bg-[#F8F9FA] overflow-hidden ${sans.className}`}>
 
             {/* BACKGROUND — subtle blue/slate blobs, no orange */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">

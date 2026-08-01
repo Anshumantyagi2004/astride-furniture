@@ -137,7 +137,7 @@ export default function ChairSection() {
     const { products, loading } = useProducts();
 
     return (
-        <section className={`relative overflow-hidden bg-[#f1f3f5] pb-10 pt-6 border-t border-t-white ${sans.className}`}>
+        <section className={`relative overflow-hidden bg-[#f1f3f5] md:pb-6  pt-6 border-t border-t-white ${sans.className}`}>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-zinc-400/10 blur-[180px] rounded-full pointer-events-none"></div>
             
             <div className="relative z-10 px-4 md:px-10 lg:px-20 mx-auto max-w-[1600px]">

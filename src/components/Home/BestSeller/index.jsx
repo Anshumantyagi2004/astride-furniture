@@ -177,7 +177,7 @@ export default function BestSeller() {
         
         {/* Header Area */}
         <div className="mb-5 flex flex-col items-start md:flex-row md:items-end md:justify-between gap-5 px-0 md:px-2">
-          <div>
+          <div className="pt-3 md:pt-0">
             <h2 className="mt-0 text-[32px] font-black leading-tight text-[#131313] md:text-[42px] lg:text-[48px] font-sans">
               Best{" "}
               <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold">

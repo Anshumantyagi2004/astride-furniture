@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useMemo, MouseEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { generateSlug } from "@/utils/generateSlug";
 
 interface SeriesChair {
     name: string;
@@ -327,7 +328,7 @@ export default function Navbar3() {
                         {navItems.map((item) => (
                             <Link
                                 key={item}
-                                href={`/products?category=${encodeURIComponent(item)}`}
+                                href={`/products?category=${generateSlug(item)}`}
                                 onMouseEnter={() => setActiveMenu(item)}
                                 className="relative py-[6px] text-[15.5px] font-semibold tracking-[0.04em] text-slate-800 hover:text-slate-950 transition-colors after:absolute after:left-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-gradient-to-r after:from-[#8B5CF6] after:to-[#FF7A1A] after:transition-all after:duration-300 after:w-0 hover:after:w-full"
                             >

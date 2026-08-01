@@ -123,7 +123,7 @@ export default function StatsSection_New() {
   }, []);
 
   return (
-    <section className="bg-[#0F172B] border-y-[3px] border-[#131313] pt-3 pb-4 md:pt-[40px] md:pb-[45px] lg:pt-[50px] lg:pb-[50px]">
+    <section className="bg-[#0F172B] border-y-[3px] border-[#131313] pt-5 pb-5 md:pt-[40px] md:pb-[45px] lg:pt-[50px] lg:pb-[50px]">
       <div className="max-w-[1440px] mx-auto px-3 sm:px-5 md:px-8 lg:px-12">
         
         {/* Heading */}
@@ -179,13 +179,15 @@ export default function StatsSection_New() {
                 className="absolute inset-0 bg-white pointer-events-none z-0 rounded-full [filter:blur(var(--glow-blur-mobile))] [opacity:var(--glow-opacity-mobile)] md:[filter:blur(var(--glow-blur-desktop))] md:[opacity:var(--glow-opacity-desktop)] [will-change:filter] [transform:translateZ(0)]" 
               />
               
+              <div className='bg-white flex h-15 justify-center items-center px-4 rounded-2xl'>
               <Image
                 src="/Logo/amazon.webp"
                 alt="Amazon"
                 width={200}
-                height={94}
-                className="h-[var(--h-mobile)] w-[var(--w-mobile)] md:h-[var(--h-desktop)] md:w-[var(--w-desktop)] [transform:translateY(var(--ty-mobile))] md:[transform:translateY(var(--ty-desktop))] object-contain relative z-10"
+                height={54}
+                className="h-[var(--h-mobile)] mt-2 md:mt-0 w-[var(--w-mobile)] md:h-[var(--h-desktop)] md:w-[var(--w-desktop)] [transform:translateY(var(--ty-mobile))] md:[transform:translateY(var(--ty-desktop))] object-contain relative z-10"
               />
+              </div>
             </div>
 
             {/* Flipkart Logo Wrapper */}
@@ -207,14 +209,18 @@ export default function StatsSection_New() {
               <div 
                 className="absolute inset-0 bg-white pointer-events-none z-0 rounded-md [filter:blur(var(--glow-blur-mobile))] [opacity:var(--glow-opacity-mobile)] md:[filter:blur(var(--glow-blur-desktop))] md:[opacity:var(--glow-opacity-desktop)] [will-change:filter] [transform:translateZ(0)]" 
               />
+
+              <div className='bg-white px-4 py-4 flex justify-center items-center rounded-2xl'>
+
               
               <Image
                 src="/Logo/FLIPKART_Webp.webp"
                 alt="Flipkart"
                 width={100}
-                height={24}
-                className="h-[var(--h-mobile)] w-[var(--w-mobile)] md:h-[var(--h-desktop)] md:w-[var(--w-desktop)] [transform:translateY(var(--ty-mobile))] md:[transform:translateY(var(--ty-desktop))] object-contain relative z-10"
+                height={44}
+                className="h-[var(--h-mobile)] w-[var(--w-mobile)] md:h-[var(--h-desktop)] md:w-[var(--w-desktop)]  md:[transform:translateY(var(--ty-desktop))] object-cover relative z-10"
               />
+                </div>
             </div>
           </div>
         </div>
