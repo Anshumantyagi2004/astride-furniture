@@ -107,7 +107,7 @@ export default function Category({ initialCategories = [] }) {
                                 {categories.map((category, index) => (
                                     <SwiperSlide key={index}>
                                         <Link 
-                                            href={`/products?category=${encodeURIComponent(category.name)}`} 
+                                            href={`/products/category/${category.slug || encodeURIComponent(category.name)}`} 
                                             className="w-full block"
                                         >
                                             <div className="group relative overflow-hidden rounded-[14px] bg-white border-[2.5px] border-[#131313] shadow-[4px_4px_0_#131313] active:translate-y-[2px] active:shadow-[2px_2px_0_#131313] transition-all duration-200">
@@ -141,7 +141,7 @@ export default function Category({ initialCategories = [] }) {
                         <div className="hidden sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 md:gap-6 lg:gap-8 max-w-[1400px] mx-auto">
                             {categories.map(
                                 (category, index) => (
-                                    <Link key={index} href={`/products?category=${encodeURIComponent(category.name)}`} className="w-full block">
+                                    <Link key={index} href={`/products/category/${category.slug || encodeURIComponent(category.name)}`} className="w-full block">
                                         <motion.div
                                         initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
                                         whileInView={isMobile ? false : { opacity: 1, y: 0 }}

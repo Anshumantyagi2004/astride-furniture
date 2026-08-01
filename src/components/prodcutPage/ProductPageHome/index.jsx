@@ -102,7 +102,7 @@ const PRODUCTS = [
   },
 ];
 
-export default function ProductPageHome({ preloadedProducts = [], preloadedCategories = [] }) {
+export default function ProductPageHome({ preloadedProducts = [], preloadedCategories = [], initialCategorySlug = null }) {
   const router = useRouter();
   const [productsList, setProductsList] = useState(() => {
     return preloadedProducts.length > 0 ? preloadedProducts : [];
@@ -116,7 +116,13 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
   const [loading, setLoading] = useState(() => {
     return preloadedProducts.length === 0;
   });
-  const [selectedCategory, setSelectedCategory] = useState("All Products");
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    if (initialCategorySlug && preloadedCategories.length > 0) {
+      const cat = preloadedCategories.find(c => c.slug === initialCategorySlug);
+      return cat ? cat.name : "All Products";
+    }
+    return "All Products";
+  });
   const [selectedBackSupport, setSelectedBackSupport] = useState(null);
   const [selectedHours, setSelectedHours] = useState(null);
   const [selectedCapacity, setSelectedCapacity] = useState(null);
@@ -131,19 +137,33 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
   // Decode URL category immediately (no waiting)
   const urlCategory = catParam ? decodeURIComponent(catParam) : null;
 
-  // Helper to find a matching tab for a category param
+  // Helper to find a matching tab for a category param (supports names & slugs)
   function findTabMatch(decoded, tabList) {
-    let match = tabList.find(t => t.toLowerCase() === decoded.toLowerCase());
-    if (!match && (decoded.toLowerCase().includes('bar') || decoded.toLowerCase().includes('stool') || decoded.toLowerCase().includes('cafe'))) {
+    if (!decoded) return null;
+    const cleanDecoded = decoded.replace(/-/g, ' ').toLowerCase();
+    
+    let match = tabList.find(t => t.toLowerCase() === cleanDecoded);
+    if (!match && (cleanDecoded.includes('bar') || cleanDecoded.includes('stool') || cleanDecoded.includes('cafe'))) {
       match = tabList.find(t => t.toLowerCase().includes('bar')) || "Bar Stools & Cafe Chair";
     }
     return match || null;
   }
 
-  // Set category IMMEDIATELY from URL (instant - no waiting for API)
+  // Set category from URL slug or query param
   useEffect(() => {
-    if (urlCategory) {
-      setSelectedCategory(urlCategory);
+    if (initialCategorySlug) {
+      // Look up by slug from preloadedCategories (most reliable)
+      const cat = preloadedCategories.find(c => c.slug === initialCategorySlug);
+      if (cat) {
+        setSelectedCategory(cat.name);
+        return;
+      }
+      // Fallback: convert slug to name via tabs
+      const match = findTabMatch(initialCategorySlug, tabs);
+      setSelectedCategory(match || initialCategorySlug);
+    } else if (urlCategory) {
+      const match = findTabMatch(urlCategory, tabs);
+      setSelectedCategory(match || urlCategory);
     } else {
       setSelectedCategory("All Products");
     }
@@ -152,18 +172,16 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
     } else {
       setSearchQuery("");
     }
-    // Always scroll page to top when category or search parameter changes
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     }
-  }, [urlCategory, searchParam]);
+  }, [urlCategory, initialCategorySlug, searchParam, tabs]);
 
   // Verify and correct category match once tabs populate from API
   useEffect(() => {
-    if (tabs.length > 1 && urlCategory) {
+    if (tabs.length > 1 && urlCategory && !initialCategorySlug) {
       const match = findTabMatch(urlCategory, tabs);
-      if (match && match !== urlCategory) {
-        // Only update if the API found an exact match that's different from URL
+      if (match && match !== selectedCategory) {
         setSelectedCategory(match);
       }
     }
@@ -369,7 +387,16 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
   // Filter logic
   const filteredProducts = useMemo(() => {
     return productsList.filter((product) => {
-      if (selectedCategory && selectedCategory !== "All Products" && product.category !== selectedCategory) return false;
+      if (selectedCategory && selectedCategory !== "All Products") {
+        const normSelected = selectedCategory.replace(/-/g, ' ').toLowerCase();
+        const normProdCat = (product.category || "").replace(/-/g, ' ').toLowerCase();
+
+        let isMatch = normProdCat === normSelected;
+        if (!isMatch && (normSelected.includes('bar') || normSelected.includes('stool') || normSelected.includes('cafe'))) {
+          isMatch = normProdCat.includes('bar') || normProdCat.includes('stool') || normProdCat.includes('cafe');
+        }
+        if (!isMatch) return false;
+      }
       if (selectedBackSupport && product.backSupport !== selectedBackSupport) return false;
       if (selectedHours && product.hours !== selectedHours) return false;
       if (selectedCapacity && product.capacity !== selectedCapacity) return false;
@@ -471,8 +498,13 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
                       key={tab}
                       onClick={() => {
                         setSelectedCategory(tab);
-                        if (tab === "All Products") router.push("/products");
-                        else router.push(`/products?category=${encodeURIComponent(tab)}`);
+                        if (tab === "All Products") {
+                          router.push("/products");
+                        } else {
+                          const catObj = preloadedCategories.find(c => c.name === tab);
+                          const catSlug = catObj?.slug || encodeURIComponent(tab);
+                          router.push(`/products/category/${catSlug}`);
+                        }
                       }}
                       className="relative px-3.5 py-2 rounded-full text-[11px] font-bold transition-colors duration-300 focus:outline-none shrink-0"
                     >
@@ -505,8 +537,9 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
                     if (tab === "All Products") {
                       router.push("/products");
                     } else {
-                      const encoded = encodeURIComponent(tab);
-                      router.push(`/products?category=${encoded}`);
+                      const catObj = preloadedCategories.find(c => c.name === tab);
+                      const catSlug = catObj?.slug || encodeURIComponent(tab);
+                      router.push(`/products/category/${catSlug}`);
                     }
                   }}
                   className={`shrink-0 px-6 py-3 rounded-full font-bold uppercase text-xs tracking-widest focus:outline-none transition-all duration-300 ${

@@ -193,20 +193,13 @@ export default function Navbar3() {
         };
     }, []);
 
-    // 2. Memoized Dynamic Navigation Items (Uses categories from state)
-    const navItems = useMemo(() => {
-        if (categories.length > 0) {
-            return categories.map((cat: any) => cat.name);
-        }
-        // Fallback to hardcoded items if categories not loaded
-        return [
-            "Staff Chair",
-            "Office Chair",
-            "Gaming Chair",
-            "Study Chair",
-            "Bar Stools & Cafe Chair",
-        ];
-    }, [categories]);
+    const displayCategories = categories.length > 0 ? categories : [
+        { _id: "staff-chair", name: "Staff Chair", slug: "staff-chair" },
+        { _id: "executive-chair", name: "Office Chair", slug: "executive-chair" },
+        { _id: "gaming-chair", name: "Gaming Chair", slug: "gaming-chair" },
+        { _id: "study-chair", name: "Study Chair", slug: "study-chair" },
+        { _id: "bar-stool", name: "Bar Stools & Cafe Chair", slug: "bar-stool" },
+    ];
 
     // 3. Memoized Dynamic Mega Dropdown Chairs (Reduces heavy computations on hover)
     const displayChairs = useMemo<SeriesChair[]>(() => {
@@ -325,14 +318,14 @@ export default function Navbar3() {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
-                        {navItems.map((item) => (
+                    {displayCategories.map((cat: any) => (
                             <Link
-                                key={item}
-                                href={`/products?category=${generateSlug(item)}`}
-                                onMouseEnter={() => setActiveMenu(item)}
+                                key={cat._id || cat.name}
+                                href={`/products/category/${cat.slug || generateSlug(cat.name)}`}
+                                onMouseEnter={() => setActiveMenu(cat.name)}
                                 className="relative py-[6px] text-[15.5px] font-semibold tracking-[0.04em] text-slate-800 hover:text-slate-950 transition-colors after:absolute after:left-0 after:bottom-0 after:h-[3px] after:rounded-full after:bg-gradient-to-r after:from-[#8B5CF6] after:to-[#FF7A1A] after:transition-all after:duration-300 after:w-0 hover:after:w-full"
                             >
-                                {item}
+                                {cat.name}
                             </Link>
                         ))}
                     </nav>
@@ -471,14 +464,14 @@ export default function Navbar3() {
                     {/* Mobile Navigation */}
                     {isOpen && (
                         <nav className="absolute left-0 right-0 top-full flex flex-col gap-4 border-b-2 border-slate-900 bg-white px-5 py-5 lg:hidden shadow-xl">
-                            {navItems.map((item) => (
+                            {displayCategories.map((cat: any) => (
                                 <Link
-                                    key={item}
-                                    href={`/products?category=${encodeURIComponent(item)}`}
+                                    key={cat._id || cat.name}
+                                    href={`/products/category/${cat.slug || generateSlug(cat.name)}`}
                                     className="font-semibold text-slate-800 hover:text-black"
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    {item}
+                                    {cat.name}
                                 </Link>
                             ))}
 
