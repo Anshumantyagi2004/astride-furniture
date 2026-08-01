@@ -109,7 +109,9 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
   });
   const [tabs, setTabs] = useState(() => {
     if (preloadedCategories.length > 0) {
-      return ["All Products", ...preloadedCategories.map((cat) => cat.name)];
+      const office = preloadedCategories.filter(c => c.name === "Office Chair");
+      const rest = preloadedCategories.filter(c => c.name !== "Office Chair");
+      return ["All Products", ...[...office, ...rest].map(c => c.name)];
     }
     return ["All Products"];
   });
