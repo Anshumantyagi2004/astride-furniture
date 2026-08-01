@@ -531,7 +531,7 @@ export default function Navbar() {
               <button
                 key={category._id || category.name}
                 onMouseEnter={() => setActiveMenu(category.name)}
-                onClick={() => router.push(`/products?category=${encodeURIComponent(category.name)}`)}
+                onClick={() => router.push(`/products?category=${category.slug || encodeURIComponent(category.name)}`)}
                 className={`relative group transition-all duration-300 px-3 py-1 uppercase tracking-wider text-sm font-black ${
                   activeMenu === category.name ? 'text-white' : 'text-[#BABABA] hover:text-white'
                 }`}
@@ -768,7 +768,7 @@ export default function Navbar() {
                   {categoryList.map((category) => (
                     <Link
                       key={category._id || category.name}
-                      href={`/products?category=${encodeURIComponent(category.name)}`}
+                      href={`/products?category=${category.slug || encodeURIComponent(category.name)}`}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center justify-between text-[14px] font-bold text-zinc-300 hover:text-white uppercase tracking-widest py-3 px-4 rounded-xl hover:bg-zinc-900/50 transition-all duration-300 border-l-2 border-transparent hover:border-zinc-400"
                     >

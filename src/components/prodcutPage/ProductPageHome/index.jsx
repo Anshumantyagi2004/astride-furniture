@@ -131,19 +131,23 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
   // Decode URL category immediately (no waiting)
   const urlCategory = catParam ? decodeURIComponent(catParam) : null;
 
-  // Helper to find a matching tab for a category param
+  // Helper to find a matching tab for a category param (supports names & slugs)
   function findTabMatch(decoded, tabList) {
-    let match = tabList.find(t => t.toLowerCase() === decoded.toLowerCase());
-    if (!match && (decoded.toLowerCase().includes('bar') || decoded.toLowerCase().includes('stool') || decoded.toLowerCase().includes('cafe'))) {
+    if (!decoded) return null;
+    const cleanDecoded = decoded.replace(/-/g, ' ').toLowerCase();
+    
+    let match = tabList.find(t => t.toLowerCase() === cleanDecoded);
+    if (!match && (cleanDecoded.includes('bar') || cleanDecoded.includes('stool') || cleanDecoded.includes('cafe'))) {
       match = tabList.find(t => t.toLowerCase().includes('bar')) || "Bar Stools & Cafe Chair";
     }
     return match || null;
   }
 
-  // Set category IMMEDIATELY from URL (instant - no waiting for API)
+  // Set category IMMEDIATELY from URL (supports category slugs)
   useEffect(() => {
     if (urlCategory) {
-      setSelectedCategory(urlCategory);
+      const match = findTabMatch(urlCategory, tabs);
+      setSelectedCategory(match || urlCategory);
     } else {
       setSelectedCategory("All Products");
     }
@@ -156,14 +160,13 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     }
-  }, [urlCategory, searchParam]);
+  }, [urlCategory, searchParam, tabs]);
 
   // Verify and correct category match once tabs populate from API
   useEffect(() => {
     if (tabs.length > 1 && urlCategory) {
       const match = findTabMatch(urlCategory, tabs);
-      if (match && match !== urlCategory) {
-        // Only update if the API found an exact match that's different from URL
+      if (match && match !== selectedCategory) {
         setSelectedCategory(match);
       }
     }
@@ -369,7 +372,16 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
   // Filter logic
   const filteredProducts = useMemo(() => {
     return productsList.filter((product) => {
-      if (selectedCategory && selectedCategory !== "All Products" && product.category !== selectedCategory) return false;
+      if (selectedCategory && selectedCategory !== "All Products") {
+        const normSelected = selectedCategory.replace(/-/g, ' ').toLowerCase();
+        const normProdCat = (product.category || "").replace(/-/g, ' ').toLowerCase();
+
+        let isMatch = normProdCat === normSelected;
+        if (!isMatch && (normSelected.includes('bar') || normSelected.includes('stool') || normSelected.includes('cafe'))) {
+          isMatch = normProdCat.includes('bar') || normProdCat.includes('stool') || normProdCat.includes('cafe');
+        }
+        if (!isMatch) return false;
+      }
       if (selectedBackSupport && product.backSupport !== selectedBackSupport) return false;
       if (selectedHours && product.hours !== selectedHours) return false;
       if (selectedCapacity && product.capacity !== selectedCapacity) return false;
