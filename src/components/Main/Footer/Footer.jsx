@@ -90,10 +90,10 @@ export default function Footer() {
                             Shop
                         </h4>
                         {[
-                            { name: "Gaming Chairs", link: "/products?category=Gaming%20Chair" },
-                            { name: "Office Chairs", link: "/products?category=Office%20Chair" },
-                            { name: "Study Chairs", link: "/products?category=Study%20Chair" },
-                            { name: "Bar Stools & Cafe Chair", link: "/products?category=Bar%20Stools%20%26%20Cafe%20Chair" },
+                            { name: "Gaming Chairs", link: "/products/category/gaming-chair" },
+                            { name: "Office Chairs", link: "/products/category/executive-chair" },
+                            { name: "Study Chairs", link: "/products/category/study-chair" },
+                            { name: "Bar Stools & Cafe Chair", link: "/products/category/bar-stool" },
                             { name: "All Products", link: "/products" },
                         ].map((item, index) => (
                             <Link
