@@ -91,7 +91,7 @@ export default function Footer() {
                         </h4>
                         {[
                             { name: "Gaming Chairs", link: "/products/category/gaming-chair" },
-                            { name: "Office Chairs", link: "/products/category/executive-chair" },
+                            { name: "Office Chairs", link: "/products/category/office-chair" },
                             { name: "Study Chairs", link: "/products/category/study-chair" },
                             { name: "Bar Stools & Cafe Chair", link: "/products/category/bar-stool" },
                             { name: "All Products", link: "/products" },

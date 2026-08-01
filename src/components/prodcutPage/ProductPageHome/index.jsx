@@ -146,6 +146,9 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
     if (!match && (cleanDecoded.includes('bar') || cleanDecoded.includes('stool') || cleanDecoded.includes('cafe'))) {
       match = tabList.find(t => t.toLowerCase().includes('bar')) || "Bar Stools & Cafe Chair";
     }
+    if (!match && (cleanDecoded.includes('office') || cleanDecoded.includes('executive'))) {
+      match = tabList.find(t => t.toLowerCase().includes('office') || t.toLowerCase().includes('executive')) || "Office Chair";
+    }
     return match || null;
   }
 

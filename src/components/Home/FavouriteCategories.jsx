@@ -20,11 +20,11 @@ const sans = Plus_Jakarta_Sans({
     variable: "--font-sans",
 });
 
-const TABS = ["Bar Stools & Cafe Chair", "Gaming Chair", "Office Chair", "Staff Chair", "Study Chair"];
+const TABS = ["Office Chair", "Gaming Chair", "Staff Chair", "Study Chair", "Bar Stools & Cafe Chair"];
 
 // Segmenting items cleanly for mobile view arrangement rules
-const MOBILE_ROW_ONE = ["Bar Stools & Cafe Chair", "Gaming Chair", "Office Chair"];
-const MOBILE_ROW_TWO = ["Staff Chair", "Study Chair"];
+const MOBILE_ROW_ONE = ["Office Chair", "Gaming Chair", "Staff Chair"];
+const MOBILE_ROW_TWO = ["Study Chair", "Bar Stools & Cafe Chair"];
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -245,7 +245,7 @@ const STATIC_FAVOURITES = [
 // ==========================================
 export default function FavouriteCategories() {
     const { products: rawProducts, loading } = useProducts();
-    const [activeCategory, setActiveCategory] = useState("Bar Stools & Cafe Chair");
+    const [activeCategory, setActiveCategory] = useState("Office Chair");
     const [productsList, setProductsList] = useState(STATIC_FAVOURITES);
     const [wishlisted, setWishlisted] = useState({});
 

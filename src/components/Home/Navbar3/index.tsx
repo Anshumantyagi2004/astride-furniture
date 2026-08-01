@@ -195,7 +195,7 @@ export default function Navbar3() {
 
     const displayCategories = categories.length > 0 ? categories : [
         { _id: "staff-chair", name: "Staff Chair", slug: "staff-chair" },
-        { _id: "executive-chair", name: "Office Chair", slug: "executive-chair" },
+        { _id: "office-chair", name: "Office Chair", slug: "office-chair" },
         { _id: "gaming-chair", name: "Gaming Chair", slug: "gaming-chair" },
         { _id: "study-chair", name: "Study Chair", slug: "study-chair" },
         { _id: "bar-stool", name: "Bar Stools & Cafe Chair", slug: "bar-stool" },
