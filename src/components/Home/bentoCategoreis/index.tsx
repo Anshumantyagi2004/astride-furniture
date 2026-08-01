@@ -38,7 +38,7 @@ const CATEGORIES: BentoCategory[] = [
     title: 'Gaming Chair',
     subtitle: 'Explore high-performance racing cockpits designed for ultimate lumbar support and game-winning comfort.',
     image: '/Png1/chair11_octave.webp',
-    href: '/products?category=Gaming%20Chair',
+    href: '/products/category/gaming-chair',
     colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
     imageClass: 'absolute right-2 top-1/2 -translate-y-1/2 md:top-auto md:bottom-0 md:-translate-y-3 w-[42%] md:w-[32%] h-[85%] md:h-[80%] transform md:group-hover:scale-105 transition-transform duration-500 ease-out',
     
@@ -53,7 +53,7 @@ const CATEGORIES: BentoCategory[] = [
     title: 'Staff Chair',
     subtitle: 'Sleek executive task chairs engineered to maximize posture.',
     image: '/Png1/chair4_ACE.webp',
-    href: '/products?category=Staff%20Chair',
+    href: '/products/category/staff-chair',
     colSpan: 'lg:col-span-4 md:col-span-5 col-span-12',
     imageClass: 'absolute right-2 top-1/2 -translate-y-1/2 md:top-auto md:bottom-0 md:-translate-y-9 w-[38%] md:w-[35%] h-[80%] md:h-[80%] transform md:group-hover:scale-105 transition-transform duration-500 ease-out',
     
@@ -68,7 +68,7 @@ const CATEGORIES: BentoCategory[] = [
     title: 'Study Chair',
     subtitle: 'Self-adjusting active tension cradles.',
     image: '/Png1/chair5_AIRSENSE.webp',
-    href: '/products?category=Study%20Chair',
+    href: '/products/category/study-chair',
     colSpan: 'lg:col-span-4 md:col-span-5 col-span-12',
     imageClass: 'absolute right-1 top-1/2 -translate-y-1/2 md:top-auto md:bottom-0 md:translate-y-0 w-[48%] md:w-[52%] h-[95%] md:h-[110%] transform md:group-hover:scale-105 transition-transform duration-500 ease-out',
     
@@ -83,7 +83,7 @@ const CATEGORIES: BentoCategory[] = [
     title: 'Bar Stools & Cafe Chair',
     subtitle: 'Elevate your counter experience with premium luxury bar stools and ergonomic counter-height seating.',
     image: '/Png1/chair6c_Rapid Black.webp',
-    href: '/products?category=Bar%20Stools%20%26%20Cafe%20Chair',
+    href: '/products/category/bar-stool',
     colSpan: 'lg:col-span-8 md:col-span-7 col-span-12',
     imageClass: 'absolute right-2 top-1/2 -translate-y-1/2 md:top-auto md:bottom-0 md:translate-y-0 w-[45%] md:w-[40%] h-[90%] md:h-[95%] transform md:group-hover:scale-105 transition-transform duration-500 ease-out',
     
