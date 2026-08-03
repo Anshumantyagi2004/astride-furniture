@@ -131,6 +131,8 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
   const [maxPrice, setMaxPrice] = useState(25000);
   const [wishlisted, setWishlisted] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const categoryCarouselRef = React.useRef(null);
+  const categoryButtonsRef = React.useRef({});
 
   const searchParams = useSearchParams();
   const catParam = searchParams ? searchParams.get('category') : null;
@@ -410,6 +412,17 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
     });
   }, [productsList, selectedCategory, selectedBackSupport, selectedHours, selectedCapacity, maxPrice]);
 
+  // Auto-scroll category tabs into view on mobile when selected
+  useEffect(() => {
+    const activeBtn = categoryButtonsRef.current[selectedCategory];
+    const container = categoryCarouselRef.current;
+    if (activeBtn && container && window.innerWidth < 768) {
+      setTimeout(() => {
+        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }, 100);
+    }
+  }, [selectedCategory]);
+
   const toggleWishlist = (id) => {
     setWishlisted((prev) => {
       const updated = { ...prev, [id]: !prev[id] };
@@ -495,12 +508,13 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
 
             {/* Swipeable single row capsule */}
             <div className="-mx-4 bg-gray-100 rounded-[20px] border border-gray-200/50 p-2 mb-4">
-              <div className="flex overflow-x-auto gap-1 w-full scrollbar-hide px-2">
+              <div ref={categoryCarouselRef} className="flex overflow-x-auto gap-1 w-full scrollbar-hide px-2">
                 {tabs.map((tab) => {
                   const isActive = selectedCategory === tab;
                   return (
                     <button
                       key={tab}
+                      ref={(el) => { if (el) categoryButtonsRef.current[tab] = el; }}
                       onClick={() => {
                         setSelectedCategory(tab);
                         if (tab === "All Products") {

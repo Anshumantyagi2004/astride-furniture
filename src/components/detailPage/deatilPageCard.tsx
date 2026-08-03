@@ -831,7 +831,7 @@ export default function DetailPageCard({ product }: { product: any }) {
                   +
                 </span>
               </button>
-              <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'whychoose' ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div className={`overflow-hidden transition-all duration-300 ${activeTab === 'whychoose' ? 'max-h-max opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className="px-5 pb-6 text-[#444] text-[15px] leading-[1.6]">
                   {product.whychoose ? (
                     <div
