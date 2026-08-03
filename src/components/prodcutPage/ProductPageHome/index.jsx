@@ -456,7 +456,7 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans select-none overflow-x-hidden">
       
       {/* ── Page Header ── */}
-      <div className="max-w-[1600px] mx-auto px-4 md:px-8 pt-8 md:pt-16 pb-0">
+      <div className="max-w-[1600px] mx-auto px-2 sm:px-4 md:px-8 pt-4 sm:pt-8 md:pt-16 pb-0">
         
         {/* Breadcrumb */}
         <div className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6 md:mb-10">
@@ -468,11 +468,11 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
         </div>
  
         {/* Title */}
-        <div className="text-center mb-6 md:mb-12">
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-black mb-3 md:mb-5">
+        <div className="text-center mb-3 sm:mb-6 md:mb-12">
+          <h1 className="text-xl sm:text-3xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-black mb-2 sm:mb-3 md:mb-5">
             {selectedCategory === "All Products" ? "All Premium Seating" : selectedCategory + " Series"}
           </h1>
-          <p className="max-w-2xl mx-auto text-xs md:text-base text-neutral-500 leading-relaxed font-medium px-2">
+          <p className="max-w-2xl mx-auto text-[11px] sm:text-xs md:text-base text-neutral-500 leading-relaxed font-medium px-2">
             Discover Astride's premium ergonomics — masterfully engineered seating built for long-session endurance, proactive posture correction, and premium styling.
           </p>
         </div>
@@ -561,30 +561,30 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
         </div>
 
         {/* ── Mobile Filter Bar ── */}
-        <div className="flex lg:hidden items-center justify-between mb-4 px-0">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+        <div className="flex lg:hidden items-center justify-between mb-3 sm:mb-4 px-0 gap-2">
+          <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate">
             {filteredProducts.length} Products
           </p>
           <button
             onClick={() => setIsFilterOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-black text-white text-[11px] font-bold uppercase tracking-wider transition-all active:scale-95"
+            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full bg-black text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all active:scale-95 shrink-0"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
-            Filters{activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ""}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
+            <span className="hidden xs:inline">Filters{activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ""}</span>
           </button>
         </div>
       </div>
 
       {/* ── Mobile Filter Drawer (Slide-up) ── */}
       {isFilterOpen && (
-        <div className="lg:hidden fixed inset-0 z-[1000]">
+        <div className="lg:hidden fixed inset-0 z-[1000] pointer-events-auto">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm pointer-events-auto"
             onClick={() => setIsFilterOpen(false)}
           />
           {/* Panel */}
-          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto">
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto pointer-events-auto">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-sm font-bold uppercase tracking-widest text-black">Filters</h2>
               <div className="flex items-center gap-4">
@@ -653,9 +653,9 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
 
             {/* Price */}
             <div className="mb-8">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center mb-4 gap-2">
                 <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Max Price</h3>
-                <span className="text-sm font-black text-slate-900">₹{maxPrice.toLocaleString()}</span>
+                <span className="text-xs sm:text-sm font-black text-slate-900">₹{maxPrice.toLocaleString()}</span>
               </div>
               <input
                 type="range" min={0} max={25000} step={500} value={maxPrice}
@@ -675,7 +675,7 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
       )}
 
       {/* ── Main Content ── */}
-      <div className="max-w-[1600px] mx-auto px-4 md:px-8 pb-12">
+      <div className="max-w-[1600px] mx-auto px-2 sm:px-4 md:px-8 pb-12">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
           {/* ── Desktop Sidebar Filters ── */}
@@ -730,9 +730,9 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
             )}
 
             <div className="pt-2">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center mb-4 gap-2">
                 <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Max Price</h3>
-                <span className="text-[13px] font-black text-slate-900">₹{maxPrice.toLocaleString()}</span>
+                <span className="text-[13px] font-black text-slate-900 whitespace-nowrap">₹{maxPrice.toLocaleString()}</span>
               </div>
               <input type="range" min={0} max={25000} step={500} value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} className="w-full accent-slate-900 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none" />
             </div>

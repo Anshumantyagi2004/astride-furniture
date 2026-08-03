@@ -30,7 +30,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
       onClick={() => router.push(`/products/${product.slug || product.id}`)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative w-full max-w-[280px] h-[340px] bg-white rounded-[28px] p-4 pb-5 pt-3.5 border border-slate-100 shadow-sm flex flex-col justify-between overflow-hidden cursor-pointer hover:scale-[1.02] hover:shadow-md transition-all duration-300"
+      className="group relative w-full max-w-[280px] min-h-[340px] sm:h-[340px] bg-white rounded-[28px] p-3 sm:p-4 pb-4 sm:pb-5 pt-2.5 sm:pt-3.5 border border-slate-100 shadow-sm flex flex-col justify-between cursor-pointer hover:scale-[1.02] hover:shadow-md transition-all duration-300"
     >
       {/* Background radial reflection glow for added visual shine */}
       <div className="absolute inset-0 bg-gradient-to-tr from-white/80 via-transparent to-black/[0.01] pointer-events-none rounded-[28px]" />
@@ -62,7 +62,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
       </div>
 
       {/* Image Area */}
-      <div className="relative w-full h-[52%] flex flex-col items-center justify-center z-[5] my-0.5">
+      <div className="relative w-full h-[45%] sm:h-[52%] flex flex-col items-center justify-center z-[5] my-0.5">
         <Image
           src={images[currentImageIndex] || product.image}
           alt={product.name}
@@ -86,27 +86,27 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
       </div>
 
       {/* Bottom Metadata */}
-      <div className="w-full flex flex-col gap-1 z-10 relative">
+      <div className="w-full flex flex-col gap-0.5 sm:gap-1 z-10 relative">
         {/* Name, Rating & Pricing */}
-        <div className="flex flex-col gap-1">
-          <h3 className="text-sm font-black text-slate-900 tracking-tight leading-tight md:text-base pr-2 truncate">
+        <div className="flex flex-col gap-0.5 sm:gap-1">
+          <h3 className="text-xs sm:text-sm font-black text-slate-900 tracking-tight leading-tight md:text-base pr-2 truncate">
             {product.name}
           </h3>
-          <div className="flex justify-between items-center w-full">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-black text-slate-900 md:text-sm">
+          <div className="flex justify-between items-center w-full gap-1">
+            <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+              <span className="text-[11px] sm:text-xs font-black text-slate-900 md:text-sm">
                 ₹{product.price.toLocaleString()}
               </span>
-              <span className="text-[10px] font-bold text-slate-400 line-through">
+              <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 line-through">
                 ₹{product.originalPrice.toLocaleString()}
               </span>
             </div>
             {product.rating && (
-              <div className="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded-lg border border-slate-100 shadow-sm shrink-0 mb-[1px]">
-                <span className="text-[9px] font-black text-slate-800">{product.rating}</span>
+              <div className="flex items-center gap-0.5 bg-white px-1 sm:px-1.5 py-0.5 rounded-lg border border-slate-100 shadow-sm shrink-0 mb-[1px]">
+                <span className="text-[8px] sm:text-[9px] font-black text-slate-800">{product.rating}</span>
                 <svg 
-                  width="9" 
-                  height="9" 
+                  width="8" 
+                  height="8"
                   viewBox="0 0 24 24" 
                   fill="#fbbf24" 
                   stroke="#fbbf24" 
@@ -121,7 +121,7 @@ const ProductPageCard = ({ product, isWishlisted, onToggleWishlist }) => {
         </div>
 
         {/* Always visible animated Pearl Button component */}
-        <div className="w-full mt-1.5">
+        <div className="w-full mt-1 sm:mt-1.5">
           <Button onClick={(e) => {
             e.stopPropagation();
             const cardVariantColor = product.color || product.colorVariants?.[0]?.colorName || "Black";
