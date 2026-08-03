@@ -32,7 +32,7 @@ export default function AboutSection_New() {
       id="about"
       className="relative bg-[#F1E8D6] pt-6 pb-[70px] md:pt-6 md:pb-[90px] lg:pt-8 lg:pb-[120px]"
     >
-      <div className="mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12">
+      <div className={`mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12 ${sans.className}`}>
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
           {/* Left Content */}
           <div>
@@ -44,20 +44,20 @@ export default function AboutSection_New() {
             {/* Heading */}
             <h2 className="mt-5 text-[36px] font-black leading-tight text-[#131313] md:text-[48px] lg:text-[58px]">
               India&apos;s trusted{" "}
-              <span className={`${sans.className} bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold`}>
+              <span className={` bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold`}>
                 chair makers.
               </span>
             </h2>
 
             {/* Paragraphs */}
-            <p className={`mt-5 max-w-[540px] text-[16px] font-medium leading-8 text-[#333333] ${sans.className}`}>
+            <p className={`mt-5 max-w-[540px] text-[16px] font-medium leading-8 text-[#333333] `}>
               We create premium ergonomic chairs designed for comfort,
               elegance, and productivity. From work-from-home setups to
               executive seating, every chair is crafted with modern aesthetics
               and serious support.
             </p>
 
-            <p className={`mt-5 max-w-[540px] text-[16px] font-medium leading-8 text-[#333333] ${sans.className} hidden md:block`}>
+            <p className={`mt-5 max-w-[540px] text-[16px] font-medium leading-8 text-[#333333]  hidden md:block`}>
               Mesh backs, lumbar support, revolving bases, adjustable
               everything — built with innovation, durability, and a whole lot
               of style.
@@ -71,10 +71,10 @@ export default function AboutSection_New() {
                   className={`
                     rounded-full px-[18px] py-[9px]
                     text-[13px] font-semibold
-                    ${sans.className}
+                    
                     ${
                       index % 2 === 0
-                        ? "border-2 border-[#131313] bg-white shadow-[3px_3px_0_#131313] -rotate-1"
+                        ? "border-2 border-[#7a5959] bg-white shadow-[3px_3px_0_#131313] -rotate-1"
                         : "border-2 border-[#8B5CF6] bg-white shadow-[3px_3px_0_#8B5CF6] rotate-[1.4deg]"
                     }
                   `}
@@ -112,7 +112,7 @@ export default function AboutSection_New() {
                 px-[22px] py-3
                 text-[22px] font-bold
                 text-[#131313]
-                shadow-[5px_5px_0_#131313]
+                // shadow-[5px_5px_0_#131313]
               "
             >
               crafted, not copied ✦

@@ -117,10 +117,10 @@ function ChairCard({ chair, products, priorityLoad }) {
             <div className="relative z-10 px-6 pb-5 bg-white">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className={`text-xl text-[#161316] font-bold ${sans.className}`}>
+                        <h3 className={`text-xl text-[#161316] font-bold `}>
                             {chair.name}
                         </h3>
-                        <p className={`text-[#8B5CF6] text-sm font-semibold mt-1 ${sans.className}`}>
+                        <p className={`text-[#8B5CF6] text-sm font-semibold mt-1`}>
                             {chair.subtitle}
                         </p>
                     </div>
@@ -142,10 +142,10 @@ export default function ChairSection() {
             
             <div className="relative z-10 px-4 md:px-10 lg:px-20 mx-auto max-w-[1600px]">
                 <div className="text-center mb-8">
-                    <p className={`uppercase tracking-[5px] text-[#8B5CF6] text-sm font-extrabold ${sans.className}`}>
+                    <p className={`uppercase tracking-[5px] text-[#8B5CF6] text-sm font-extrabold `}>
                         Premium Ergonomics
                     </p>
-                    <h2 className={`text-4xl md:text-6xl font-black text-[#161316] leading-none mt-2 ${sans.className}`}>
+                    <h2 className={`text-4xl md:text-6xl font-black text-[#161316] leading-none mt-2 `}>
                         Designed For <br />
                         <span className="bg-gradient-to-r from-[#8B5CF6] via-[#EC4899] to-[#F97316] bg-clip-text text-transparent font-extrabold">Modern Workspace</span>
                     </h2>

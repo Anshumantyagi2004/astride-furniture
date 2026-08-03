@@ -151,7 +151,9 @@ export default function AstrideOffers() {
                     <div className="w-full h-[460px] bg-[#0058A3] rounded-[14px] overflow-hidden flex flex-col justify-between text-white border-[2.5px] border-[#131313] shadow-[6px_6px_0_#131313]">
                       <div className="relative w-full h-[180px] shrink-0 bg-[#004e92] border-b-[2.5px] border-[#131313] flex items-center justify-center p-4">
                         <div className="relative w-[70%] h-[70%] flex items-center justify-center">
-                          <img 
+                          <Image
+                                                    height={100}
+                                                    width={100}
                             src={bannerSrc} 
                             alt="Astride Family offers" 
                             className="w-full h-full object-contain drop-shadow-2xl"
@@ -198,7 +200,9 @@ export default function AstrideOffers() {
           <div className="hidden md:flex absolute right-0 top-0 h-[460px] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] bg-[#0058A3] rounded-[14px] overflow-hidden flex-col justify-between z-20 text-white border-[2.5px] border-[#131313] shadow-[6px_6px_0_#131313]">
             <div className="relative w-full h-[180px] shrink-0 bg-[#004e92] border-b-[2.5px] border-[#131313] flex items-center justify-center p-4">
               <div className="relative w-[70%] h-[70%] flex items-center justify-center">
-                <img 
+                <Image
+                                                    height={100}
+                                                    width={100}
                   src={bannerSrc} 
                   alt="Astride Family offers" 
                   className="w-full h-full object-contain drop-shadow-2xl scale-100 transition-transform duration-700 hover:scale-110"

@@ -10,6 +10,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 
 import "swiper/css";
+import Image from "next/image";
 
 const sans = Plus_Jakarta_Sans({
     subsets: ["latin"],
@@ -112,7 +113,9 @@ export default function Category({ initialCategories = [] }) {
                                         >
                                             <div className="group relative overflow-hidden rounded-[14px] bg-white border-[2.5px] border-[#131313] shadow-[4px_4px_0_#131313] active:translate-y-[2px] active:shadow-[2px_2px_0_#131313] transition-all duration-200">
                                                 <div className="relative h-[150px] w-full overflow-hidden bg-white border-b-[2.5px] border-[#131313]">
-                                                    <img
+                                                    <Image
+                                                    height={100}
+                                                    width={100}
                                                         src={category.image}
                                                         alt={category.name}
                                                         className="w-full h-full object-contain p-2"
@@ -153,7 +156,9 @@ export default function Category({ initialCategories = [] }) {
                                         className="group relative overflow-hidden rounded-[14px] bg-white border-[2.5px] border-[#131313] shadow-[5px_5px_0_#131313] transition-transform duration-300 hover:-translate-y-2 hover:shadow-[9px_12px_0_rgba(19,19,19,0.9)] max-md:!opacity-100 max-md:!transform-none">
 
                                         <div className="relative h-[300px] w-full overflow-hidden bg-white border-b-[2.5px] border-[#131313]">
-                                            <img
+                                            <Image
+                                                    height={100}
+                                                    width={100}
                                                 src={category.image}
                                                 alt={category.name}
                                                 className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
