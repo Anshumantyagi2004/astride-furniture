@@ -378,7 +378,16 @@ export default function FavouriteCategories() {
                     animate={{ x: [0, 8, 0] }}
                     transition={{ duration: 1, ease: "easeInOut", repeat: Infinity, repeatDelay: 0.5 }}
                 >
-                    <span className="flex items-center gap-0.5 text-[10px] text-gray-400 font-semibold">
+                    <span
+                      onClick={() => {
+    if (mobileCarouselRef.current) {
+      mobileCarouselRef.current.scrollBy({
+        left: 150, // adjust distance
+        behavior: "smooth",
+      });
+    }
+  }}
+                     className="flex items-center gap-0.5 text-[10px] text-gray-400 font-semibold">
                         swipe <ChevronRight size={14} className="text-gray-400" strokeWidth={2.5} />
                     </span>
                 </motion.div>

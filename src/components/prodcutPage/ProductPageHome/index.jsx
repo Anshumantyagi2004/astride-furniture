@@ -501,7 +501,14 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
               animate={{ x: [0, 8, 0] }}
               transition={{ duration: 1, ease: "easeInOut", repeat: Infinity, repeatDelay: 0.5 }}
             >
-              <span className="flex items-center gap-0.5 text-[10px] text-gray-400 font-semibold">
+              <span   onClick={() => {
+    if (categoryCarouselRef.current) {
+      categoryCarouselRef.current.scrollBy({
+        left: 150,
+        behavior: "smooth",
+      });
+    }
+  }} className="flex items-center gap-0.5 text-[10px] text-gray-400 font-semibold">
                 swipe <ChevronRight size={14} className="text-gray-400" strokeWidth={2.5} />
               </span>
             </motion.div>
@@ -515,16 +522,7 @@ export default function ProductPageHome({ preloadedProducts = [], preloadedCateg
                     <button
                       key={tab}
                       ref={(el) => { if (el) categoryButtonsRef.current[tab] = el; }}
-                      onClick={() => {
-                        setSelectedCategory(tab);
-                        if (tab === "All Products") {
-                          router.push("/products");
-                        } else {
-                          const catObj = preloadedCategories.find(c => c.name === tab);
-                          const catSlug = catObj?.slug || encodeURIComponent(tab);
-                          router.push(`/products/category/${catSlug}`);
-                        }
-                      }}
+                      onClick={() => setSelectedCategory(tab)}
                       className="relative px-3.5 py-2 rounded-full text-[11px] font-bold transition-colors duration-300 focus:outline-none shrink-0"
                     >
                       {isActive && (
