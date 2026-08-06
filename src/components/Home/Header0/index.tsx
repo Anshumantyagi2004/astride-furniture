@@ -130,6 +130,7 @@ export default function Header0() {
                   fill
                   className="object-cover object-center"
                   priority={idx === 0}
+                  loading={idx === 0 ? "eager" : "lazy"}
                 />
               </Link>
             </SwiperSlide>
