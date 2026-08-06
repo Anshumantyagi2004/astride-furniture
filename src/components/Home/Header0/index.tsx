@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/ui/loader";
@@ -9,6 +10,9 @@ import { ChevronRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+
+// const Swiper = dynamic(() => import("swiper/react").then(m => m.Swiper), { ssr: false });
+// const SwiperSlide = dynamic(() => import("swiper/react").then(m => m.SwiperSlide), { ssr: false });
 
 import ChairFinder from "../ChairFinder";
 
@@ -69,12 +73,14 @@ export default function Header0() {
   const handleBannerClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsNavigating(true);
+  setTimeout(() => {
     router.push("/products");
+  }, 150);
   };
 
   if (showFinder) {
     return (
-      <section id="circular-chairs" className="relative w-full h-[70vh] min-h-[520px] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
+      <section id="circular-chairs" className="relative w-full h-[60vh] sm:h-[70vh] md:h-[85vh] md:min-h-[600px] overflow-hidden bg-zinc-900">
         <ChairFinder onBack={() => setShowFinder(false)} />
       </section>
     );
@@ -107,7 +113,7 @@ export default function Header0() {
           effect="fade"
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           pagination={{ clickable: true }}
-          loop={slides.length >= 4}
+          loop={slides.length > 1}
           className="w-full h-full"
         >
           {slides.map((slide, idx) => (
@@ -122,7 +128,6 @@ export default function Header0() {
                   src={slide.src}
                   alt={slide.alt}
                   fill
-                  unoptimized
                   className="object-cover object-center"
                   priority={idx === 0}
                 />
@@ -139,7 +144,7 @@ export default function Header0() {
           effect="fade"
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           pagination={{ clickable: true }}
-          loop={mobileSlides.length >= 4}
+          loop={slides.length > 1}
           className="w-full h-full"
         >
           {mobileSlides.map((slide, idx) => (
