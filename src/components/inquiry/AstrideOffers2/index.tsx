@@ -246,19 +246,19 @@ function DealCard({ deal }: { deal: any }) {
   const [isHovered, setIsHovered] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    if (deal.images && deal.images.length > 1) {
-      // Auto sweep every 2.5 seconds (2500ms)
-      timerRef.current = setInterval(() => {
-        setCurrentImageIndex((prev) => (prev + 1) % deal.images.length);
-      }, 2500);
-    }
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
-  }, [deal.images]);
+//   useEffect(() => {
+//     if (deal.images && deal.images.length > 1) {
+//       // Auto sweep every 2.5 seconds (2500ms)
+//       timerRef.current = setInterval(() => {
+//         setCurrentImageIndex((prev) => (prev + 1) % deal.images.length);
+//       }, 2500);
+//     }
+//     return () => {
+//       if (timerRef.current) {
+//         clearInterval(timerRef.current);
+//       }
+//     };
+//   }, [deal.images]);
 
   return (
     <Link 
