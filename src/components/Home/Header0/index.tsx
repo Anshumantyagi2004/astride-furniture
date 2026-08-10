@@ -141,7 +141,7 @@ export default function Header0() {
       {/* MOBILE BANNER CAROUSEL (less than md) */}
       <div className="block md:hidden w-full h-full">
         <Swiper
-          modules={[Autoplay, Pagination, EffectFade]}
+          modules={[Autoplay, Pagination]}
           effect="fade"
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           pagination={{ clickable: true }}

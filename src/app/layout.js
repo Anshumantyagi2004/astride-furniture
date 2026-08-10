@@ -5,7 +5,6 @@ import SideMenuAddToCart from "@/components/Main/SideMenuAddToCart";
 import LayoutWrapper from "./LayoutWrapper";
 import Script from "next/script";
 
-
 const forum = Forum({
   subsets: ["latin"],
   weight: "400",
@@ -18,8 +17,10 @@ const sans = Plus_Jakarta_Sans({
 });
 
 export const metadata = {
-  title: "ASTRIDE® Office Chair Manufacturer| Ergonomic Office Chairs, Gaming Chairs & Workstations",
-  description: "Discover ASTRIDE® premium office Chair manufacturer including ergonomic office chairs, gaming chairs, executive chairs, visitor chairs, bar stools, workstations, and office seating solutions.",
+  title:
+    "ASTRIDE® Office Chair Manufacturer| Ergonomic Office Chairs, Gaming Chairs & Workstations",
+  description:
+    "Discover ASTRIDE® premium office Chair manufacturer including ergonomic office chairs, gaming chairs, executive chairs, visitor chairs, bar stools, workstations, and office seating solutions.",
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -42,9 +43,12 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${forum.variable} ${sans.variable} ${sans.className}`}>
+    <html
+      lang="en"
+      className={`${forum.variable} ${sans.variable} ${sans.className}`}
+    >
       <head>
-         {/* Google Analytics Script */}
+        {/* Google Analytics Script */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-QN4L70TBMR"
           strategy="afterInteractive"
@@ -57,11 +61,16 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-QN4L70TBMR');
           `}
         </Script>
+        <link rel="preload" as="image" href="/Png1/Mobile_banner.webp" />
         <meta
           name="google-site-verification"
           content="oo7Se9amQ-_Nfvln61Rt4HRmrRKaSecpc_wTTyBFTfk"
         />
-        <script defer src="https://cloud.umami.is/script.js" data-website-id="24892c29-995b-4c38-baa1-308094691027"></script>
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="24892c29-995b-4c38-baa1-308094691027"
+        ></script>
 
         <script
           dangerouslySetInnerHTML={{
@@ -104,9 +113,7 @@ export default function RootLayout({ children }) {
         {/* End Meta Pixel Code */}
       </head>
       <body className="min-h-screen">
-        <LayoutWrapper>
-          {children}
-        </LayoutWrapper>
+        <LayoutWrapper>{children}</LayoutWrapper>
         <Toaster position="top-center" />
         <SideMenuAddToCart />
       </body>
