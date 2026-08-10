@@ -30,7 +30,7 @@ const HeroMob = () => {
       >
         {banners.map((img, index) => (
           <SwiperSlide key={index}>
-            <div className="relative w-full h-[530px]">
+            <div className="relative w-full h-[580px]">
               <Image
                 src={img}
                 alt={`slide-${index}`}
