@@ -132,6 +132,29 @@ export async function PUT(req, { params }) {
 
 
         // ==========================================
+        // CHAIR SPECS
+        // ==========================================
+
+        let chairSpecs = product.chairSpecs;
+
+        const chairSpecsInput = formData.get("chairSpecs");
+
+        if (chairSpecsInput) {
+            try {
+                chairSpecs = JSON.parse(chairSpecsInput);
+            } catch {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: "Invalid chairSpecs format",
+                    },
+                    { status: 400 }
+                );
+            }
+        }
+
+
+        // ==========================================
         // UPDATE SLUG
         // ==========================================
 
@@ -155,98 +178,6 @@ export async function PUT(req, { params }) {
 
             product.slug = newSlug;
         }
-
-
-        // ==========================================
-        // EXISTING IMAGES TO KEEP
-        // ==========================================
-
-        let existingImages = product.images;
-
-        const existingImagesInput =
-            formData.get("existingImages");
-
-        if (existingImagesInput) {
-            try {
-                existingImages = JSON.parse(
-                    existingImagesInput
-                );
-            } catch {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        message: "Invalid existingImages format",
-                    },
-                    { status: 400 }
-                );
-            }
-        }
-
-
-        // ==========================================
-        // FIND IMAGES THAT WERE REMOVED
-        // ==========================================
-
-        const imagesToDelete = product.images.filter(
-            (oldImage) =>
-                !existingImages.some(
-                    (newImage) =>
-                        newImage.imageKey === oldImage.imageKey
-                )
-        );
-
-
-        // ==========================================
-        // NEW IMAGES
-        // ==========================================
-
-        const files = formData.getAll("images");
-
-        const newUploadedImages = [];
-
-        for (const file of files) {
-
-            if (!(file instanceof File)) {
-                continue;
-            }
-
-            const bytes = await file.arrayBuffer();
-
-            const buffer = Buffer.from(bytes);
-
-            const extension =
-                file.name
-                    .split(".")
-                    .pop()
-                    ?.toLowerCase() || "jpg";
-
-            const fileName =
-                `${Date.now()}-${crypto.randomUUID()}.${extension}`;
-
-
-            const uploadedImage = await uploadToR2({
-                file: buffer,
-                folder: "products",
-                fileName,
-                contentType: file.type,
-            });
-
-
-            newUploadedImages.push({
-                url: uploadedImage.url,
-                imageKey: uploadedImage.key,
-            });
-        }
-
-
-        // ==========================================
-        // FINAL IMAGE LIST
-        // ==========================================
-
-        product.images = [
-            ...existingImages,
-            ...newUploadedImages,
-        ];
 
 
         // ==========================================
@@ -274,34 +205,7 @@ export async function PUT(req, { params }) {
         }
 
         product.specifications = specifications;
-
-
-        // ==========================================
-        // DELETE REMOVED IMAGES FROM R2 FIRST (Fault-Tolerant)
-        // ==========================================
-
-        const deletionResults = await Promise.allSettled(
-            imagesToDelete.map((image) => deleteFromR2(image.imageKey))
-        );
-
-        const failedDeletions = deletionResults.filter(
-            (result) => result.status === "rejected"
-        );
-
-        if (failedDeletions.length > 0) {
-            console.error(
-                "Some R2 images could not be deleted:",
-                failedDeletions
-            );
-
-            return NextResponse.json(
-                {
-                    success: false,
-                    message: "Failed to delete removed images from storage. Product update aborted.",
-                },
-                { status: 500 }
-            );
-        }
+        product.chairSpecs = chairSpecs;
 
 
         // ==========================================
