@@ -209,6 +209,79 @@ export async function PUT(req, { params }) {
 
 
         // ==========================================
+        // COLOR VARIANTS (images, imageType, position)
+        // ==========================================
+
+        const colorVariantsInput = formData.get("colorVariants");
+
+        if (colorVariantsInput) {
+            let colorVariantsData;
+            try {
+                colorVariantsData = JSON.parse(colorVariantsInput);
+            } catch {
+                return NextResponse.json(
+                    { success: false, message: "Invalid colorVariants format" },
+                    { status: 400 }
+                );
+            }
+
+            const updatedColorVariants = [];
+
+            for (let variantIndex = 0; variantIndex < colorVariantsData.length; variantIndex++) {
+                const variant = colorVariantsData[variantIndex];
+
+                // 1. Start with existing images (already ordered + updated imageType from frontend)
+                const existingImages = (variant.existingImages || []).map((img) => ({
+                    url: img.url,
+                    imageField: img.imageField || "",
+                    imageType: img.imageType || "png",
+                }));
+
+                // 2. Upload any new files for this variant
+                const newFiles = formData.getAll(`variant_${variantIndex}`);
+                const newImageTypes = variant.newImageTypes || [];
+                const newUploadedImages = [];
+
+                for (let imgIdx = 0; imgIdx < newFiles.length; imgIdx++) {
+                    const file = newFiles[imgIdx];
+
+                    if (!(file instanceof File)) continue;
+
+                    const bytes = await file.arrayBuffer();
+                    const buffer = Buffer.from(bytes);
+
+                    const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+                    const fileName = `${Date.now()}-${crypto.randomUUID()}.${extension}`;
+
+                    const uploadedImage = await uploadToR2({
+                        file: buffer,
+                        folder: "products",
+                        fileName,
+                        contentType: file.type,
+                    });
+
+                    newUploadedImages.push({
+                        url: uploadedImage.url,
+                        imageField: uploadedImage.key,
+                        imageType: newImageTypes[imgIdx] || "png",
+                    });
+                }
+
+                // 3. Merge: existing (in their new order) + newly uploaded
+                updatedColorVariants.push({
+                    colorName: variant.colorName,
+                    colorCode: variant.colorCode || "",
+                    secondaryColorCode: variant.secondaryColorCode || "",
+                    colorMode: variant.colorMode || "name",
+                    images: [...existingImages, ...newUploadedImages],
+                });
+            }
+
+            product.colorVariants = updatedColorVariants;
+        }
+
+
+        // ==========================================
         // SAVE PRODUCT
         // ==========================================
 
