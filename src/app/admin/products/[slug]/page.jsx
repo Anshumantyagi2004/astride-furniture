@@ -393,6 +393,12 @@ export default function Page() {
         setSpecifications(updated);
     };
 
+    const handleSpecChange = (index, field, value) => {
+        const updated = [...specifications];
+        updated[index][field] = value;
+        setSpecifications(updated);
+    };
+
     const moveVariantImage = (variantIndex, imageIndex, direction) => {
         const updated = [...colorVariants];
         const targetIndex = direction === "left" ? imageIndex - 1 : imageIndex + 1;
