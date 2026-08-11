@@ -1,73 +1,71 @@
-// app/api/product/[id]/route.js
-
 import { NextResponse } from "next/server";
-import connectDB from "@/config/connectDB";
-import { verifyAdmin } from "@/lib/verifyAdmin";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+import crypto from "crypto";
+import connectDB from "@/lib/mongodb";
 import Product from "@/models/Product";
 import { uploadToR2 } from "@/utils/uploadToR2";
 import { deleteFromR2 } from "@/utils/deleteFromR2";
-import { generateSlug } from "@/utils/generateSlug";
-import crypto from "crypto";
-import path from "path";
 
+
+// ==========================================
 // GET SINGLE PRODUCT
+// ==========================================
+
 export async function GET(req, { params }) {
     try {
         await connectDB();
+
         const { slug } = await params;
-        let product = null;
-        if (slug && slug.match(/^[0-9a-fA-F]{24}$/)) {
-            product = await Product.findById(slug).populate("category");
-        }
-        if (!product) {
-            product = await Product.findOne({ slug: slug }).populate("category");
-        }
+
+        const product = await Product.findOne({
+            slug: slug.toLowerCase(),
+        });
 
         if (!product) {
             return NextResponse.json(
-                { success: false, message: "Product not found", },
+                {
+                    success: false,
+                    message: "Product not found",
+                },
                 { status: 404 }
             );
         }
 
-        const response = NextResponse.json(
-            { success: true, product, },
+        return NextResponse.json(
+            {
+                success: true,
+                product,
+            },
             { status: 200 }
         );
-        
-        // Prevent caching to ensure fresh data is always served
-        response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-        response.headers.set("Pragma", "no-cache");
-        response.headers.set("Expires", "0");
-        
-        return response;
+
     } catch (error) {
-        console.log(error);
+        console.error("Get product error:", error);
+
         return NextResponse.json(
-            { success: false, message: "Internal server error", },
+            {
+                success: false,
+                message: "Failed to fetch product",
+            },
             { status: 500 }
         );
     }
 }
 
+
+// ==========================================
 // UPDATE PRODUCT
+// ==========================================
+
 export async function PUT(req, { params }) {
     try {
-        if (!verifyAdmin(req)) {
-            return NextResponse.json(
-                { success: false, message: "Unauthorized" },
-                { status: 401 }
-            );
-        }
-
         await connectDB();
 
         const { slug } = await params;
 
-        const product = await Product.findOne({ slug });
+        // Find the existing product
+        const product = await Product.findOne({
+            slug: slug.toLowerCase(),
+        });
 
         if (!product) {
             return NextResponse.json(
@@ -81,171 +79,241 @@ export async function PUT(req, { params }) {
 
         const formData = await req.formData();
 
-        const productName = formData.get("productName");
-         const customSlug = formData.get("slug");
 
-        // ADD THESE TWO:
-        const metaTitleInput = formData.get("metaTitle");
-        const metaDescriptionInput = formData.get("metaDescription");
+        // ==========================================
+        // PRODUCT DETAILS
+        // ==========================================
 
-        // DUPLICATE NAME CHECK (excluding current product)
-        if (productName) {
-            const existingName = await Product.findOne({
-                productName: { $regex: new RegExp(`^${productName.trim()}$`, "i") },
-                _id: { $ne: product._id }
-            });
-            if (existingName) {
+        const productName =
+            formData.get("productName")?.trim();
+
+        const newSlug =
+            formData.get("slug")
+                ?.trim()
+                .toLowerCase();
+
+        const shortDescription =
+            formData.get("shortDescription")?.trim();
+
+        const longDescription =
+            formData.get("longDescription")?.trim();
+
+        const metaTitle =
+            formData.get("metaTitle")?.trim();
+
+        const metaDescription =
+            formData.get("metaDescription")?.trim();
+
+
+        // ==========================================
+        // SPECIFICATIONS
+        // ==========================================
+
+        let specifications = product.specifications;
+
+        const specificationsInput =
+            formData.get("specifications");
+
+        if (specificationsInput) {
+            try {
+                specifications = JSON.parse(
+                    specificationsInput
+                );
+            } catch {
                 return NextResponse.json(
-                    { success: false, message: "Product with this name already exists", },
+                    {
+                        success: false,
+                        message: "Invalid specifications format",
+                    },
                     { status: 400 }
                 );
             }
         }
 
-        const category = formData.get("category");
-        const oldPrice = formData.get("oldPrice");
-        const realPrice = formData.get("realPrice");
-        const shortDescription = formData.get("shortDescription");
-        const longDescription = formData.get("longDescription");
-        const keyfeatures = formData.get("keyfeatures");
-        const application = formData.get("application");
-        const whychoose = formData.get("whychoose");
 
-        const videoLinks = JSON.parse(
-            formData.get("videoLinks") || "[]"
-        );
+        // ==========================================
+        // UPDATE SLUG
+        // ==========================================
 
-        const specifications = JSON.parse(
-            formData.get("specifications") || "[]"
-        );
+        if (newSlug && newSlug !== product.slug) {
 
-        const chairSpecs = JSON.parse(
-            formData.get("chairSpecs") || "[]"
-        );
-
-        const colorVariantsData = JSON.parse(
-            formData.get("colorVariants") || "[]"
-        );
-
-        // Determine which old images to keep
-        const allExistingImagesToKeep = colorVariantsData.flatMap(v => (v.existingImages || []).map(img => img.imageField));
-
-        const imagesToDelete = [];
-        for (const variant of product.colorVariants) {
-            for (const image of variant.images) {
-                if (!allExistingImagesToKeep.includes(image.imageField)) {
-                    imagesToDelete.push(image.imageField);
-                }
-            }
-        }
-
-        // Delete removed images asynchronously
-        await Promise.all(imagesToDelete.map(imageField => deleteFromR2(imageField)));
-
-        // Upload new images and merge with existing ones
-        const uploadedColorVariants = await Promise.all(
-            colorVariantsData.map(async (variant, variantIndex) => {
-                const files = formData.getAll(`variant_${variantIndex}`);
-
-                const uploadedImages = await Promise.all(
-                    files.map(async (image, imgIdx) => {
-                        const bytes = await image.arrayBuffer();
-                        const buffer = Buffer.from(bytes);
-                        let extension = path.extname(image.name || "");
-                        if (!extension) {
-                            extension = image.type === "image/webp" ? ".webp" : (image.type === "image/jpeg" || image.type === "image/jpg" ? ".jpg" : ".png");
-                        }
-                        const fileName = `${Date.now()}-${generateSlug(productName)}-${variant.colorName}-${crypto.randomBytes(2).toString("hex")}${extension}`;
-
-                        const uploadedImage = await uploadToR2({
-                            file: buffer,
-                            folder: "products",
-                            fileName,
-                            contentType: image.type,
-                        });
-
-                        const newType = variant.newImageTypes && variant.newImageTypes[imgIdx] ? variant.newImageTypes[imgIdx] : "png";
-
-                        return {
-                            url: uploadedImage.url,
-                            imageField: uploadedImage.key,
-                            imageType: newType,
-                        };
-                    })
-                );
-
-                const existingImages = (variant.existingImages || []).map((img) => ({
-                    url: img.url,
-                    imageField: img.imageField || (img.url ? img.url.split("/").pop() : "products/image"),
-                    imageType: img.imageType || "png",
-                }));
-
-                return {
-                    colorName: variant.colorName,
-                    colorCode: variant.colorCode || "",
-                    secondaryColorCode: variant.secondaryColorCode || "",
-                    colorMode: variant.colorMode || "name",
-                    images: [...existingImages, ...uploadedImages],
-                };
-            })
-        );
-
-        product.colorVariants = uploadedColorVariants;
-
-        // UPDATE SLUG LOGIC
-        if (customSlug) {
-            const formattedSlug = generateSlug(customSlug);
-            const duplicateSlug = await Product.findOne({
-                slug: formattedSlug,
-                _id: { $ne: product._id } // Don't match against itself
+            const slugAlreadyExists = await Product.findOne({
+                slug: newSlug,
+                _id: { $ne: product._id },
             });
-            
-            if (duplicateSlug) {
+
+            if (slugAlreadyExists) {
                 return NextResponse.json(
-                    { success: false, message: "This slug is already in use by another product." },
+                    {
+                        success: false,
+                        message:
+                            "This slug is already being used by another product",
+                    },
                     { status: 400 }
                 );
             }
-            product.slug = formattedSlug;
-        } else if (productName) {
-            // If they didn't provide a custom slug, but they changed the name, regenerate the slug
-            product.slug = generateSlug(productName);
+
+            product.slug = newSlug;
         }
 
-        // UPDATE NAME LOGIC
+
+        // ==========================================
+        // EXISTING IMAGES TO KEEP
+        // ==========================================
+
+        let existingImages = product.images;
+
+        const existingImagesInput =
+            formData.get("existingImages");
+
+        if (existingImagesInput) {
+            try {
+                existingImages = JSON.parse(
+                    existingImagesInput
+                );
+            } catch {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: "Invalid existingImages format",
+                    },
+                    { status: 400 }
+                );
+            }
+        }
+
+
+        // ==========================================
+        // FIND IMAGES THAT WERE REMOVED
+        // ==========================================
+
+        const imagesToDelete = product.images.filter(
+            (oldImage) =>
+                !existingImages.some(
+                    (newImage) =>
+                        newImage.imageKey === oldImage.imageKey
+                )
+        );
+
+
+        // ==========================================
+        // NEW IMAGES
+        // ==========================================
+
+        const files = formData.getAll("images");
+
+        const newUploadedImages = [];
+
+        for (const file of files) {
+
+            if (!(file instanceof File)) {
+                continue;
+            }
+
+            const bytes = await file.arrayBuffer();
+
+            const buffer = Buffer.from(bytes);
+
+            const extension =
+                file.name
+                    .split(".")
+                    .pop()
+                    ?.toLowerCase() || "jpg";
+
+            const fileName =
+                `${Date.now()}-${crypto.randomUUID()}.${extension}`;
+
+
+            const uploadedImage = await uploadToR2({
+                file: buffer,
+                folder: "products",
+                fileName,
+                contentType: file.type,
+            });
+
+
+            newUploadedImages.push({
+                url: uploadedImage.url,
+                imageKey: uploadedImage.key,
+            });
+        }
+
+
+        // ==========================================
+        // FINAL IMAGE LIST
+        // ==========================================
+
+        product.images = [
+            ...existingImages,
+            ...newUploadedImages,
+        ];
+
+
+        // ==========================================
+        // UPDATE PRODUCT FIELDS
+        // ==========================================
+
         if (productName) {
             product.productName = productName;
         }
 
-        product.category = category ?? product.category;
-        product.oldPrice = oldPrice ?? product.oldPrice;
-        product.realPrice = realPrice ?? product.realPrice;
-        product.shortDescription = shortDescription ?? product.shortDescription;
-        product.longDescription = longDescription ?? product.longDescription;
-        product.keyfeatures = keyfeatures ?? product.keyfeatures;
-        product.application = application ?? product.application;
-        product.whychoose = whychoose ?? product.whychoose;
-        product.chairSpecs = (chairSpecs && chairSpecs.length) ? chairSpecs : product.chairSpecs;
-        product.videoLinks = (videoLinks && videoLinks.length) ? videoLinks : product.videoLinks;
-        product.specifications = (specifications && specifications.length) ? specifications : product.specifications;
+        if (shortDescription !== undefined) {
+            product.shortDescription = shortDescription;
+        }
 
-        // UPDATE METADATA VALUES:
-        if (metaTitleInput !== null && metaTitleInput !== undefined) {
-            product.metaTitle = metaTitleInput;
-        } else if (productName) {
-            product.metaTitle = `${productName} | Your Company`;
+        if (longDescription !== undefined) {
+            product.longDescription = longDescription;
         }
-        if (metaDescriptionInput !== null && metaDescriptionInput !== undefined) {
-            product.metaDescription = metaDescriptionInput;
-        } else if (productName) {
-            product.metaDescription = `Buy ${productName} at best price from our company.`;
+
+        if (metaTitle !== undefined) {
+            product.metaTitle = metaTitle;
         }
+
+        if (metaDescription !== undefined) {
+            product.metaDescription = metaDescription;
+        }
+
+        product.specifications = specifications;
+
+
+        // ==========================================
+        // DELETE REMOVED IMAGES FROM R2 FIRST (Fault-Tolerant)
+        // ==========================================
+
+        const deletionResults = await Promise.allSettled(
+            imagesToDelete.map((image) => deleteFromR2(image.imageKey))
+        );
+
+        const failedDeletions = deletionResults.filter(
+            (result) => result.status === "rejected"
+        );
+
+        if (failedDeletions.length > 0) {
+            console.error(
+                "Some R2 images could not be deleted:",
+                failedDeletions
+            );
+
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Failed to delete removed images from storage. Product update aborted.",
+                },
+                { status: 500 }
+            );
+        }
+
+
+        // ==========================================
+        // SAVE PRODUCT
+        // ==========================================
 
         await product.save();
 
-        // Invalidate global product cache
-        global.productCache = null;
-        global.productCacheTime = 0;
+
+        // ==========================================
+        // SUCCESS
+        // ==========================================
 
         return NextResponse.json(
             {
@@ -255,34 +323,39 @@ export async function PUT(req, { params }) {
             },
             { status: 200 }
         );
+
     } catch (error) {
-        console.log(error);
+
+        console.error("Update product error:", error);
 
         return NextResponse.json(
             {
                 success: false,
-                message: error.message || "Internal server error",
+                message:
+                    error instanceof Error
+                        ? error.message
+                        : "Failed to update product",
             },
             { status: 500 }
         );
     }
 }
 
+
+// ==========================================
+// DELETE PRODUCT
+// ==========================================
 // DELETE PRODUCT
 export async function DELETE(req, { params }) {
     try {
-        if (!verifyAdmin(req)) {
-            return NextResponse.json(
-                { success: false, message: "Unauthorized" },
-                { status: 401 }
-            );
-        }
-
         await connectDB();
 
         const { slug } = await params;
 
-        const product = await Product.findById(slug);
+        // Find product
+        const product = await Product.findOne({
+            slug: slug.toLowerCase(),
+        });
 
         if (!product) {
             return NextResponse.json(
@@ -294,35 +367,58 @@ export async function DELETE(req, { params }) {
             );
         }
 
-        // DELETE ALL VARIANT IMAGES
-        for (const variant of product.colorVariants) {
-            for (const image of variant.images) {
-                await deleteFromR2(
-                    image.imageField
-                );
-            }
+        // Safely extract images array
+        const imagesToDelete = product.images || [];
+
+        // Delete ALL images from R2 concurrently
+        const deletionResults = await Promise.allSettled(
+            imagesToDelete.map((image) =>
+                deleteFromR2(image.imageKey)
+            )
+        );
+
+        // Check if any R2 deletion failed
+        const failedDeletions = deletionResults.filter(
+            (result) => result.status === "rejected"
+        );
+
+        // If even one image failed to delete, block MongoDB deletion
+        if (failedDeletions.length > 0) {
+            console.error(
+                "Some R2 images could not be deleted:",
+                failedDeletions
+            );
+
+            return NextResponse.json(
+                {
+                    success: false,
+                    message:
+                        "Some images could not be deleted from Cloudflare R2. Product was not deleted.",
+                },
+                { status: 500 }
+            );
         }
 
-        await Product.findByIdAndDelete(slug);
-
-        // Invalidate global product cache
-        global.productCache = null;
-        global.productCacheTime = 0;
+        // All R2 images successfully deleted -> Delete product from MongoDB
+        await Product.deleteOne({
+            _id: product._id,
+        });
 
         return NextResponse.json(
             {
                 success: true,
-                message: "Product deleted successfully",
+                message: "Product and all images deleted successfully",
             },
             { status: 200 }
         );
+
     } catch (error) {
-        console.log(error);
+        console.error("Delete product error:", error);
 
         return NextResponse.json(
             {
                 success: false,
-                message: "Internal server error",
+                message: "Failed to delete product",
             },
             { status: 500 }
         );
