@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import connectDB from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product";
 import { uploadToR2 } from "@/utils/uploadToR2";
 import { deleteFromR2 } from "@/utils/deleteFromR2";
