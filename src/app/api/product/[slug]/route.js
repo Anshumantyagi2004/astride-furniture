@@ -15,7 +15,7 @@ export async function GET(req, { params }) {
         await connectDB();
 
         const { slug } = await params;
-
+        
         const product = await Product.findOne({
             slug: slug.toLowerCase(),
         });
