@@ -62,6 +62,9 @@ export default function AboutSection_New() {
               everything — built with innovation, durability, and a whole lot
               of style.
             </p>
+            <p className={`mt-5 max-w-[540px] text-[16px] font-medium leading-8 text-[#333333]  hidden md:block`}>
+             For More Details <a href="/contact" className="font-bold text-black"> Contact</a> Us Today !
+            </p>
 
             {/* Chips */}
             <div className="mt-8 flex flex-wrap gap-3">

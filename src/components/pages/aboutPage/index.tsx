@@ -9,7 +9,7 @@ import bannerImage from './about_image.png';
 const stats = [
   { value: '2015', label: 'Founded' },
   { value: '50K+', label: 'Happy Customers' },
-  { value: '12+', label: 'Countries Served' },
+  { value: '40+', label: 'Cities Served' },
   { value: '40+', label: 'Products Designed' },
 ];
 
