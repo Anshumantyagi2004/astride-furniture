@@ -17,34 +17,41 @@ import {
     MessageSquare,
     ExternalLink,
     Printer,
-    Building
+    Building,
+    List
 } from "lucide-react";
 
 export default function Page() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [deletingId, setDeletingId] = useState(null);
-    const [replyTexts, setReplyTexts] = useState({});
-    const [sendingReplyId, setSendingReplyId] = useState(null);
+    const [adminNoteInputs, setAdminNoteInputs] = useState({});
+    const [savingNoteId, setSavingNoteId] = useState(null);
 
-    const handleSendReply = async (orderId) => {
-        const note = replyTexts[orderId];
-        if (!note || !note.trim()) {
-            toast.error("Please enter a message");
+    const handleAddBullet = (orderId, currentNote) => {
+        const text = adminNoteInputs[orderId] !== undefined ? adminNoteInputs[orderId] : (currentNote || "");
+        const newText = text ? `${text}\n• ` : "• ";
+        setAdminNoteInputs({ ...adminNoteInputs, [orderId]: newText });
+    };
+
+    const handleSaveAdminNote = async (orderId) => {
+        const note = adminNoteInputs[orderId];
+        if (note === undefined || note === null) {
+            toast.error("Please enter a note");
             return;
         }
         try {
-            setSendingReplyId(orderId);
+            setSavingNoteId(orderId);
             const { data } = await axios.put(`/api/order?id=${orderId}`, { adminNote: note });
             if (data.success) {
-                toast.success("Message sent to customer account!");
+                toast.success("Admin note saved!");
                 setOrders(orders.map(o => o._id === orderId ? { ...o, adminNote: note } : o));
             }
         } catch (error) {
             console.error(error);
-            toast.error("Failed to send message");
+            toast.error("Failed to save note");
         } finally {
-            setSendingReplyId(null);
+            setSavingNoteId(null);
         }
     };
 
@@ -151,11 +158,6 @@ export default function Page() {
                                                 <span className="text-base font-bold text-neutral-500 uppercase tracking-wider">
                                                     Order ID: <span className="text-neutral-900 select-all font-mono font-extrabold text-lg">{order._id}</span>
                                                 </span>
-                                                <span className="w-2 h-2 rounded-full bg-neutral-300 hidden sm:block"></span>
-                                                <div className="flex items-center gap-2 text-base text-neutral-600 font-semibold">
-                                                    <Calendar size={18} className="text-neutral-400" />
-                                                    <span>{new Date(order.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })} at {new Date(order.createdAt).toLocaleTimeString()}</span>
-                                                </div>
                                             </div>
 
                                             {order.razorpayOrderId && (
@@ -170,40 +172,86 @@ export default function Page() {
                                             )}
                                         </div>
 
-                                        <div className="flex items-center gap-3 self-start sm:self-center">
-                                            <a
-                                                href={`/admin/orders/${order._id}/invoice`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="h-11 px-4 min-w-[120px] flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-sm font-bold transition-all border border-blue-200 shadow-sm"
-                                            >
-                                                <Printer size={16} />
-                                                <span>Invoice</span>
-                                            </a>
+                                        {/* Admin Custom Note in Header Middle Space */}
+                                        <div className="flex-1 max-w-xl min-w-[350px] my-1 sm:my-0 flex flex-col p-4 bg-white border border-neutral-200/70 rounded-2xl shadow-sm">
+                                            <div className="flex items-center gap-4 mb-2.5">
+                                                <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest">
+                                                    Admin Note
+                                                </label>
+                                            </div>
+                                            <div className="flex items-start gap-2.5">
+                                                <textarea 
+                                                    rows={Math.max(2, (adminNoteInputs[order._id] !== undefined ? adminNoteInputs[order._id] : (order.adminNote || "")).split('\n').length)}
+                                                    placeholder="Type note here..."
+                                                    value={adminNoteInputs[order._id] !== undefined ? adminNoteInputs[order._id] : (order.adminNote || "")}
+                                                    onChange={(e) => setAdminNoteInputs({ ...adminNoteInputs, [order._id]: e.target.value })}
+                                                    className="min-h-[44px] max-h-32 flex-1 bg-neutral-50 focus:bg-white border border-neutral-200 rounded-xl px-3.5 py-2.5 text-sm font-medium text-neutral-900 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all shadow-sm resize-y leading-relaxed placeholder:text-neutral-400"
+                                                />
+                                                <div className="flex flex-col gap-2.5 shrink-0">
+                                                    <button 
+                                                        type="button"
+                                                        onClick={() => handleSaveAdminNote(order._id)}
+                                                        disabled={savingNoteId === order._id}
+                                                        className="h-[44px] px-5 bg-black hover:bg-neutral-800 text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 shadow-sm flex items-center justify-center gap-1.5 w-full"
+                                                    >
+                                                        {savingNoteId === order._id ? (
+                                                            <Loader2 className="animate-spin" size={16} />
+                                                        ) : null}
+                                                        <span>{savingNoteId === order._id ? "Saving..." : "Save Note"}</span>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleAddBullet(order._id, adminNoteInputs[order._id] !== undefined ? adminNoteInputs[order._id] : (order.adminNote || ""))}
+                                                        className="text-[11px] flex items-center justify-center gap-1 font-bold text-neutral-500 hover:text-black uppercase tracking-wider transition-colors w-full py-1.5 hover:bg-neutral-100 rounded-lg"
+                                                    >
+                                                        <List size={12} strokeWidth={2.5} />
+                                                        <span>Point</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                            <a
-                                                href={`/track-order${order.shippingInfo?.phone ? `?phone=${order.shippingInfo.phone.replace(/\D/g, '').slice(-10)}` : ''}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="h-11 px-4 min-w-[120px] flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold transition-all shadow-sm"
-                                            >
-                                                <ExternalLink size={16} />
-                                                <span>Track Order</span>
-                                            </a>
+                                        <div className="flex flex-col gap-4 items-center self-start sm:self-center">
+                                            <div className="flex items-center gap-2 text-sm text-neutral-600 font-semibold">
+                                                <Calendar size={16} className="text-neutral-400" />
+                                                <span>{new Date(order.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })} at {new Date(order.createdAt).toLocaleTimeString()}</span>
+                                            </div>
 
-                                            <button
-                                                type="button"
-                                                disabled={deletingId === order._id}
-                                                onClick={() => handleDeleteOrder(order._id)}
-                                                className="h-11 px-4 min-w-[120px] flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
-                                            >
-                                                {deletingId === order._id ? (
-                                                    <Loader2 className="animate-spin" size={16} />
-                                                ) : (
-                                                    <Trash2 size={16} />
-                                                )}
-                                                <span>Delete Order</span>
-                                            </button>
+                                            <div className="flex items-center gap-3">
+                                                <a
+                                                    href={`/admin/orders/${order._id}/invoice`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="h-11 px-4 min-w-[120px] flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-sm font-bold transition-all border border-blue-200 shadow-sm"
+                                                >
+                                                    <Printer size={16} />
+                                                    <span>Invoice</span>
+                                                </a>
+
+                                                <a
+                                                    href={`/track-order${order.shippingInfo?.phone ? `?phone=${order.shippingInfo.phone.replace(/\D/g, '').slice(-10)}` : ''}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="h-11 px-4 min-w-[120px] flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold transition-all shadow-sm"
+                                                >
+                                                    <ExternalLink size={16} />
+                                                    <span>Track Order</span>
+                                                </a>
+
+                                                <button
+                                                    type="button"
+                                                    disabled={deletingId === order._id}
+                                                    onClick={() => handleDeleteOrder(order._id)}
+                                                    className="h-11 px-4 min-w-[120px] flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+                                                >
+                                                    {deletingId === order._id ? (
+                                                        <Loader2 className="animate-spin" size={16} />
+                                                    ) : (
+                                                        <Trash2 size={16} />
+                                                    )}
+                                                    <span>Delete Order</span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -319,17 +367,17 @@ export default function Page() {
                                                             <input 
                                                                 type="text" 
                                                                 placeholder="Type message to display in customer's account..."
-                                                                value={replyTexts[order._id] !== undefined ? replyTexts[order._id] : (order.adminNote || "")}
-                                                                onChange={(e) => setReplyTexts({ ...replyTexts, [order._id]: e.target.value })}
+                                                                value={adminNoteInputs[order._id] !== undefined ? adminNoteInputs[order._id] : (order.adminNote || "")}
+                                                                onChange={(e) => setAdminNoteInputs({ ...adminNoteInputs, [order._id]: e.target.value })}
                                                                 className="flex-1 bg-white border border-neutral-200 rounded-xl px-3.5 py-2 text-sm text-neutral-900 focus:outline-none focus:border-black transition-all"
                                                             />
                                                             <button 
                                                                 type="button"
-                                                                onClick={() => handleSendReply(order._id)}
-                                                                disabled={sendingReplyId === order._id}
+                                                                onClick={() => handleSaveAdminNote(order._id)}
+                                                                disabled={savingNoteId === order._id}
                                                                 className="bg-black hover:bg-neutral-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all disabled:opacity-50 shrink-0"
                                                             >
-                                                                {sendingReplyId === order._id ? "Sending..." : "Send Message"}
+                                                                {savingNoteId === order._id ? "Sending..." : "Send Message"}
                                                             </button>
                                                         </div>
                                                     </div>
