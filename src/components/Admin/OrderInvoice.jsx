@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
-import html2pdf from "html2pdf.js";
 const OrderInvoice = () => {
   const params = useParams();
   const orderId = params?.id;
@@ -23,7 +22,7 @@ const OrderInvoice = () => {
           const found = data.orders.find(o => o._id === orderId);
           if (found) {
             setOrder(found);
-            const invNum = found._id?.toString().slice(-6).toUpperCase() || "ORDER";
+            const invNum = found._id?.toString() || "ORDER";
             document.title = `Invoice_${invNum}`;
           } else {
             setError("Order not found");
@@ -70,7 +69,7 @@ const OrderInvoice = () => {
   };
 
   // Formatting variables
-  const invoiceNumber = `#${safeOrder._id?.toString().slice(-6).toUpperCase()}`;
+  const invoiceNumber = safeOrder._id?.toString();
   const orderDate = new Date(safeOrder.createdAt).toLocaleDateString('en-GB'); // DD/MM/YYYY
   const paymentMethod = safeOrder.paymentMethod || "Razorpay secure";
   const shippingMethod = safeOrder.pricing.shippingCharge > 0 ? "Standard Delivery" : "Free Standard Delivery";
@@ -85,6 +84,7 @@ const OrderInvoice = () => {
   const handlePrint = async () => {
     setIsGeneratingPdf(true);
     try {
+      const html2pdf = (await import("html2pdf.js")).default;
       const element = document.querySelector(".invoice-container");
       if (!element) {
         window.print();
@@ -106,7 +106,7 @@ const OrderInvoice = () => {
           });
         })
       );
-      const invNum = safeOrder._id?.toString().slice(-6).toUpperCase() || "ORDER";
+      const invNum = safeOrder._id?.toString() || "ORDER";
 
       // A4 portrait content width: 210mm - 2*10mm margin = 190mm = ~718px at 96dpi
       // We use 680px as the safe capture width to prevent any right-side clipping
