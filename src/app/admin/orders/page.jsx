@@ -160,14 +160,18 @@ export default function Page() {
                                                 </span>
                                             </div>
 
+                                            <div className="text-sm sm:text-base text-neutral-600 font-semibold">
+                                                INVOICE NO.: <span className="font-mono font-black text-neutral-900 select-all text-base sm:text-lg">{order._id?.toString().slice(-6).toUpperCase()}</span>
+                                            </div>
+
                                             {order.razorpayOrderId && (
-                                                <div className="text-xs text-neutral-500 font-medium">
-                                                    Razorpay Order ID: <span className="font-mono font-bold text-neutral-900 select-all">{order.razorpayOrderId}</span>
+                                                <div className="text-sm text-neutral-600 font-medium">
+                                                    Razorpay Order ID: <span className="font-mono font-bold text-neutral-900 select-all text-sm sm:text-base">{order.razorpayOrderId}</span>
                                                 </div>
                                             )}
                                             {order.razorpayPaymentId && (
-                                                <div className="text-xs text-neutral-500 font-medium">
-                                                    Razorpay Payment ID: <span className="font-mono font-bold text-neutral-900 select-all">{order.razorpayPaymentId}</span>
+                                                <div className="text-sm text-neutral-600 font-medium">
+                                                    Razorpay Payment ID: <span className="font-mono font-bold text-neutral-900 select-all text-sm sm:text-base">{order.razorpayPaymentId}</span>
                                                 </div>
                                             )}
                                         </div>
