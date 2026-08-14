@@ -22,7 +22,7 @@ const OrderInvoice = () => {
           const found = data.orders.find(o => o._id === orderId);
           if (found) {
             setOrder(found);
-            const invNum = found._id?.toString() || "ORDER";
+            const invNum = found._id?.toString().slice(-6).toUpperCase() || "ORDER";
             document.title = `Invoice_${invNum}`;
           } else {
             setError("Order not found");
@@ -69,7 +69,7 @@ const OrderInvoice = () => {
   };
 
   // Formatting variables
-  const invoiceNumber = safeOrder._id?.toString();
+  const invoiceNumber = safeOrder._id?.toString().slice(-6).toUpperCase();
   const orderDate = new Date(safeOrder.createdAt).toLocaleDateString('en-GB'); // DD/MM/YYYY
   const paymentMethod = safeOrder.paymentMethod || "Razorpay secure";
   const shippingMethod = safeOrder.pricing.shippingCharge > 0 ? "Standard Delivery" : "Free Standard Delivery";
@@ -106,7 +106,7 @@ const OrderInvoice = () => {
           });
         })
       );
-      const invNum = safeOrder._id?.toString() || "ORDER";
+      const invNum = invoiceNumber || "ORDER";
 
       // A4 portrait content width: 210mm - 2*10mm margin = 190mm = ~718px at 96dpi
       // We use 680px as the safe capture width to prevent any right-side clipping
