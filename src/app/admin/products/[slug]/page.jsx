@@ -160,7 +160,8 @@ export default function Page() {
                                 },
                             ]
                     );
-                    setLoading(false);
+                    // Don't turn off loading here — useEffect's Promise.all
+                    // will handle it after getCategories also finishes
                     return; // exit if successful
                 }
             } catch (error) {
@@ -174,7 +175,6 @@ export default function Page() {
                 }
             }
         }
-        setLoading(false);
     };
 
     // GET CATEGORIES
@@ -191,8 +191,11 @@ export default function Page() {
     };
 
     useEffect(() => {
-        getProduct();
-        getCategories();
+        // Run both in parallel; only show the form once BOTH are done
+        // so the category dropdown already has its options when it renders
+        Promise.all([getProduct(), getCategories()]).finally(() => {
+            setLoading(false);
+        });
     }, []);
 
     const addColorVariant = () => {

@@ -18,7 +18,7 @@ export async function GET(req, { params }) {
         
         const product = await Product.findOne({
             slug: slug.toLowerCase(),
-        });
+        }).populate("category");
 
         if (!product) {
             return NextResponse.json(
@@ -106,6 +106,7 @@ export async function PUT(req, { params }) {
 
         const oldPriceInput = formData.get("oldPrice");
         const realPriceInput = formData.get("realPrice");
+        const categoryInput = formData.get("category");
 
         const keyfeatures = formData.get("keyfeatures")?.trim();
         const application = formData.get("application")?.trim();
@@ -229,6 +230,10 @@ export async function PUT(req, { params }) {
 
         if (whychoose !== undefined) {
             product.whychoose = whychoose;
+        }
+
+        if (categoryInput) {
+            product.category = categoryInput;
         }
 
         product.specifications = specifications;
