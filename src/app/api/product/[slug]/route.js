@@ -104,6 +104,13 @@ export async function PUT(req, { params }) {
         const metaDescription =
             formData.get("metaDescription")?.trim();
 
+        const oldPriceInput = formData.get("oldPrice");
+        const realPriceInput = formData.get("realPrice");
+
+        const keyfeatures = formData.get("keyfeatures")?.trim();
+        const application = formData.get("application")?.trim();
+        const whychoose = formData.get("whychoose")?.trim();
+
 
         // ==========================================
         // SPECIFICATIONS
@@ -202,6 +209,26 @@ export async function PUT(req, { params }) {
 
         if (metaDescription !== undefined) {
             product.metaDescription = metaDescription;
+        }
+
+        if (oldPriceInput !== null && oldPriceInput !== undefined) {
+            product.oldPrice = Number(oldPriceInput);
+        }
+
+        if (realPriceInput !== null && realPriceInput !== undefined) {
+            product.realPrice = Number(realPriceInput);
+        }
+
+        if (keyfeatures !== undefined) {
+            product.keyfeatures = keyfeatures;
+        }
+
+        if (application !== undefined) {
+            product.application = application;
+        }
+
+        if (whychoose !== undefined) {
+            product.whychoose = whychoose;
         }
 
         product.specifications = specifications;
