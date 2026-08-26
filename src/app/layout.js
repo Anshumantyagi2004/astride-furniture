@@ -54,6 +54,20 @@ export default function RootLayout({ children }) {
           strategy="afterInteractive"
         /> */}
 
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-11248983982"
+          strategy="afterInteractive"
+        />
+
+        <Script id="google-ads-gtag" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-11248983982');
+          `}
+        </Script>
+
         <Script id="google-tag-manager" strategy="beforeInteractive">
           {`
             (function(w,d,s,l,i){
