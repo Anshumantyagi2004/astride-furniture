@@ -64,20 +64,20 @@ const getSwatchBackground = (colorName: string, colorVariants?: any[]): string =
 
 
 export default function DetailPageCard({ product }: { product: any }) {
-//   // Grab the category name safely
-// // 1. Use 'let' so we can override it for testing
-// let activeCategoryId = product?.categoryId || product?.category?._id;
-// const activeCategoryName = product?.category?.name || product?.category;
+  //   // Grab the category name safely
+  // // 1. Use 'let' so we can override it for testing
+  // let activeCategoryId = product?.categoryId || product?.category?._id;
+  // const activeCategoryName = product?.category?.name || product?.category;
 
 
-// // TESTING FEATURE FOR LOCALHOST 
-// // Uncomment the line below to manually force the Bar Stool ID
+  // // TESTING FEATURE FOR LOCALHOST 
+  // // Uncomment the line below to manually force the Bar Stool ID
 
-// activeCategoryId = "6a182e652d3460990337fb44"; 
+  // activeCategoryId = "6a182e652d3460990337fb44"; 
 
-// // 2. Log the variables to the console
-// console.log("Active Category ID:", activeCategoryId);
-// console.log("Active Category Name:", activeCategoryName);
+  // // 2. Log the variables to the console
+  // console.log("Active Category ID:", activeCategoryId);
+  // console.log("Active Category Name:", activeCategoryName);
 
   const [quantity, setQuantity] = useState(0);
   const [selectedColor, setSelectedColor] = useState('Red');
@@ -90,7 +90,7 @@ export default function DetailPageCard({ product }: { product: any }) {
 
   const allVariantImages = useMemo(() => {
     if (!product || !product.colorVariants) return [];
-    
+
     // Only show images from the currently selected color variant
     const selectedVariant = product.colorVariants.find(
       (v: any) => v.colorName?.toLowerCase() === selectedColor?.toLowerCase()
@@ -200,6 +200,7 @@ export default function DetailPageCard({ product }: { product: any }) {
   }, [activeTab]);
 
   const handleAddToCartClick = () => {
+    if (true) return toast.error("This product is out of stock! 🪑")
     if (!product) return;
     if (quantity <= 0) {
       toast.error("Please select quantity or choose a chair set first! 🪑", {
@@ -474,6 +475,10 @@ export default function DetailPageCard({ product }: { product: any }) {
             </span>
           </div>
 
+          <span className="text-[#EC4899] font-bold text-[13px] tracking-[0.08em] uppercase mb-2">
+            Out of stock for now. Check back soon for availability!
+          </span>
+
           <p className="text-[11.5px] text-[#888]">Inclusive of all taxes.</p>
 
           <div
@@ -524,30 +529,27 @@ export default function DetailPageCard({ product }: { product: any }) {
 
           {/* Quick Bulk Sets & Single Chair */}
           <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-4 mb-2">
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setQuantity(1)}
-              className={`flex-1 font-extrabold text-[11px] sm:text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all ${
-                quantity === 1 ? 'bg-[#FEF3C7] text-amber-900 ring-2 ring-amber-600 scale-[1.02]' : 'bg-[#FFFBEB] text-amber-800 hover:bg-[#FEF3C7]'
-              }`}
+              className={`flex-1 font-extrabold text-[11px] sm:text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all ${quantity === 1 ? 'bg-[#FEF3C7] text-amber-900 ring-2 ring-amber-600 scale-[1.02]' : 'bg-[#FFFBEB] text-amber-800 hover:bg-[#FEF3C7]'
+                }`}
             >
               1 Chair 🪑
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setQuantity(5)}
-              className={`flex-1 font-extrabold text-[11px] sm:text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all ${
-                quantity === 5 ? 'bg-[#BFDBFE] text-blue-900 ring-2 ring-blue-600 scale-[1.02]' : 'bg-[#EFF6FF] text-blue-700 hover:bg-[#BFDBFE]'
-              }`}
+              className={`flex-1 font-extrabold text-[11px] sm:text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all ${quantity === 5 ? 'bg-[#BFDBFE] text-blue-900 ring-2 ring-blue-600 scale-[1.02]' : 'bg-[#EFF6FF] text-blue-700 hover:bg-[#BFDBFE]'
+                }`}
             >
               Set of 5 🪑
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setQuantity(10)}
-              className={`flex-1 font-extrabold text-[11px] sm:text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all ${
-                quantity === 10 ? 'bg-[#A7F3D0] text-emerald-900 ring-2 ring-emerald-600 scale-[1.02]' : 'bg-[#ECFDF5] text-emerald-700 hover:bg-[#A7F3D0]'
-              }`}
+              className={`flex-1 font-extrabold text-[11px] sm:text-[13px] tracking-wide rounded-[14px] border-[2.5px] border-[#131313] shadow-[3px_3px_0_#131313] py-2.5 hover:translate-y-0.5 active:translate-y-1 active:shadow-[1px_1px_0_#131313] transition-all ${quantity === 10 ? 'bg-[#A7F3D0] text-emerald-900 ring-2 ring-emerald-600 scale-[1.02]' : 'bg-[#ECFDF5] text-emerald-700 hover:bg-[#A7F3D0]'
+                }`}
             >
               Set of 10 🪑
             </button>
@@ -597,8 +599,8 @@ export default function DetailPageCard({ product }: { product: any }) {
             </div>
             <div className="w-[1.5px] bg-[#e5e5e5] shrink-0 my-2" />
             {/* 30 Day Returns */}
-            
-           
+
+
             {/* 2 Year Warranty */}
             <div className="flex-1 min-w-0 flex flex-col lg:flex-row items-center justify-center gap-1.5 px-1.5 py-2.5">
               <div className="w-[34px] h-[34px] rounded-[9px] bg-[#fff7ed] border-[1.5px] border-[#131313] flex items-center justify-center shrink-0">
@@ -886,16 +888,16 @@ export default function DetailPageCard({ product }: { product: any }) {
               {(product?.chairSpecs && product.chairSpecs.length > 0
                 ? product.chairSpecs
                 : [
-                    { key: "Seat height", value: "18\" – 22\"" },
-                    ...(product?.categoryId !== "6a182e652d3460990337fb44"
-                      ? [{ key: "Armrest height", value: "6\" – 10\"" }]
-                      : []),
-                    { key: "Weight capacity", value: "135 kg" },
-                    { key: "Recline lock", value: "4 positions" }
-                  ]
+                  { key: "Seat height", value: "18\" – 22\"" },
+                  ...(product?.categoryId !== "6a182e652d3460990337fb44"
+                    ? [{ key: "Armrest height", value: "6\" – 10\"" }]
+                    : []),
+                  { key: "Weight capacity", value: "135 kg" },
+                  { key: "Recline lock", value: "4 positions" }
+                ]
               ).map((spec: any, idx: number, arr: any[]) => (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   className={`flex justify-between items-start sm:items-center gap-3 sm:gap-4 py-3.5 ${idx < arr.length - 1 ? 'border-b-[1.5px] border-dashed border-[#3a3a3a]' : ''}`}
                 >
                   <span className="text-[11px] sm:text-[12px] tracking-[0.1em] uppercase text-[#9a9a9a] font-bold shrink-0 min-w-[110px] sm:min-w-[130px] whitespace-nowrap">
@@ -908,17 +910,17 @@ export default function DetailPageCard({ product }: { product: any }) {
               ))}
             </div>
             <div className="mt-6 flex justify-center drop-shadow-[0_0_60px_rgba(255,255,255,1)] drop-shadow-[0_0_20px_rgba(255,255,255,0.9)]">
-              <Image 
+              <Image
                 src={
-                  product?.colorVariants?.[0]?.images?.find((img: any) => img.imageType === "png")?.url || 
-                  product?.colorVariants?.[0]?.images?.[0]?.url || 
-                  product?.image || 
+                  product?.colorVariants?.[0]?.images?.find((img: any) => img.imageType === "png")?.url ||
+                  product?.colorVariants?.[0]?.images?.[0]?.url ||
+                  product?.image ||
                   "/Png1/chair12_ErgoFit.webp"
-                } 
-                alt="Adjustability" 
-                width={240} 
-                height={230} 
-                className="object-contain max-h-[230px]" 
+                }
+                alt="Adjustability"
+                width={240}
+                height={230}
+                className="object-contain max-h-[230px]"
               />
             </div>
           </div>
