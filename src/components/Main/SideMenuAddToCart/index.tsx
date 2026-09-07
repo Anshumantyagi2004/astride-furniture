@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { X, Minus, Plus } from 'lucide-react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
+import toast from 'react-hot-toast';
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -37,7 +38,7 @@ export default function SideMenuAddToCart() {
     setIsMounted(true);
     const savedCart = localStorage.getItem('astride_cart');
     if (savedCart) {
-      try { setCartItems(JSON.parse(savedCart)); } catch {}
+      try { setCartItems(JSON.parse(savedCart)); } catch { }
     }
   }, []);
 
@@ -139,16 +140,14 @@ export default function SideMenuAddToCart() {
       {/* Backdrop — pure CSS fade */}
       <div
         onClick={() => setIsOpen(false)}
-        className={`fixed inset-0 bg-black/45 z-[9999] transition-opacity duration-300 ease-in-out ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`fixed inset-0 bg-black/45 z-[9999] transition-opacity duration-300 ease-in-out ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
       />
 
       {/* Sidebar Panel — pure CSS slide */}
       <div
-        className={`fixed top-0 right-0 h-full h-[100dvh] md:top-4 md:right-4 md:bottom-4 md:h-[calc(100vh-32px)] w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transition-transform duration-300 ease-in-out overscroll-contain ${
-          isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-[calc(100%+24px)]'
-        }`}
+        className={`fixed top-0 right-0 h-full h-[100dvh] md:top-4 md:right-4 md:bottom-4 md:h-[calc(100vh-32px)] w-full max-w-full md:max-w-[420px] bg-white rounded-none md:rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] z-[10000] flex flex-col justify-between overflow-hidden transition-transform duration-300 ease-in-out overscroll-contain ${isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-[calc(100%+24px)]'
+          }`}
         style={{
           fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
           overscrollBehavior: 'contain',
@@ -159,7 +158,7 @@ export default function SideMenuAddToCart() {
           <span className="font-semibold text-neutral-800 text-[16px] tracking-tight">
             Cart ({totalItemsCount})
           </span>
-          <button 
+          <button
             onClick={() => setIsOpen(false)}
             className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors flex items-center justify-center text-neutral-600 focus:outline-none"
           >
@@ -176,7 +175,7 @@ export default function SideMenuAddToCart() {
             <div className="h-full flex flex-col items-center justify-center text-center gap-4 py-12">
               <span className="text-neutral-300 text-6xl">🛒</span>
               <p className="text-[14px] text-neutral-400 font-medium">Your cart feels light. Let's add some premium comfort!</p>
-              <button 
+              <button
                 onClick={() => setIsOpen(false)}
                 className="mt-2 px-5 py-2.5 bg-black text-white text-[12px] font-bold rounded-xl hover:bg-neutral-800 transition-colors tracking-wider uppercase"
               >
@@ -188,8 +187,8 @@ export default function SideMenuAddToCart() {
               <div key={`${item.id}-${item.color || ""}`} className="flex gap-4 border-b border-neutral-100/50 pb-5 items-start relative group">
                 {/* Image */}
                 <div className="relative w-20 h-20 bg-neutral-50 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border border-neutral-100 p-1">
-                  <Image 
-                    src={item.image} 
+                  <Image
+                    src={item.image}
                     alt={item.name}
                     fill
                     className="object-contain mix-blend-multiply"
@@ -220,7 +219,7 @@ export default function SideMenuAddToCart() {
                   {/* Quantity selector & Delete row */}
                   <div className="flex justify-between items-center mt-3">
                     <div className="flex items-center gap-1 bg-neutral-50 rounded-lg p-0.5 border border-neutral-200/50">
-                      <button 
+                      <button
                         onClick={() => handleUpdateQuantity(item.id, item.color, -1)}
                         className="w-6 h-6 flex items-center justify-center text-neutral-500 hover:text-black rounded transition-colors"
                       >
@@ -229,7 +228,7 @@ export default function SideMenuAddToCart() {
                       <span className="w-6 text-center text-[12px] font-semibold text-neutral-800">
                         {item.quantity}
                       </span>
-                      <button 
+                      <button
                         onClick={() => handleUpdateQuantity(item.id, item.color, 1)}
                         className="w-6 h-6 flex items-center justify-center text-neutral-500 hover:text-black rounded transition-colors"
                       >
@@ -237,7 +236,7 @@ export default function SideMenuAddToCart() {
                       </button>
                     </div>
 
-                    <button 
+                    <button
                       onClick={() => handleRemoveItem(item.id, item.color)}
                       className="w-7 h-7 rounded-lg hover:bg-neutral-100 flex items-center justify-center text-neutral-400 hover:text-red-500 transition-all border border-neutral-100"
                     >
@@ -264,14 +263,15 @@ export default function SideMenuAddToCart() {
             router.push('/checkout');
           */}
 
-          <button 
+          <button
             disabled={cartItems.length === 0 || isProcessing}
             onClick={async () => {
+              if (true) return toast.error("This product is out of stock! 🪑");
               if (isProcessing || cartItems.length === 0) return;
               setIsProcessing(true);
               try {
                 const subtotalAmt = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-                
+
                 // Load Razorpay script dynamically if missing
                 if (typeof window !== "undefined" && !(window as any).Razorpay) {
                   await new Promise<void>((resolve, reject) => {
@@ -363,7 +363,7 @@ export default function SideMenuAddToCart() {
                         localStorage.removeItem("astride_cart");
                         setCartItems([]);
                         window.dispatchEvent(new Event("astride_cart_updated"));
-                        
+
                         const completedOrderId = verifyData.order?._id || response.razorpay_order_id || "";
                         router.push(`/checkout?orderId=${completedOrderId}&success=true`);
                       } else {
@@ -386,11 +386,10 @@ export default function SideMenuAddToCart() {
                 setIsProcessing(false);
               }
             }}
-            className={`w-full py-4 text-center rounded-2xl text-[14px] font-semibold transition-all shadow-md focus:outline-none flex items-center justify-center gap-2 ${
-              cartItems.length === 0 || isProcessing
-                ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed shadow-none' 
-                : 'bg-black text-white hover:bg-neutral-900 active:scale-[0.98]'
-            }`}
+            className={`w-full py-4 text-center rounded-2xl text-[14px] font-semibold transition-all shadow-md focus:outline-none flex items-center justify-center gap-2 ${cartItems.length === 0 || isProcessing
+              ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed shadow-none'
+              : 'bg-black text-white hover:bg-neutral-900 active:scale-[0.98]'
+              }`}
           >
             {isProcessing ? "Opening Razorpay..." : "Checkout"}
           </button>
