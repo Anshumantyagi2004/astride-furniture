@@ -30,7 +30,7 @@ export async function POST(req) {
     });
 
     // Fire-and-forget Telegram notification — does NOT block response
-    sendTelegramContactNotification(contact.toObject ? contact.toObject() : contact);
+    // sendTelegramContactNotification(contact.toObject ? contact.toObject() : contact);
     
     // Fire-and-forget Brandbnalo notification
     sendBrandbnaloContactNotification(contact.toObject ? contact.toObject() : contact);

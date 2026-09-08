@@ -31,7 +31,7 @@ export async function POST(req) {
     });
 
     // Fire-and-forget Telegram notification — does NOT block response
-    sendTelegramCorporateEnquiryNotification(enquiry.toObject ? enquiry.toObject() : enquiry);
+    // sendTelegramCorporateEnquiryNotification(enquiry.toObject ? enquiry.toObject() : enquiry);
 
     // Fire-and-forget Brandbnalo notification
     sendBrandbnaloEnquiryNotification(enquiry.toObject ? enquiry.toObject() : enquiry);

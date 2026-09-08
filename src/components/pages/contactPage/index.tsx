@@ -2,12 +2,12 @@
 
 import React, { useState, useCallback } from "react";
 import toast from "react-hot-toast";
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  User, 
-  Briefcase, 
+import {
+  Mail,
+  Phone,
+  MapPin,
+  User,
+  Briefcase,
   MessageSquare,
   CheckCircle,
   ArrowRight
@@ -77,14 +77,14 @@ export default function ContactPage() {
 
     // 1. STRICT TEXT: Prevent numbers and special characters
     if ((name === 'fullName' || name === 'state' || name === 'city' || name === 'companyName') && !/^[a-zA-Z\s]*$/.test(value)) {
-      return; 
+      return;
     }
 
     // 2. STRICT NUMBERS: Prevent letters in Phone
     if (name === 'phoneNumber' && !/^\d*$/.test(value)) {
       return;
     }
-    
+
     // 3. MAX LENGTH: Restrict phone to 10 digits
     if (name === 'phoneNumber' && value.length > 10) return;
 
@@ -123,36 +123,43 @@ export default function ContactPage() {
     setErrors(newErrors);
 
     // Stop submission if ANY error exists
-    if (Object.values(newErrors).some(err => err !== "")) {
+    if (Object.values(newErrors).some((err) => err !== "")) {
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("/api/contact", {
+      const payload = {
+        supplierToken: "6a5de970cfd1e398b08fe333",
+        platform: "Astrides Contact Page",
+        platformEmail: "deepa@mbtc.co.in",
+        name: formData.fullName || "N/A",
+        phone: formData.phoneNumber || "N/A",
+        email: formData.email || "N/A",
+        product: formData.companyName || "N/A",
+        place: `${formData.city || "N/A"}, ${formData.state || "N/A"}`,
+        message: formData.message || "N/A",
+      };
+
+      const res = await fetch("https://brandbnalo.com/api/form/add", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName: formData.fullName,
-          email: formData.email,
-          companyName: formData.companyName,
-          phone: formData.phoneNumber,
-          state: formData.state,
-          city: formData.city,
-          message: formData.message,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
-      if (data.success) {
+
+      if (res.ok && data.success) {
         setSubmitSuccess(true);
         setFormData(INITIAL_FORM_DATA);
       } else {
         toast.error(data.message || "Failed to submit form");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Form submission error:", error);
       toast.error("Failed to submit message. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -162,8 +169,8 @@ export default function ContactPage() {
   // Dynamic sleek input styling based on error state
   const getInputClass = (error: string, baseClass: string = "w-full pl-4 pr-10 rounded-xl outline-none transition-all placeholder:text-sm placeholder:font-normal") => `
     ${baseClass} text-base font-semibold border
-    ${error 
-      ? 'border-red-300 bg-red-50/40 text-red-900 focus:border-red-500 shadow-[inset_0_0_0_1px_rgba(248,113,113,0.2)] placeholder-red-300' 
+    ${error
+      ? 'border-red-300 bg-red-50/40 text-red-900 focus:border-red-500 shadow-[inset_0_0_0_1px_rgba(248,113,113,0.2)] placeholder-red-300'
       : 'border-slate-200 bg-slate-50/50 text-slate-800 focus:border-slate-900 focus:bg-white placeholder-slate-350'
     }
   `;
@@ -185,13 +192,13 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-[#f1f3f5] text-slate-800 pt-6 md:pt-24 pb-8 md:pb-24 px-4 md:px-8 select-none relative overflow-hidden" style={{ fontFamily: '"Inter", sans-serif' }}>
-      
+
       {/* Background ambient glows */}
       <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] rounded-full bg-slate-400/5 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-[-10%] w-[600px] h-[600px] rounded-full bg-slate-300/5 blur-[120px] pointer-events-none" />
 
       <div className="max-w-[1200px] mx-auto relative z-10">
-        
+
         {/* Header */}
         <div className="text-center mb-16 flex flex-col gap-3">
           <h1 className="text-slate-900 text-5xl sm:text-7xl lg:text-8xl font-extrabold uppercase leading-none tracking-tight">
@@ -203,10 +210,10 @@ export default function ContactPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
+
           {/* Left Column: Contact Cards */}
           <div className="lg:col-span-5 flex flex-col gap-6 w-full">
-            
+
             {/* Email Card */}
             <div className="bg-white border border-slate-200/60 rounded-[24px] p-6 flex items-start gap-4 shadow-[0_15px_40px_rgba(0,0,0,0.02)] hover:border-slate-350 transition-all duration-300">
               <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-900 shrink-0">
@@ -250,7 +257,7 @@ export default function ContactPage() {
 
           {/* Right Column: Contact Form */}
           <div className="lg:col-span-7 w-full">
-            
+
             {submitSuccess && (
               <div className="mb-6 p-5 bg-slate-900 border border-slate-800 text-white rounded-3xl flex items-center gap-4 shadow-lg animate-fade-in">
                 <CheckCircle size={22} className="text-emerald-400 shrink-0" />
@@ -263,10 +270,10 @@ export default function ContactPage() {
 
             <div className="bg-white border border-slate-200/60 rounded-[32px] p-8 md:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
               <form onSubmit={handleSubmit} className="space-y-6">
-                
+
                 {/* Inputs Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-                  
+
                   {/* Full Name */}
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-slate-400">Full Name</label>
@@ -355,7 +362,7 @@ export default function ContactPage() {
                     />
                     <ErrorMessage error={errors.state} />
                   </div>
- 
+
                   {/* City */}
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-slate-400">City</label>

@@ -62,7 +62,7 @@ export async function sendBrandbnaloNotification(order, paymentType) {
 
     const totalAmount = pricing.total || (pricing.subtotal || 0) + (pricing.shippingCharge || 0);
 
-    const message = 
+    const message =
       `<b>ORDER STATUS:</b> ${order.status || "Confirmed"}<br><br>` +
       `<b>PAYMENT METHOD:</b> ${paymentType}<br>` +
       `<b>PAYMENT STATUS:</b> ${order.paymentStatus || "Paid"}<br>` +
@@ -73,7 +73,7 @@ export async function sendBrandbnaloNotification(order, paymentType) {
 
     // 4. Construct the payload
     const payload = {
-      supplierToken: "7311164111",
+      supplierToken: "6a5de970cfd1e398b08fe333",
       platform: "Website Contact Page",
       platformEmail: "deepa@mbtc.co.in",
       name: shipping.fullName || "N/A",
@@ -108,7 +108,7 @@ export async function sendBrandbnaloNotification(order, paymentType) {
  */
 export async function sendBrandbnaloContactNotification(contact) {
   try {
-    const message = 
+    const message =
       `<b>NEW CONTACT FORM SUBMISSION</b><br><br>` +
       `<b>COMPANY NAME:</b> ${contact.companyName || "N/A"}<br>` +
       `<b>MESSAGE:</b><br>${contact.message}`;
@@ -145,7 +145,7 @@ export async function sendBrandbnaloContactNotification(contact) {
  */
 export async function sendBrandbnaloEnquiryNotification(enquiry) {
   try {
-    const message = 
+    const message =
       `<b>NEW CORPORATE ENQUIRY SUBMISSION</b><br><br>` +
       `<b>COMPANY NAME:</b> ${enquiry.companyName || "N/A"}<br>` +
       `<b>NO. OF CHAIRS:</b> ${enquiry.quantity}<br>`;

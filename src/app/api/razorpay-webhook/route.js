@@ -114,7 +114,7 @@ export async function POST(req) {
         console.log(`Successfully updated Magic Checkout customer data for Order ${razorpayOrderId}`);
 
         // Fire notifications with full customer details
-        sendTelegramOrderNotification(existingOrder.toObject ? existingOrder.toObject() : existingOrder, "Razorpay");
+        // sendTelegramOrderNotification(existingOrder.toObject ? existingOrder.toObject() : existingOrder, "Razorpay");
         sendBrandbnaloNotification(existingOrder.toObject ? existingOrder.toObject() : existingOrder, "Razorpay");
         sendWhatsappOrderNotification(existingOrder.toObject ? existingOrder.toObject() : existingOrder, "Razorpay");
       } else {

@@ -19,7 +19,7 @@ export async function POST(req) {
     const order = await Order.create({ ...body, status: "Confirmed" });
 
     // Fire-and-forget Telegram notification — does NOT block the response
-    sendTelegramOrderNotification(order.toObject ? order.toObject() : order, body.paymentMethod || "COD");
+    // sendTelegramOrderNotification(order.toObject ? order.toObject() : order, body.paymentMethod || "COD");
     sendBrandbnaloNotification(order.toObject ? order.toObject() : order, body.paymentMethod || "COD");
     sendWhatsappOrderNotification(order.toObject ? order.toObject() : order, body.paymentMethod || "COD");
 

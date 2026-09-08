@@ -59,7 +59,7 @@ export async function POST(req) {
     await order.save();
 
     // Fire-and-forget Telegram alert — does NOT block the response
-    sendTelegramCancelNotification(order.toObject ? order.toObject() : order);
+    // sendTelegramCancelNotification(order.toObject ? order.toObject() : order);
 
     return NextResponse.json({
       success: true,

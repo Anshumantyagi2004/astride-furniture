@@ -66,7 +66,7 @@ const FEATURES = [
 
 const FeatureItem = memo(({ item }: { item: typeof FEATURES[0] }) => (
   <li className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4">
-    <div 
+    <div
       className="flex h-[42px] w-[40px] md:h-[46px] md:w-[46px] shrink-0 items-center justify-center rounded-xl border border-[#3A3A3A] bg-[#222]"
       style={{ color: item.color }}
     >
@@ -130,7 +130,7 @@ export default function Enquiry_New() {
     const { name, value } = e.target;
 
     if ((name === 'fullName' || name === 'location') && !/^[a-zA-Z\s]*$/.test(value)) {
-      return; 
+      return;
     }
     if ((name === 'phone' || name === 'quantity') && !/^\d*$/.test(value)) {
       return;
@@ -169,24 +169,41 @@ export default function Enquiry_New() {
 
     setErrors(newErrors);
 
-    if (Object.values(newErrors).some(err => err !== "")) {
+    if (Object.values(newErrors).some((err) => err !== "")) {
       return;
     }
 
     setLoading(true);
+
     try {
-      const res = await fetch("/api/enquiry", {
+      const payload = {
+        supplierToken: "6a5de970cfd1e398b08fe333",
+        platform: "Astride Contact Form",
+        platformEmail: "deepa@mbtc.co.in",
+        name: formData.fullName || "N/A",
+        phone: formData.phone || "N/A",
+        email: formData.email || "N/A",
+        product: `Quantity: ${formData.quantity || "N/A"} `,
+        place: formData.location || "N/A",
+        message: `Company: ${formData.companyName || "N/A"}, `,
+      };
+
+      const res = await fetch("https://brandbnalo.com/api/form/add", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
 
-      if (data.success) {
+      if (res.ok && data.success) {
         setSubmitted(true);
       } else {
-        setErrorMsg(data.message || "Something went wrong. Please try again.");
+        setErrorMsg(
+          data.message || "Something went wrong. Please try again."
+        );
       }
     } catch (err) {
       console.error(err);
@@ -196,11 +213,10 @@ export default function Enquiry_New() {
     }
   };
 
-  const getInputClass = (error: string) => `w-full rounded-[10px] border-2 px-4 py-[11px] md:py-[13px] text-sm font-semibold outline-none transition duration-300 ${
-    error 
-      ? 'border-red-500 bg-red-50/50 text-red-900 focus:border-red-500 focus:shadow-[3px_3px_0_#ef4444]' 
-      : 'border-[#131313] focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]'
-  }`;
+  const getInputClass = (error: string) => `w-full rounded-[10px] border-2 px-4 py-[11px] md:py-[13px] text-sm font-semibold outline-none transition duration-300 ${error
+    ? 'border-red-500 bg-red-50/50 text-red-900 focus:border-red-500 focus:shadow-[3px_3px_0_#ef4444]'
+    : 'border-[#131313] focus:border-[#8B5CF6] focus:shadow-[3px_3px_0_#8B5CF6]'
+    }`;
 
   const ErrorMessage = ({ error }: { error: string }) => {
     if (!error) return null;
@@ -223,7 +239,7 @@ export default function Enquiry_New() {
     >
       <div className="mx-auto max-w-[1440px] px-5 md:px-8 lg:px-12">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-10 xl:gap-14 items-start">
-          
+
           {/* LEFT COLUMN */}
           <motion.div
             initial="hidden"
@@ -252,7 +268,7 @@ export default function Enquiry_New() {
             </p>
 
             <div className="mt-8 md:mt-10 flex flex-col md:flex-row items-stretch gap-4 max-w-[460px]">
-              
+
               {/* Features List: order-2 on mobile (moves bottom), md:order-1 on desktop (moves left) */}
               <div className="order-2 md:order-1 flex-[1.3] bg-white/[0.02] border border-white/5 rounded-[20px] p-4 md:p-5 flex flex-col justify-center">
                 <ul className={`grid grid-cols-3 md:grid-cols-1 gap-2 md:gap-0 md:space-y-5 ${sans.className}`}>
@@ -261,12 +277,12 @@ export default function Enquiry_New() {
                   ))}
                 </ul>
               </div>
-              
+
               {/* GeM Logo Container: order-1 on mobile (moves top), md:order-2 on desktop (moves right) */}
               <div className="order-1 md:order-2 flex-1 flex items-center justify-center bg-white rounded-[20px] p-3 md:p-4 shadow-[4px_4px_0_#F97316] border border-white">
-                <Image 
-                  src="/Png1/Gemologo3.webp" 
-                  alt="GeM Logo" 
+                <Image
+                  src="/Png1/Gemologo3.webp"
+                  alt="GeM Logo"
                   width={180}
                   height={100}
                   className="object-contain w-full max-w-[130px] md:max-w-[150px] h-auto"
@@ -331,7 +347,7 @@ export default function Enquiry_New() {
                       No. of chairs*
                     </label>
                     <input
-                      type="text" 
+                      type="text"
                       name="quantity"
                       placeholder="e.g. 5"
                       value={formData.quantity}

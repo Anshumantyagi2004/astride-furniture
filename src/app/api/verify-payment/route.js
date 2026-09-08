@@ -200,7 +200,7 @@ export async function POST(req) {
       });
 
       // Fire-and-forget notifications only for newly created orders
-      sendTelegramOrderNotification(finalOrder.toObject ? finalOrder.toObject() : finalOrder, "Razorpay");
+      // sendTelegramOrderNotification(finalOrder.toObject ? finalOrder.toObject() : finalOrder, "Razorpay");
       sendBrandbnaloNotification(finalOrder.toObject ? finalOrder.toObject() : finalOrder, "Razorpay");
       sendWhatsappOrderNotification(finalOrder.toObject ? finalOrder.toObject() : finalOrder, "Razorpay");
     }
