@@ -133,7 +133,7 @@ export default function ContactPage() {
       const payload = {
         supplierToken: "6a5de970cfd1e398b08fe333",
         platform: "Astrides Contact Page",
-        platformEmail: "deepa@mbtc.co.in",
+        platformEmail: "support@astride.in",
         name: formData.fullName || "N/A",
         phone: formData.phoneNumber || "N/A",
         email: formData.email || "N/A",

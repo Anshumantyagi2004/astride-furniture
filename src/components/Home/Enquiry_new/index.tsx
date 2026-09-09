@@ -179,7 +179,7 @@ export default function Enquiry_New() {
       const payload = {
         supplierToken: "6a5de970cfd1e398b08fe333",
         platform: "Astride Contact Form",
-        platformEmail: "deepa@mbtc.co.in",
+        platformEmail: "support@astride.in",
         name: formData.fullName || "N/A",
         phone: formData.phone || "N/A",
         email: formData.email || "N/A",
